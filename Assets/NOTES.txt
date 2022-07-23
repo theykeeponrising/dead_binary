@@ -5,3 +5,9 @@ import in blender
 copy/paste keyframes
 
 aim / (globalHit - dodge) / 10
+
+%userprofile%\AppData\Local\GitHubUnity\octorun\src\api.js
+replace
+type: "oauth"
+with
+type: "token"
