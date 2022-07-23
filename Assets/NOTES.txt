@@ -11,3 +11,5 @@ replace
 type: "oauth"
 with
 type: "token"
+
+TEST
