@@ -1,0 +1,7 @@
+import model and animation into 3ds max
+fix rotation, x 90, fix position, zero all
+export to fbx, do not bake animations
+import in blender
+copy/paste keyframes
+
+aim / (globalHit - dodge) / 10
