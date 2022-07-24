@@ -70990,30 +70990,30 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_Events:
   - time: 0.06666667
-    functionName: ShootWeaponEffect
-    data: 
+    functionName: AnimationEvent
+    data: shoot
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
   - time: 0.2
-    functionName: DealDamageEffect
-    data: 
+    functionName: AnimationEvent
+    data: dealdamage
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
-    intParameter: 0
+    intParameter: 1
     messageOptions: 0
   - time: 0.3
-    functionName: ShootWeaponEffect
-    data: 
+    functionName: AnimationEvent
+    data: shoot
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
   - time: 0.43333334
-    functionName: DealDamageEffect
+    functionName: AnimationEvent
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
-    intParameter: 0
+    intParameter: 1
     messageOptions: 0
