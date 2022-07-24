@@ -15,7 +15,6 @@ public class Character : MonoBehaviour
     public List<Tile> movePath;
     Tile moveTargetImmediate;
     Tile moveTargetDestination;
-    public int maxMoves = 3;
 
     float velocityX = 0f;
     float velocityZ = 0f;
@@ -36,6 +35,8 @@ public class Character : MonoBehaviour
     }
     public Animators animators;
     Animator animator;
+
+    enum AnimationEventContext { SHOOT, DEAL_DAMAGE, RELOAD, STOW, DRAW }
 
     public class Body
     {
@@ -65,7 +66,7 @@ public class Character : MonoBehaviour
     public class Stats
     {
         public int health;
-        public int move;
+        public int movement;
         public float aim;
         public int armor;
         public float dodge;
@@ -319,9 +320,9 @@ public class Character : MonoBehaviour
             Debug.Log("No move path.");
             return false;
         }
-        if (movePath.Count > maxMoves)
+        if (movePath.Count > stats.movement)
         {
-            Debug.Log(string.Format("Destination Too Far! \nDistance: {0}, Max Moves: {1}", movePath.Count, maxMoves));
+            Debug.Log(string.Format("Destination Too Far! \nDistance: {0}, Max Moves: {1}", movePath.Count, stats.movement));
             return false;
         }
         return true;
@@ -333,9 +334,13 @@ public class Character : MonoBehaviour
         // Checks for prefab objects when equipping a new weapon
         // Previous weapon is stowed in extra slot
 
+        // If character has a weapon equipped currently, stow it
         if (equippedWeapon && equippedWeapon != assetManager.weapon.noWeapon)
         {
             storedWeapon = equippedWeapon;
+
+            // If crouching, do not play stow animation
+            // This is until we can get a proper crouch-stow animation
             if (!flags.Contains("crouching"))
             {
                 AddFlag("stowing");
@@ -346,16 +351,22 @@ public class Character : MonoBehaviour
             animator.SetLayerWeight(storedWeapon.weaponLayer, 0);
         }
 
+        // Equipping the new weapon
         if (weapon)
         {
+            // If prefab, clone the object
             if (PrefabUtility.GetCorrespondingObjectFromOriginalSource(weapon) != null)
                 equippedWeapon = Instantiate(weapon);
             else
                 equippedWeapon = weapon;
 
+            // Enable weapon object, set position and animation layer
             equippedWeapon.gameObject.SetActive(true);
             equippedWeapon.DefaultPosition(this);
             animator.SetLayerWeight(equippedWeapon.weaponLayer, 1);
+
+            // If crouching, do not play draw animation
+            // This is until we can get a proper crouch-draw animation
             if (!flags.Contains("crouching"))
             {
                 AddFlag("drawing");
@@ -364,24 +375,6 @@ public class Character : MonoBehaviour
                     yield return new WaitForSeconds(0.01f);
             }
         }
-    }
-
-    void DrawWeapon()
-    {
-        // Called by weapon draw animations
-        // Allows EquipWeapon to continue
-
-        RemoveFlag("drawing");
-    }
-
-
-    void StowWeapon()
-    {
-        // Called by weapon draw animations
-        // Allows EquipWeapon to continue
-
-        RemoveFlag("stowing");
-        storedWeapon.gameObject.SetActive(false);
     }
 
     IEnumerator ReloadWeapon()
@@ -401,7 +394,6 @@ public class Character : MonoBehaviour
         // Placeholder function
         // Test shoot animation when button pressed
 
-        print("Shoot!");
         AddFlag("shooting");
         animator.Play("Shoot", equippedWeapon.weaponLayer);
         while (animator.IsInTransition(equippedWeapon.weaponLayer))
@@ -412,12 +404,41 @@ public class Character : MonoBehaviour
             targetCharacter.TakeDamage(this, equippedWeapon.stats.damage);
     }
 
-    void ShootWeaponEffect()
+    void AnimationEvent(AnimationEventContext context)
     {
-        // Called by weapon draw animations
-        // Makes equipped weapon perform shoot sound and visual effect
+        // Handler for animation events
+        // Evaluate context and perform appropriate actions
 
-        equippedWeapon.Shoot();
+        // Weapon shooting effect and sound
+        if (context == AnimationEventContext.SHOOT)
+        {
+            equippedWeapon.Shoot();
+        }
+
+        // Weapon impact effect on target
+        else if (context == AnimationEventContext.DEAL_DAMAGE)
+        {
+            targetCharacter.TakeDamageEffect();
+        }
+
+        // Stow weapon animation is completed
+        else if (context == AnimationEventContext.STOW)
+        {
+            RemoveFlag("stowing");
+            storedWeapon.gameObject.SetActive(false);
+        }
+
+        // Draw weapon animation is completed
+        else if (context == AnimationEventContext.DRAW)
+        {
+            RemoveFlag("drawing");
+        }
+
+        // Reload weapon animation is completed -- NOT YET IMPLEMENTED
+               else if (context == AnimationEventContext.RELOAD)
+        {
+            RemoveFlag("reloading");
+        }
     }
 
     void ToggleCrouch(bool crouching)
@@ -518,14 +539,6 @@ public class Character : MonoBehaviour
             animator.Play("Damage2", equippedWeapon.weaponLayer);
     }
 
-    void DealDamageEffect()
-    {
-        // Called by weapon shooting animations
-        // Makes targeted character perform damage animation
-
-        targetCharacter.TakeDamageEffect();
-    }
-
     void GetTarget(string action)
     {
         // Character it put into "targeting" mode
@@ -542,6 +555,8 @@ public class Character : MonoBehaviour
 
     IEnumerator StandAndShoot()
     {
+        // Makes character fully stand before shooting to prevent animation skipping
+
         ToggleCombat(true);
         ToggleCrouch(false);
         yield return new WaitForSeconds(0.01f);
@@ -549,6 +564,9 @@ public class Character : MonoBehaviour
 
     public void SetTarget(Character selectedTarget=null, string action="")
     {
+        // Sets the character's target and performs action on them
+        // Called by ClickHandler
+
         if (selectedTarget)
             if (action == "attack")
             {
@@ -560,6 +578,8 @@ public class Character : MonoBehaviour
 
     public void CancelTarget()
     {
+        // Removes targetting flag and combat stance
+
         RemoveFlag("targeting");
         ToggleCombat(false);
     }
