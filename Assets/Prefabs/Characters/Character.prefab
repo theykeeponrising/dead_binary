@@ -1357,7 +1357,6 @@ MonoBehaviour:
   flags: []
   currentTile: {fileID: 0}
   movePath: []
-  maxMoves: 5
   equippedWeapon: {fileID: 0}
   storedWeapon: {fileID: 0}
   targetCharacter: {fileID: 0}
@@ -1368,7 +1367,7 @@ MonoBehaviour:
     name: 
   stats:
     health: 10
-    move: 3
+    movement: 3
     aim: 10
     armor: 0
     dodge: 10

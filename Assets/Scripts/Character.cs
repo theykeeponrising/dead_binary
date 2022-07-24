@@ -84,7 +84,7 @@ public class Character : MonoBehaviour
         currentTile.ChangeTileOccupant(this, true);
         selectionCircle = transform.Find("SelectionCircle").gameObject;
 
-        //TRANSFORMS
+        // Body parts for use in armor placement
         CharacterPart[] characterPart = GetComponentsInChildren<CharacterPart>();
         foreach (CharacterPart part in characterPart)
         {
@@ -111,6 +111,23 @@ public class Character : MonoBehaviour
             //if (part.bodyPart == CharacterPart.BodyPart.hand_left)
             //    body.handLeft = part.transform;
         }
+        
+        // Init starting weapons
+        if (equippedWeapon)
+        {
+            if (PrefabUtility.GetCorrespondingObjectFromOriginalSource(equippedWeapon) != null)
+                equippedWeapon = Instantiate(equippedWeapon);
+            equippedWeapon.gameObject.SetActive(true);
+            equippedWeapon.DefaultPosition(this);
+            animator.SetLayerWeight(equippedWeapon.weaponLayer, 1);
+        }
+        if (storedWeapon)
+        {
+            if (PrefabUtility.GetCorrespondingObjectFromOriginalSource(storedWeapon) != null)
+                storedWeapon = Instantiate(storedWeapon);
+            storedWeapon.gameObject.SetActive(false);
+            storedWeapon.DefaultPosition(this);
+        }
     }
 
     // Update is called once per frame
@@ -126,11 +143,13 @@ public class Character : MonoBehaviour
 
         clickHandler = incomingHandler;
 
-        if (keycode == KeyCode.Z)
-            StartCoroutine(EquipWeapon(assetManager.weapon.ar));
-        else if (keycode == KeyCode.X)
-            StartCoroutine(EquipWeapon(assetManager.weapon.pistol));
-        else if (keycode == KeyCode.C)
+        // TEMP WEAPON SPAWN TEST -- NO LONGER NEEDED
+        //if (keycode == KeyCode.Z) 
+        //    StartCoroutine(EquipWeapon(assetManager.weapon.ar));
+        //else if (keycode == KeyCode.X)
+        //    StartCoroutine(EquipWeapon(assetManager.weapon.pistol));
+
+        if (keycode == KeyCode.C)
             StartCoroutine(EquipWeapon(storedWeapon));
         else if (keycode == KeyCode.V)
             ToggleCrouch();
@@ -338,17 +357,20 @@ public class Character : MonoBehaviour
         if (equippedWeapon && equippedWeapon != assetManager.weapon.noWeapon)
         {
             storedWeapon = equippedWeapon;
+            equippedWeapon = null;
 
             // If crouching, do not play stow animation
             // This is until we can get a proper crouch-stow animation
             if (!flags.Contains("crouching"))
             {
                 AddFlag("stowing");
-                animator.Play("Stow", equippedWeapon.weaponLayer);
+                animator.Play("Stow", storedWeapon.weaponLayer);
                 while (flags.Contains("stowing"))
                     yield return new WaitForSeconds(0.01f);
             }
-            animator.SetLayerWeight(storedWeapon.weaponLayer, 0);
+            else
+                AnimationEvent(AnimationEventContext.STOW);
+            
         }
 
         // Equipping the new weapon
@@ -374,6 +396,8 @@ public class Character : MonoBehaviour
                 while (flags.Contains("drawing"))
                     yield return new WaitForSeconds(0.01f);
             }
+                        else
+                AnimationEvent(AnimationEventContext.DRAW);
         }
     }
 
@@ -426,6 +450,7 @@ public class Character : MonoBehaviour
         {
             RemoveFlag("stowing");
             storedWeapon.gameObject.SetActive(false);
+            animator.SetLayerWeight(storedWeapon.weaponLayer, 0);
         }
 
         // Draw weapon animation is completed
