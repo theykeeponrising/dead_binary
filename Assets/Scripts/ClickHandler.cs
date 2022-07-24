@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class ClickHandler : MonoBehaviour
 {
+    // Used to manage user inputs
+
     public Character selectedCharacter;
     public List<Tile> previewPath = new List<Tile>();
     public Tile targetTile;
@@ -35,8 +37,8 @@ public class ClickHandler : MonoBehaviour
 
     void LeftClick()
     {
-        // Changes selection to clicked unit
-        // No target will clear selection
+        // Default context - select a unit, or deselect if none targeted
+        // If unit is selected, send action to the unit along with context (such as attack target)
 
         RaycastHit hit;
         Ray ray;
@@ -69,6 +71,7 @@ public class ClickHandler : MonoBehaviour
     void RightClick()
     {
         // Orders target to move on right-click
+
         if (selectedCharacter)
         {
             RaycastHit hit;
@@ -153,6 +156,8 @@ public class ClickHandler : MonoBehaviour
 
     void PathPreviewClear()
     {
+        // Clears currently displayed path preview
+        
         if (previewPath != null)
             foreach (Tile tile in previewPath)
                 tile.Highlighted(false);

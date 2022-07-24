@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class AssetManager : MonoBehaviour
 {
+    // Manifest of prefab assets for use in function calls
+    
     [System.Serializable]
     public class WeaponPrefabs
     {

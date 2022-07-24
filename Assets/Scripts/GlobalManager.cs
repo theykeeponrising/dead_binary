@@ -3,6 +3,8 @@ using System.Collections;
 
 public class GlobalManager : MonoBehaviour
 {
+    // Used for handling constants and other globals
+    
     public static float gameSpeed = 1.0f;
     public static float diffMod = 0.1f;
     static Vector3 gravity;

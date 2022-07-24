@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class Tile : MonoBehaviour
 {
+    // Main script for Tile behavior, such as pathing and cover objects
+
     public List<Tile> neighbours;
     public BoxCollider[] boxColliders;
     public Tile nearestTile;
@@ -55,6 +57,8 @@ public class Tile : MonoBehaviour
 
     public void Highlighted(bool highlighted = true, string highlightType = "error", string eval = "movement")
     {
+        // Changes tile highlight based on context
+
         if (highlighted)
         {
             if (highlightType == "preview")
@@ -199,6 +203,8 @@ public class Tile : MonoBehaviour
 
     public bool CheckIfTileOccupant(Character character)
     {
+        // True/False if tile is currently occupied by a character
+        
         foreach(BoxCollider collider in GetComponents<BoxCollider>())
         {
             if (character.GetComponent<CapsuleCollider>().bounds.Intersects(collider.bounds))

@@ -5,6 +5,8 @@ using UnityEditor;
 
 public class Character : MonoBehaviour
 {
+    // Main script for Player-Controlled characters
+
     //[HideInInspector]
     public List<string> flags = new List<string>();
     GameObject selectionCircle;

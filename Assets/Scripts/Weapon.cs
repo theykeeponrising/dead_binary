@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Weapon : MonoBehaviour
 {
+    // Main class used for weapon objects
+
     public enum WeaponType { Gun, Melee, Shield }
     public WeaponType weaponType;
 
@@ -36,6 +38,8 @@ public class Weapon : MonoBehaviour
 
     private void Awake()
     {
+        // Converts the Unity Editor value into a layer int
+
         if (weaponHeld == WeaponHeld.Onehand)
             weaponLayer = 1;
         else if (weaponHeld == WeaponHeld.Twohand)
@@ -44,6 +48,8 @@ public class Weapon : MonoBehaviour
 
     public void DefaultPosition(Character parent)
     {
+        // Used to place newly-created weapon objects into the default position
+
         parentObj = parent.gameObject;
         handAttach = parent.body.handRight;
         audioSource = GetComponent<AudioSource>();
@@ -82,6 +88,8 @@ public class Weapon : MonoBehaviour
 
     public void Shoot()
     {
+        // Used by animation to kick off shoot effect
+
         StartCoroutine(ShootEffect());
     }
 
@@ -101,6 +109,8 @@ public class Weapon : MonoBehaviour
 
     public void Reload()
     {
+        // Reload sound effect
+        
         audioSource.PlayOneShot(reloadSound);
     }
 }
