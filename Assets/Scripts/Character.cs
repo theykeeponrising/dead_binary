@@ -36,7 +36,7 @@ public class Character : MonoBehaviour
     public Animators animators;
     Animator animator;
 
-    enum AnimationEventContext { SHOOT, DEAL_DAMAGE, RELOAD, STOW, DRAW }
+    enum AnimationEventContext { SHOOT, TAKE_DAMAGE, RELOAD, STOW, DRAW }
 
     public class Body
     {
@@ -148,6 +148,9 @@ public class Character : MonoBehaviour
         //    StartCoroutine(EquipWeapon(assetManager.weapon.ar));
         //else if (keycode == KeyCode.X)
         //    StartCoroutine(EquipWeapon(assetManager.weapon.pistol));
+
+        // Clear any existing targeting
+        CancelTarget();
 
         if (keycode == KeyCode.C)
             StartCoroutine(EquipWeapon(storedWeapon));
@@ -411,6 +414,7 @@ public class Character : MonoBehaviour
         while (animator.IsInTransition(equippedWeapon.weaponLayer))
             yield return new WaitForSeconds(0.01f);
         RemoveFlag("reload");
+        equippedWeapon.stats.ammoCurrent = equippedWeapon.stats.ammoMax;
     }
 
     IEnumerator ShootWeapon()
@@ -420,6 +424,7 @@ public class Character : MonoBehaviour
 
         AddFlag("shooting");
         animator.Play("Shoot", equippedWeapon.weaponLayer);
+        equippedWeapon.stats.ammoCurrent -= 1;
         while (animator.IsInTransition(equippedWeapon.weaponLayer))
             yield return new WaitForSeconds(0.01f);
         RemoveFlag("shooting");
@@ -440,7 +445,7 @@ public class Character : MonoBehaviour
         }
 
         // Weapon impact effect on target
-        else if (context == AnimationEventContext.DEAL_DAMAGE)
+        else if (context == AnimationEventContext.TAKE_DAMAGE)
         {
             targetCharacter.TakeDamageEffect();
         }
@@ -595,15 +600,22 @@ public class Character : MonoBehaviour
         if (selectedTarget)
             if (action == "attack")
             {
-                targetCharacter = selectedTarget;
-                StartCoroutine(ShootWeapon());
-                RemoveFlag("targeting");
+                if (equippedWeapon.stats.ammoCurrent > 0)
+                {
+                    targetCharacter = selectedTarget;
+                    StartCoroutine(ShootWeapon());
+                    RemoveFlag("targeting");
+                }
+                else
+                {
+                    Debug.Log("Out of Ammo! Reload weapon");
+                }
             }
     }
 
     public void CancelTarget()
     {
-        // Removes targetting flag and combat stance
+        // Removes targeting flag and combat stance
 
         RemoveFlag("targeting");
         ToggleCombat(false);
