@@ -6,6 +6,9 @@
 [Ll]ogs/
 [Uu]serSettings/
 
+LocalScene.unity
+LocalScene.unity.meta
+
 # Uncomment this line if you wish to ignore the asset store tools plugin
 # [Aa]ssets/AssetStoreTools*
 
