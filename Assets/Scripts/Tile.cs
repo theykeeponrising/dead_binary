@@ -12,9 +12,11 @@ public class Tile : MonoBehaviour
     public BoxCollider[] boxColliders;
     public Tile nearestTile;
     Color tileColor;
+    [HideInInspector]
     public Material tileGlow;
     public Character occupant;
     public Cover cover;
+    [HideInInspector]
     public Vector3 standPoint;
 
     // Use this for initialization

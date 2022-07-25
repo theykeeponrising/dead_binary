@@ -30,4 +30,11 @@ public class AssetManager : MonoBehaviour
         public Weapon grenadeLauncher;
     }
     public WeaponPrefabs weapon;
+
+    [System.Serializable]
+    public class CoverPrefabs
+    {
+        public Cover halfWall;
+    }
+    public CoverPrefabs cover;
 }
