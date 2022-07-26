@@ -206,6 +206,9 @@ MonoBehaviour:
   stats:
     damage: 5
     range: 5
+    ammoMax: 4
+    ammoCurrent: 0
+    reloadSpeed: 0
 --- !u!1 &5461691002361095811
 GameObject:
   m_ObjectHideFlags: 0

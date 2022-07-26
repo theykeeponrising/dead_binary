@@ -33,6 +33,10 @@ public class Weapon : MonoBehaviour
     {
         public int damage;
         public int range;
+        public int ammoMax;
+        [HideInInspector]
+        public int ammoCurrent;
+        public float reloadSpeed;
     }
     public Stats stats;
 
@@ -44,6 +48,9 @@ public class Weapon : MonoBehaviour
             weaponLayer = 1;
         else if (weaponHeld == WeaponHeld.Twohand)
             weaponLayer = 2;
+
+        // Weapon always starts with full ammo
+        stats.ammoCurrent = stats.ammoMax;
     }
 
     public void DefaultPosition(Character parent)
