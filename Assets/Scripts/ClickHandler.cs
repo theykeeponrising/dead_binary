@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class ClickHandler : MonoBehaviour
@@ -55,7 +54,7 @@ public class ClickHandler : MonoBehaviour
         {
             if (targetCharacter)
             {
-                selectedCharacter.SetTarget(targetCharacter, clickContext);
+                selectedCharacter.ProcessAction(Actions.action_shoot, contextCharacter: targetCharacter, contextString: clickContext);
                 clickAction = ClickAction.select;
                 clickContext = "";
             }
@@ -82,10 +81,7 @@ public class ClickHandler : MonoBehaviour
             {
                 if (hit.collider.GetComponent<Tile>())
                 {
-                    if (previewPath != null)
-                        foreach (Tile tile in previewPath)
-                            tile.Highlighted(false);
-                    selectedCharacter.SetTile(hit.collider.GetComponent<Tile>());
+                    selectedCharacter.ProcessAction(Actions.action_move, contextTile: hit.collider.GetComponent<Tile>(), contextPath: previewPath);
                 }
             }
         }
