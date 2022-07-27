@@ -1367,7 +1367,7 @@ MonoBehaviour:
     name: 
   stats:
     health: 10
-    movement: 3
+    movement: 5
     aim: 10
     armor: 0
     dodge: 10
