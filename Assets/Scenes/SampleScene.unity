@@ -141,7 +141,7 @@ GameObject:
   - component: {fileID: 15813149}
   - component: {fileID: 15813148}
   - component: {fileID: 15813147}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: HalfWall(Clone)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -339,7 +339,7 @@ GameObject:
   - component: {fileID: 112227439}
   - component: {fileID: 112227438}
   - component: {fileID: 112227437}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: HalfWall(Clone)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3423,7 +3423,7 @@ GameObject:
   - component: {fileID: 1084896643}
   - component: {fileID: 1084896642}
   - component: {fileID: 1084896641}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: HalfWall(Clone)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

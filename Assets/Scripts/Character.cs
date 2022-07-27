@@ -344,6 +344,7 @@ public class Character : MonoBehaviour
             if (moveTargetImmediate)
                 moveTargetImmediate.ChangeTileOccupant(this, false);
             moveTargetImmediate = path;
+            CheckForObstacle();
 
             // Wait until immediate tile is reached before moving to the next one
             while (currentTile != path)
@@ -388,6 +389,23 @@ public class Character : MonoBehaviour
             return false;
         }
         return true;
+    }
+
+    void CheckForObstacle()
+    {
+        Vector3 direction = (moveTargetImmediate.transform.position - transform.position);
+        RaycastHit hit;
+        Ray ray = new Ray(transform.position, direction);
+        Debug.DrawRay(transform.position, direction, Color.red, 20, true);
+        int layerMask = (1 << 6);
+
+        if (Physics.Raycast(ray, out hit, direction.magnitude, layerMask))
+        {
+            animator.Play("Vault-Over", equippedWeapon.weaponLayer);
+            Debug.Log(hit.collider.gameObject);
+        }
+        //if (hit.collider.GetComponent<Cover>())
+        //Debug.Log("cover found");
     }
 
     IEnumerator EquipWeapon(Weapon weapon)
