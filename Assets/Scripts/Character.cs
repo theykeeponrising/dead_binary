@@ -70,8 +70,12 @@ public class Character : MonoBehaviour
         public float aim;
         public int armor;
         public float dodge;
+        public int actionPointsCurrent;
+        public int actionPointsMax;
     }
     public Stats stats;
+    public List<Actions.ActionsList> availableActions;
+    public Actions.Action currentAction;
 
     // Start is called before the first frame update
     void Start()
@@ -111,6 +115,9 @@ public class Character : MonoBehaviour
             //if (part.bodyPart == CharacterPart.BodyPart.hand_left)
             //    body.handLeft = part.transform;
         }
+
+        // Characters start with all action points
+        stats.actionPointsCurrent = stats.actionPointsMax;
         
         // Init starting weapons
         if (equippedWeapon)
@@ -154,14 +161,17 @@ public class Character : MonoBehaviour
 
         if (keycode == KeyCode.C)
             StartCoroutine(EquipWeapon(storedWeapon));
-        else if (keycode == KeyCode.V)
+        else if (keycode == KeyCode.V) // Temp testing hotkey to be removed in the future
             ToggleCrouch();
-        else if (keycode == KeyCode.T)
+        else if (keycode == KeyCode.T) // Temp testing hotkey to be removed in the future
             ToggleCombat();
+        else if (keycode == KeyCode.Z) // Temp testing hotkey to be removed in the future
+            RefreshActionPoints();
         else if (keycode == KeyCode.R && equippedWeapon)
             StartCoroutine(ReloadWeapon());
-        else if (keycode == KeyCode.F && equippedWeapon)
-            GetTarget("attack");
+        else if (keycode == KeyCode.F)
+            if (equippedWeapon && availableActions.Contains(Actions.ActionsList.SHOOT))
+                GetTarget("attack");
     }
 
     private void OnMouseOver()
@@ -201,6 +211,28 @@ public class Character : MonoBehaviour
         {
             selectionCircle.SetActive(false);
             selectionCircle.GetComponent<Renderer>().material.color = Color.white;
+        }
+    }
+
+    public void ProcessAction(Actions.Action actionToPerform, Tile contextTile=null, List<Tile> contextPath=null, Character contextCharacter=null, string contextString=null)
+    {
+        int actionCost = actionToPerform.cost;
+        if (actionCost > stats.actionPointsCurrent)
+        {
+            Debug.Log("Not enough AP!"); // This will eventually be shown in UI
+        }
+        else
+        {
+            currentAction = actionToPerform;
+            switch (actionToPerform.context)
+            {
+                case "move":
+                    MoveAction(contextTile, contextPath);
+                    break;
+                case "shoot":
+                    ShootAction(contextCharacter, contextString);
+                    break;
+            }
         }
     }
 
@@ -270,10 +302,17 @@ public class Character : MonoBehaviour
         return null;
     }
 
-    public void SetTile(Tile newTile)
+    void MoveAction(Tile newTile, List<Tile> previewPath)
     {
         // Sets the target destination tile
         // Once a path is found, begin movement routine
+
+        if (!availableActions.Contains(Actions.ActionsList.MOVE))
+            return;
+
+        if (previewPath != null)
+            foreach (Tile tile in previewPath)
+                tile.Highlighted(false);
 
         if (!flags.Contains("moving"))
         {
@@ -281,6 +320,7 @@ public class Character : MonoBehaviour
             {
                 movePath = currentTile.FindCost(newTile);
                 StartCoroutine(MoveToPath());
+                stats.actionPointsCurrent -= currentAction.cost;
             }
         }
     }
@@ -339,12 +379,12 @@ public class Character : MonoBehaviour
         movePath = currentTile.FindCost(newTile);
         if (movePath == null)
         {
-            Debug.Log("No move path.");
+            Debug.Log("No move path."); // Replace this with UI eventually
             return false;
         }
         if (movePath.Count > stats.movement)
         {
-            Debug.Log(string.Format("Destination Too Far! \nDistance: {0}, Max Moves: {1}", movePath.Count, stats.movement));
+            Debug.Log(string.Format("Destination Too Far! \nDistance: {0}, Max Moves: {1}", movePath.Count, stats.movement)); // This will eventually be shown visually instead of told
             return false;
         }
         return true;
@@ -555,7 +595,7 @@ public class Character : MonoBehaviour
         // Called by an attacking source when taking damage
         // TO DO: More complex damage reduction will be added here
 
-        Debug.Log(string.Format("{0} has attacked {1} for {2} damage!", attacker.attributes.name, attributes.name, damage));
+        Debug.Log(string.Format("{0} has attacked {1} for {2} damage!", attacker.attributes.name, attributes.name, damage)); // This will eventually be shown visually instead of told
         stats.health -= damage;
     }
 
@@ -592,7 +632,7 @@ public class Character : MonoBehaviour
         yield return new WaitForSeconds(0.01f);
     }
 
-    public void SetTarget(Character selectedTarget=null, string action="")
+    public void ShootAction(Character selectedTarget=null, string action="")
     {
         // Sets the character's target and performs action on them
         // Called by ClickHandler
@@ -603,12 +643,13 @@ public class Character : MonoBehaviour
                 if (equippedWeapon.stats.ammoCurrent > 0)
                 {
                     targetCharacter = selectedTarget;
+                    stats.actionPointsCurrent -= currentAction.cost;
                     StartCoroutine(ShootWeapon());
                     RemoveFlag("targeting");
                 }
                 else
                 {
-                    Debug.Log("Out of Ammo! Reload weapon");
+                    Debug.Log("Out of Ammo! Reload weapon"); // This will eventually be shown in UI
                 }
             }
     }
@@ -619,6 +660,14 @@ public class Character : MonoBehaviour
 
         RemoveFlag("targeting");
         ToggleCombat(false);
+    }
+
+    public void RefreshActionPoints()
+    {
+        // Used to refresh character action points to max.
+        // Ideally this would be called when a player's turn is started.
+
+        stats.actionPointsCurrent = stats.actionPointsMax;
     }
 
     void AddFlag(string flag)
