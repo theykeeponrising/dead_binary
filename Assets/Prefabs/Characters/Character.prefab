@@ -72,7 +72,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6379414259075701749}
   m_Layer: 0
-  m_Name: DummyRig
+  m_Name: CharacterRig
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -105,7 +105,7 @@ GameObject:
   - component: {fileID: 6379414259075701751}
   - component: {fileID: 6379414259080875437}
   m_Layer: 0
-  m_Name: DummyMesh
+  m_Name: CharacterMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -146,7 +146,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ccc50d631d14df84a982c4f4acd00013, type: 2}
+  - {fileID: 2100000, guid: de1a2924fe391dc468c0155e2abb7b49, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -171,7 +171,7 @@ SkinnedMeshRenderer:
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
   m_SkinnedMotionVectors: 1
-  m_Mesh: {fileID: 4300002, guid: 5917c0e93d180a842b61d1ebc62a195c, type: 3}
+  m_Mesh: {fileID: 4300002, guid: 0ddafde2003ca4d4196523175ecec146, type: 3}
   m_Bones:
   - {fileID: 7325331879838918386}
   - {fileID: 7325542208226895162}
@@ -1301,7 +1301,7 @@ Animator:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7323552420328571708}
   m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 5917c0e93d180a842b61d1ebc62a195c, type: 3}
+  m_Avatar: {fileID: 9000000, guid: 0ddafde2003ca4d4196523175ecec146, type: 3}
   m_Controller: {fileID: 22100000, guid: eb2a3bcd62a378d42a44994dde68d087, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
