@@ -36,7 +36,7 @@ public class Character : MonoBehaviour
     public Animators animators;
     Animator animator;
 
-    enum AnimationEventContext { SHOOT, TAKE_DAMAGE, RELOAD, STOW, DRAW }
+    enum AnimationEventContext { SHOOT, TAKE_DAMAGE, RELOAD, STOW, DRAW, VAULT }
 
     public class Body
     {
@@ -258,7 +258,8 @@ public class Character : MonoBehaviour
     {
         // Function that actually moves target towards destination
         // If there is no move target, then this action is skipped
-
+        
+        // If we have a move target, begin moving
         if (moveTargetImmediate)
         {
             Vector3 relativePos;
@@ -266,16 +267,27 @@ public class Character : MonoBehaviour
             float distance = Vector3.Distance(transform.position, moveTargetPoint);
             velocityZ = distance / 2;
 
+            // If the final move target is also the most immediate one, slow down move speed as we approach
             if (moveTargetDestination == moveTargetImmediate)
             {
-                transform.position = Vector3.MoveTowards(transform.position, moveTargetPoint, 0.03f);
+                // Slow down movement speed if character is vaulting
+                if (flags.Contains("vaulting"))
+                    transform.position = Vector3.MoveTowards(transform.position, moveTargetPoint, 0.01f);
+                else
+                    transform.position = Vector3.MoveTowards(transform.position, moveTargetPoint, 0.03f);
                 relativePos = moveTargetPoint - transform.position;
             }
             else
             {
-                transform.position = Vector3.MoveTowards(transform.position, moveTargetImmediate.transform.position, 0.03f);
+                // Slow down movement speed if character is vaulting
+                if (flags.Contains("vaulting"))
+                    transform.position = Vector3.MoveTowards(transform.position, moveTargetImmediate.transform.position, 0.01f);
+                else
+                    transform.position = Vector3.MoveTowards(transform.position, moveTargetImmediate.transform.position, 0.03f);
                 relativePos = moveTargetImmediate.transform.position - transform.position;
             }
+
+            // Gradually rotate character to face towards move target
             if (relativePos != new Vector3(0,0,0))
             {
                 Quaternion toRotation = Quaternion.LookRotation(relativePos);
@@ -344,14 +356,17 @@ public class Character : MonoBehaviour
             if (moveTargetImmediate)
                 moveTargetImmediate.ChangeTileOccupant(this, false);
             moveTargetImmediate = path;
+            //CheckForObstacle();
 
             // Wait until immediate tile is reached before moving to the next one
             while (currentTile != path)
             {
+                CheckForObstacle();
                 currentTile = FindCurrentTile();
                 yield return new WaitForSeconds(0.01f);
             }
             path.ChangeTileOccupant(this, true);
+            RemoveFlag("vaulting");
         }
 
         // Wait until character comes to a stop before completing movement action
@@ -388,6 +403,29 @@ public class Character : MonoBehaviour
             return false;
         }
         return true;
+    }
+
+    bool CheckForObstacle()
+    {
+        // Checks a short distance in front of character for objects in the "VaultOver" layer
+        if (flags.Contains("vaulting"))
+            return false;
+
+        Vector3 direction = (moveTargetImmediate.transform.position - transform.position);
+        RaycastHit hit;
+        Ray ray = new Ray(transform.position, direction);
+        Debug.DrawRay(transform.position, direction, Color.red, 20, true); // For debug purposes
+        int layerMask = (1 << LayerMask.NameToLayer("VaultObject"));
+        float distance = 0.5f;
+
+        // If vaultable object detected, play vaulting animation
+        if (Physics.Raycast(ray, out hit, direction.magnitude * distance, layerMask))
+        {
+            AddFlag("vaulting");
+            animator.Play("Vault-Over", equippedWeapon.weaponLayer);
+            return true;
+        }
+        return false;
     }
 
     IEnumerator EquipWeapon(Weapon weapon)
@@ -505,9 +543,15 @@ public class Character : MonoBehaviour
         }
 
         // Reload weapon animation is completed -- NOT YET IMPLEMENTED
-               else if (context == AnimationEventContext.RELOAD)
+        else if (context == AnimationEventContext.RELOAD)
         {
             RemoveFlag("reloading");
+        }
+
+        // Reload weapon animation is completed -- NOT YET IMPLEMENTED
+        else if (context == AnimationEventContext.VAULT)
+        {
+            RemoveFlag("vaulting");
         }
     }
 
