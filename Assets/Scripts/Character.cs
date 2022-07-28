@@ -24,7 +24,7 @@ public class Character : MonoBehaviour
     public Character targetCharacter;
 
     AssetManager assetManager;
-    ClickHandler clickHandler;
+    InCombatPlayerAction playerAction;
 
     [System.Serializable]
     public class Animators
@@ -36,7 +36,7 @@ public class Character : MonoBehaviour
     public Animators animators;
     Animator animator;
 
-    enum AnimationEventContext { SHOOT, TAKE_DAMAGE, RELOAD, STOW, DRAW }
+    enum AnimationEventContext { SHOOT, TAKE_DAMAGE, RELOAD, STOW, DRAW, VAULT }
 
     public class Body
     {
@@ -70,13 +70,18 @@ public class Character : MonoBehaviour
         public float aim;
         public int armor;
         public float dodge;
+        public int actionPointsCurrent;
+        public int actionPointsMax;
     }
     public Stats stats;
+    public List<Actions.ActionsList> availableActions;
+    public Actions.Action currentAction;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         assetManager = GameObject.FindGameObjectWithTag("GlobalManager").GetComponent<AssetManager>();
+        playerAction = GameObject.FindGameObjectWithTag("Player").GetComponent<InCombatPlayerAction>();
 
         animator = GetComponent<Animator>();
         animators.animatorBase = animator.runtimeAnimatorController;
@@ -111,6 +116,9 @@ public class Character : MonoBehaviour
             //if (part.bodyPart == CharacterPart.BodyPart.hand_left)
             //    body.handLeft = part.transform;
         }
+
+        // Characters start with all action points
+        stats.actionPointsCurrent = stats.actionPointsMax;
         
         // Init starting weapons
         if (equippedWeapon)
@@ -137,12 +145,8 @@ public class Character : MonoBehaviour
         Movement();
     }
 
-    public void KeyPress(KeyCode keycode, ClickHandler incomingHandler)
+    public bool KeyPress(KeyCode keycode)
     {
-        // Handler for keypress
-
-        clickHandler = incomingHandler;
-
         // TEMP WEAPON SPAWN TEST -- NO LONGER NEEDED
         //if (keycode == KeyCode.Z) 
         //    StartCoroutine(EquipWeapon(assetManager.weapon.ar));
@@ -151,25 +155,46 @@ public class Character : MonoBehaviour
 
         // Clear any existing targeting
         CancelTarget();
-
         if (keycode == KeyCode.C)
+        {
             StartCoroutine(EquipWeapon(storedWeapon));
-        else if (keycode == KeyCode.V)
+            return true;
+        }
+        else if (keycode == KeyCode.V) // Temp testing hotkey to be removed in the future
+        {
             ToggleCrouch();
-        else if (keycode == KeyCode.T)
+            return true;
+        }    
+        else if (keycode == KeyCode.T) // Temp testing hotkey to be removed in the future
+        {
             ToggleCombat();
+            return true;
+        }
+        else if (keycode == KeyCode.Z) // Temp testing hotkey to be removed in the future
+        {
+            RefreshActionPoints();
+            return true;
+        }
         else if (keycode == KeyCode.R && equippedWeapon)
+        {
             StartCoroutine(ReloadWeapon());
-        else if (keycode == KeyCode.F && equippedWeapon)
-            GetTarget("attack");
+            return true;
+        }
+        else if (keycode == KeyCode.F)
+        {
+            if (equippedWeapon && availableActions.Contains(Actions.ActionsList.SHOOT))
+            {
+                    GetTarget("attack");
+                    return true;
+            }
+        }
+        return false;
     }
 
     private void OnMouseOver()
     {
         // Highlights unit on mouse over
-
-        ClickHandler handler = FindObjectOfType<ClickHandler>();
-        if (handler.selectedCharacter != this)
+        if (playerAction.selectedCharacter != this)
         {
             selectionCircle.SetActive(true);
             selectionCircle.GetComponent<Renderer>().material.color = new Color(0, 255, 0, 0.10f);
@@ -179,9 +204,7 @@ public class Character : MonoBehaviour
     private void OnMouseExit()
     {
         // Clears unit highlight on mouse leave
-
-        ClickHandler handler = FindObjectOfType<ClickHandler>();
-        if (handler.selectedCharacter != this)
+        if (playerAction.selectedCharacter != this)
         {
             selectionCircle.SetActive(false);
             selectionCircle.GetComponent<Renderer>().material.color = Color.white;
@@ -204,10 +227,31 @@ public class Character : MonoBehaviour
         }
     }
 
+    public void ProcessAction(Actions.Action actionToPerform, Tile contextTile=null, List<Tile> contextPath=null, Character contextCharacter=null, string contextString=null)
+    {
+        int actionCost = actionToPerform.cost;
+        if (actionCost > stats.actionPointsCurrent)
+        {
+            Debug.Log("Not enough AP!"); // This will eventually be shown in UI
+        }
+        else
+        {
+            currentAction = actionToPerform;
+            switch (actionToPerform.context)
+            {
+                case "move":
+                    MoveAction(contextTile, contextPath);
+                    break;
+                case "shoot":
+                    ShootAction(contextCharacter, contextString);
+                    break;
+            }
+        }
+    }
+
     void SetAnimation()
     {
         // Changes animation based on flags
-
         if (flags.Contains("moving"))
         {
             animator.SetBool("moving", true);
@@ -226,7 +270,8 @@ public class Character : MonoBehaviour
     {
         // Function that actually moves target towards destination
         // If there is no move target, then this action is skipped
-
+        
+        // If we have a move target, begin moving
         if (moveTargetImmediate)
         {
             Vector3 relativePos;
@@ -234,16 +279,27 @@ public class Character : MonoBehaviour
             float distance = Vector3.Distance(transform.position, moveTargetPoint);
             velocityZ = distance / 2;
 
+            // If the final move target is also the most immediate one, slow down move speed as we approach
             if (moveTargetDestination == moveTargetImmediate)
             {
-                transform.position = Vector3.MoveTowards(transform.position, moveTargetPoint, 0.03f);
+                // Slow down movement speed if character is vaulting
+                if (flags.Contains("vaulting"))
+                    transform.position = Vector3.MoveTowards(transform.position, moveTargetPoint, 0.01f);
+                else
+                    transform.position = Vector3.MoveTowards(transform.position, moveTargetPoint, 0.03f);
                 relativePos = moveTargetPoint - transform.position;
             }
             else
             {
-                transform.position = Vector3.MoveTowards(transform.position, moveTargetImmediate.transform.position, 0.03f);
+                // Slow down movement speed if character is vaulting
+                if (flags.Contains("vaulting"))
+                    transform.position = Vector3.MoveTowards(transform.position, moveTargetImmediate.transform.position, 0.01f);
+                else
+                    transform.position = Vector3.MoveTowards(transform.position, moveTargetImmediate.transform.position, 0.03f);
                 relativePos = moveTargetImmediate.transform.position - transform.position;
             }
+
+            // Gradually rotate character to face towards move target
             if (relativePos != new Vector3(0,0,0))
             {
                 Quaternion toRotation = Quaternion.LookRotation(relativePos);
@@ -270,10 +326,17 @@ public class Character : MonoBehaviour
         return null;
     }
 
-    public void SetTile(Tile newTile)
+    void MoveAction(Tile newTile, List<Tile> previewPath)
     {
         // Sets the target destination tile
         // Once a path is found, begin movement routine
+
+        if (!availableActions.Contains(Actions.ActionsList.MOVE))
+            return;
+
+        if (previewPath != null)
+            foreach (Tile tile in previewPath)
+                tile.Highlighted(false);
 
         if (!flags.Contains("moving"))
         {
@@ -281,6 +344,7 @@ public class Character : MonoBehaviour
             {
                 movePath = currentTile.FindCost(newTile);
                 StartCoroutine(MoveToPath());
+                stats.actionPointsCurrent -= currentAction.cost;
             }
         }
     }
@@ -304,14 +368,17 @@ public class Character : MonoBehaviour
             if (moveTargetImmediate)
                 moveTargetImmediate.ChangeTileOccupant(this, false);
             moveTargetImmediate = path;
+            //CheckForObstacle();
 
             // Wait until immediate tile is reached before moving to the next one
             while (currentTile != path)
             {
+                CheckForObstacle();
                 currentTile = FindCurrentTile();
                 yield return new WaitForSeconds(0.01f);
             }
             path.ChangeTileOccupant(this, true);
+            RemoveFlag("vaulting");
         }
 
         // Wait until character comes to a stop before completing movement action
@@ -339,15 +406,38 @@ public class Character : MonoBehaviour
         movePath = currentTile.FindCost(newTile);
         if (movePath == null)
         {
-            Debug.Log("No move path.");
+            Debug.Log("No move path."); // Replace this with UI eventually
             return false;
         }
         if (movePath.Count > stats.movement)
         {
-            Debug.Log(string.Format("Destination Too Far! \nDistance: {0}, Max Moves: {1}", movePath.Count, stats.movement));
+            Debug.Log(string.Format("Destination Too Far! \nDistance: {0}, Max Moves: {1}", movePath.Count, stats.movement)); // This will eventually be shown visually instead of told
             return false;
         }
         return true;
+    }
+
+    bool CheckForObstacle()
+    {
+        // Checks a short distance in front of character for objects in the "VaultOver" layer
+        if (flags.Contains("vaulting"))
+            return false;
+
+        Vector3 direction = (moveTargetImmediate.transform.position - transform.position);
+        RaycastHit hit;
+        Ray ray = new Ray(transform.position, direction);
+        Debug.DrawRay(transform.position, direction, Color.red, 20, true); // For debug purposes
+        int layerMask = (1 << LayerMask.NameToLayer("VaultObject"));
+        float distance = 0.5f;
+
+        // If vaultable object detected, play vaulting animation
+        if (Physics.Raycast(ray, out hit, direction.magnitude * distance, layerMask))
+        {
+            AddFlag("vaulting");
+            animator.Play("Vault-Over", equippedWeapon.weaponLayer);
+            return true;
+        }
+        return false;
     }
 
     IEnumerator EquipWeapon(Weapon weapon)
@@ -425,6 +515,7 @@ public class Character : MonoBehaviour
         AddFlag("shooting");
         animator.Play("Shoot", equippedWeapon.weaponLayer);
         equippedWeapon.stats.ammoCurrent -= 1;
+        transform.LookAt(targetCharacter.transform);
         while (animator.IsInTransition(equippedWeapon.weaponLayer))
             yield return new WaitForSeconds(0.01f);
         RemoveFlag("shooting");
@@ -465,9 +556,15 @@ public class Character : MonoBehaviour
         }
 
         // Reload weapon animation is completed -- NOT YET IMPLEMENTED
-               else if (context == AnimationEventContext.RELOAD)
+        else if (context == AnimationEventContext.RELOAD)
         {
             RemoveFlag("reloading");
+        }
+
+        // Reload weapon animation is completed -- NOT YET IMPLEMENTED
+        else if (context == AnimationEventContext.VAULT)
+        {
+            RemoveFlag("vaulting");
         }
     }
 
@@ -555,7 +652,7 @@ public class Character : MonoBehaviour
         // Called by an attacking source when taking damage
         // TO DO: More complex damage reduction will be added here
 
-        Debug.Log(string.Format("{0} has attacked {1} for {2} damage!", attacker.attributes.name, attributes.name, damage));
+        Debug.Log(string.Format("{0} has attacked {1} for {2} damage!", attacker.attributes.name, attributes.name, damage)); // This will eventually be shown visually instead of told
         stats.health -= damage;
     }
 
@@ -578,8 +675,8 @@ public class Character : MonoBehaviour
         {
             AddFlag("targeting");
             StartCoroutine(StandAndShoot());
-            clickHandler.clickAction = ClickHandler.ClickAction.target;
-            clickHandler.clickContext = action;
+            playerAction.clickAction = InCombatPlayerAction.ClickAction.target;
+            playerAction.clickContext = action;
         }
     }
 
@@ -592,10 +689,10 @@ public class Character : MonoBehaviour
         yield return new WaitForSeconds(0.01f);
     }
 
-    public void SetTarget(Character selectedTarget=null, string action="")
+    public void ShootAction(Character selectedTarget=null, string action="")
     {
         // Sets the character's target and performs action on them
-        // Called by ClickHandler
+        // Called by InCombatPlayerAction
 
         if (selectedTarget)
             if (action == "attack")
@@ -603,12 +700,13 @@ public class Character : MonoBehaviour
                 if (equippedWeapon.stats.ammoCurrent > 0)
                 {
                     targetCharacter = selectedTarget;
+                    stats.actionPointsCurrent -= currentAction.cost;
                     StartCoroutine(ShootWeapon());
                     RemoveFlag("targeting");
                 }
                 else
                 {
-                    Debug.Log("Out of Ammo! Reload weapon");
+                    Debug.Log("Out of Ammo! Reload weapon"); // This will eventually be shown in UI
                 }
             }
     }
@@ -619,6 +717,14 @@ public class Character : MonoBehaviour
 
         RemoveFlag("targeting");
         ToggleCombat(false);
+    }
+
+    public void RefreshActionPoints()
+    {
+        // Used to refresh character action points to max.
+        // Ideally this would be called when a player's turn is started.
+
+        stats.actionPointsCurrent = stats.actionPointsMax;
     }
 
     void AddFlag(string flag)

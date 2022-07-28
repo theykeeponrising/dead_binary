@@ -1367,10 +1367,13 @@ MonoBehaviour:
     name: 
   stats:
     health: 10
-    movement: 3
+    movement: 5
     aim: 10
     armor: 0
     dodge: 10
+    actionPointsCurrent: 0
+    actionPointsMax: 2
+  availableActions: 0000000001000000
 --- !u!1 &7323553403757494216
 GameObject:
   m_ObjectHideFlags: 0
