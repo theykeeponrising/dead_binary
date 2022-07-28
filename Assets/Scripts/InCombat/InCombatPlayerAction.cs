@@ -3,7 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ClickHandler : MonoBehaviour
+
+public class InCombatPlayerAction : MonoBehaviour 
 {
     // Used to manage user inputs
 
@@ -14,31 +15,16 @@ public class ClickHandler : MonoBehaviour
     public ClickAction clickAction;
     public string clickContext;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
     // Update is called once per frame
     void Update()
     {
-        if (Input.anyKeyDown)
-            KeyPress();
-        if (Input.GetMouseButtonDown(1))
-            RightClick();
-        if (Input.GetMouseButtonDown(0))
-            LeftClick();
-
         PathPreview();
     }
-
-
-    void LeftClick()
+    
+    public void SelectUnit()
     {
         // Default context - select a unit, or deselect if none targeted
         // If unit is selected, send action to the unit along with context (such as attack target)
-
         RaycastHit hit;
         Ray ray;
         ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -67,10 +53,9 @@ public class ClickHandler : MonoBehaviour
         }
     }
 
-    void RightClick()
+    public void MoveCharacter()
     {
         // Orders target to move on right-click
-
         if (selectedCharacter)
         {
             RaycastHit hit;
@@ -113,19 +98,13 @@ public class ClickHandler : MonoBehaviour
         }
     }
 
-    void KeyPress()
+    public bool Keypress(KeyCode keycode) 
     {
-        // Sends inputs to selected character.
-
-        foreach (KeyCode keycode in Enum.GetValues(typeof(KeyCode)))
-        {
-            if (Input.GetKey(keycode))
-            {
-                if (selectedCharacter)
-                    selectedCharacter.KeyPress(keycode, this);
-                return;
-            }
+        bool keyPress = false;
+        if (selectedCharacter) {
+            keyPress = selectedCharacter.KeyPress(keycode);
         }
+        return keyPress;
     }
 
     void PathPreview()
