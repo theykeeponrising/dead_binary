@@ -2,6 +2,8 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 using TMPro;
+
+//Menu for exiting the game, may obtain additional functionality later
 public class StatusMenuState : GameState
 {
     bool shouldQuit = true;

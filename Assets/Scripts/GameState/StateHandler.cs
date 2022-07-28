@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+//Class that manages all the states. Handles transitioning between states, passes inputs to the states, etc.
 public class StateHandler: MonoBehaviour
 {
     private CombatState combatState;
@@ -78,6 +79,7 @@ public class StateHandler: MonoBehaviour
         this.SetStateActive(state);
     }
 
+    // Ensures that the same key doesn't get registered multiple times when only pressing a single time
     public IEnumerator WaitKeypress()
     {
         keypressPaused = true;
