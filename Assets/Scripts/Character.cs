@@ -465,6 +465,7 @@ public class Character : MonoBehaviour
         AddFlag("shooting");
         animator.Play("Shoot", equippedWeapon.weaponLayer);
         equippedWeapon.stats.ammoCurrent -= 1;
+        transform.LookAt(targetCharacter.transform);
         while (animator.IsInTransition(equippedWeapon.weaponLayer))
             yield return new WaitForSeconds(0.01f);
         RemoveFlag("shooting");
