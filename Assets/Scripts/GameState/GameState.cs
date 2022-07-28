@@ -2,6 +2,8 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+//Abstract class that all future game states (menus, combat, world map, etc.) will inherit from
+//This is used to separate inputs for each state (since e.g. menus will have different inputs compared to combat)
 public abstract class GameState : MonoBehaviour
 {
     protected StateHandler stateHandler;
