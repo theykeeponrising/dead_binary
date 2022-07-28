@@ -145,7 +145,7 @@ public class Character : MonoBehaviour
         Movement();
     }
 
-    public void KeyPress(KeyCode keycode)
+    public bool KeyPress(KeyCode keycode)
     {
         // TEMP WEAPON SPAWN TEST -- NO LONGER NEEDED
         //if (keycode == KeyCode.Z) 
@@ -155,20 +155,40 @@ public class Character : MonoBehaviour
 
         // Clear any existing targeting
         CancelTarget();
-
         if (keycode == KeyCode.C)
+        {
             StartCoroutine(EquipWeapon(storedWeapon));
+            return true;
+        }
         else if (keycode == KeyCode.V) // Temp testing hotkey to be removed in the future
+        {
             ToggleCrouch();
+            return true;
+        }    
         else if (keycode == KeyCode.T) // Temp testing hotkey to be removed in the future
+        {
             ToggleCombat();
+            return true;
+        }
         else if (keycode == KeyCode.Z) // Temp testing hotkey to be removed in the future
+        {
             RefreshActionPoints();
+            return true;
+        }
         else if (keycode == KeyCode.R && equippedWeapon)
+        {
             StartCoroutine(ReloadWeapon());
+            return true;
+        }
         else if (keycode == KeyCode.F)
+        {
             if (equippedWeapon && availableActions.Contains(Actions.ActionsList.SHOOT))
-                GetTarget("attack");
+            {
+                    GetTarget("attack");
+                    return true;
+            }
+        }
+        return false;
     }
 
     private void OnMouseOver()

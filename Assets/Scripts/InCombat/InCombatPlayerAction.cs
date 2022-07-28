@@ -98,6 +98,15 @@ public class InCombatPlayerAction : MonoBehaviour
         }
     }
 
+    public bool Keypress(KeyCode keycode) 
+    {
+        bool keyPress = false;
+        if (selectedCharacter) {
+            keyPress = selectedCharacter.KeyPress(keycode);
+        }
+        return keyPress;
+    }
+
     void PathPreview()
     {
         // Previews move path on mouse over

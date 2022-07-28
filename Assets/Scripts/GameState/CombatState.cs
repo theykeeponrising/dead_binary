@@ -7,8 +7,6 @@ using UnityEngine;
 public class CombatState : GameState
 {
     // Used to manage user inputs
-
-    public Character selectedCharacter;
     public InCombatPlayerAction inCombatPlayerAction;
 
     // Start is called before the first frame update
@@ -44,10 +42,13 @@ public class CombatState : GameState
         {
             if (Input.GetKey(keycode))
             {
-                if (keycode == KeyCode.Escape) stateHandler.TransitionState(StateHandler.State.StatusMenuState);
-                if (selectedCharacter)
-                    selectedCharacter.KeyPress(keycode);
-                return true;
+                if (keycode == KeyCode.Escape) 
+                {
+                    stateHandler.TransitionState(StateHandler.State.StatusMenuState);
+                    return true;
+                }
+                bool keyPressed = inCombatPlayerAction.Keypress(keycode);
+                if (keyPressed) return true;
             }
         }
         return false;
