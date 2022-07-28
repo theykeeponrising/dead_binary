@@ -18,10 +18,12 @@ public class Tile : MonoBehaviour
     public Cover cover;
     [HideInInspector]
     public Vector3 standPoint;
+    InCombatPlayerAction playerAction;
 
     // Use this for initialization
     void Start()
     {
+        playerAction = GameObject.FindGameObjectWithTag("Player").GetComponent<InCombatPlayerAction>();
         tileGlow = GetComponent<Renderer>().materials[1];
         tileColor = tileGlow.color;
         boxColliders = gameObject.GetComponents<BoxCollider>();
@@ -42,8 +44,7 @@ public class Tile : MonoBehaviour
     private void OnMouseOver()
     {
         // Updates targeted tile on mouse over
-        ClickHandler handler = FindObjectOfType<ClickHandler>();
-        handler.targetTile = this;
+        playerAction.targetTile = this;
         Highlighted(true, "preview");
     }
 
@@ -51,9 +52,8 @@ public class Tile : MonoBehaviour
     private void OnMouseExit()
     {
         // Clears targeted tile on mouse leave if currently target
-        ClickHandler handler = FindObjectOfType<ClickHandler>();
-        if (handler.targetTile == this)
-            handler.targetTile = null;
+        if (playerAction.targetTile == this)
+            playerAction.targetTile = null;
         Highlighted(false, "preview");
     }
 

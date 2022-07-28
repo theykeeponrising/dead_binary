@@ -24,7 +24,7 @@ public class Character : MonoBehaviour
     public Character targetCharacter;
 
     AssetManager assetManager;
-    ClickHandler clickHandler;
+    InCombatPlayerAction playerAction;
 
     [System.Serializable]
     public class Animators
@@ -74,9 +74,10 @@ public class Character : MonoBehaviour
     public Stats stats;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         assetManager = GameObject.FindGameObjectWithTag("GlobalManager").GetComponent<AssetManager>();
+        playerAction = GameObject.FindGameObjectWithTag("Player").GetComponent<InCombatPlayerAction>();
 
         animator = GetComponent<Animator>();
         animators.animatorBase = animator.runtimeAnimatorController;
@@ -137,12 +138,8 @@ public class Character : MonoBehaviour
         Movement();
     }
 
-    public void KeyPress(KeyCode keycode, ClickHandler incomingHandler)
+    public void KeyPress(KeyCode keycode)
     {
-        // Handler for keypress
-
-        clickHandler = incomingHandler;
-
         // TEMP WEAPON SPAWN TEST -- NO LONGER NEEDED
         //if (keycode == KeyCode.Z) 
         //    StartCoroutine(EquipWeapon(assetManager.weapon.ar));
@@ -167,9 +164,7 @@ public class Character : MonoBehaviour
     private void OnMouseOver()
     {
         // Highlights unit on mouse over
-
-        ClickHandler handler = FindObjectOfType<ClickHandler>();
-        if (handler.selectedCharacter != this)
+        if (playerAction.selectedCharacter != this)
         {
             selectionCircle.SetActive(true);
             selectionCircle.GetComponent<Renderer>().material.color = new Color(0, 255, 0, 0.10f);
@@ -179,9 +174,7 @@ public class Character : MonoBehaviour
     private void OnMouseExit()
     {
         // Clears unit highlight on mouse leave
-
-        ClickHandler handler = FindObjectOfType<ClickHandler>();
-        if (handler.selectedCharacter != this)
+        if (playerAction.selectedCharacter != this)
         {
             selectionCircle.SetActive(false);
             selectionCircle.GetComponent<Renderer>().material.color = Color.white;
@@ -207,7 +200,6 @@ public class Character : MonoBehaviour
     void SetAnimation()
     {
         // Changes animation based on flags
-
         if (flags.Contains("moving"))
         {
             animator.SetBool("moving", true);
@@ -578,8 +570,8 @@ public class Character : MonoBehaviour
         {
             AddFlag("targeting");
             StartCoroutine(StandAndShoot());
-            clickHandler.clickAction = ClickHandler.ClickAction.target;
-            clickHandler.clickContext = action;
+            playerAction.clickAction = InCombatPlayerAction.ClickAction.target;
+            playerAction.clickContext = action;
         }
     }
 
@@ -595,7 +587,7 @@ public class Character : MonoBehaviour
     public void SetTarget(Character selectedTarget=null, string action="")
     {
         // Sets the character's target and performs action on them
-        // Called by ClickHandler
+        // Called by InCombatPlayerAction
 
         if (selectedTarget)
             if (action == "attack")
