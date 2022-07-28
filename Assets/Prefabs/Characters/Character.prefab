@@ -72,7 +72,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6379414259075701749}
   m_Layer: 0
-  m_Name: CharacterRig
+  m_Name: DummyRig
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -105,7 +105,7 @@ GameObject:
   - component: {fileID: 6379414259075701751}
   - component: {fileID: 6379414259080875437}
   m_Layer: 0
-  m_Name: CharacterMesh
+  m_Name: DummyMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1361,7 +1361,7 @@ MonoBehaviour:
   storedWeapon: {fileID: 0}
   targetCharacter: {fileID: 0}
   animators:
-    animatorBase: {fileID: 0}
+    animatorBase: {fileID: 9100000, guid: 347ec8c34e26d9146b434b8d63ef1192, type: 2}
     animatorOverride: {fileID: 22100000, guid: 55e353f9f8d68454c8822e669cbd2c59, type: 2}
   attributes:
     name: 
