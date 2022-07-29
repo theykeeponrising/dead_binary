@@ -42,18 +42,19 @@ public class Character : MonoBehaviour
     {
         public Transform handLeft;
         public Transform handRight;
-        public Transform chestArmor;
-        public Transform headArmor;
-        public Transform shoulderArmor;
-        public Transform armArmor;
-        public Transform handArmor;
-        public Transform legArmor;
-        public Transform shinArmor;
-        public Transform footArmor;
-        public Transform maskArmor;
+        public Transform chest;
+        public Transform head;
+        public Transform shoulder;
+        public Transform arm;
+        public Transform hand;
+        public Transform leg;
+        public Transform shin;
+        public Transform foot;
+        public Transform mask;
     }
     //[HideInInspector]
     public Body body = new Body();
+    Rigidbody[] ragdoll;
 
     [System.Serializable]
     public class Attributes
@@ -65,7 +66,8 @@ public class Character : MonoBehaviour
     [System.Serializable]
     public class Stats
     {
-        public int health;
+        public int healthCurrent;
+        public int healthMax;
         public int movement;
         public float aim;
         public int armor;
@@ -82,6 +84,7 @@ public class Character : MonoBehaviour
     {
         assetManager = GameObject.FindGameObjectWithTag("GlobalManager").GetComponent<AssetManager>();
         playerAction = GameObject.FindGameObjectWithTag("Player").GetComponent<InCombatPlayerAction>();
+        ragdoll = GetComponentsInChildren<Rigidbody>();
 
         animator = GetComponent<Animator>();
         animators.animatorBase = animator.runtimeAnimatorController;
@@ -95,8 +98,8 @@ public class Character : MonoBehaviour
         {
             //if (part.bodyPart == CharacterPart.BodyPart.head)
             //    body.headArmor = part.transform;
-            //if (part.bodyPart == CharacterPart.BodyPart.chest)
-            //    body.chestArmor = part.transform;
+            if (part.bodyPart == CharacterPart.BodyPart.chest)
+                body.chest = part.transform;
             //if (part.bodyPart == CharacterPart.BodyPart.shoulders)
             //    body.shoulderArmor = part.transform;
             //if (part.bodyPart == CharacterPart.BodyPart.arms)
@@ -117,7 +120,8 @@ public class Character : MonoBehaviour
             //    body.handLeft = part.transform;
         }
 
-        // Characters start with all action points
+        // Characters start with full health and action points
+        stats.healthCurrent = stats.healthMax;
         stats.actionPointsCurrent = stats.actionPointsMax;
         
         // Init starting weapons
@@ -173,6 +177,11 @@ public class Character : MonoBehaviour
         else if (keycode == KeyCode.Z) // Temp testing hotkey to be removed in the future
         {
             RefreshActionPoints();
+            return true;
+        }
+        else if (keycode == KeyCode.Q) // Temp testing hotkey to be removed in the future
+        {
+            Death(-transform.forward * 20f);
             return true;
         }
         else if (keycode == KeyCode.R && equippedWeapon)
@@ -653,7 +662,14 @@ public class Character : MonoBehaviour
         // TO DO: More complex damage reduction will be added here
 
         Debug.Log(string.Format("{0} has attacked {1} for {2} damage!", attacker.attributes.name, attributes.name, damage)); // This will eventually be shown visually instead of told
-        stats.health -= damage;
+        Vector3 direction =  (transform.position - attacker.transform.position);
+        stats.healthCurrent -= damage;
+
+        if (stats.healthCurrent <= 0)
+        {
+            Death(direction);
+            Debug.DrawRay(transform.position, direction, Color.red, 20, true); // For debug purposes
+        }
     }
 
     public void TakeDamageEffect()
@@ -664,6 +680,39 @@ public class Character : MonoBehaviour
             animator.Play("Damage3", equippedWeapon.weaponLayer, .1f);
         else
             animator.Play("Damage2", equippedWeapon.weaponLayer);
+    }
+
+    private void Death(Vector3 attackDirection, float impactForce = 2f)
+    {
+        // Disable top collider
+        GetComponent<CapsuleCollider>().enabled = false;
+
+        // Disable animator and general rigidbody
+        animator.enabled = false;
+        Destroy(ragdoll[0]);
+        
+        // Enable bodypart physics for the ragdoll effect
+        foreach (Rigidbody rag in ragdoll)
+        {
+            rag.isKinematic = false;
+            rag.GetComponent<Collider>().isTrigger = false;
+        }
+
+        // Apply impact force to center of mass
+        body.chest.GetComponent<Rigidbody>().AddForce(attackDirection * impactForce, ForceMode.Impulse);
+        gameObject.layer = LayerMask.NameToLayer("Ignore Raycast"); // TO DO -- Layer specifically for dead characters??
+
+        // Remove player selection
+        if (playerAction.selectedCharacter == this)
+            playerAction.selectedCharacter = null;
+        SelectUnit(false);
+
+        // Remove character as a obstacle on the map
+        currentTile.occupant = null;
+        this.enabled = false;
+
+        // TO DO -- DISABLE ENEMY AI
+        // TO DO -- DROP WEAPON
     }
 
     void GetTarget(string action)
