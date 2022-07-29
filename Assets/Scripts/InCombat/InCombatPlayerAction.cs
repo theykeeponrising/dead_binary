@@ -2,6 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+using TMPro;
 
 
 public class InCombatPlayerAction : MonoBehaviour 
@@ -15,10 +18,36 @@ public class InCombatPlayerAction : MonoBehaviour
     public ClickAction clickAction;
     public string clickContext;
 
+    public LayerMask uiLayermask;
+    [SerializeField]
+    public ActionPanel actionPanel;
+    [Serializable]
+    public class ActionPanel
+    {
+        public GameObject panel;
+        public TextMeshProUGUI actionPointsText;
+        public Button moveButton;
+        public Button shootButton;
+    }
+
     // Update is called once per frame
     void Update()
     {
         PathPreview();
+
+        if (selectedCharacter != null)
+        {
+            actionPanel.panel.SetActive(true);
+            if (actionPanel != null)
+            {
+                actionPanel.actionPointsText.text =
+                    "AP: " + selectedCharacter.stats.actionPointsCurrent.ToString();
+            }
+        }
+        else
+        {
+            actionPanel.panel.SetActive(false);
+        }
     }
     
     public void SelectUnit()
@@ -30,9 +59,17 @@ public class InCombatPlayerAction : MonoBehaviour
         ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         Character targetCharacter = null;
 
-        if (Physics.Raycast(ray, out hit))
-            if (hit.collider.GetComponent<Character>())
-                targetCharacter = hit.collider.GetComponent<Character>();
+        if (!EventSystem.current.IsPointerOverGameObject())
+        {
+            if (Physics.Raycast(ray, out hit))
+                if (hit.collider.GetComponent<Character>())
+                    targetCharacter = hit.collider.GetComponent<Character>();
+
+            SelectAction(targetCharacter);
+        }
+
+
+        /*
 
         if (clickAction == ClickAction.select)
             SelectAction(targetCharacter);
@@ -51,6 +88,8 @@ public class InCombatPlayerAction : MonoBehaviour
                 clickContext = "";
             }
         }
+
+        */
     }
 
     public void MoveCharacter()
@@ -58,15 +97,18 @@ public class InCombatPlayerAction : MonoBehaviour
         // Orders target to move on right-click
         if (selectedCharacter)
         {
-            RaycastHit hit;
-            Ray ray;
-            ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-            if (Physics.Raycast(ray, out hit))
+            if (selectedCharacter.state.GetType() == typeof(SelectedStates.ChoosingMoveDestination))
             {
-                if (hit.collider.GetComponent<Tile>())
+                RaycastHit hit;
+                Ray ray;
+                ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+                if (Physics.Raycast(ray, out hit))
                 {
-                    selectedCharacter.ProcessAction(Actions.action_move, contextTile: hit.collider.GetComponent<Tile>(), contextPath: previewPath);
+                    if (hit.collider.GetComponent<Tile>())
+                    {
+                        selectedCharacter.ProcessAction(Actions.action_move, contextTile: hit.collider.GetComponent<Tile>(), contextPath: previewPath);
+                    }
                 }
             }
         }
@@ -113,20 +155,24 @@ public class InCombatPlayerAction : MonoBehaviour
 
         if (selectedCharacter && targetTile)
         {
-            if (selectedCharacter.currentTile)
+            if (selectedCharacter.state.GetType() == typeof(SelectedStates.ChoosingMoveDestination))
             {
-                PathPreviewClear();
-                previewPath = selectedCharacter.currentTile.FindCost(targetTile);
-                if (previewPath != null)
-                    previewPath.Add(selectedCharacter.currentTile);
-                if (previewPath != null)
+                if (selectedCharacter.currentTile)
+                {
+                    PathPreviewClear();
+                    previewPath = selectedCharacter.currentTile.FindCost(targetTile);
+                    if (previewPath != null)
+                        previewPath.Add(selectedCharacter.currentTile);
+                    if (previewPath != null)
+                        foreach (Tile tile in previewPath)
+                            tile.Highlighted(true, "preview");
+                }
+
+                else if (previewPath != null)
                     foreach (Tile tile in previewPath)
-                        tile.Highlighted(true, "preview");
+                        tile.Highlighted(false);
             }
         }
-        else if (previewPath != null)
-            foreach (Tile tile in previewPath)
-                tile.Highlighted(false);
     }
 
     void PathPreviewClear()
@@ -136,5 +182,17 @@ public class InCombatPlayerAction : MonoBehaviour
         if (previewPath != null)
             foreach (Tile tile in previewPath)
                 tile.Highlighted(false);
+    }
+
+    public void SetState_ChooseMoveDestination()
+    {
+        selectedCharacter.stateMachine.ChangeState(new SelectedStates.ChoosingMoveDestination(selectedCharacter.stateMachine));
+
+        PathPreviewClear();
+    }
+
+    public void SetState_ChooseShootTarget()
+    {
+        selectedCharacter.stateMachine.ChangeState(new SelectedStates.ChoosingShootTarget(selectedCharacter.stateMachine));
     }
 }

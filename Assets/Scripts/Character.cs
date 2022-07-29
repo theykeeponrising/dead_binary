@@ -77,6 +77,10 @@ public class Character : MonoBehaviour
     public List<Actions.ActionsList> availableActions;
     public Actions.Action currentAction;
 
+    public StateMachine<Character> stateMachine;
+    [SerializeField] private string CurrentState;
+    public FiniteState<Character> state;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -143,6 +147,15 @@ public class Character : MonoBehaviour
     {
         SetAnimation();
         Movement();
+
+        if (stateMachine != null)
+        {
+            stateMachine.Update();
+            state = stateMachine.GetCurrentState();
+            CurrentState = state.ToString();
+        }
+        else
+            CurrentState = "None";
     }
 
     public bool KeyPress(KeyCode keycode)
@@ -219,11 +232,20 @@ public class Character : MonoBehaviour
         {
             selectionCircle.SetActive(true);
             selectionCircle.GetComponent<Renderer>().material.color = Color.green;
+
+            stateMachine = new StateMachine<Character>();
+            stateMachine.Configure(this, new SelectedStates.Idle(stateMachine));
         }
         else
         {
             selectionCircle.SetActive(false);
             selectionCircle.GetComponent<Renderer>().material.color = Color.white;
+
+            if (stateMachine != null)
+            {
+                stateMachine.ChangeState(null);
+                stateMachine = null;
+            }
         }
     }
 
@@ -351,6 +373,8 @@ public class Character : MonoBehaviour
 
     IEnumerator MoveToPath()
     {
+        //stateMachine.ChangeState(new SelectedStates.Moving(stateMachine));
+
         // Movement routine
         // Sets "moving" flag before and removes after
 
@@ -396,6 +420,9 @@ public class Character : MonoBehaviour
             ToggleCrouch();
         moveTargetImmediate = null;
         moveTargetDestination = null;
+
+
+        stateMachine.ChangeState(new SelectedStates.Idle(stateMachine));
     }
 
     bool CheckTileMove(Tile newTile)
