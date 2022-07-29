@@ -11,6 +11,7 @@ public class Character : MonoBehaviour
     public List<string> flags = new List<string>();
     GameObject selectionCircle;
 
+    [Header("Pathfinding")]
     public Tile currentTile;
     public List<Tile> movePath;
     Tile moveTargetImmediate;
@@ -19,6 +20,7 @@ public class Character : MonoBehaviour
     float velocityX = 0f;
     float velocityZ = 0f;
 
+    [Header("Equipment")]
     public Weapon equippedWeapon;
     public Weapon storedWeapon;
     public Character targetCharacter;
@@ -33,6 +35,8 @@ public class Character : MonoBehaviour
         public RuntimeAnimatorController animatorBase;
         public RuntimeAnimatorController animatorOverride;
     }
+
+    [Header("Animation")]
     public Animators animators;
     Animator animator;
 
@@ -61,7 +65,6 @@ public class Character : MonoBehaviour
     {
         public string name;
     }
-    public Attributes attributes;
 
     [System.Serializable]
     public class Stats
@@ -75,7 +78,9 @@ public class Character : MonoBehaviour
         public int actionPointsCurrent;
         public int actionPointsMax;
     }
+    [Header("Character Info")]
     public Stats stats;
+    public Attributes attributes;
     public List<Actions.ActionsList> availableActions;
     public Actions.Action currentAction;
 
@@ -186,7 +191,7 @@ public class Character : MonoBehaviour
         }
         else if (keycode == KeyCode.R && equippedWeapon)
         {
-            StartCoroutine(ReloadWeapon());
+            ProcessAction(Actions.action_reload);
             return true;
         }
         else if (keycode == KeyCode.F)
@@ -238,6 +243,15 @@ public class Character : MonoBehaviour
 
     public void ProcessAction(Actions.Action actionToPerform, Tile contextTile=null, List<Tile> contextPath=null, Character contextCharacter=null, string contextString=null)
     {
+        // Determine if action can be performed, and perform action if so
+
+        // Check if action is in allowed list of actions for character
+        if (!availableActions.Contains(actionToPerform.name))
+        {
+            Debug.Log("Invalid action");
+            return;
+        }    
+
         int actionCost = actionToPerform.cost;
         if (actionCost > stats.actionPointsCurrent)
         {
@@ -253,6 +267,9 @@ public class Character : MonoBehaviour
                     break;
                 case "shoot":
                     ShootAction(contextCharacter, contextString);
+                    break;
+                case "reload":
+                    ReloadAction();
                     break;
             }
         }
@@ -503,6 +520,19 @@ public class Character : MonoBehaviour
         }
     }
 
+    void ReloadAction()
+    {
+        // Reload action handler
+
+        if (equippedWeapon.stats.ammoCurrent >= equippedWeapon.stats.ammoMax)
+        {
+            Debug.Log("Ammo is max already!"); // TO DO - Show this in UI
+            return;
+        }
+        stats.actionPointsCurrent -= currentAction.cost;
+        StartCoroutine(ReloadWeapon());
+    }
+
     IEnumerator ReloadWeapon()
     {
         // Reload animation
@@ -682,7 +712,7 @@ public class Character : MonoBehaviour
             animator.Play("Damage2", equippedWeapon.weaponLayer);
     }
 
-    private void Death(Vector3 attackDirection, float impactForce = 2f)
+    void Death(Vector3 attackDirection, float impactForce = 2f)
     {
         // Disable top collider
         GetComponent<CapsuleCollider>().enabled = false;
@@ -738,7 +768,7 @@ public class Character : MonoBehaviour
         yield return new WaitForSeconds(0.01f);
     }
 
-    public void ShootAction(Character selectedTarget=null, string action="")
+    void ShootAction(Character selectedTarget=null, string action="")
     {
         // Sets the character's target and performs action on them
         // Called by InCombatPlayerAction

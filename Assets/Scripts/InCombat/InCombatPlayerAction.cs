@@ -29,10 +29,13 @@ public class InCombatPlayerAction : MonoBehaviour
         Ray ray;
         ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         Character targetCharacter = null;
+        int layerMask = (1 << LayerMask.NameToLayer("TileMap"));
 
-        if (Physics.Raycast(ray, out hit))
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, ~layerMask))
+        {
             if (hit.collider.GetComponent<Character>())
                 targetCharacter = hit.collider.GetComponent<Character>();
+        }
 
         if (clickAction == ClickAction.select)
             SelectAction(targetCharacter);

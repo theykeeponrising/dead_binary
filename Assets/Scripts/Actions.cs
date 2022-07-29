@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class Actions : MonoBehaviour
 {
+    // All possible actions in enum form
+    public enum ActionsList { MOVE, SHOOT, RELOAD }
 
     public class Action
     {
@@ -17,24 +19,22 @@ public class Actions : MonoBehaviour
         // FUTURE ATTR
         // Type - Action type (ability, item, etc)
 
-        public string name;
+        public ActionsList name;
         public string context;
         public int cost;
         public int cooldown;
 
-        public Action(string aName, string aContext, int aCost, int aCooldown)
+        public Action(ActionsList aName, string aContext, int aCost, int aCooldown)
         {
             name = aName;
             context = aContext;
             cost = aCost;
             cooldown = aCooldown;
         }
-    }
-
-    // All possible actions in enum form
-    public enum ActionsList { MOVE, SHOOT }
+    }   
 
     // All possible character actions with values
-    public static Action action_move = new Action("Move", "move", 1, 0);
-    public static Action action_shoot = new Action("Shoot", "shoot", 1, 0);
+    public static Action action_move = new Action(ActionsList.MOVE, "move", 1, 0);
+    public static Action action_shoot = new Action(ActionsList.SHOOT, "shoot", 1, 0);
+    public static Action action_reload = new Action(ActionsList.RELOAD, "reload", 1, 0);
 }
