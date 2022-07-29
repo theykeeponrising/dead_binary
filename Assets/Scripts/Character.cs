@@ -665,7 +665,7 @@ public class Character : MonoBehaviour
         Vector3 direction =  (transform.position - attacker.transform.position);
         stats.healthCurrent -= damage;
 
-        if (stats.healthCurrent < 0)
+        if (stats.healthCurrent <= 0)
         {
             Death(direction);
             Debug.DrawRay(transform.position, direction, Color.red, 20, true); // For debug purposes
