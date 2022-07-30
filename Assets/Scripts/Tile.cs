@@ -24,7 +24,8 @@ public class Tile : MonoBehaviour
     void Start()
     {
         playerAction = GameObject.FindGameObjectWithTag("Player").GetComponent<InCombatPlayerAction>();
-        tileGlow = GetComponent<Renderer>().materials[1];
+        Renderer renderer = this.gameObject.GetComponentInChildren(typeof(Renderer)) as Renderer;
+        tileGlow = renderer.materials[1];
         tileColor = tileGlow.color;
         boxColliders = gameObject.GetComponents<BoxCollider>();
         cover = GetComponentInChildren<Cover>();
@@ -88,8 +89,11 @@ public class Tile : MonoBehaviour
         foreach (Tile tile in tiles)
             if (tile.gameObject.GetInstanceID() != gameObject.GetInstanceID())
                 foreach (BoxCollider boxCollider in boxColliders)
-                    if (boxCollider.bounds.Intersects(tile.gameObject.GetComponent<MeshCollider>().bounds))
+                {
+                    MeshCollider meshCollider = tile.gameObject.GetComponentInChildren(typeof(MeshCollider)) as MeshCollider;
+                    if (boxCollider.bounds.Intersects(meshCollider.bounds))
                         neighbours.Add(tile);
+                }
     }
 
     Tile GetNeighbor(bool north = false, bool south = false, bool east = false, bool west = false)
