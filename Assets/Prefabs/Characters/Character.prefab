@@ -1959,7 +1959,7 @@ MonoBehaviour:
     dodge: 10
     actionPointsCurrent: 0
     actionPointsMax: 2
-  availableActions: 0000000001000000
+  availableActions: 000000000100000002000000
 --- !u!1 &7323553403757494216
 GameObject:
   m_ObjectHideFlags: 0
@@ -3754,7 +3754,7 @@ GameObject:
   - component: {fileID: 7324549120656334255}
   - component: {fileID: 7324549120656334253}
   - component: {fileID: 7324549120656334254}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: SelectionCircle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
