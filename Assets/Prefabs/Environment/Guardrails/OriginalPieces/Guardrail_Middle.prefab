@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6653129465488425607}
   - component: {fileID: 8260492996421021797}
   - component: {fileID: 4081583852505977866}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Guardrail_Middle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -64,7 +64,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 5241741257762602693, guid: 0bbabd68acf3faa4daf6c3945f9053ee, type: 3}
+  - {fileID: 2100000, guid: acea01271dc505e49bba29dbfc98fdad, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

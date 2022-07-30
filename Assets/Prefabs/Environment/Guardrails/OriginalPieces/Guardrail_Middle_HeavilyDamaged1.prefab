@@ -57,7 +57,7 @@ GameObject:
   - component: {fileID: 4734357301969172422}
   - component: {fileID: 2399386507734497050}
   - component: {fileID: 2813276625297526543}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Guardrail_Middle_HeavilyDamaged1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -108,7 +108,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 5241741257762602693, guid: 823c1dec0aad0f148b7d2f6eabe7e9c6, type: 3}
+  - {fileID: 2100000, guid: acea01271dc505e49bba29dbfc98fdad, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

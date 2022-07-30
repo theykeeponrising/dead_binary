@@ -9,7 +9,19 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2459940309320796070, guid: c0624a6720a7cb14396cf0dd66248e93, type: 3}
       propertyPath: m_Name
-      value: LongGuardrail_End_Damaged_Left
+      value: LongGuardrail_End_Damaged_Left Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 2459940309320796070, guid: c0624a6720a7cb14396cf0dd66248e93, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2466678896333296524, guid: c0624a6720a7cb14396cf0dd66248e93, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5341850138473467741, guid: c0624a6720a7cb14396cf0dd66248e93, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 8419406627003828951, guid: c0624a6720a7cb14396cf0dd66248e93, type: 3}
       propertyPath: m_RootOrder
@@ -58,6 +70,10 @@ PrefabInstance:
     - target: {fileID: 8419406627003828951, guid: c0624a6720a7cb14396cf0dd66248e93, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8723381740717369251, guid: c0624a6720a7cb14396cf0dd66248e93, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c0624a6720a7cb14396cf0dd66248e93, type: 3}

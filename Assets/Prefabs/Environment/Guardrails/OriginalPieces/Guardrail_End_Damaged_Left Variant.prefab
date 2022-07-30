@@ -7,9 +7,17 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5732725796777731911, guid: c9748289dbd924a41adc9bb51808f52e, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: acea01271dc505e49bba29dbfc98fdad, type: 2}
     - target: {fileID: 6645718353320064557, guid: c9748289dbd924a41adc9bb51808f52e, type: 3}
       propertyPath: m_Name
       value: Guardrail_End_Damaged_Left Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 6645718353320064557, guid: c9748289dbd924a41adc9bb51808f52e, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6996005157526289615, guid: c9748289dbd924a41adc9bb51808f52e, type: 3}
       propertyPath: m_RootOrder

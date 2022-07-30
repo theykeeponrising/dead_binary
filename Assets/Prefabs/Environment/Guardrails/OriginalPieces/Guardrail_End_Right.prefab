@@ -57,7 +57,7 @@ GameObject:
   - component: {fileID: 4894984463025124512}
   - component: {fileID: 1309469870307254015}
   - component: {fileID: 1094575256059022615}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Guardrail_End_Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -108,7 +108,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 5241741257762602693, guid: 95d0cb001f14ebd46a3096ed4d383407, type: 3}
+  - {fileID: 2100000, guid: acea01271dc505e49bba29dbfc98fdad, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
