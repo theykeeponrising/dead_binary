@@ -1,15 +1,10 @@
+--HOW TO IMPORT KEVIN IGLESIAS ANIMS INTO BLENDER--
 import model and animation into 3ds max
 fix rotation, x 90, fix position, zero all
 export to fbx, do not bake animations
 import in blender
+exclude root
 copy/paste keyframes
 
+-- MATH FOR HIT CHANCE --
 aim / (globalHit - dodge) / 10
-
-%userprofile%\AppData\Local\GitHubUnity\octorun\src\api.js
-replace
-type: "oauth"
-with
-type: "token"
-
-TEST

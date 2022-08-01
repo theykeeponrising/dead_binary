@@ -34,7 +34,6 @@ public class Weapon : MonoBehaviour
         public int damage;
         public int range;
         public int ammoMax;
-        [HideInInspector]
         public int ammoCurrent;
         public float reloadSpeed;
     }

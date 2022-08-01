@@ -1850,6 +1850,7 @@ GameObject:
   - component: {fileID: 7274816835234447552}
   - component: {fileID: 7324549121527466964}
   - component: {fileID: 7324549121527466971}
+  - component: {fileID: 1573632515060724147}
   - component: {fileID: 7324549121527466970}
   m_Layer: 0
   m_Name: Character
@@ -1921,10 +1922,24 @@ CapsuleCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7323552420328571708}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
+  m_IsTrigger: 1
+  m_Enabled: 0
   m_Radius: 0.35
   m_Height: 1.8854423
+  m_Direction: 1
+  m_Center: {x: 0.00999999, y: 0.9406307, z: 0}
+--- !u!136 &1573632515060724147
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7323552420328571708}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 2
   m_Direction: 1
   m_Center: {x: 0.00999999, y: 0.9406307, z: 0}
 --- !u!114 &7324549121527466970
@@ -1948,8 +1963,6 @@ MonoBehaviour:
   animators:
     animatorBase: {fileID: 9100000, guid: 347ec8c34e26d9146b434b8d63ef1192, type: 2}
     animatorOverride: {fileID: 22100000, guid: 55e353f9f8d68454c8822e669cbd2c59, type: 2}
-  attributes:
-    name: 
   stats:
     healthCurrent: 10
     healthMax: 10
@@ -1959,6 +1972,8 @@ MonoBehaviour:
     dodge: 10
     actionPointsCurrent: 0
     actionPointsMax: 2
+  attributes:
+    name: 
   availableActions: 000000000100000002000000
 --- !u!1 &7323553403757494216
 GameObject:
