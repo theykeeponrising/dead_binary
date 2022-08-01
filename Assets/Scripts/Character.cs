@@ -282,7 +282,6 @@ public class Character : MonoBehaviour
         // Changes animation based on flags
         if (flags.Contains("moving"))
         {
-            //animator.SetBool("moving", true);
             animator.SetFloat("velocityX", velocityX / GlobalManager.gameSpeed);
             animator.SetFloat("velocityZ", velocityZ / GlobalManager.gameSpeed);
         }
@@ -349,7 +348,6 @@ public class Character : MonoBehaviour
         // Gradually rotate character to expected look direction while behind cover
         else if (currentCover && !flags.Contains("targeting") && !flags.Contains("shooting"))
         {
-            //transform.LookAt(Vector3.Slerp(transform.position, currentCover.transform.forward, 100f));
             Debug.DrawRay(currentCover.transform.position, currentCover.transform.forward, Color.green, 20f);
             transform.rotation = Quaternion.Lerp(transform.rotation, currentCover.transform.rotation, 10 * Time.deltaTime);
             ToggleCrouch(true);
