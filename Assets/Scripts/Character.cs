@@ -16,6 +16,8 @@ public class Character : MonoBehaviour
     public List<Tile> movePath;
     Tile moveTargetImmediate;
     Tile moveTargetDestination;
+    Cover currentCover;
+    Transform lookTarget;
 
     float velocityX = 0f;
     float velocityZ = 0f;
@@ -280,7 +282,7 @@ public class Character : MonoBehaviour
         // Changes animation based on flags
         if (flags.Contains("moving"))
         {
-            animator.SetBool("moving", true);
+            //animator.SetBool("moving", true);
             animator.SetFloat("velocityX", velocityX / GlobalManager.gameSpeed);
             animator.SetFloat("velocityZ", velocityZ / GlobalManager.gameSpeed);
         }
@@ -334,6 +336,24 @@ public class Character : MonoBehaviour
                 transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, 10 * Time.deltaTime);
             }
         }
+
+        // Gradually rotate character to face towards look target
+        else if (lookTarget)
+        {
+            Quaternion toRotation = Quaternion.LookRotation(lookTarget.position);
+            toRotation.x = transform.rotation.x;
+            toRotation.z = transform.rotation.z;
+            transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, 10 * Time.deltaTime);
+        }
+
+        // Gradually rotate character to expected look direction while behind cover
+        else if (currentCover && !flags.Contains("targeting") && !flags.Contains("shooting"))
+        {
+            //transform.LookAt(Vector3.Slerp(transform.position, currentCover.transform.forward, 100f));
+            Debug.DrawRay(currentCover.transform.position, currentCover.transform.forward, Color.green, 20f);
+            transform.rotation = Quaternion.Lerp(transform.rotation, currentCover.transform.rotation, 10 * Time.deltaTime);
+            ToggleCrouch(true);
+        }
     }
 
     Tile FindCurrentTile()
@@ -379,14 +399,16 @@ public class Character : MonoBehaviour
     {
         // Movement routine
         // Sets "moving" flag before and removes after
+        AddFlag("moving");
+        animator.SetBool("moving", true);
 
-        //Stand up if crouched
+        // Stand up if crouched
         if (flags.Contains("crouching"))
             ToggleCrouch();
 
-        AddFlag("moving");
         moveTargetDestination = movePath[movePath.Count - 1];
         currentTile.ChangeTileOccupant(this, false);
+        currentCover = null;
 
         // Move to each tile in the provided path
         foreach (Tile path in movePath)
@@ -419,7 +441,10 @@ public class Character : MonoBehaviour
         // Clear movement flags
         RemoveFlag("moving");
         if (currentTile.cover && currentTile.cover.coverSize == Cover.CoverSize.half)
+        {
+            currentCover = currentTile.cover;
             ToggleCrouch();
+        }
         moveTargetImmediate = null;
         moveTargetDestination = null;
     }
@@ -540,7 +565,7 @@ public class Character : MonoBehaviour
         AddFlag("reload");
         animator.Play("Reload", equippedWeapon.weaponLayer);
         equippedWeapon.Reload();
-        while (animator.IsInTransition(equippedWeapon.weaponLayer))
+        while (AnimatorIsPlaying())
             yield return new WaitForSeconds(0.01f);
         RemoveFlag("reload");
         equippedWeapon.stats.ammoCurrent = equippedWeapon.stats.ammoMax;
@@ -555,12 +580,29 @@ public class Character : MonoBehaviour
         animator.Play("Shoot", equippedWeapon.weaponLayer);
         equippedWeapon.stats.ammoCurrent -= 1;
         transform.LookAt(targetCharacter.transform);
-        while (animator.IsInTransition(equippedWeapon.weaponLayer))
-            yield return new WaitForSeconds(0.01f);
-        RemoveFlag("shooting");
 
+        // Wait until shoot animation completes
+        while (AnimatorIsPlaying())
+        {
+            yield return new WaitForSeconds(0.01f);
+        }
+
+        // Inflict damage on target character
         if (targetCharacter)
             targetCharacter.TakeDamage(this, equippedWeapon.stats.damage);
+
+        // Add a small delay before character exits shooting stance
+        yield return new WaitForSeconds(1.0f);
+
+        // Remove shooting flag
+        RemoveFlag("shooting");
+    }
+
+    bool AnimatorIsPlaying()
+    {
+        // True/False whether an animation is currently playing on the equipped weapon layer.
+
+        return animator.GetCurrentAnimatorStateInfo(equippedWeapon.weaponLayer).length > animator.GetCurrentAnimatorStateInfo(2).normalizedTime;
     }
 
     void AnimationEvent(AnimationEventContext context)

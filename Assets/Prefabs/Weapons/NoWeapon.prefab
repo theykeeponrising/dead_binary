@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4132712680190922041}
   - component: {fileID: 3640915152672987620}
   - component: {fileID: 877797045781911332}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: NoWeapon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -206,6 +206,9 @@ MonoBehaviour:
   stats:
     damage: 0
     range: 0
+    ammoMax: 0
+    ammoCurrent: 0
+    reloadSpeed: 0
 --- !u!1 &6729600718463147584
 GameObject:
   m_ObjectHideFlags: 0
