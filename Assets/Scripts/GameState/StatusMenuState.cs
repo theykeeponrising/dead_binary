@@ -22,12 +22,12 @@ public class StatusMenuState : GameState
         gameObject.GetComponent<CanvasGroup>().alpha = 0;
     }
 
-    void OnEnable()
+    void EnablePlayerInput()
     {
         playerInput.Enable();
     }
 
-    void OnDisable()
+    void DisablePlayerInput()
     {
         playerInput.Disable();
     }
@@ -79,11 +79,13 @@ public class StatusMenuState : GameState
     public override void SetStateActive()
     {
         DisplayMenu(true);
+        EnablePlayerInput();
     }
 
     public override void SetStateInactive()
     {
         DisplayMenu(false);
+        DisablePlayerInput();
     }
 
 }
