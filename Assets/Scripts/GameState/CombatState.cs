@@ -16,7 +16,7 @@ public class CombatState : GameState
         playerInput = new PlayerInput();
     }
 
-    void OnEnable()
+    void EnablePlayerInput()
     {
         playerInput.Controls.InputPrimary.performed += _ => inCombatPlayerAction.SelectUnit();
         playerInput.Controls.InputSecondary.performed += _ => inCombatPlayerAction.MoveCharacter();
@@ -29,7 +29,7 @@ public class CombatState : GameState
         playerInput.Enable();
     }
 
-    void OnDisable()
+    void DisablePlayerInput()
     {
         playerInput.Controls.InputPrimary.performed -= _ => inCombatPlayerAction.SelectUnit();
         playerInput.Controls.InputSecondary.performed -= _ => inCombatPlayerAction.MoveCharacter();
@@ -61,11 +61,11 @@ public class CombatState : GameState
 
     public override void SetStateActive()
     {
-        return;
+        EnablePlayerInput();
     }
 
     public override void SetStateInactive()
     {
-        return;
+        DisablePlayerInput();
     }
 }

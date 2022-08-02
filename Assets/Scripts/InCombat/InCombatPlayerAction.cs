@@ -19,16 +19,7 @@ public class InCombatPlayerAction : MonoBehaviour
     private void Awake()
     {
         playerInput = new PlayerInput();
-    }
-
-    void OnEnable()
-    {
         playerInput.Enable();
-    }
-
-    void OnDisable()
-    {
-        playerInput.Disable();
     }
 
     // Update is called once per frame
