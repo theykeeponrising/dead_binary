@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 //Combat State is the basic gameplay, i.e. player vs robot battles. This class will handle inputs at a high level
 public class CombatState : GameState
@@ -9,7 +10,6 @@ public class CombatState : GameState
     // Used to manage user inputs
     public InCombatPlayerAction inCombatPlayerAction;
 
-    // Start is called before the first frame update
     void SetClickHandler(InCombatPlayerAction inCombatPlayerAction)
     {
         this.inCombatPlayerAction = inCombatPlayerAction;
@@ -18,49 +18,19 @@ public class CombatState : GameState
     // Update is called once per frame
     public override bool HandleKeyPress()
     {
-        bool keyPressed = false;
-        if (Input.anyKeyDown)
-        {
-            keyPressed = KeyPress();
-        }
-        if (Input.GetMouseButtonDown(1)) {
-            inCombatPlayerAction.MoveCharacter();
-            keyPressed = true;
-        } 
-        else if (Input.GetMouseButtonDown(0))
-        {
-            inCombatPlayerAction.SelectUnit();
-            keyPressed = true;
-        }
-        return keyPressed;
-    }
-
-    bool KeyPress()
-    {
-        // Sends inputs to selected character.
-        foreach (KeyCode keycode in Enum.GetValues(typeof(KeyCode)))
-        {
-            if (Input.GetKey(keycode))
-            {
-                if (keycode == KeyCode.Escape) 
-                {
-                    stateHandler.TransitionState(StateHandler.State.StatusMenuState);
-                    return true;
-                }
-                bool keyPressed = inCombatPlayerAction.Keypress(keycode);
-                if (keyPressed) return true;
-            }
-        }
-        return false;
+        // True/False if any key is pressed while in state
+        return (inCombatPlayerAction.playerInput.Controls.AnyKey.ReadValue<float>() > 0.5f);
     }
 
     public override void SetStateActive()
     {
-        return;
+        inCombatPlayerAction.EnablePlayerInput();
+        inCombatPlayerAction.playerInput.Controls.InputMenu.performed += _ => stateHandler.TransitionState(StateHandler.State.StatusMenuState);
     }
 
     public override void SetStateInactive()
     {
-        return;
+        inCombatPlayerAction.DisablePlayerInput();
+        inCombatPlayerAction.playerInput.Controls.InputMenu.performed += _ => stateHandler.TransitionState(StateHandler.State.StatusMenuState);
     }
 }

@@ -32,9 +32,11 @@ public class StateHandler: MonoBehaviour
             gameState.SetStateManager(this);
         }
         this.globalManager = globalManager;
-
 	}
 
+    private void Start() {
+        this.GetStateObject(this.activeState).SetStateActive();
+    }
 	public void Update()
 	{
         this.GetStateObject(this.activeState).HandleInput();
