@@ -69,6 +69,7 @@ public class StatusMenuState : GameState
     {
         int alpha = 1;
         if (!visible) alpha = 0;
+        GetComponentInParent<GraphicRaycaster>().enabled = visible;
         gameObject.GetComponent<CanvasGroup>().alpha = alpha;
         yesPanel.GetComponent<CanvasGroup>().alpha = alpha;
         noPanel.GetComponent<CanvasGroup>().alpha = 0;
