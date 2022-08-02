@@ -8,7 +8,7 @@ using UnityEngine.InputSystem;
 public class InCombatPlayerAction : MonoBehaviour 
 {
     // Used to manage user inputs
-    PlayerInput playerInput;
+    public PlayerInput playerInput;
     public Character selectedCharacter;
     public List<Tile> previewPath = new List<Tile>();
     public Tile targetTile;
@@ -19,7 +19,23 @@ public class InCombatPlayerAction : MonoBehaviour
     private void Awake()
     {
         playerInput = new PlayerInput();
+        playerInput.Controls.InputPrimary.performed += _ => SelectUnit();
+        playerInput.Controls.InputSecondary.performed += _ => MoveCharacter();
+        //playerInput.Controls.AnyKey.performed += _ => KeyPress(playerInput.Controls.AnyKey); // For if we want any "PRESS ANY KEY" moments
+        playerInput.Controls.ActionButton_1.performed += _ => KeyPress(playerInput.Controls, playerInput.Controls.ActionButton_1);
+        playerInput.Controls.ActionButton_2.performed += _ => KeyPress(playerInput.Controls, playerInput.Controls.ActionButton_2);
+        playerInput.Controls.ActionButton_3.performed += _ => KeyPress(playerInput.Controls, playerInput.Controls.ActionButton_3);
+        playerInput.Controls.ActionButton_4.performed += _ => KeyPress(playerInput.Controls, playerInput.Controls.ActionButton_4);
+    }
+
+    public void EnablePlayerInput()
+    {
         playerInput.Enable();
+    }
+
+    public void DisablePlayerInput()
+    {
+        playerInput.Disable();
     }
 
     // Update is called once per frame
@@ -108,7 +124,7 @@ public class InCombatPlayerAction : MonoBehaviour
         }
     }
 
-    public bool Keypress(PlayerInput.ControlsActions controls, InputAction action) 
+    public bool KeyPress(PlayerInput.ControlsActions controls, InputAction action) 
     {
         bool keyPress = false;
         if (selectedCharacter) {
