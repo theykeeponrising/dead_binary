@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-public class Character : MonoBehaviour
+public class Character : MonoBehaviour, IFaction
 {
     // Main script for Player-Controlled characters
 
@@ -80,6 +80,11 @@ public class Character : MonoBehaviour
     public StateMachine<Character> stateMachine;
     [SerializeField] private string CurrentState;
     public FiniteState<Character> state;
+    public Faction faction;
+    public IFaction ifaction;
+    Faction IFaction.faction { get { return faction; } set { faction = value; } }
+
+    public Character[] potentialTargets;
 
     // Start is called before the first frame update
     void Awake()
@@ -140,6 +145,7 @@ public class Character : MonoBehaviour
             storedWeapon.gameObject.SetActive(false);
             storedWeapon.DefaultPosition(this);
         }
+        ifaction = this;
     }
 
     // Update is called once per frame
@@ -233,8 +239,8 @@ public class Character : MonoBehaviour
             selectionCircle.SetActive(true);
             selectionCircle.GetComponent<Renderer>().material.color = Color.green;
 
-            stateMachine = new StateMachine<Character>();
-            stateMachine.Configure(this, new SelectedStates.Idle(stateMachine));
+          //  stateMachine = new StateMachine<Character>();
+          //  stateMachine.Configure(this, new SelectedStates.Idle(stateMachine));
         }
         else
         {
@@ -422,7 +428,7 @@ public class Character : MonoBehaviour
         moveTargetDestination = null;
 
 
-        stateMachine.ChangeState(new SelectedStates.Idle(stateMachine));
+       // stateMachine.ChangeState(new SelectedStates.Idle(stateMachine));
     }
 
     bool CheckTileMove(Tile newTile)
@@ -565,7 +571,7 @@ public class Character : MonoBehaviour
         // Weapon impact effect on target
         else if (context == AnimationEventContext.TAKE_DAMAGE)
         {
-            targetCharacter.TakeDamageEffect();
+          targetCharacter.TakeDamageEffect();
         }
 
         // Stow weapon animation is completed
@@ -681,6 +687,8 @@ public class Character : MonoBehaviour
 
         Debug.Log(string.Format("{0} has attacked {1} for {2} damage!", attacker.attributes.name, attributes.name, damage)); // This will eventually be shown visually instead of told
         stats.health -= damage;
+
+        TakeDamageEffect();
     }
 
     public void TakeDamageEffect()

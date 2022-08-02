@@ -30,6 +30,11 @@ public class InCombatPlayerAction : MonoBehaviour
         public Button shootButton;
     }
 
+    public StateMachine<InCombatPlayerAction> stateMachine;
+    public FiniteState<InCombatPlayerAction> state;
+    [SerializeField] string currentState;
+    public GameObject selectorBall;
+
     // Update is called once per frame
     void Update()
     {
@@ -43,11 +48,31 @@ public class InCombatPlayerAction : MonoBehaviour
                 actionPanel.actionPointsText.text =
                     "AP: " + selectedCharacter.stats.actionPointsCurrent.ToString();
             }
+
+            if (selectedCharacter.targetCharacter != null)
+            {
+                selectorBall.SetActive(true);
+                selectorBall.transform.position = selectedCharacter.targetCharacter.transform.position + Vector3.up * 2;
+            }
+            else
+            {
+                selectorBall.transform.position = Vector3.zero;
+                selectorBall.SetActive(false);
+            }
         }
         else
         {
             actionPanel.panel.SetActive(false);
         }
+
+        if (stateMachine != null)
+        {
+            stateMachine.Update();
+            state = stateMachine.GetCurrentState();
+            currentState = state.ToString();
+        }
+
+
     }
     
     public void SelectUnit()
@@ -66,11 +91,14 @@ public class InCombatPlayerAction : MonoBehaviour
                     targetCharacter = hit.collider.GetComponent<Character>();
 
             SelectAction(targetCharacter);
+
+            stateMachine = new StateMachine<InCombatPlayerAction>();
+            stateMachine.Configure(this, new SelectedStates.Idle(stateMachine));
         }
 
 
+        
         /*
-
         if (clickAction == ClickAction.select)
             SelectAction(targetCharacter);
         else if (clickAction == ClickAction.target)
@@ -88,8 +116,8 @@ public class InCombatPlayerAction : MonoBehaviour
                 clickContext = "";
             }
         }
-
         */
+        
     }
 
     public void MoveCharacter()
@@ -97,7 +125,7 @@ public class InCombatPlayerAction : MonoBehaviour
         // Orders target to move on right-click
         if (selectedCharacter)
         {
-            if (selectedCharacter.state.GetType() == typeof(SelectedStates.ChoosingMoveDestination))
+            if (state.GetType() == typeof(SelectedStates.ChoosingMoveDestination))
             {
                 RaycastHit hit;
                 Ray ray;
@@ -155,7 +183,8 @@ public class InCombatPlayerAction : MonoBehaviour
 
         if (selectedCharacter && targetTile)
         {
-            if (selectedCharacter.state.GetType() == typeof(SelectedStates.ChoosingMoveDestination))
+            //f (selectedCharacter.state.GetType() == typeof(SelectedStates.ChoosingMoveDestination))
+            if(state.GetType() == typeof(SelectedStates.ChoosingMoveDestination))
             {
                 if (selectedCharacter.currentTile)
                 {
@@ -175,7 +204,7 @@ public class InCombatPlayerAction : MonoBehaviour
         }
     }
 
-    void PathPreviewClear()
+    public void PathPreviewClear()
     {
         // Clears currently displayed path preview
         
@@ -186,13 +215,17 @@ public class InCombatPlayerAction : MonoBehaviour
 
     public void SetState_ChooseMoveDestination()
     {
-        selectedCharacter.stateMachine.ChangeState(new SelectedStates.ChoosingMoveDestination(selectedCharacter.stateMachine));
+        //selectedCharacter.stateMachine.ChangeState(new SelectedStates.ChoosingMoveDestination//(selectedCharacter.stateMachine));
 
-        PathPreviewClear();
+        stateMachine.ChangeState(new SelectedStates.ChoosingMoveDestination(stateMachine));
+
+        //PathPreviewClear();
     }
 
     public void SetState_ChooseShootTarget()
     {
-        selectedCharacter.stateMachine.ChangeState(new SelectedStates.ChoosingShootTarget(selectedCharacter.stateMachine));
+        //selectedCharacter.stateMachine.ChangeState(new SelectedStates.ChoosingShootTarget//(selectedCharacter.stateMachine));
+
+        stateMachine.ChangeState(new SelectedStates.ChoosingShootTarget(stateMachine));
     }
 }
