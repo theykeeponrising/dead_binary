@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using System.Collections;
 using UnityEngine.UI;
 using TMPro;
@@ -6,25 +7,42 @@ using TMPro;
 //Menu for exiting the game, may obtain additional functionality later
 public class StatusMenuState : GameState
 {
+    PlayerInput playerInput;
     bool shouldQuit = true;
     public GameObject yesPanel;
     public GameObject noPanel;
+
+    void Awake()
+    {
+        playerInput = new PlayerInput();
+    }
 
     public void Start() 
     {
         gameObject.GetComponent<CanvasGroup>().alpha = 0;
     }
 
+    void OnEnable()
+    {
+        playerInput.Enable();
+    }
+
+    void OnDisable()
+    {
+        playerInput.Disable();
+    }
+
     public override bool HandleKeyPress()
     {
         bool keyPressed = false;
-        if (Input.GetAxis("Cancel") > 0)
+
+        if (playerInput.Controls.InputCancel.triggered || playerInput.Controls.InputMenu.triggered)
         {
             stateHandler.TransitionState(StateHandler.State.CombatState);
             keyPressed = true;
         }
 
-        if (Input.GetAxis("Horizontal") != 0)
+        if (playerInput.Controls.InputJoystick.ReadValue<Vector2>().x != 0)
         {
             shouldQuit = !shouldQuit;
             int alpha = 0;
@@ -34,10 +52,11 @@ public class StatusMenuState : GameState
             keyPressed = true;
         }
 
-        if (Input.GetAxis("Submit") > 0)
+        if (playerInput.Controls.InputSubmit.triggered)
         {
             Debug.Log(shouldQuit);
-            if (shouldQuit) {
+            if (shouldQuit)
+            {
                 UnityEditor.EditorApplication.isPlaying = false;
                 Application.Quit();
             }

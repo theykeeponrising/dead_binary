@@ -49,6 +49,8 @@ public class StateHandler: MonoBehaviour
         State old_state = this.activeState;
         this.GetStateObject(old_state).SetStateInactive();
         this.GetStateObject(state).SetStateActive();
+        this.GetStateObject(old_state).enabled = false;
+        this.GetStateObject(state).enabled = true;
         StartCoroutine(this.GetStateObject(state).WaitKeyPress());
         this.activeState = state;
         return old_state;

@@ -2,18 +2,34 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 
 public class InCombatPlayerAction : MonoBehaviour 
 {
     // Used to manage user inputs
-
+    PlayerInput playerInput;
     public Character selectedCharacter;
     public List<Tile> previewPath = new List<Tile>();
     public Tile targetTile;
     public enum ClickAction { select, target }
     public ClickAction clickAction;
     public string clickContext;
+
+    private void Awake()
+    {
+        playerInput = new PlayerInput();
+    }
+
+    void OnEnable()
+    {
+        playerInput.Enable();
+    }
+
+    void OnDisable()
+    {
+        playerInput.Disable();
+    }
 
     // Update is called once per frame
     void Update()
@@ -27,7 +43,7 @@ public class InCombatPlayerAction : MonoBehaviour
         // If unit is selected, send action to the unit along with context (such as attack target)
         RaycastHit hit;
         Ray ray;
-        ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        ray = Camera.main.ScreenPointToRay(playerInput.Controls.InputPosition.ReadValue<Vector2>());
         Character targetCharacter = null;
         int layerMask = (1 << LayerMask.NameToLayer("TileMap"));
 
@@ -63,7 +79,7 @@ public class InCombatPlayerAction : MonoBehaviour
         {
             RaycastHit hit;
             Ray ray;
-            ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            ray = Camera.main.ScreenPointToRay(playerInput.Controls.InputPosition.ReadValue<Vector2>());
 
             if (Physics.Raycast(ray, out hit))
             {
@@ -101,11 +117,11 @@ public class InCombatPlayerAction : MonoBehaviour
         }
     }
 
-    public bool Keypress(KeyCode keycode) 
+    public bool Keypress(PlayerInput.ControlsActions controls, InputAction action) 
     {
         bool keyPress = false;
         if (selectedCharacter) {
-            keyPress = selectedCharacter.KeyPress(keycode);
+            keyPress = selectedCharacter.KeyPress(controls, action);
         }
         return keyPress;
     }

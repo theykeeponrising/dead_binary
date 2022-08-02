@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEditor;
 
-public class Character : MonoBehaviour
+public class Character : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     // Main script for Player-Controlled characters
 
@@ -156,58 +158,46 @@ public class Character : MonoBehaviour
         Movement();
     }
 
-    public bool KeyPress(KeyCode keycode)
+    public bool KeyPress(PlayerInput.ControlsActions controls, InputAction action)
     {
-        // TEMP WEAPON SPAWN TEST -- NO LONGER NEEDED
-        //if (keycode == KeyCode.Z) 
-        //    StartCoroutine(EquipWeapon(assetManager.weapon.ar));
-        //else if (keycode == KeyCode.X)
-        //    StartCoroutine(EquipWeapon(assetManager.weapon.pistol));
-
         // Clear any existing targeting
         CancelTarget();
-        if (keycode == KeyCode.C)
+
+        // ACTION BUTTON 1 -- Shoot
+        if (action == controls.ActionButton_1 && equippedWeapon)
         {
-            StartCoroutine(EquipWeapon(storedWeapon));
-            return true;
+            if (equippedWeapon && availableActions.Contains(Actions.ActionsList.SHOOT))
+            {
+                GetTarget("attack");
+                return true;
+            }
         }
-        else if (keycode == KeyCode.V) // Temp testing hotkey to be removed in the future
-        {
-            ToggleCrouch();
-            return true;
-        }    
-        else if (keycode == KeyCode.T) // Temp testing hotkey to be removed in the future
-        {
-            ToggleCombat();
-            return true;
-        }
-        else if (keycode == KeyCode.Z) // Temp testing hotkey to be removed in the future
-        {
-            RefreshActionPoints();
-            return true;
-        }
-        else if (keycode == KeyCode.Q) // Temp testing hotkey to be removed in the future
-        {
-            Death(-transform.forward * 20f);
-            return true;
-        }
-        else if (keycode == KeyCode.R && equippedWeapon)
+
+        // ACTION BUTTON 2 -- Reload
+        else if (action == controls.ActionButton_2 && equippedWeapon)
         {
             ProcessAction(Actions.action_reload);
             return true;
         }
-        else if (keycode == KeyCode.F)
+
+        // ACTION BUTTON 3 -- Swap Gun (Temporary)
+        else if (action == controls.ActionButton_3)
         {
-            if (equippedWeapon && availableActions.Contains(Actions.ActionsList.SHOOT))
-            {
-                    GetTarget("attack");
-                    return true;
-            }
+            StartCoroutine(EquipWeapon(storedWeapon));
+            return true;
         }
+
+        // ACTION BUTTON 4 -- Refresh AP (Temporary)
+        else if (action == controls.ActionButton_4)
+        {
+            RefreshActionPoints();
+            return true;
+        }
+
         return false;
     }
 
-    private void OnMouseOver()
+    void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
     {
         // Highlights unit on mouse over
         if (playerAction.selectedCharacter != this)
@@ -217,7 +207,7 @@ public class Character : MonoBehaviour
         }
     }
 
-    private void OnMouseExit()
+    void IPointerExitHandler.OnPointerExit(PointerEventData eventData)
     {
         // Clears unit highlight on mouse leave
         if (playerAction.selectedCharacter != this)
