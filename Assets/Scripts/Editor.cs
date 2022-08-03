@@ -30,8 +30,8 @@ public class TileCustom : Editor
 				AssetManager assetManager = GameObject.FindGameObjectWithTag("GlobalManager").GetComponent<AssetManager>();
 				script.cover = Instantiate(assetManager.cover.halfWall);
 				script.cover.transform.parent = script.transform;
-				script.cover.transform.localPosition = new Vector3(0f, 0.425f, 4f);
-				script.cover.transform.localScale = new Vector3(10f, 0.85f, 2f);
+				script.cover.transform.localPosition = new Vector3(0f, 0.425f, -1f);
+				script.cover.transform.localScale = new Vector3(2f, 0.85f, 0.5f);
 				EditorUtility.SetDirty(script);
 			}
 		}

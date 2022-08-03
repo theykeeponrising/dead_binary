@@ -119,4 +119,12 @@ public class Weapon : MonoBehaviour
         
         audioSource.PlayOneShot(reloadSound);
     }
+
+    public void DropGun()
+    {
+        // Detaches gun from Character and adds physics
+
+        transform.parent = null;
+        gameObject.AddComponent<Rigidbody>();
+    }
 }

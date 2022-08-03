@@ -561,8 +561,9 @@ public class Character : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
     IEnumerator ShootWeapon()
     {
-        // Placeholder function
-        // Test shoot animation when button pressed
+        // Inflict damage on target character
+        if (targetCharacter)
+            targetCharacter.TakeDamage(this, equippedWeapon.stats.damage);
 
         AddFlag("shooting");
         animator.Play("Shoot", equippedWeapon.weaponLayer);
@@ -575,15 +576,14 @@ public class Character : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             yield return new WaitForSeconds(0.01f);
         }
 
-        // Inflict damage on target character
-        if (targetCharacter)
-            targetCharacter.TakeDamage(this, equippedWeapon.stats.damage);
-
         // Add a small delay before character exits shooting stance
         yield return new WaitForSeconds(1.0f);
 
         // Remove shooting flag
         RemoveFlag("shooting");
+
+        // If target is dodging, remove flag
+        targetCharacter.RemoveFlag("dodging");
     }
 
     bool AnimatorIsPlaying()
@@ -716,38 +716,78 @@ public class Character : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         }
     }
 
+    bool RollForHit(Character attacker)
+    {
+        // Dodge change for character vs. attacker's aim
+
+        // Dice roll performed
+        float baseChance;
+        int randomChance = Random.Range(1, 100);
+
+        // Calculate chance to be hit
+        if (currentCover)
+            baseChance = attacker.stats.aim * 20 * ((GlobalManager.globalHit - currentCover.CoverBonus() - stats.dodge) / 100);
+        else
+            baseChance = attacker.stats.aim * 20 * ((GlobalManager.globalHit - stats.dodge) / 100);
+
+        // FOR TESTING PURPOSES ONLY -- REMOVE WHEN FINISHED
+        Debug.Log(string.Format("Base chance to hit: {0}%, Dice roll: {1}", baseChance, randomChance));
+
+        // Return true/false if hit connected
+        return (baseChance >= randomChance);
+    }
+
     void TakeDamage(Character attacker, int damage)
     {
         // Called by an attacking source when taking damage
         // TO DO: More complex damage reduction will be added here
 
+        // If attacked missed, do not take damage
+        if (!RollForHit(attacker))
+        {
+            Debug.Log(string.Format("{0} missed target {1}!", attacker.attributes.name, attributes.name));
+            AddFlag("dodging");
+            return;
+        }
+
+        // Inflict damage on character
         Debug.Log(string.Format("{0} has attacked {1} for {2} damage!", attacker.attributes.name, attributes.name, damage)); // This will eventually be shown visually instead of told
         Vector3 direction =  (transform.position - attacker.transform.position);
         stats.healthCurrent -= damage;
 
+        // Character death
         if (stats.healthCurrent <= 0)
         {
-            Death(direction);
+            StartCoroutine(Death(attacker, direction));
             Debug.DrawRay(transform.position, direction, Color.red, 20, true); // For debug purposes
         }
     }
 
     public void TakeDamageEffect()
     {
-        // Effect shown when character is hit
+        if (flags.Contains("dodging"))
+        {
+            // TO DO -- Play dodging animation instead
+            return;
+        }
 
+        // Effect shown when character is hit
         if (animator.GetCurrentAnimatorStateInfo(equippedWeapon.weaponLayer).IsName("Damage2"))
             animator.Play("Damage3", equippedWeapon.weaponLayer, .1f);
         else
             animator.Play("Damage2", equippedWeapon.weaponLayer);
     }
 
-    void Death(Vector3 attackDirection, float impactForce = 2f)
+    IEnumerator Death(Character attacker, Vector3 attackDirection, float impactForce = 2f)
     {
+        // Wait for attacker animation to complete
+        while (attacker.AnimatorIsPlaying())
+            yield return new WaitForSeconds(0.01f);
+
         // Disable top collider
         GetComponent<CapsuleCollider>().enabled = false;
 
-        // Disable animator and general rigidbody
+        // Disable animator and top rigidbody
         animator.enabled = false;
         Destroy(ragdoll[0]);
         
@@ -770,6 +810,9 @@ public class Character : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         // Remove character as a obstacle on the map
         currentTile.occupant = null;
         this.enabled = false;
+
+        if (equippedWeapon)
+            equippedWeapon.DropGun();
 
         // TO DO -- DISABLE ENEMY AI
         // TO DO -- DROP WEAPON

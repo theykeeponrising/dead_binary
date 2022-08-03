@@ -16,4 +16,15 @@ public class Cover : MonoBehaviour
         
         standPoint = GetComponentInChildren<StandPoint>().transform.position;
     }
+
+    public int CoverBonus()
+    {
+        // Returns dodge chance percent bonus provided by cover
+
+        if (coverSize == CoverSize.half)
+            return 15;
+        else if (coverSize == CoverSize.full)
+            return 30;
+        return 0;
+    }
 }
