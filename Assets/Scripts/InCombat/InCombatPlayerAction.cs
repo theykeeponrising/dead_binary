@@ -142,12 +142,18 @@ public class InCombatPlayerAction : MonoBehaviour
             if (selectedCharacter.currentTile)
             {
                 PathPreviewClear();
-                previewPath = selectedCharacter.currentTile.FindCost(targetTile);
+                previewPath = selectedCharacter.currentTile.FindCost(targetTile, selectedCharacter.stats.movement);
+
+                // If target tile has an object on it, can't move there
+                if (targetTile.occupant) previewPath = null;
+
                 if (previewPath != null)
+                {
                     previewPath.Add(selectedCharacter.currentTile);
-                if (previewPath != null)
-                    foreach (Tile tile in previewPath)
-                        tile.Highlighted(true, "preview");
+                    if (previewPath.Count > 1)
+                        foreach (Tile tile in previewPath)
+                            tile.Highlighted(true, "preview");
+                }       
             }
         }
         else if (previewPath != null)

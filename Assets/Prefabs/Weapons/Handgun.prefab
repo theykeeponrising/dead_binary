@@ -219,10 +219,11 @@ MonoBehaviour:
   offset: {x: 0, y: 0, z: 0}
   stats:
     damage: 3
-    range: 3
+    range: 5
     ammoMax: 3
     ammoCurrent: 0
     reloadSpeed: 0
+    accuracyModifier: 1.1
 --- !u!1 &6729600718463147584
 GameObject:
   m_ObjectHideFlags: 0

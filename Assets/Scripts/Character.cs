@@ -376,9 +376,17 @@ public class Character : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         {
             if (CheckTileMove(newTile))
             {
-                movePath = currentTile.FindCost(newTile);
-                StartCoroutine(MoveToPath());
-                stats.actionPointsCurrent -= currentAction.cost;
+                // If tile is occupied, we can't move there
+                if (newTile.occupant)
+                    movePath = null;
+                else movePath = currentTile.FindCost(newTile, stats.movement);
+                
+                if (movePath.Count > 0)
+                {
+                    StartCoroutine(MoveToPath());
+                    stats.actionPointsCurrent -= currentAction.cost;
+                }
+                
             }
         }
     }
@@ -443,7 +451,7 @@ public class Character : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         // If destination is too far, abort move action
 
         movePath = currentTile.FindCost(newTile);
-        if (movePath == null)
+        if (movePath.Count == 0 || newTile.occupant)
         {
             Debug.Log("No move path."); // Replace this with UI eventually
             return false;
@@ -723,12 +731,13 @@ public class Character : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         // Dice roll performed
         float baseChance;
         int randomChance = Random.Range(1, 100);
+        float weaponAccuracyModifier = attacker.equippedWeapon.stats.accuracyModifier;
 
         // Calculate chance to be hit
         if (currentCover)
-            baseChance = attacker.stats.aim * 20 * ((GlobalManager.globalHit - currentCover.CoverBonus() - stats.dodge) / 100);
+            baseChance = weaponAccuracyModifier * attacker.stats.aim * 20 * ((GlobalManager.globalHit - currentCover.CoverBonus() - stats.dodge) / 100);
         else
-            baseChance = attacker.stats.aim * 20 * ((GlobalManager.globalHit - stats.dodge) / 100);
+            baseChance = weaponAccuracyModifier * attacker.stats.aim * 20 * ((GlobalManager.globalHit - stats.dodge) / 100);
 
         // FOR TESTING PURPOSES ONLY -- REMOVE WHEN FINISHED
         Debug.Log(string.Format("Base chance to hit: {0}%, Dice roll: {1}", baseChance, randomChance));
@@ -849,17 +858,25 @@ public class Character : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         if (selectedTarget)
             if (action == "attack")
             {
-                if (equippedWeapon.stats.ammoCurrent > 0)
-                {
-                    targetCharacter = selectedTarget;
-                    stats.actionPointsCurrent -= currentAction.cost;
-                    StartCoroutine(ShootWeapon());
-                    RemoveFlag("targeting");
-                }
-                else
-                {
-                    Debug.Log("Out of Ammo! Reload weapon"); // This will eventually be shown in UI
-                }
+                int weaponRange = equippedWeapon.GetRange();
+                int distanceToTarget = currentTile.FindCost(selectedTarget.currentTile, 15).Count;
+
+                //Check if target within weapon range
+                if (distanceToTarget <= weaponRange && distanceToTarget > 0)
+                    {
+                    if (equippedWeapon.stats.ammoCurrent > 0)
+                    {
+                        targetCharacter = selectedTarget;
+                        stats.actionPointsCurrent -= currentAction.cost;
+                        StartCoroutine(ShootWeapon());
+                        RemoveFlag("targeting");
+                    }
+                    else
+                    {
+                        Debug.Log("Out of Ammo! Reload weapon"); // This will eventually be shown in UI
+                    }
+                } 
+                else Debug.Log(string.Format("Target is out of range! \nDistance: {0}, Weapon Range: {1}", distanceToTarget, weaponRange)); // This will eventually be shown visually instead of told
             }
     }
 
