@@ -1967,7 +1967,7 @@ MonoBehaviour:
     healthCurrent: 10
     healthMax: 10
     movement: 5
-    aim: 10
+    aim: 4
     armor: 0
     dodge: 10
     actionPointsCurrent: 0
