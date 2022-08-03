@@ -5,18 +5,20 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.InputSystem;
 
 
-public class InCombatPlayerAction : MonoBehaviour 
+public class InCombatPlayerAction : MonoBehaviour
 {
     // Used to manage user inputs
-
+    public PlayerInput playerInput;
     public Character selectedCharacter;
     public List<Tile> previewPath = new List<Tile>();
     public Tile targetTile;
     public enum ClickAction { select, target }
     public ClickAction clickAction;
     public string clickContext;
+
 
     public LayerMask uiLayermask;
     [SerializeField]
@@ -34,6 +36,28 @@ public class InCombatPlayerAction : MonoBehaviour
     public FiniteState<InCombatPlayerAction> state;
     [SerializeField] string currentState;
     public GameObject selectorBall;
+
+    private void Awake()
+    {
+        playerInput = new PlayerInput();
+        playerInput.Controls.InputPrimary.performed += _ => SelectUnit();
+        playerInput.Controls.InputSecondary.performed += _ => MoveCharacter();
+        //playerInput.Controls.AnyKey.performed += _ => KeyPress(playerInput.Controls.AnyKey); // For if we want any "PRESS ANY KEY" moments
+        playerInput.Controls.ActionButton_1.performed += _ => KeyPress(playerInput.Controls, playerInput.Controls.ActionButton_1);
+        playerInput.Controls.ActionButton_2.performed += _ => KeyPress(playerInput.Controls, playerInput.Controls.ActionButton_2);
+        playerInput.Controls.ActionButton_3.performed += _ => KeyPress(playerInput.Controls, playerInput.Controls.ActionButton_3);
+        playerInput.Controls.ActionButton_4.performed += _ => KeyPress(playerInput.Controls, playerInput.Controls.ActionButton_4);
+    }
+
+    public void EnablePlayerInput()
+    {
+        playerInput.Enable();
+    }
+
+    public void DisablePlayerInput()
+    {
+        playerInput.Disable();
+    }
 
     // Update is called once per frame
     void Update()
@@ -62,7 +86,7 @@ public class InCombatPlayerAction : MonoBehaviour
         }
         else
         {
-            actionPanel.panel.SetActive(false);
+            //actionPanel.panel.SetActive(false);
         }
 
         if (stateMachine != null)
@@ -74,30 +98,32 @@ public class InCombatPlayerAction : MonoBehaviour
 
 
     }
-    
+
     public void SelectUnit()
     {
         // Default context - select a unit, or deselect if none targeted
         // If unit is selected, send action to the unit along with context (such as attack target)
         RaycastHit hit;
         Ray ray;
-        ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        ray = Camera.main.ScreenPointToRay(playerInput.Controls.InputPosition.ReadValue<Vector2>());
         Character targetCharacter = null;
+        int layerMask = (1 << LayerMask.NameToLayer("TileMap"));
 
-        if (!EventSystem.current.IsPointerOverGameObject())
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, ~layerMask))
         {
-            if (Physics.Raycast(ray, out hit))
-                if (hit.collider.GetComponent<Character>())
-                    targetCharacter = hit.collider.GetComponent<Character>();
-
-            SelectAction(targetCharacter);
-
-            stateMachine = new StateMachine<InCombatPlayerAction>();
-            stateMachine.Configure(this, new SelectedStates.Idle(stateMachine));
+            if (hit.collider.GetComponent<Character>())
+                targetCharacter = hit.collider.GetComponent<Character>();
         }
 
+        SelectAction(targetCharacter);
 
-        
+        stateMachine = new StateMachine<InCombatPlayerAction>();
+        stateMachine.Configure(this, new SelectedStates.Idle(stateMachine));
+
+
+
+
+
         /*
         if (clickAction == ClickAction.select)
             SelectAction(targetCharacter);
@@ -117,8 +143,9 @@ public class InCombatPlayerAction : MonoBehaviour
             }
         }
         */
-        
+
     }
+    
 
     public void MoveCharacter()
     {
@@ -168,11 +195,11 @@ public class InCombatPlayerAction : MonoBehaviour
         }
     }
 
-    public bool Keypress(KeyCode keycode) 
+    public bool KeyPress(PlayerInput.ControlsActions controls, InputAction action) 
     {
         bool keyPress = false;
         if (selectedCharacter) {
-            keyPress = selectedCharacter.KeyPress(keycode);
+            keyPress = selectedCharacter.KeyPress(controls, action);
         }
         return keyPress;
     }

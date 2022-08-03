@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEditor;
 
-public class Character : MonoBehaviour, IFaction
+
+public class Character : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IFaction
 {
     // Main script for Player-Controlled characters
 
@@ -11,14 +14,18 @@ public class Character : MonoBehaviour, IFaction
     public List<string> flags = new List<string>();
     GameObject selectionCircle;
 
+    [Header("Pathfinding")]
     public Tile currentTile;
     public List<Tile> movePath;
     Tile moveTargetImmediate;
     Tile moveTargetDestination;
+    Cover currentCover;
+    Transform lookTarget;
 
     float velocityX = 0f;
     float velocityZ = 0f;
 
+    [Header("Equipment")]
     public Weapon equippedWeapon;
     public Weapon storedWeapon;
     public Character targetCharacter;
@@ -33,6 +40,8 @@ public class Character : MonoBehaviour, IFaction
         public RuntimeAnimatorController animatorBase;
         public RuntimeAnimatorController animatorOverride;
     }
+
+    [Header("Animation")]
     public Animators animators;
     Animator animator;
 
@@ -42,30 +51,31 @@ public class Character : MonoBehaviour, IFaction
     {
         public Transform handLeft;
         public Transform handRight;
-        public Transform chestArmor;
-        public Transform headArmor;
-        public Transform shoulderArmor;
-        public Transform armArmor;
-        public Transform handArmor;
-        public Transform legArmor;
-        public Transform shinArmor;
-        public Transform footArmor;
-        public Transform maskArmor;
+        public Transform chest;
+        public Transform head;
+        public Transform shoulder;
+        public Transform arm;
+        public Transform hand;
+        public Transform leg;
+        public Transform shin;
+        public Transform foot;
+        public Transform mask;
     }
     //[HideInInspector]
     public Body body = new Body();
+    Rigidbody[] ragdoll;
 
     [System.Serializable]
     public class Attributes
     {
         public string name;
     }
-    public Attributes attributes;
 
     [System.Serializable]
     public class Stats
     {
-        public int health;
+        public int healthCurrent;
+        public int healthMax;
         public int movement;
         public float aim;
         public int armor;
@@ -73,7 +83,9 @@ public class Character : MonoBehaviour, IFaction
         public int actionPointsCurrent;
         public int actionPointsMax;
     }
+    [Header("Character Info")]
     public Stats stats;
+    public Attributes attributes;
     public List<Actions.ActionsList> availableActions;
     public Actions.Action currentAction;
 
@@ -91,6 +103,7 @@ public class Character : MonoBehaviour, IFaction
     {
         assetManager = GameObject.FindGameObjectWithTag("GlobalManager").GetComponent<AssetManager>();
         playerAction = GameObject.FindGameObjectWithTag("Player").GetComponent<InCombatPlayerAction>();
+        ragdoll = GetComponentsInChildren<Rigidbody>();
 
         animator = GetComponent<Animator>();
         animators.animatorBase = animator.runtimeAnimatorController;
@@ -104,8 +117,8 @@ public class Character : MonoBehaviour, IFaction
         {
             //if (part.bodyPart == CharacterPart.BodyPart.head)
             //    body.headArmor = part.transform;
-            //if (part.bodyPart == CharacterPart.BodyPart.chest)
-            //    body.chestArmor = part.transform;
+            if (part.bodyPart == CharacterPart.BodyPart.chest)
+                body.chest = part.transform;
             //if (part.bodyPart == CharacterPart.BodyPart.shoulders)
             //    body.shoulderArmor = part.transform;
             //if (part.bodyPart == CharacterPart.BodyPart.arms)
@@ -126,7 +139,8 @@ public class Character : MonoBehaviour, IFaction
             //    body.handLeft = part.transform;
         }
 
-        // Characters start with all action points
+        // Characters start with full health and action points
+        stats.healthCurrent = stats.healthMax;
         stats.actionPointsCurrent = stats.actionPointsMax;
         
         // Init starting weapons
@@ -164,53 +178,46 @@ public class Character : MonoBehaviour, IFaction
             CurrentState = "None";
     }
 
-    public bool KeyPress(KeyCode keycode)
+    public bool KeyPress(PlayerInput.ControlsActions controls, InputAction action)
     {
-        // TEMP WEAPON SPAWN TEST -- NO LONGER NEEDED
-        //if (keycode == KeyCode.Z) 
-        //    StartCoroutine(EquipWeapon(assetManager.weapon.ar));
-        //else if (keycode == KeyCode.X)
-        //    StartCoroutine(EquipWeapon(assetManager.weapon.pistol));
-
         // Clear any existing targeting
         CancelTarget();
-        if (keycode == KeyCode.C)
+
+        // ACTION BUTTON 1 -- Shoot
+        if (action == controls.ActionButton_1 && equippedWeapon)
+        {
+            if (equippedWeapon && availableActions.Contains(Actions.ActionsList.SHOOT))
+            {
+                GetTarget("attack");
+                return true;
+            }
+        }
+
+        // ACTION BUTTON 2 -- Reload
+        else if (action == controls.ActionButton_2 && equippedWeapon)
+        {
+            ProcessAction(Actions.action_reload);
+            return true;
+        }
+
+        // ACTION BUTTON 3 -- Swap Gun (Temporary)
+        else if (action == controls.ActionButton_3)
         {
             StartCoroutine(EquipWeapon(storedWeapon));
             return true;
         }
-        else if (keycode == KeyCode.V) // Temp testing hotkey to be removed in the future
-        {
-            ToggleCrouch();
-            return true;
-        }    
-        else if (keycode == KeyCode.T) // Temp testing hotkey to be removed in the future
-        {
-            ToggleCombat();
-            return true;
-        }
-        else if (keycode == KeyCode.Z) // Temp testing hotkey to be removed in the future
+
+        // ACTION BUTTON 4 -- Refresh AP (Temporary)
+        else if (action == controls.ActionButton_4)
         {
             RefreshActionPoints();
             return true;
         }
-        else if (keycode == KeyCode.R && equippedWeapon)
-        {
-            StartCoroutine(ReloadWeapon());
-            return true;
-        }
-        else if (keycode == KeyCode.F)
-        {
-            if (equippedWeapon && availableActions.Contains(Actions.ActionsList.SHOOT))
-            {
-                    GetTarget("attack");
-                    return true;
-            }
-        }
+
         return false;
     }
 
-    private void OnMouseOver()
+    void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
     {
         // Highlights unit on mouse over
         if (playerAction.selectedCharacter != this)
@@ -220,7 +227,7 @@ public class Character : MonoBehaviour, IFaction
         }
     }
 
-    private void OnMouseExit()
+    void IPointerExitHandler.OnPointerExit(PointerEventData eventData)
     {
         // Clears unit highlight on mouse leave
         if (playerAction.selectedCharacter != this)
@@ -257,6 +264,15 @@ public class Character : MonoBehaviour, IFaction
 
     public void ProcessAction(Actions.Action actionToPerform, Tile contextTile=null, List<Tile> contextPath=null, Character contextCharacter=null, string contextString=null)
     {
+        // Determine if action can be performed, and perform action if so
+
+        // Check if action is in allowed list of actions for character
+        if (!availableActions.Contains(actionToPerform.name))
+        {
+            Debug.Log("Invalid action");
+            return;
+        }    
+
         int actionCost = actionToPerform.cost;
         if (actionCost > stats.actionPointsCurrent)
         {
@@ -273,6 +289,9 @@ public class Character : MonoBehaviour, IFaction
                 case "shoot":
                     ShootAction(contextCharacter, contextString);
                     break;
+                case "reload":
+                    ReloadAction();
+                    break;
             }
         }
     }
@@ -282,7 +301,6 @@ public class Character : MonoBehaviour, IFaction
         // Changes animation based on flags
         if (flags.Contains("moving"))
         {
-            animator.SetBool("moving", true);
             animator.SetFloat("velocityX", velocityX / GlobalManager.gameSpeed);
             animator.SetFloat("velocityZ", velocityZ / GlobalManager.gameSpeed);
         }
@@ -336,6 +354,23 @@ public class Character : MonoBehaviour, IFaction
                 transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, 10 * Time.deltaTime);
             }
         }
+
+        // Gradually rotate character to face towards look target
+        else if (lookTarget)
+        {
+            Quaternion toRotation = Quaternion.LookRotation(lookTarget.position);
+            toRotation.x = transform.rotation.x;
+            toRotation.z = transform.rotation.z;
+            transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, 10 * Time.deltaTime);
+        }
+
+        // Gradually rotate character to expected look direction while behind cover
+        else if (currentCover && !flags.Contains("targeting") && !flags.Contains("shooting"))
+        {
+            Debug.DrawRay(currentCover.transform.position, currentCover.transform.forward, Color.green, 20f);
+            transform.rotation = Quaternion.Lerp(transform.rotation, currentCover.transform.rotation, 10 * Time.deltaTime);
+            ToggleCrouch(true);
+        }
     }
 
     Tile FindCurrentTile()
@@ -383,14 +418,16 @@ public class Character : MonoBehaviour, IFaction
 
         // Movement routine
         // Sets "moving" flag before and removes after
+        AddFlag("moving");
+        animator.SetBool("moving", true);
 
-        //Stand up if crouched
+        // Stand up if crouched
         if (flags.Contains("crouching"))
             ToggleCrouch();
 
-        AddFlag("moving");
         moveTargetDestination = movePath[movePath.Count - 1];
         currentTile.ChangeTileOccupant(this, false);
+        currentCover = null;
 
         // Move to each tile in the provided path
         foreach (Tile path in movePath)
@@ -423,7 +460,10 @@ public class Character : MonoBehaviour, IFaction
         // Clear movement flags
         RemoveFlag("moving");
         if (currentTile.cover && currentTile.cover.coverSize == Cover.CoverSize.half)
+        {
+            currentCover = currentTile.cover;
             ToggleCrouch();
+        }
         moveTargetImmediate = null;
         moveTargetDestination = null;
 
@@ -527,6 +567,19 @@ public class Character : MonoBehaviour, IFaction
         }
     }
 
+    void ReloadAction()
+    {
+        // Reload action handler
+
+        if (equippedWeapon.stats.ammoCurrent >= equippedWeapon.stats.ammoMax)
+        {
+            Debug.Log("Ammo is max already!"); // TO DO - Show this in UI
+            return;
+        }
+        stats.actionPointsCurrent -= currentAction.cost;
+        StartCoroutine(ReloadWeapon());
+    }
+
     IEnumerator ReloadWeapon()
     {
         // Reload animation
@@ -534,7 +587,7 @@ public class Character : MonoBehaviour, IFaction
         AddFlag("reload");
         animator.Play("Reload", equippedWeapon.weaponLayer);
         equippedWeapon.Reload();
-        while (animator.IsInTransition(equippedWeapon.weaponLayer))
+        while (AnimatorIsPlaying())
             yield return new WaitForSeconds(0.01f);
         RemoveFlag("reload");
         equippedWeapon.stats.ammoCurrent = equippedWeapon.stats.ammoMax;
@@ -549,12 +602,29 @@ public class Character : MonoBehaviour, IFaction
         animator.Play("Shoot", equippedWeapon.weaponLayer);
         equippedWeapon.stats.ammoCurrent -= 1;
         transform.LookAt(targetCharacter.transform);
-        while (animator.IsInTransition(equippedWeapon.weaponLayer))
-            yield return new WaitForSeconds(0.01f);
-        RemoveFlag("shooting");
 
+        // Wait until shoot animation completes
+        while (AnimatorIsPlaying())
+        {
+            yield return new WaitForSeconds(0.01f);
+        }
+
+        // Inflict damage on target character
         if (targetCharacter)
             targetCharacter.TakeDamage(this, equippedWeapon.stats.damage);
+
+        // Add a small delay before character exits shooting stance
+        yield return new WaitForSeconds(1.0f);
+
+        // Remove shooting flag
+        RemoveFlag("shooting");
+    }
+
+    bool AnimatorIsPlaying()
+    {
+        // True/False whether an animation is currently playing on the equipped weapon layer.
+
+        return animator.GetCurrentAnimatorStateInfo(equippedWeapon.weaponLayer).length > animator.GetCurrentAnimatorStateInfo(2).normalizedTime;
     }
 
     void AnimationEvent(AnimationEventContext context)
@@ -686,9 +756,16 @@ public class Character : MonoBehaviour, IFaction
         // TO DO: More complex damage reduction will be added here
 
         Debug.Log(string.Format("{0} has attacked {1} for {2} damage!", attacker.attributes.name, attributes.name, damage)); // This will eventually be shown visually instead of told
-        stats.health -= damage;
 
         TakeDamageEffect();
+        Vector3 direction =  (transform.position - attacker.transform.position);
+        stats.healthCurrent -= damage;
+
+        if (stats.healthCurrent <= 0)
+        {
+            Death(direction);
+            Debug.DrawRay(transform.position, direction, Color.red, 20, true); // For debug purposes
+        }
     }
 
     public void TakeDamageEffect()
@@ -699,6 +776,39 @@ public class Character : MonoBehaviour, IFaction
             animator.Play("Damage3", equippedWeapon.weaponLayer, .1f);
         else
             animator.Play("Damage2", equippedWeapon.weaponLayer);
+    }
+
+    void Death(Vector3 attackDirection, float impactForce = 2f)
+    {
+        // Disable top collider
+        GetComponent<CapsuleCollider>().enabled = false;
+
+        // Disable animator and general rigidbody
+        animator.enabled = false;
+        Destroy(ragdoll[0]);
+        
+        // Enable bodypart physics for the ragdoll effect
+        foreach (Rigidbody rag in ragdoll)
+        {
+            rag.isKinematic = false;
+            rag.GetComponent<Collider>().isTrigger = false;
+        }
+
+        // Apply impact force to center of mass
+        body.chest.GetComponent<Rigidbody>().AddForce(attackDirection * impactForce, ForceMode.Impulse);
+        gameObject.layer = LayerMask.NameToLayer("Ignore Raycast"); // TO DO -- Layer specifically for dead characters??
+
+        // Remove player selection
+        if (playerAction.selectedCharacter == this)
+            playerAction.selectedCharacter = null;
+        SelectUnit(false);
+
+        // Remove character as a obstacle on the map
+        currentTile.occupant = null;
+        this.enabled = false;
+
+        // TO DO -- DISABLE ENEMY AI
+        // TO DO -- DROP WEAPON
     }
 
     void GetTarget(string action)

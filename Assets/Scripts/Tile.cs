@@ -1,10 +1,10 @@
 using System;
 using System.Collections;
-using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class Tile : MonoBehaviour
+public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     // Main script for Tile behavior, such as pathing and cover objects
 
@@ -24,7 +24,8 @@ public class Tile : MonoBehaviour
     void Start()
     {
         playerAction = GameObject.FindGameObjectWithTag("Player").GetComponent<InCombatPlayerAction>();
-        tileGlow = GetComponent<Renderer>().materials[1];
+        Renderer renderer = this.gameObject.GetComponentInChildren(typeof(Renderer)) as Renderer;
+        tileGlow = renderer.materials[1];
         tileColor = tileGlow.color;
         boxColliders = gameObject.GetComponents<BoxCollider>();
         cover = GetComponentInChildren<Cover>();
@@ -35,21 +36,14 @@ public class Tile : MonoBehaviour
         FindNeighbours();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
-    private void OnMouseOver()
+    void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
     {
         // Updates targeted tile on mouse over
         playerAction.targetTile = this;
         Highlighted(true, "preview");
     }
 
-
-    private void OnMouseExit()
+    void IPointerExitHandler.OnPointerExit(PointerEventData eventData)
     {
         // Clears targeted tile on mouse leave if currently target
         if (playerAction.targetTile == this)
@@ -88,8 +82,11 @@ public class Tile : MonoBehaviour
         foreach (Tile tile in tiles)
             if (tile.gameObject.GetInstanceID() != gameObject.GetInstanceID())
                 foreach (BoxCollider boxCollider in boxColliders)
-                    if (boxCollider.bounds.Intersects(tile.gameObject.GetComponent<MeshCollider>().bounds))
+                {
+                    MeshCollider meshCollider = tile.gameObject.GetComponentInChildren(typeof(MeshCollider)) as MeshCollider;
+                    if (boxCollider.bounds.Intersects(meshCollider.bounds))
                         neighbours.Add(tile);
+                }
     }
 
     Tile GetNeighbor(bool north = false, bool south = false, bool east = false, bool west = false)
@@ -206,8 +203,8 @@ public class Tile : MonoBehaviour
     public bool CheckIfTileOccupant(Character character)
     {
         // True/False if tile is currently occupied by a character
-        
-        foreach(BoxCollider collider in GetComponents<BoxCollider>())
+
+        foreach (BoxCollider collider in GetComponents<BoxCollider>())
         {
             if (character.GetComponent<CapsuleCollider>().bounds.Intersects(collider.bounds))
                 return true;
