@@ -101,14 +101,10 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         return null;
     }
 
-    public List<Tile> FindCost(Tile findTile)
+    public List<Tile> FindCost(Tile findTile, int maxDist = 10)
     {
         // Finds the nearest path to the destination tile
         // Returns path of tiles in ordered list format
-
-        // If tile is occupied, we can't move
-        if (findTile.occupant)
-            return null;
 
         // Reset path for tiles
         Tile[] tiles = FindObjectsOfType<Tile>();
@@ -117,14 +113,13 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
         // If selecting the current tile, abort move action
         if (this == findTile)
-            return null;
+            return new List<Tile>();
 
         // Prevent finding our current tile again
         nearestTile = this;
 
         // How many search iterations to perform
         int currentIteration = 1;
-        int maxIterations = 10;
 
         // Create a list to keep track of all tiles found during iteration
         List<Tile> foundTiles = new List<Tile>(neighbours);
@@ -140,17 +135,13 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         }
 
         // Begin iterating through nearby tiles
-        while (currentIteration < maxIterations)
+        while (currentIteration < maxDist)
         {
             currentIteration++;
 
-
+            List<Tile> nextTiles = new List<Tile>();
             foreach (Tile tile in new List<Tile>(foundTiles))
             {
-                // Don't use tile if its occupied
-                if (tile.occupant)
-                    continue;
-
                 // Ensures tiles only use the closest path if found by multiple tiles
                 if (tile.nearestTile == null)
                     tile.nearestTile = this;
@@ -159,18 +150,19 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                 //foreach (Tile tile2 in tile.neighbours.OrderBy(item => rnd.Next()))
                 foreach (Tile tile2 in tile.neighbours)
                 {
-                    if (tile2.occupant)
+                    if (tile2.occupant && tile2 != findTile)
                         continue;
                     if (tile2.nearestTile == null)
                         tile2.nearestTile = tile;
-                    if (!foundTiles.Contains(tile2))
-                        foundTiles.Add(tile2);
+                    if (!nextTiles.Contains(tile2))
+                        nextTiles.Add(tile2);
                     if (tile2 == findTile)
                         return FindPath(tile2);
                 }
             }
+            foundTiles = nextTiles;
         }
-        return null;
+        return new List<Tile>();
 
     }
 

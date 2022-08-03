@@ -99,6 +99,11 @@ public class Weapon : MonoBehaviour
         StartCoroutine(ShootEffect());
     }
 
+    public int GetRange()
+    {
+        return stats.range;
+    }
+
     public IEnumerator ShootEffect()
     {
         //DISPLAY GUN FLASH
