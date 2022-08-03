@@ -36,6 +36,8 @@ public class Weapon : MonoBehaviour
         public int ammoMax;
         public int ammoCurrent;
         public float reloadSpeed;
+        //Note: Not capped at 1.
+        public float accuracyModifier;
     }
     public Stats stats;
 

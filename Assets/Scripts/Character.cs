@@ -731,12 +731,13 @@ public class Character : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         // Dice roll performed
         float baseChance;
         int randomChance = Random.Range(1, 100);
+        float weaponAccuracyModifier = attacker.equippedWeapon.stats.accuracyModifier;
 
         // Calculate chance to be hit
         if (currentCover)
-            baseChance = attacker.stats.aim * 20 * ((GlobalManager.globalHit - currentCover.CoverBonus() - stats.dodge) / 100);
+            baseChance = weaponAccuracyModifier * attacker.stats.aim * 20 * ((GlobalManager.globalHit - currentCover.CoverBonus() - stats.dodge) / 100);
         else
-            baseChance = attacker.stats.aim * 20 * ((GlobalManager.globalHit - stats.dodge) / 100);
+            baseChance = weaponAccuracyModifier * attacker.stats.aim * 20 * ((GlobalManager.globalHit - stats.dodge) / 100);
 
         // FOR TESTING PURPOSES ONLY -- REMOVE WHEN FINISHED
         Debug.Log(string.Format("Base chance to hit: {0}%, Dice roll: {1}", baseChance, randomChance));
