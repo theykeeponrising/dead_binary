@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Cover : GridObject
+public class CoverObject : GridObject
 {
     // Used by parent Tile script to locate any appplicable cover objects
 

@@ -18,7 +18,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
     public List<Tile> movePath;
     Tile moveTargetImmediate;
     Tile moveTargetDestination;
-    Cover currentCover;
+    CoverObject currentCover;
     Transform lookTarget;
 
     float velocityX = 0f;
@@ -437,7 +437,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
 
         // Clear movement flags
         RemoveFlag("moving");
-        if (currentTile.cover && currentTile.cover.coverSize == Cover.CoverSize.half)
+        if (currentTile.cover && currentTile.cover.coverSize == CoverObject.CoverSize.half)
         {
             currentCover = currentTile.cover;
             ToggleCrouch();

@@ -15,11 +15,11 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     [HideInInspector]
     public Material tileGlow;
     public GridObject occupant;
-    public Cover cover;
+    public CoverObject cover;
     [HideInInspector]
     public Vector3 standPoint;
     InCombatPlayerAction playerAction;
-
+    
     // Use this for initialization
     void Start()
     {
@@ -28,12 +28,20 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         tileGlow = renderer.materials[1];
         tileColor = tileGlow.color;
         boxColliders = gameObject.GetComponents<BoxCollider>();
-        cover = GetComponentInChildren<Cover>();
-        if (cover)
-            standPoint = cover.standPoint;
-        else
-            standPoint = transform.position;
+        standPoint = transform.position;
         FindNeighbours();
+
+        if (this.occupant && this.occupant is CoverObject)
+        {
+            standPoint = ((CoverObject) occupant).standPoint;
+            foreach (Tile neighbourTile in neighbours)
+            {
+                if (!neighbourTile.occupant)
+                {
+                    neighbourTile.cover = (CoverObject) this.occupant;
+                }
+            }
+        }
     }
 
     void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
