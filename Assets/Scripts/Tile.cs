@@ -30,10 +30,15 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         boxColliders = gameObject.GetComponents<BoxCollider>();
         standPoint = transform.position;
         FindNeighbours();
+        SetNeighboursCover();
+    }
 
+    public void SetNeighboursCover()
+    {
         if (this.occupant && this.occupant is CoverObject)
         {
-            standPoint = ((CoverObject) occupant).standPoint;
+            //TODO: Set the standpoints for the neighbors
+            //standPoint = ((CoverObject) occupant).standPoint;
             foreach (Tile neighbourTile in neighbours)
             {
                 if (!neighbourTile.occupant)

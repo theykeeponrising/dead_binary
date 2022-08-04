@@ -32,6 +32,7 @@ public class TileCustom : Editor
 				script.occupant.transform.parent = script.transform;
 				script.occupant.transform.localPosition = new Vector3(0f, 0.425f, -1f);
 				script.occupant.transform.localScale = new Vector3(2f, 0.85f, 0.5f);
+				script.SetNeighboursCover();
 				EditorUtility.SetDirty(script);
 			}
 		}
