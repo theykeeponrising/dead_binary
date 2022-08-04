@@ -89,6 +89,28 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
     public Actions.Action currentAction;
 
     // Start is called before the first frame update
+    void Start()
+    {
+        // Characters start with full health and action points
+        stats.healthCurrent = stats.healthMax;
+        stats.actionPointsCurrent = stats.actionPointsMax;
+
+        // Init starting weapons
+        if (equippedWeapon)
+        {
+            equippedWeapon = Instantiate(equippedWeapon);
+            equippedWeapon.gameObject.SetActive(true);
+            equippedWeapon.DefaultPosition(this);
+            animator.SetLayerWeight(equippedWeapon.weaponLayer, 1);
+        }
+        if (storedWeapon)
+        {
+            storedWeapon = Instantiate(storedWeapon);
+            storedWeapon.gameObject.SetActive(false);
+            storedWeapon.DefaultPosition(this);
+        }
+    }
+
     protected override void Awake()
     {
         base.Awake();
@@ -128,27 +150,6 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
             body.handRight = part.transform;
             //if (part.bodyPart == CharacterPart.BodyPart.hand_left)
             //    body.handLeft = part.transform;
-        }
-
-        // Characters start with full health and action points
-        stats.healthCurrent = stats.healthMax;
-        stats.actionPointsCurrent = stats.actionPointsMax;
-        
-        // Init starting weapons
-        if (equippedWeapon)
-        {
-            if (PrefabUtility.GetCorrespondingObjectFromOriginalSource(equippedWeapon) != null)
-                equippedWeapon = Instantiate(equippedWeapon);
-            equippedWeapon.gameObject.SetActive(true);
-            equippedWeapon.DefaultPosition(this);
-            animator.SetLayerWeight(equippedWeapon.weaponLayer, 1);
-        }
-        if (storedWeapon)
-        {
-            if (PrefabUtility.GetCorrespondingObjectFromOriginalSource(storedWeapon) != null)
-                storedWeapon = Instantiate(storedWeapon);
-            storedWeapon.gameObject.SetActive(false);
-            storedWeapon.DefaultPosition(this);
         }
     }
 
@@ -491,21 +492,17 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
     IEnumerator EquipWeapon(Weapon weapon)
     {
         // Character equip or swap weapons
-        // Checks for prefab objects when equipping a new weapon
         // Previous weapon is stowed in extra slot
 
         // If character has a weapon equipped currently, stow it
         if (equippedWeapon && equippedWeapon != assetManager.weapon.noWeapon)
         {
-            storedWeapon = equippedWeapon;
-            equippedWeapon = null;
-
             // If crouching, do not play stow animation
             // This is until we can get a proper crouch-stow animation
             if (!flags.Contains("crouching"))
             {
                 AddFlag("stowing");
-                animator.Play("Stow", storedWeapon.weaponLayer);
+                animator.Play("Stow", equippedWeapon.weaponLayer);
                 while (flags.Contains("stowing"))
                     yield return new WaitForSeconds(0.01f);
             }
@@ -517,11 +514,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
         // Equipping the new weapon
         if (weapon)
         {
-            // If prefab, clone the object
-            if (PrefabUtility.GetCorrespondingObjectFromOriginalSource(weapon) != null)
-                equippedWeapon = Instantiate(weapon);
-            else
-                equippedWeapon = weapon;
+            (equippedWeapon, storedWeapon) = (weapon, equippedWeapon);
 
             // Enable weapon object, set position and animation layer
             equippedWeapon.gameObject.SetActive(true);
@@ -623,8 +616,8 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
         else if (context == AnimationEventContext.STOW)
         {
             RemoveFlag("stowing");
-            storedWeapon.gameObject.SetActive(false);
-            animator.SetLayerWeight(storedWeapon.weaponLayer, 0);
+            equippedWeapon.gameObject.SetActive(false);
+            animator.SetLayerWeight(equippedWeapon.weaponLayer, 0);
         }
 
         // Draw weapon animation is completed
