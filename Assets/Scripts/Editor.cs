@@ -25,13 +25,14 @@ public class TileCustom : Editor
 		// Creates a new cover object is none exists for tile already
 		if (GUILayout.Button("Create Cover", GUILayout.Width(120)))
 		{
-			if (!script.cover)
+			if (!script.occupant)
 			{
 				AssetManager assetManager = GameObject.FindGameObjectWithTag("GlobalManager").GetComponent<AssetManager>();
-				script.cover = Instantiate(assetManager.cover.halfWall);
-				script.cover.transform.parent = script.transform;
-				script.cover.transform.localPosition = new Vector3(0f, 0.425f, -1f);
-				script.cover.transform.localScale = new Vector3(2f, 0.85f, 0.5f);
+				script.occupant = Instantiate(assetManager.cover.halfWall);
+				script.occupant.transform.parent = script.transform;
+				script.occupant.transform.localPosition = new Vector3(0f, 0.425f, -1f);
+				script.occupant.transform.localScale = new Vector3(2f, 0.85f, 0.5f);
+				script.SetNeighboursCover();
 				EditorUtility.SetDirty(script);
 			}
 		}
@@ -39,7 +40,7 @@ public class TileCustom : Editor
 		// Rotates existing cover object for tile
 		if (GUILayout.Button("Rotate Cover", GUILayout.Width(120)))
 		{
-			if (script.cover)
+			if (script.occupant is CoverObject)
 			{
 				Transform parent = script.GetComponentInParent<Tile>().transform;
 				script.transform.RotateAround(parent.position, Vector3.up, 90);
@@ -50,10 +51,10 @@ public class TileCustom : Editor
 		// Deletes existing cover object for tile
 		if (GUILayout.Button("Remove Cover", GUILayout.Width(120)))
 		{
-			if (script.cover)
+			if (script.occupant is CoverObject)
 			{
-				DestroyImmediate(script.cover.gameObject);
-				script.cover = null;
+				DestroyImmediate(script.occupant.gameObject);
+				script.occupant = null;
 				EditorUtility.SetDirty(script);
 			}
 		}

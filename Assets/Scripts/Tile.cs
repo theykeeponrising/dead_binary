@@ -14,12 +14,12 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     Color tileColor;
     [HideInInspector]
     public Material tileGlow;
-    public Character occupant;
-    public Cover cover;
+    public GridObject occupant;
+    public CoverObject cover;
     [HideInInspector]
     public Vector3 standPoint;
     InCombatPlayerAction playerAction;
-
+    
     // Use this for initialization
     void Start()
     {
@@ -28,12 +28,25 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         tileGlow = renderer.materials[1];
         tileColor = tileGlow.color;
         boxColliders = gameObject.GetComponents<BoxCollider>();
-        cover = GetComponentInChildren<Cover>();
-        if (cover)
-            standPoint = cover.standPoint;
-        else
-            standPoint = transform.position;
+        standPoint = transform.position;
         FindNeighbours();
+        SetNeighboursCover();
+    }
+
+    public void SetNeighboursCover()
+    {
+        if (this.occupant && this.occupant is CoverObject)
+        {
+            //TODO: Set the standpoints for the neighbors
+            //standPoint = ((CoverObject) occupant).standPoint;
+            foreach (Tile neighbourTile in neighbours)
+            {
+                if (!neighbourTile.occupant)
+                {
+                    neighbourTile.cover = (CoverObject) this.occupant;
+                }
+            }
+        }
     }
 
     void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
@@ -81,12 +94,10 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
         foreach (Tile tile in tiles)
             if (tile.gameObject.GetInstanceID() != gameObject.GetInstanceID())
-                foreach (BoxCollider boxCollider in boxColliders)
-                {
-                    MeshCollider meshCollider = tile.gameObject.GetComponentInChildren(typeof(MeshCollider)) as MeshCollider;
-                    if (boxCollider.bounds.Intersects(meshCollider.bounds))
-                        neighbours.Add(tile);
-                }
+            {
+                float distance = Vector3.Distance(this.gameObject.transform.position, tile.gameObject.transform.position);
+                if (distance <= GlobalManager.tileSpacing) neighbours.Add(tile);
+            }
     }
 
     Tile GetNeighbor(bool north = false, bool south = false, bool east = false, bool west = false)
@@ -101,6 +112,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         return null;
     }
 
+    //TODO: Simplify this to just calculate distance using GlobalManager.tileSpacing and the transform.positions of the tiles
     public List<Tile> FindCost(Tile findTile, int maxDist = 10)
     {
         // Finds the nearest path to the destination tile
@@ -150,7 +162,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                 //foreach (Tile tile2 in tile.neighbours.OrderBy(item => rnd.Next()))
                 foreach (Tile tile2 in tile.neighbours)
                 {
-                    if (tile2.occupant && tile2 != findTile)
+                    if (!tile2.isTileTraversable() && tile2 != findTile)
                         continue;
                     if (tile2.nearestTile == null)
                         tile2.nearestTile = tile;
@@ -164,6 +176,11 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         }
         return new List<Tile>();
 
+    }
+
+    public bool isTileTraversable()
+    {
+        return !this.occupant || this.occupant.isTraversable;
     }
 
     private List<Tile> FindPath(Tile reverseTile)
@@ -180,26 +197,25 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         return movePath;
     }
 
-    public void ChangeTileOccupant(Character character, bool occupied = true)
+    public void ChangeTileOccupant(GridObject gridObject, bool occupied = true)
     {
         // Used to change tile occupant.
 
         if (occupied)
         {
-            occupant = character;
+            occupant = gridObject;
         }
         else
             occupant = null;
     }
 
-    public bool CheckIfTileOccupant(Character character)
+    public bool CheckIfTileOccupant(GridObject gridObject)
     {
         // True/False if tile is currently occupied by a character
-
         foreach (BoxCollider collider in GetComponents<BoxCollider>())
         {
-            if (character.GetComponent<CapsuleCollider>().bounds.Intersects(collider.bounds))
-                return true;
+            Collider gridObjColl = gridObject.GetComponent<Collider>();
+            if (gridObjColl && gridObjColl.bounds.Intersects(collider.bounds)) return true;
         }
         return false;
     }
