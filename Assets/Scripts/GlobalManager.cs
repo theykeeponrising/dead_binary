@@ -9,6 +9,9 @@ public class GlobalManager : MonoBehaviour
     static Vector3 gravity;
     public StateHandler stateHandler;
 
+    // Distance between neighboring tiles
+    public static float tileSpacing = 2.0f;
+
     // Combat related
     public static float globalHit = 85f;
 

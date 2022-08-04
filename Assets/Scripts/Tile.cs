@@ -14,7 +14,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     Color tileColor;
     [HideInInspector]
     public Material tileGlow;
-    public Character occupant;
+    public GridObject occupant;
     public Cover cover;
     [HideInInspector]
     public Vector3 standPoint;
@@ -81,12 +81,10 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
         foreach (Tile tile in tiles)
             if (tile.gameObject.GetInstanceID() != gameObject.GetInstanceID())
-                foreach (BoxCollider boxCollider in boxColliders)
-                {
-                    MeshCollider meshCollider = tile.gameObject.GetComponentInChildren(typeof(MeshCollider)) as MeshCollider;
-                    if (boxCollider.bounds.Intersects(meshCollider.bounds))
-                        neighbours.Add(tile);
-                }
+            {
+                float distance = Vector3.Distance(this.gameObject.transform.position, tile.gameObject.transform.position);
+                if (distance <= GlobalManager.tileSpacing) neighbours.Add(tile);
+            }
     }
 
     Tile GetNeighbor(bool north = false, bool south = false, bool east = false, bool west = false)
@@ -150,7 +148,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                 //foreach (Tile tile2 in tile.neighbours.OrderBy(item => rnd.Next()))
                 foreach (Tile tile2 in tile.neighbours)
                 {
-                    if (tile2.occupant && tile2 != findTile)
+                    if (!tile2.isTileTraversable() && tile2 != findTile)
                         continue;
                     if (tile2.nearestTile == null)
                         tile2.nearestTile = tile;
@@ -164,6 +162,11 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         }
         return new List<Tile>();
 
+    }
+
+    public bool isTileTraversable()
+    {
+        return !this.occupant || this.occupant.isTraversable;
     }
 
     private List<Tile> FindPath(Tile reverseTile)
@@ -180,26 +183,25 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         return movePath;
     }
 
-    public void ChangeTileOccupant(Character character, bool occupied = true)
+    public void ChangeTileOccupant(GridObject gridObject, bool occupied = true)
     {
         // Used to change tile occupant.
 
         if (occupied)
         {
-            occupant = character;
+            occupant = gridObject;
         }
         else
             occupant = null;
     }
 
-    public bool CheckIfTileOccupant(Character character)
+    public bool CheckIfTileOccupant(GridObject gridObject)
     {
         // True/False if tile is currently occupied by a character
-
         foreach (BoxCollider collider in GetComponents<BoxCollider>())
         {
-            if (character.GetComponent<CapsuleCollider>().bounds.Intersects(collider.bounds))
-                return true;
+            Collider gridObjColl = gridObject.GetComponent<Collider>();
+            if (gridObjColl && gridObjColl.bounds.Intersects(collider.bounds)) return true;
         }
         return false;
     }

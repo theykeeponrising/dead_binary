@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEditor;
 
-public class Character : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
 {
     // Main script for Player-Controlled characters
 
@@ -89,16 +89,17 @@ public class Character : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public Actions.Action currentAction;
 
     // Start is called before the first frame update
-    void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         assetManager = GameObject.FindGameObjectWithTag("GlobalManager").GetComponent<AssetManager>();
         playerAction = GameObject.FindGameObjectWithTag("Player").GetComponent<InCombatPlayerAction>();
         ragdoll = GetComponentsInChildren<Rigidbody>();
 
         animator = GetComponent<Animator>();
         animators.animatorBase = animator.runtimeAnimatorController;
-        currentTile = FindCurrentTile();
-        currentTile.ChangeTileOccupant(this, true);
+
+        if (objectTiles.Count > 0) currentTile = objectTiles[0];
         selectionCircle = transform.Find("SelectionCircle").gameObject;
 
         // Body parts for use in armor placement
@@ -403,14 +404,14 @@ public class Character : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             ToggleCrouch();
 
         moveTargetDestination = movePath[movePath.Count - 1];
-        currentTile.ChangeTileOccupant(this, false);
+        currentTile.ChangeTileOccupant((GridObject) this, false);
         currentCover = null;
 
         // Move to each tile in the provided path
         foreach (Tile path in movePath)
         {
             if (moveTargetImmediate)
-                moveTargetImmediate.ChangeTileOccupant(this, false);
+                moveTargetImmediate.ChangeTileOccupant((GridObject) this, false);
             moveTargetImmediate = path;
             //CheckForObstacle();
 
@@ -421,7 +422,7 @@ public class Character : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                 currentTile = FindCurrentTile();
                 yield return new WaitForSeconds(0.01f);
             }
-            path.ChangeTileOccupant(this, true);
+            path.ChangeTileOccupant((GridObject) this, true);
             RemoveFlag("vaulting");
         }
 
@@ -451,7 +452,7 @@ public class Character : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         // If destination is too far, abort move action
 
         movePath = currentTile.FindCost(newTile);
-        if (movePath.Count == 0 || newTile.occupant)
+        if (movePath.Count == 0 || !newTile.isTileTraversable())
         {
             Debug.Log("No move path."); // Replace this with UI eventually
             return false;
