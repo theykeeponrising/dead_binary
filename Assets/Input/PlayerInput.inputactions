@@ -60,6 +60,51 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "ActionButton_5",
+                    "type": "Button",
+                    "id": "dd59540f-de52-483a-8c62-a560df40f822",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ActionButton_6",
+                    "type": "Button",
+                    "id": "6ffd0e76-956d-4c67-89c2-65cb6b994a82",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ActionButton_7",
+                    "type": "Button",
+                    "id": "68795f4f-82ed-4a8f-b9d5-de66ac40bcce",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ActionButton_8",
+                    "type": "Button",
+                    "id": "67f528f4-1a03-484e-9288-58bd8cc23432",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ActionButton_9",
+                    "type": "Button",
+                    "id": "dcad7aa0-4732-47eb-bb2b-14ad3f68ae3f",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "AnyKey",
                     "type": "Button",
                     "id": "28d7bf34-f166-4659-adbe-1c5448857d88",
@@ -431,6 +476,61 @@
                     "processors": "",
                     "groups": "",
                     "action": "InputMenu",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "428edc30-10a1-4417-a834-941c1c3d8903",
+                    "path": "<Keyboard>/5",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ActionButton_5",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "47dc5644-dd49-4111-a956-818200fe311b",
+                    "path": "<Keyboard>/6",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ActionButton_6",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "cb164939-5036-4c9d-a73a-53c05e116fef",
+                    "path": "<Keyboard>/7",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ActionButton_7",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7076bdd2-f85b-44de-af26-a28a31dc50bd",
+                    "path": "<Keyboard>/8",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ActionButton_8",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "bd8e5894-48b2-44c8-9c3a-267ddfe1f831",
+                    "path": "<Keyboard>/9",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ActionButton_9",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

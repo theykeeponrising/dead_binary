@@ -82,6 +82,51 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""ActionButton_5"",
+                    ""type"": ""Button"",
+                    ""id"": ""dd59540f-de52-483a-8c62-a560df40f822"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ActionButton_6"",
+                    ""type"": ""Button"",
+                    ""id"": ""6ffd0e76-956d-4c67-89c2-65cb6b994a82"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ActionButton_7"",
+                    ""type"": ""Button"",
+                    ""id"": ""68795f4f-82ed-4a8f-b9d5-de66ac40bcce"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ActionButton_8"",
+                    ""type"": ""Button"",
+                    ""id"": ""67f528f4-1a03-484e-9288-58bd8cc23432"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ActionButton_9"",
+                    ""type"": ""Button"",
+                    ""id"": ""dcad7aa0-4732-47eb-bb2b-14ad3f68ae3f"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""AnyKey"",
                     ""type"": ""Button"",
                     ""id"": ""28d7bf34-f166-4659-adbe-1c5448857d88"",
@@ -455,6 +500,61 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                     ""action"": ""InputMenu"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""428edc30-10a1-4417-a834-941c1c3d8903"",
+                    ""path"": ""<Keyboard>/5"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ActionButton_5"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""47dc5644-dd49-4111-a956-818200fe311b"",
+                    ""path"": ""<Keyboard>/6"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ActionButton_6"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cb164939-5036-4c9d-a73a-53c05e116fef"",
+                    ""path"": ""<Keyboard>/7"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ActionButton_7"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7076bdd2-f85b-44de-af26-a28a31dc50bd"",
+                    ""path"": ""<Keyboard>/8"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ActionButton_8"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""bd8e5894-48b2-44c8-9c3a-267ddfe1f831"",
+                    ""path"": ""<Keyboard>/9"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ActionButton_9"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -469,6 +569,11 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         m_Controls_ActionButton_2 = m_Controls.FindAction("ActionButton_2", throwIfNotFound: true);
         m_Controls_ActionButton_3 = m_Controls.FindAction("ActionButton_3", throwIfNotFound: true);
         m_Controls_ActionButton_4 = m_Controls.FindAction("ActionButton_4", throwIfNotFound: true);
+        m_Controls_ActionButton_5 = m_Controls.FindAction("ActionButton_5", throwIfNotFound: true);
+        m_Controls_ActionButton_6 = m_Controls.FindAction("ActionButton_6", throwIfNotFound: true);
+        m_Controls_ActionButton_7 = m_Controls.FindAction("ActionButton_7", throwIfNotFound: true);
+        m_Controls_ActionButton_8 = m_Controls.FindAction("ActionButton_8", throwIfNotFound: true);
+        m_Controls_ActionButton_9 = m_Controls.FindAction("ActionButton_9", throwIfNotFound: true);
         m_Controls_AnyKey = m_Controls.FindAction("AnyKey", throwIfNotFound: true);
         m_Controls_InputCancel = m_Controls.FindAction("InputCancel", throwIfNotFound: true);
         m_Controls_InputSubmit = m_Controls.FindAction("InputSubmit", throwIfNotFound: true);
@@ -540,6 +645,11 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
     private readonly InputAction m_Controls_ActionButton_2;
     private readonly InputAction m_Controls_ActionButton_3;
     private readonly InputAction m_Controls_ActionButton_4;
+    private readonly InputAction m_Controls_ActionButton_5;
+    private readonly InputAction m_Controls_ActionButton_6;
+    private readonly InputAction m_Controls_ActionButton_7;
+    private readonly InputAction m_Controls_ActionButton_8;
+    private readonly InputAction m_Controls_ActionButton_9;
     private readonly InputAction m_Controls_AnyKey;
     private readonly InputAction m_Controls_InputCancel;
     private readonly InputAction m_Controls_InputSubmit;
@@ -556,6 +666,11 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         public InputAction @ActionButton_2 => m_Wrapper.m_Controls_ActionButton_2;
         public InputAction @ActionButton_3 => m_Wrapper.m_Controls_ActionButton_3;
         public InputAction @ActionButton_4 => m_Wrapper.m_Controls_ActionButton_4;
+        public InputAction @ActionButton_5 => m_Wrapper.m_Controls_ActionButton_5;
+        public InputAction @ActionButton_6 => m_Wrapper.m_Controls_ActionButton_6;
+        public InputAction @ActionButton_7 => m_Wrapper.m_Controls_ActionButton_7;
+        public InputAction @ActionButton_8 => m_Wrapper.m_Controls_ActionButton_8;
+        public InputAction @ActionButton_9 => m_Wrapper.m_Controls_ActionButton_9;
         public InputAction @AnyKey => m_Wrapper.m_Controls_AnyKey;
         public InputAction @InputCancel => m_Wrapper.m_Controls_InputCancel;
         public InputAction @InputSubmit => m_Wrapper.m_Controls_InputSubmit;
@@ -589,6 +704,21 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 @ActionButton_4.started -= m_Wrapper.m_ControlsActionsCallbackInterface.OnActionButton_4;
                 @ActionButton_4.performed -= m_Wrapper.m_ControlsActionsCallbackInterface.OnActionButton_4;
                 @ActionButton_4.canceled -= m_Wrapper.m_ControlsActionsCallbackInterface.OnActionButton_4;
+                @ActionButton_5.started -= m_Wrapper.m_ControlsActionsCallbackInterface.OnActionButton_5;
+                @ActionButton_5.performed -= m_Wrapper.m_ControlsActionsCallbackInterface.OnActionButton_5;
+                @ActionButton_5.canceled -= m_Wrapper.m_ControlsActionsCallbackInterface.OnActionButton_5;
+                @ActionButton_6.started -= m_Wrapper.m_ControlsActionsCallbackInterface.OnActionButton_6;
+                @ActionButton_6.performed -= m_Wrapper.m_ControlsActionsCallbackInterface.OnActionButton_6;
+                @ActionButton_6.canceled -= m_Wrapper.m_ControlsActionsCallbackInterface.OnActionButton_6;
+                @ActionButton_7.started -= m_Wrapper.m_ControlsActionsCallbackInterface.OnActionButton_7;
+                @ActionButton_7.performed -= m_Wrapper.m_ControlsActionsCallbackInterface.OnActionButton_7;
+                @ActionButton_7.canceled -= m_Wrapper.m_ControlsActionsCallbackInterface.OnActionButton_7;
+                @ActionButton_8.started -= m_Wrapper.m_ControlsActionsCallbackInterface.OnActionButton_8;
+                @ActionButton_8.performed -= m_Wrapper.m_ControlsActionsCallbackInterface.OnActionButton_8;
+                @ActionButton_8.canceled -= m_Wrapper.m_ControlsActionsCallbackInterface.OnActionButton_8;
+                @ActionButton_9.started -= m_Wrapper.m_ControlsActionsCallbackInterface.OnActionButton_9;
+                @ActionButton_9.performed -= m_Wrapper.m_ControlsActionsCallbackInterface.OnActionButton_9;
+                @ActionButton_9.canceled -= m_Wrapper.m_ControlsActionsCallbackInterface.OnActionButton_9;
                 @AnyKey.started -= m_Wrapper.m_ControlsActionsCallbackInterface.OnAnyKey;
                 @AnyKey.performed -= m_Wrapper.m_ControlsActionsCallbackInterface.OnAnyKey;
                 @AnyKey.canceled -= m_Wrapper.m_ControlsActionsCallbackInterface.OnAnyKey;
@@ -629,6 +759,21 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 @ActionButton_4.started += instance.OnActionButton_4;
                 @ActionButton_4.performed += instance.OnActionButton_4;
                 @ActionButton_4.canceled += instance.OnActionButton_4;
+                @ActionButton_5.started += instance.OnActionButton_5;
+                @ActionButton_5.performed += instance.OnActionButton_5;
+                @ActionButton_5.canceled += instance.OnActionButton_5;
+                @ActionButton_6.started += instance.OnActionButton_6;
+                @ActionButton_6.performed += instance.OnActionButton_6;
+                @ActionButton_6.canceled += instance.OnActionButton_6;
+                @ActionButton_7.started += instance.OnActionButton_7;
+                @ActionButton_7.performed += instance.OnActionButton_7;
+                @ActionButton_7.canceled += instance.OnActionButton_7;
+                @ActionButton_8.started += instance.OnActionButton_8;
+                @ActionButton_8.performed += instance.OnActionButton_8;
+                @ActionButton_8.canceled += instance.OnActionButton_8;
+                @ActionButton_9.started += instance.OnActionButton_9;
+                @ActionButton_9.performed += instance.OnActionButton_9;
+                @ActionButton_9.canceled += instance.OnActionButton_9;
                 @AnyKey.started += instance.OnAnyKey;
                 @AnyKey.performed += instance.OnAnyKey;
                 @AnyKey.canceled += instance.OnAnyKey;
@@ -659,6 +804,11 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         void OnActionButton_2(InputAction.CallbackContext context);
         void OnActionButton_3(InputAction.CallbackContext context);
         void OnActionButton_4(InputAction.CallbackContext context);
+        void OnActionButton_5(InputAction.CallbackContext context);
+        void OnActionButton_6(InputAction.CallbackContext context);
+        void OnActionButton_7(InputAction.CallbackContext context);
+        void OnActionButton_8(InputAction.CallbackContext context);
+        void OnActionButton_9(InputAction.CallbackContext context);
         void OnAnyKey(InputAction.CallbackContext context);
         void OnInputCancel(InputAction.CallbackContext context);
         void OnInputSubmit(InputAction.CallbackContext context);

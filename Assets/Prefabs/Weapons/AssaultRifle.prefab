@@ -219,7 +219,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0, z: 0}
   stats:
     damage: 5
-    range: 5
+    range: 8
     ammoMax: 4
     ammoCurrent: 0
     reloadSpeed: 0

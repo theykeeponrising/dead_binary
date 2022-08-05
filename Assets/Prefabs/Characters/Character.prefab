@@ -1852,6 +1852,7 @@ GameObject:
   - component: {fileID: 7324549121527466971}
   - component: {fileID: 1573632515060724147}
   - component: {fileID: 7324549121527466970}
+  - component: {fileID: 3296876834387543054}
   m_Layer: 0
   m_Name: Character
   m_TagString: Untagged
@@ -1954,15 +1955,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a32bbe332c45aee41aa6226d2d2fe659, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  objectTiles: []
+  isTraversable: 0
   flags: []
   currentTile: {fileID: 0}
   movePath: []
-  equippedWeapon: {fileID: 0}
-  storedWeapon: {fileID: 0}
   targetCharacter: {fileID: 0}
   animators:
     animatorBase: {fileID: 9100000, guid: 347ec8c34e26d9146b434b8d63ef1192, type: 2}
     animatorOverride: {fileID: 22100000, guid: 55e353f9f8d68454c8822e669cbd2c59, type: 2}
+  animator: {fileID: 0}
   stats:
     healthCurrent: 10
     healthMax: 10
@@ -1975,6 +1977,23 @@ MonoBehaviour:
   attributes:
     name: 
   availableActions: 000000000100000002000000
+--- !u!114 &3296876834387543054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7323552420328571708}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c490b25532104d418f8ebcd479a7e15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weapons:
+  - {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
+  - {fileID: 877797045781911332, guid: 074955a812631f44b88f9cb1f37ff1be, type: 3}
+  items: []
+  equippedWeapon: {fileID: 0}
 --- !u!1 &7323553403757494216
 GameObject:
   m_ObjectHideFlags: 0

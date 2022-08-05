@@ -20,17 +20,14 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
     Tile moveTargetDestination;
     CoverObject currentCover;
     Transform lookTarget;
+    public Character targetCharacter;
 
     float velocityX = 0f;
     float velocityZ = 0f;
 
-    [Header("Equipment")]
-    public Weapon equippedWeapon;
-    public Weapon storedWeapon;
-    public Character targetCharacter;
-
     AssetManager assetManager;
     InCombatPlayerAction playerAction;
+    Inventory inventory;
 
     [System.Serializable]
     public class Animators
@@ -42,7 +39,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
 
     [Header("Animation")]
     public Animators animators;
-    Animator animator;
+    public Animator animator;
 
     enum AnimationEventContext { SHOOT, TAKE_DAMAGE, RELOAD, STOW, DRAW, VAULT }
 
@@ -94,21 +91,6 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
         // Characters start with full health and action points
         stats.healthCurrent = stats.healthMax;
         stats.actionPointsCurrent = stats.actionPointsMax;
-
-        // Init starting weapons
-        if (equippedWeapon)
-        {
-            equippedWeapon = Instantiate(equippedWeapon);
-            equippedWeapon.gameObject.SetActive(true);
-            equippedWeapon.DefaultPosition(this);
-            animator.SetLayerWeight(equippedWeapon.weaponLayer, 1);
-        }
-        if (storedWeapon)
-        {
-            storedWeapon = Instantiate(storedWeapon);
-            storedWeapon.gameObject.SetActive(false);
-            storedWeapon.DefaultPosition(this);
-        }
     }
 
     protected override void Awake()
@@ -120,6 +102,8 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
 
         animator = GetComponent<Animator>();
         animators.animatorBase = animator.runtimeAnimatorController;
+
+        inventory = GetComponent<Inventory>();
 
         if (objectTiles.Count > 0) currentTile = objectTiles[0];
         selectionCircle = transform.Find("SelectionCircle").gameObject;
@@ -166,9 +150,9 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
         CancelTarget();
 
         // ACTION BUTTON 1 -- Shoot
-        if (action == controls.ActionButton_1 && equippedWeapon)
+        if (action == controls.ActionButton_1 && inventory.equippedWeapon)
         {
-            if (equippedWeapon && availableActions.Contains(Actions.ActionsList.SHOOT))
+            if (inventory.equippedWeapon && availableActions.Contains(Actions.ActionsList.SHOOT))
             {
                 GetTarget("attack");
                 return true;
@@ -176,23 +160,62 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
         }
 
         // ACTION BUTTON 2 -- Reload
-        else if (action == controls.ActionButton_2 && equippedWeapon)
+        else if (action == controls.ActionButton_2 && inventory.equippedWeapon)
         {
             ProcessAction(Actions.action_reload);
             return true;
         }
 
-        // ACTION BUTTON 3 -- Swap Gun (Temporary)
+        // ACTION BUTTON 3 -- Swap Gun
         else if (action == controls.ActionButton_3)
         {
-            StartCoroutine(EquipWeapon(storedWeapon));
+            StartCoroutine(EquipWeapon(inventory.CycleWeapon()));
             return true;
         }
 
         // ACTION BUTTON 4 -- Refresh AP (Temporary)
         else if (action == controls.ActionButton_4)
         {
+            Debug.Log("DEBUG -- AP Refreshed");
             RefreshActionPoints();
+            return true;
+        }
+
+        // ACTION BUTTON 5 -- Spawn Pistol (Temporary)
+        else if (action == controls.ActionButton_5)
+        {
+            Debug.Log("DEBUG -- Spawn Pistol");
+            inventory.SpawnWeapon(assetManager.weapon.pistol);
+            return true;
+        }
+
+        // ACTION BUTTON 6 -- Spawn AR (Temporary)
+        else if (action == controls.ActionButton_6)
+        {
+            Debug.Log("DEBUG -- Spawn AR");
+            inventory.SpawnWeapon(assetManager.weapon.ar);
+            return true;
+        }
+
+        // ACTION BUTTON 7 -- Not implemented
+        else if (action == controls.ActionButton_7)
+        {
+            Debug.Log("DEBUG -- No action bound");
+            return true;
+        }
+
+        // ACTION BUTTON 8 -- Not implemented
+        else if (action == controls.ActionButton_8)
+        {
+            Debug.Log("DEBUG -- No action bound");
+            inventory.SpawnWeapon(assetManager.weapon.ar);
+            return true;
+        }
+
+        else if (action == controls.ActionButton_9)
+        // ACTION BUTTON 9 -- Not implemented
+        {
+            Debug.Log("DEBUG -- No action bound");
             return true;
         }
 
@@ -483,7 +506,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
         if (Physics.Raycast(ray, out hit, direction.magnitude * distance, layerMask))
         {
             AddFlag("vaulting");
-            animator.Play("Vault-Over", equippedWeapon.weaponLayer);
+            animator.Play("Vault-Over", inventory.equippedWeapon.weaponLayer);
             return true;
         }
         return false;
@@ -495,43 +518,47 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
         // Previous weapon is stowed in extra slot
 
         // If character has a weapon equipped currently, stow it
-        if (equippedWeapon && equippedWeapon != assetManager.weapon.noWeapon)
+        if (inventory.equippedWeapon && inventory.equippedWeapon != assetManager.weapon.noWeapon)
         {
             // If crouching, do not play stow animation
             // This is until we can get a proper crouch-stow animation
             if (!flags.Contains("crouching"))
             {
                 AddFlag("stowing");
-                animator.Play("Stow", equippedWeapon.weaponLayer);
+                animator.Play("Stow", inventory.equippedWeapon.weaponLayer);
                 while (flags.Contains("stowing"))
                     yield return new WaitForSeconds(0.01f);
             }
             else
+            {
                 AnimationEvent(AnimationEventContext.STOW);
+            }
             
         }
 
         // Equipping the new weapon
         if (weapon)
         {
-            (equippedWeapon, storedWeapon) = (weapon, equippedWeapon);
+            inventory.equippedWeapon = weapon;
 
             // Enable weapon object, set position and animation layer
-            equippedWeapon.gameObject.SetActive(true);
-            equippedWeapon.DefaultPosition(this);
-            animator.SetLayerWeight(equippedWeapon.weaponLayer, 1);
+            inventory.equippedWeapon.gameObject.SetActive(true);
+            inventory.equippedWeapon.DefaultPosition(this);
+            animator.SetLayerWeight(inventory.equippedWeapon.weaponLayer, 1);
 
             // If crouching, do not play draw animation
             // This is until we can get a proper crouch-draw animation
             if (!flags.Contains("crouching"))
             {
                 AddFlag("drawing");
-                animator.Play("Draw", equippedWeapon.weaponLayer);
+                animator.Play("Draw", inventory.equippedWeapon.weaponLayer);
                 while (flags.Contains("drawing"))
                     yield return new WaitForSeconds(0.01f);
             }
-                        else
+            else
+            {
                 AnimationEvent(AnimationEventContext.DRAW);
+            }
         }
     }
 
@@ -539,7 +566,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
     {
         // Reload action handler
 
-        if (equippedWeapon.stats.ammoCurrent >= equippedWeapon.stats.ammoMax)
+        if (inventory.equippedWeapon.stats.ammoCurrent >= inventory.equippedWeapon.stats.ammoMax)
         {
             Debug.Log("Ammo is max already!"); // TO DO - Show this in UI
             return;
@@ -553,23 +580,23 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
         // Reload animation
 
         AddFlag("reload");
-        animator.Play("Reload", equippedWeapon.weaponLayer);
-        equippedWeapon.Reload();
+        animator.Play("Reload", inventory.equippedWeapon.weaponLayer);
+        inventory.equippedWeapon.Reload();
         while (AnimatorIsPlaying())
             yield return new WaitForSeconds(0.01f);
         RemoveFlag("reload");
-        equippedWeapon.stats.ammoCurrent = equippedWeapon.stats.ammoMax;
+        inventory.equippedWeapon.stats.ammoCurrent = inventory.equippedWeapon.stats.ammoMax;
     }
 
     IEnumerator ShootWeapon()
     {
         // Inflict damage on target character
         if (targetCharacter)
-            targetCharacter.TakeDamage(this, equippedWeapon.stats.damage);
+            targetCharacter.TakeDamage(this, inventory.equippedWeapon.stats.damage);
 
         AddFlag("shooting");
-        animator.Play("Shoot", equippedWeapon.weaponLayer);
-        equippedWeapon.stats.ammoCurrent -= 1;
+        animator.Play("Shoot", inventory.equippedWeapon.weaponLayer);
+        inventory.equippedWeapon.stats.ammoCurrent -= 1;
         transform.LookAt(targetCharacter.transform);
 
         // Wait until shoot animation completes
@@ -592,7 +619,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
     {
         // True/False whether an animation is currently playing on the equipped weapon layer.
 
-        return animator.GetCurrentAnimatorStateInfo(equippedWeapon.weaponLayer).length > animator.GetCurrentAnimatorStateInfo(2).normalizedTime;
+        return animator.GetCurrentAnimatorStateInfo(inventory.equippedWeapon.weaponLayer).length > animator.GetCurrentAnimatorStateInfo(2).normalizedTime;
     }
 
     void AnimationEvent(AnimationEventContext context)
@@ -603,7 +630,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
         // Weapon shooting effect and sound
         if (context == AnimationEventContext.SHOOT)
         {
-            equippedWeapon.Shoot();
+            inventory.equippedWeapon.Shoot();
         }
 
         // Weapon impact effect on target
@@ -616,8 +643,8 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
         else if (context == AnimationEventContext.STOW)
         {
             RemoveFlag("stowing");
-            equippedWeapon.gameObject.SetActive(false);
-            animator.SetLayerWeight(equippedWeapon.weaponLayer, 0);
+            inventory.equippedWeapon.gameObject.SetActive(false);
+            animator.SetLayerWeight(inventory.equippedWeapon.weaponLayer, 0);
         }
 
         // Draw weapon animation is completed
@@ -682,14 +709,14 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
         {
             animator.runtimeAnimatorController = animators.animatorBase;
             if (!flags.Contains("crouching"))
-                animator.Play("Combat-Transition", equippedWeapon.weaponLayer);
+                animator.Play("Combat-Transition", inventory.equippedWeapon.weaponLayer);
             RemoveFlag("combat");
         }
         else
         {
             animator.runtimeAnimatorController = animators.animatorOverride;
             if (!flags.Contains("crouching"))
-                animator.Play("Combat-Transition", equippedWeapon.weaponLayer);
+                animator.Play("Combat-Transition", inventory.equippedWeapon.weaponLayer);
             AddFlag("combat");
         }
     }
@@ -704,7 +731,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
         {
             animator.runtimeAnimatorController = animators.animatorBase;
             if (!flags.Contains("crouching"))
-                animator.Play("Combat-Transition", equippedWeapon.weaponLayer);
+                animator.Play("Combat-Transition", inventory.equippedWeapon.weaponLayer);
             RemoveFlag("combat");
         }
 
@@ -713,7 +740,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
         {
             animator.runtimeAnimatorController = animators.animatorOverride;
             if (!flags.Contains("crouching"))
-                animator.Play("Combat-Transition", equippedWeapon.weaponLayer);
+                animator.Play("Combat-Transition", inventory.equippedWeapon.weaponLayer);
             AddFlag("combat");
         }
     }
@@ -725,7 +752,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
         // Dice roll performed
         float baseChance;
         int randomChance = Random.Range(1, 100);
-        float weaponAccuracyModifier = attacker.equippedWeapon.stats.accuracyModifier;
+        float weaponAccuracyModifier = attacker.inventory.equippedWeapon.stats.accuracyModifier;
 
         // Calculate chance to be hit
         if (currentCover)
@@ -775,10 +802,10 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
         }
 
         // Effect shown when character is hit
-        if (animator.GetCurrentAnimatorStateInfo(equippedWeapon.weaponLayer).IsName("Damage2"))
-            animator.Play("Damage3", equippedWeapon.weaponLayer, .1f);
+        if (animator.GetCurrentAnimatorStateInfo(inventory.equippedWeapon.weaponLayer).IsName("Damage2"))
+            animator.Play("Damage3", inventory.equippedWeapon.weaponLayer, .1f);
         else
-            animator.Play("Damage2", equippedWeapon.weaponLayer);
+            animator.Play("Damage2", inventory.equippedWeapon.weaponLayer);
     }
 
     IEnumerator Death(Character attacker, Vector3 attackDirection, float impactForce = 2f)
@@ -814,8 +841,8 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
         currentTile.occupant = null;
         this.enabled = false;
 
-        if (equippedWeapon)
-            equippedWeapon.DropGun();
+        if (inventory.equippedWeapon)
+            inventory.equippedWeapon.DropGun();
 
         // TO DO -- DISABLE ENEMY AI
         // TO DO -- DROP WEAPON
@@ -852,13 +879,13 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
         if (selectedTarget)
             if (action == "attack")
             {
-                int weaponRange = equippedWeapon.GetRange();
+                int weaponRange = inventory.equippedWeapon.GetRange();
                 int distanceToTarget = currentTile.FindCost(selectedTarget.currentTile, 15).Count;
 
                 //Check if target within weapon range
                 if (distanceToTarget <= weaponRange && distanceToTarget > 0)
                     {
-                    if (equippedWeapon.stats.ammoCurrent > 0)
+                    if (inventory.equippedWeapon.stats.ammoCurrent > 0)
                     {
                         targetCharacter = selectedTarget;
                         stats.actionPointsCurrent -= currentAction.cost;
