@@ -221,7 +221,7 @@ public class SelectedStates
             if (t.selectedCharacter.targetCharacter)
                 ChangeState(new ShootTarget(Machine));
             else
-                Debug.Log("No Target -- But how?");
+                Debug.Log("No Target -- But how? Ensure that both characters are set to different factions.");
         }
         public override void InputAction3(InCombatPlayerAction t)
         {
