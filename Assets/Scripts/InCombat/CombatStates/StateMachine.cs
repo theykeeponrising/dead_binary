@@ -36,4 +36,9 @@ public class StateMachine <T>
     {
         return CurrentState;
     }
+
+    public void Quit()
+    {
+        if (CurrentState != null) CurrentState.Exit(Owner);
+    }
 }

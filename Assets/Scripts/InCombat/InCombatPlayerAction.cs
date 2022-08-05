@@ -21,10 +21,8 @@ public class InCombatPlayerAction : MonoBehaviour
 
 
     public LayerMask uiLayermask;
-    [SerializeField]
-    public ActionPanel actionPanel;
-    [Serializable]
-    public class ActionPanel
+    [SerializeField] public ActionPanel actionPanel;
+    [Serializable] public class ActionPanel
     {
         public GameObject panel;
         public TextMeshProUGUI actionPointsText;
@@ -33,20 +31,28 @@ public class InCombatPlayerAction : MonoBehaviour
     }
 
     public StateMachine<InCombatPlayerAction> stateMachine;
-    public FiniteState<InCombatPlayerAction> state;
-    [SerializeField] string currentState;
-    public GameObject selectorBall;
+    public TextMeshProUGUI stateText;
 
+    [Tooltip("The object to float above the Target's head.")]
+    public GameObject selectorBall;
     private void Awake()
     {
         playerInput = new PlayerInput();
-        playerInput.Controls.InputPrimary.performed += _ => SelectUnit();
-        playerInput.Controls.InputSecondary.performed += _ => MoveCharacter();
+
+       // playerInput.Controls.InputPrimary.performed += _ => SelectUnit();
+       // playerInput.Controls.InputSecondary.performed += _ => MoveCharacter();
         //playerInput.Controls.AnyKey.performed += _ => KeyPress(playerInput.Controls.AnyKey); // For if we want any "PRESS ANY KEY" moments
         playerInput.Controls.ActionButton_1.performed += _ => KeyPress(playerInput.Controls, playerInput.Controls.ActionButton_1);
         playerInput.Controls.ActionButton_2.performed += _ => KeyPress(playerInput.Controls, playerInput.Controls.ActionButton_2);
         playerInput.Controls.ActionButton_3.performed += _ => KeyPress(playerInput.Controls, playerInput.Controls.ActionButton_3);
         playerInput.Controls.ActionButton_4.performed += _ => KeyPress(playerInput.Controls, playerInput.Controls.ActionButton_4);
+
+        
+    }
+    private void Start()
+    {
+        stateMachine = new StateMachine<InCombatPlayerAction>();
+        stateMachine.Configure(this, new SelectedStates.NoTargetSelected(stateMachine));
     }
 
     public void EnablePlayerInput()
@@ -68,35 +74,17 @@ public class InCombatPlayerAction : MonoBehaviour
         {
             actionPanel.panel.SetActive(true);
             if (actionPanel != null)
-            {
                 actionPanel.actionPointsText.text =
                     "AP: " + selectedCharacter.stats.actionPointsCurrent.ToString();
-            }
-
-            if (selectedCharacter.targetCharacter != null)
-            {
-                selectorBall.SetActive(true);
-                selectorBall.transform.position = selectedCharacter.targetCharacter.transform.position + Vector3.up * 2;
-            }
-            else
-            {
-                selectorBall.transform.position = Vector3.zero;
-                selectorBall.SetActive(false);
-            }
         }
         else
-        {
-            //actionPanel.panel.SetActive(false);
-        }
+            actionPanel.panel.SetActive(false);
 
         if (stateMachine != null)
         {
             stateMachine.Update();
-            state = stateMachine.GetCurrentState();
-            currentState = state.ToString();
+            stateText.text = stateMachine.GetCurrentState().StateName;
         }
-
-
     }
 
     public void SelectUnit()
@@ -117,33 +105,28 @@ public class InCombatPlayerAction : MonoBehaviour
 
         SelectAction(targetCharacter);
 
-        stateMachine = new StateMachine<InCombatPlayerAction>();
-        stateMachine.Configure(this, new SelectedStates.Idle(stateMachine));
-
-
-
-
-
-        /*
-        if (clickAction == ClickAction.select)
-            SelectAction(targetCharacter);
-        else if (clickAction == ClickAction.target)
+        // ClickActions. - Obsolete?
         {
-            if (targetCharacter)
+            /*
+            if (clickAction == ClickAction.select)
+                SelectAction(targetCharacter);
+            else if (clickAction == ClickAction.target)
             {
-                selectedCharacter.ProcessAction(Actions.action_shoot, contextCharacter: targetCharacter, contextString: clickContext);
-                clickAction = ClickAction.select;
-                clickContext = "";
+                if (targetCharacter)
+                {
+                    selectedCharacter.ProcessAction(Actions.action_shoot, contextCharacter: targetCharacter, contextString: clickContext);
+                    clickAction = ClickAction.select;
+                    clickContext = "";
+                }
+                else
+                {
+                    selectedCharacter.CancelTarget();
+                    clickAction = ClickAction.select;
+                    clickContext = "";
+                }
             }
-            else
-            {
-                selectedCharacter.CancelTarget();
-                clickAction = ClickAction.select;
-                clickContext = "";
-            }
+            */
         }
-        */
-
     }
     
 
@@ -152,13 +135,15 @@ public class InCombatPlayerAction : MonoBehaviour
         // Orders target to move on right-click
         if (selectedCharacter)
         {
-            if (state.GetType() == typeof(SelectedStates.ChoosingMoveDestination))
+            if (stateMachine.GetCurrentState().GetType() 
+                == typeof(SelectedStates.ChoosingMoveDestination))
             {
                 RaycastHit hit;
                 Ray ray;
-                ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                ray = Camera.main.ScreenPointToRay(playerInput.Controls.InputPosition.ReadValue<Vector2>());
+                int layerMask = (1 << LayerMask.NameToLayer("TileMap"));
 
-                if (Physics.Raycast(ray, out hit))
+                if (Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask))
                 {
                     if (hit.collider.GetComponent<Tile>())
                     {
@@ -171,13 +156,13 @@ public class InCombatPlayerAction : MonoBehaviour
 
     void SelectAction(Character targetCharacter)
     {
-
         // Select action, character selected, previous selection
         // Change character selection
         if (targetCharacter)
         {
             if (selectedCharacter)
                 selectedCharacter.SelectUnit(false);
+
             selectedCharacter = targetCharacter;
             selectedCharacter.SelectUnit(true);
         }
@@ -198,20 +183,31 @@ public class InCombatPlayerAction : MonoBehaviour
     public bool KeyPress(PlayerInput.ControlsActions controls, InputAction action) 
     {
         bool keyPress = false;
-        if (selectedCharacter) {
-            keyPress = selectedCharacter.KeyPress(controls, action);
+        {
+            if (action == controls.ActionButton_1)
+            {
+            }
+
+            if (action == controls.ActionButton_2)
+            {
+            }
         }
         return keyPress;
+    }
+
+    public int TriggerButton(int num)
+    {
+        return num;
     }
 
     void PathPreview()
     {
         // Previews move path on mouse over
-
         if (selectedCharacter && targetTile)
         {
-            //f (selectedCharacter.state.GetType() == typeof(SelectedStates.ChoosingMoveDestination))
-            if(state.GetType() == typeof(SelectedStates.ChoosingMoveDestination))
+
+            if(stateMachine.GetCurrentState().GetType() 
+                == typeof(SelectedStates.ChoosingMoveDestination))
             {
                 if (selectedCharacter.currentTile)
                 {
@@ -238,21 +234,5 @@ public class InCombatPlayerAction : MonoBehaviour
         if (previewPath != null)
             foreach (Tile tile in previewPath)
                 tile.Highlighted(false);
-    }
-
-    public void SetState_ChooseMoveDestination()
-    {
-        //selectedCharacter.stateMachine.ChangeState(new SelectedStates.ChoosingMoveDestination//(selectedCharacter.stateMachine));
-
-        stateMachine.ChangeState(new SelectedStates.ChoosingMoveDestination(stateMachine));
-
-        //PathPreviewClear();
-    }
-
-    public void SetState_ChooseShootTarget()
-    {
-        //selectedCharacter.stateMachine.ChangeState(new SelectedStates.ChoosingShootTarget//(selectedCharacter.stateMachine));
-
-        stateMachine.ChangeState(new SelectedStates.ChoosingShootTarget(stateMachine));
     }
 }

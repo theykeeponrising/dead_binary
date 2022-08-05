@@ -19,6 +19,13 @@ public class Character : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public List<Tile> movePath;
     Tile moveTargetImmediate;
     Tile moveTargetDestination;
+
+    public bool isAtDestination => IsAtDestination();
+    private bool IsAtDestination()
+    {
+        bool b = moveTargetDestination == null ? true : false;
+        return b;
+    }
     Cover currentCover;
     Transform lookTarget;
 
@@ -89,14 +96,11 @@ public class Character : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public List<Actions.ActionsList> availableActions;
     public Actions.Action currentAction;
 
-    public StateMachine<Character> stateMachine;
-    [SerializeField] private string CurrentState;
-    public FiniteState<Character> state;
     public Faction faction;
     public IFaction ifaction;
     Faction IFaction.faction { get { return faction; } set { faction = value; } }
 
-    public Character[] potentialTargets;
+    public List<Character> potentialTargets;
 
     // Start is called before the first frame update
     void Awake()
@@ -160,6 +164,7 @@ public class Character : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             storedWeapon.DefaultPosition(this);
         }
         ifaction = this;
+        potentialTargets = null;
     }
 
     // Update is called once per frame
@@ -168,14 +173,17 @@ public class Character : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         SetAnimation();
         Movement();
 
+        /*
         if (stateMachine != null)
         {
+            Debug.Log("SM on Char");
             stateMachine.Update();
             state = stateMachine.GetCurrentState();
             CurrentState = state.ToString();
         }
         else
             CurrentState = "None";
+        */
     }
 
     public bool KeyPress(PlayerInput.ControlsActions controls, InputAction action)
@@ -245,20 +253,11 @@ public class Character : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         {
             selectionCircle.SetActive(true);
             selectionCircle.GetComponent<Renderer>().material.color = Color.green;
-
-          //  stateMachine = new StateMachine<Character>();
-          //  stateMachine.Configure(this, new SelectedStates.Idle(stateMachine));
         }
         else
         {
             selectionCircle.SetActive(false);
             selectionCircle.GetComponent<Renderer>().material.color = Color.white;
-
-            if (stateMachine != null)
-            {
-                stateMachine.ChangeState(null);
-                stateMachine = null;
-            }
         }
     }
 
