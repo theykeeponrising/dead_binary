@@ -36,6 +36,8 @@ public class Weapon : MonoBehaviour
         public int ammoMax;
         public int ammoCurrent;
         public float reloadSpeed;
+        //Note: Not capped at 1.
+        public float accuracyModifier;
     }
     public Stats stats;
 
@@ -99,6 +101,11 @@ public class Weapon : MonoBehaviour
         StartCoroutine(ShootEffect());
     }
 
+    public int GetRange()
+    {
+        return stats.range;
+    }
+
     public IEnumerator ShootEffect()
     {
         //DISPLAY GUN FLASH
@@ -118,5 +125,13 @@ public class Weapon : MonoBehaviour
         // Reload sound effect
         
         audioSource.PlayOneShot(reloadSound);
+    }
+
+    public void DropGun()
+    {
+        // Detaches gun from Character and adds physics
+
+        transform.parent = null;
+        gameObject.AddComponent<Rigidbody>();
     }
 }

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: -9194202209193084327}
   - component: {fileID: 171350893874193170}
   - component: {fileID: 171350893874193171}
+  - component: {fileID: 929978353056147712}
   - component: {fileID: -4286811643612619385}
   m_Layer: 2
   m_Name: AssaultRifle
@@ -182,6 +183,19 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &929978353056147712
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 171350893874193181}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.08345069, y: 0.28553024, z: 0.76092744}
+  m_Center: {x: -0.0016390756, y: 0.023348391, z: 0.15906417}
 --- !u!114 &-4286811643612619385
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -209,6 +223,7 @@ MonoBehaviour:
     ammoMax: 4
     ammoCurrent: 0
     reloadSpeed: 0
+    accuracyModifier: 0.9
 --- !u!1 &5461691002361095811
 GameObject:
   m_ObjectHideFlags: 0

@@ -34,7 +34,7 @@ public class AssetManager : MonoBehaviour
     [System.Serializable]
     public class CoverPrefabs
     {
-        public Cover halfWall;
+        public CoverObject halfWall;
     }
     public CoverPrefabs cover;
 }

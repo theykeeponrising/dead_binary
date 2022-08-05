@@ -5,8 +5,8 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEditor;
 
+public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, IFaction
 
-public class Character : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IFaction
 {
     // Main script for Player-Controlled characters
 
@@ -26,7 +26,9 @@ public class Character : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         bool b = moveTargetDestination == null ? true : false;
         return b;
     }
-    Cover currentCover;
+
+    CoverObject currentCover;
+
     Transform lookTarget;
 
     float velocityX = 0f;
@@ -103,16 +105,39 @@ public class Character : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public List<Character> potentialTargets;
 
     // Start is called before the first frame update
-    void Awake()
+    void Start()
     {
+        // Characters start with full health and action points
+        stats.healthCurrent = stats.healthMax;
+        stats.actionPointsCurrent = stats.actionPointsMax;
+
+        // Init starting weapons
+        if (equippedWeapon)
+        {
+            equippedWeapon = Instantiate(equippedWeapon);
+            equippedWeapon.gameObject.SetActive(true);
+            equippedWeapon.DefaultPosition(this);
+            animator.SetLayerWeight(equippedWeapon.weaponLayer, 1);
+        }
+        if (storedWeapon)
+        {
+            storedWeapon = Instantiate(storedWeapon);
+            storedWeapon.gameObject.SetActive(false);
+            storedWeapon.DefaultPosition(this);
+        }
+    }
+
+    protected override void Awake()
+    {
+        base.Awake();
         assetManager = GameObject.FindGameObjectWithTag("GlobalManager").GetComponent<AssetManager>();
         playerAction = GameObject.FindGameObjectWithTag("Player").GetComponent<InCombatPlayerAction>();
         ragdoll = GetComponentsInChildren<Rigidbody>();
 
         animator = GetComponent<Animator>();
         animators.animatorBase = animator.runtimeAnimatorController;
-        currentTile = FindCurrentTile();
-        currentTile.ChangeTileOccupant(this, true);
+
+        if (objectTiles.Count > 0) currentTile = objectTiles[0];
         selectionCircle = transform.Find("SelectionCircle").gameObject;
 
         // Body parts for use in armor placement
@@ -143,26 +168,6 @@ public class Character : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             //    body.handLeft = part.transform;
         }
 
-        // Characters start with full health and action points
-        stats.healthCurrent = stats.healthMax;
-        stats.actionPointsCurrent = stats.actionPointsMax;
-        
-        // Init starting weapons
-        if (equippedWeapon)
-        {
-            if (PrefabUtility.GetCorrespondingObjectFromOriginalSource(equippedWeapon) != null)
-                equippedWeapon = Instantiate(equippedWeapon);
-            equippedWeapon.gameObject.SetActive(true);
-            equippedWeapon.DefaultPosition(this);
-            animator.SetLayerWeight(equippedWeapon.weaponLayer, 1);
-        }
-        if (storedWeapon)
-        {
-            if (PrefabUtility.GetCorrespondingObjectFromOriginalSource(storedWeapon) != null)
-                storedWeapon = Instantiate(storedWeapon);
-            storedWeapon.gameObject.SetActive(false);
-            storedWeapon.DefaultPosition(this);
-        }
         ifaction = this;
         potentialTargets = null;
     }
@@ -404,9 +409,17 @@ public class Character : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         {
             if (CheckTileMove(newTile))
             {
-                movePath = currentTile.FindCost(newTile);
-                StartCoroutine(MoveToPath());
-                stats.actionPointsCurrent -= currentAction.cost;
+                // If tile is occupied, we can't move there
+                if (newTile.occupant)
+                    movePath = null;
+                else movePath = currentTile.FindCost(newTile, stats.movement);
+                
+                if (movePath.Count > 0)
+                {
+                    StartCoroutine(MoveToPath());
+                    stats.actionPointsCurrent -= currentAction.cost;
+                }
+                
             }
         }
     }
@@ -425,14 +438,14 @@ public class Character : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             ToggleCrouch();
 
         moveTargetDestination = movePath[movePath.Count - 1];
-        currentTile.ChangeTileOccupant(this, false);
+        currentTile.ChangeTileOccupant((GridObject) this, false);
         currentCover = null;
 
         // Move to each tile in the provided path
         foreach (Tile path in movePath)
         {
             if (moveTargetImmediate)
-                moveTargetImmediate.ChangeTileOccupant(this, false);
+                moveTargetImmediate.ChangeTileOccupant((GridObject) this, false);
             moveTargetImmediate = path;
             //CheckForObstacle();
 
@@ -443,7 +456,7 @@ public class Character : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                 currentTile = FindCurrentTile();
                 yield return new WaitForSeconds(0.01f);
             }
-            path.ChangeTileOccupant(this, true);
+            path.ChangeTileOccupant((GridObject) this, true);
             RemoveFlag("vaulting");
         }
 
@@ -458,7 +471,7 @@ public class Character : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
         // Clear movement flags
         RemoveFlag("moving");
-        if (currentTile.cover && currentTile.cover.coverSize == Cover.CoverSize.half)
+        if (currentTile.cover && currentTile.cover.coverSize == CoverObject.CoverSize.half)
         {
             currentCover = currentTile.cover;
             ToggleCrouch();
@@ -476,7 +489,7 @@ public class Character : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         // If destination is too far, abort move action
 
         movePath = currentTile.FindCost(newTile);
-        if (movePath == null)
+        if (movePath.Count == 0 || !newTile.isTileTraversable())
         {
             Debug.Log("No move path."); // Replace this with UI eventually
             return false;
@@ -515,21 +528,17 @@ public class Character : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     IEnumerator EquipWeapon(Weapon weapon)
     {
         // Character equip or swap weapons
-        // Checks for prefab objects when equipping a new weapon
         // Previous weapon is stowed in extra slot
 
         // If character has a weapon equipped currently, stow it
         if (equippedWeapon && equippedWeapon != assetManager.weapon.noWeapon)
         {
-            storedWeapon = equippedWeapon;
-            equippedWeapon = null;
-
             // If crouching, do not play stow animation
             // This is until we can get a proper crouch-stow animation
             if (!flags.Contains("crouching"))
             {
                 AddFlag("stowing");
-                animator.Play("Stow", storedWeapon.weaponLayer);
+                animator.Play("Stow", equippedWeapon.weaponLayer);
                 while (flags.Contains("stowing"))
                     yield return new WaitForSeconds(0.01f);
             }
@@ -541,11 +550,7 @@ public class Character : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         // Equipping the new weapon
         if (weapon)
         {
-            // If prefab, clone the object
-            if (PrefabUtility.GetCorrespondingObjectFromOriginalSource(weapon) != null)
-                equippedWeapon = Instantiate(weapon);
-            else
-                equippedWeapon = weapon;
+            (equippedWeapon, storedWeapon) = (weapon, equippedWeapon);
 
             // Enable weapon object, set position and animation layer
             equippedWeapon.gameObject.SetActive(true);
@@ -594,8 +599,9 @@ public class Character : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
     IEnumerator ShootWeapon()
     {
-        // Placeholder function
-        // Test shoot animation when button pressed
+        // Inflict damage on target character
+        if (targetCharacter)
+            targetCharacter.TakeDamage(this, equippedWeapon.stats.damage);
 
         AddFlag("shooting");
         animator.Play("Shoot", equippedWeapon.weaponLayer);
@@ -608,15 +614,14 @@ public class Character : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             yield return new WaitForSeconds(0.01f);
         }
 
-        // Inflict damage on target character
-        if (targetCharacter)
-            targetCharacter.TakeDamage(this, equippedWeapon.stats.damage);
-
         // Add a small delay before character exits shooting stance
         yield return new WaitForSeconds(1.0f);
 
         // Remove shooting flag
         RemoveFlag("shooting");
+
+        // If target is dodging, remove flag
+        targetCharacter.RemoveFlag("dodging");
     }
 
     bool AnimatorIsPlaying()
@@ -647,8 +652,8 @@ public class Character : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         else if (context == AnimationEventContext.STOW)
         {
             RemoveFlag("stowing");
-            storedWeapon.gameObject.SetActive(false);
-            animator.SetLayerWeight(storedWeapon.weaponLayer, 0);
+            equippedWeapon.gameObject.SetActive(false);
+            animator.SetLayerWeight(equippedWeapon.weaponLayer, 0);
         }
 
         // Draw weapon animation is completed
@@ -749,40 +754,81 @@ public class Character : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         }
     }
 
+    bool RollForHit(Character attacker)
+    {
+        // Dodge change for character vs. attacker's aim
+
+        // Dice roll performed
+        float baseChance;
+        int randomChance = Random.Range(1, 100);
+        float weaponAccuracyModifier = attacker.equippedWeapon.stats.accuracyModifier;
+
+        // Calculate chance to be hit
+        if (currentCover)
+            baseChance = weaponAccuracyModifier * attacker.stats.aim * 20 * ((GlobalManager.globalHit - currentCover.CoverBonus() - stats.dodge) / 100);
+        else
+            baseChance = weaponAccuracyModifier * attacker.stats.aim * 20 * ((GlobalManager.globalHit - stats.dodge) / 100);
+
+        // FOR TESTING PURPOSES ONLY -- REMOVE WHEN FINISHED
+        Debug.Log(string.Format("Base chance to hit: {0}%, Dice roll: {1}", baseChance, randomChance));
+
+        // Return true/false if hit connected
+        return (baseChance >= randomChance);
+    }
+
     void TakeDamage(Character attacker, int damage)
     {
         // Called by an attacking source when taking damage
         // TO DO: More complex damage reduction will be added here
 
+        // If attacked missed, do not take damage
+        if (!RollForHit(attacker))
+        {
+            Debug.Log(string.Format("{0} missed target {1}!", attacker.attributes.name, attributes.name));
+            AddFlag("dodging");
+            return;
+        }
+
+        // Inflict damage on character
         Debug.Log(string.Format("{0} has attacked {1} for {2} damage!", attacker.attributes.name, attributes.name, damage)); // This will eventually be shown visually instead of told
 
         TakeDamageEffect();
         Vector3 direction =  (transform.position - attacker.transform.position);
         stats.healthCurrent -= damage;
 
+        // Character death
         if (stats.healthCurrent <= 0)
         {
-            Death(direction);
+            StartCoroutine(Death(attacker, direction));
             Debug.DrawRay(transform.position, direction, Color.red, 20, true); // For debug purposes
         }
     }
 
     public void TakeDamageEffect()
     {
-        // Effect shown when character is hit
+        if (flags.Contains("dodging"))
+        {
+            // TO DO -- Play dodging animation instead
+            return;
+        }
 
+        // Effect shown when character is hit
         if (animator.GetCurrentAnimatorStateInfo(equippedWeapon.weaponLayer).IsName("Damage2"))
             animator.Play("Damage3", equippedWeapon.weaponLayer, .1f);
         else
             animator.Play("Damage2", equippedWeapon.weaponLayer);
     }
 
-    void Death(Vector3 attackDirection, float impactForce = 2f)
+    IEnumerator Death(Character attacker, Vector3 attackDirection, float impactForce = 2f)
     {
+        // Wait for attacker animation to complete
+        while (attacker.AnimatorIsPlaying())
+            yield return new WaitForSeconds(0.01f);
+
         // Disable top collider
         GetComponent<CapsuleCollider>().enabled = false;
 
-        // Disable animator and general rigidbody
+        // Disable animator and top rigidbody
         animator.enabled = false;
         Destroy(ragdoll[0]);
         
@@ -805,6 +851,9 @@ public class Character : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         // Remove character as a obstacle on the map
         currentTile.occupant = null;
         this.enabled = false;
+
+        if (equippedWeapon)
+            equippedWeapon.DropGun();
 
         // TO DO -- DISABLE ENEMY AI
         // TO DO -- DROP WEAPON
@@ -841,17 +890,25 @@ public class Character : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         if (selectedTarget)
             if (action == "attack")
             {
-                if (equippedWeapon.stats.ammoCurrent > 0)
-                {
-                    targetCharacter = selectedTarget;
-                    stats.actionPointsCurrent -= currentAction.cost;
-                    StartCoroutine(ShootWeapon());
-                    RemoveFlag("targeting");
-                }
-                else
-                {
-                    Debug.Log("Out of Ammo! Reload weapon"); // This will eventually be shown in UI
-                }
+                int weaponRange = equippedWeapon.GetRange();
+                int distanceToTarget = currentTile.FindCost(selectedTarget.currentTile, 15).Count;
+
+                //Check if target within weapon range
+                if (distanceToTarget <= weaponRange && distanceToTarget > 0)
+                    {
+                    if (equippedWeapon.stats.ammoCurrent > 0)
+                    {
+                        targetCharacter = selectedTarget;
+                        stats.actionPointsCurrent -= currentAction.cost;
+                        StartCoroutine(ShootWeapon());
+                        RemoveFlag("targeting");
+                    }
+                    else
+                    {
+                        Debug.Log("Out of Ammo! Reload weapon"); // This will eventually be shown in UI
+                    }
+                } 
+                else Debug.Log(string.Format("Target is out of range! \nDistance: {0}, Weapon Range: {1}", distanceToTarget, weaponRange)); // This will eventually be shown visually instead of told
             }
     }
 

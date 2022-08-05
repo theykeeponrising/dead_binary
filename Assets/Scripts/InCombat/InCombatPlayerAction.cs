@@ -205,24 +205,22 @@ public class InCombatPlayerAction : MonoBehaviour
         // Previews move path on mouse over
         if (selectedCharacter && targetTile)
         {
-
             if(stateMachine.GetCurrentState().GetType() 
                 == typeof(SelectedStates.ChoosingMoveDestination))
             {
-                if (selectedCharacter.currentTile)
+                PathPreviewClear();
+                previewPath = selectedCharacter.currentTile.FindCost(targetTile, selectedCharacter.stats.movement);
+
+                // If target tile has an object on it, can't move there
+                if (targetTile.occupant) previewPath = null;
+
+                if (previewPath != null)
                 {
-                    PathPreviewClear();
-                    previewPath = selectedCharacter.currentTile.FindCost(targetTile);
-                    if (previewPath != null)
-                        previewPath.Add(selectedCharacter.currentTile);
-                    if (previewPath != null)
+                    previewPath.Add(selectedCharacter.currentTile);
+                    if (previewPath.Count > 1)
                         foreach (Tile tile in previewPath)
                             tile.Highlighted(true, "preview");
-                }
-
-                else if (previewPath != null)
-                    foreach (Tile tile in previewPath)
-                        tile.Highlighted(false);
+                }       
             }
         }
     }

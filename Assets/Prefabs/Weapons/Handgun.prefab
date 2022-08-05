@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: -2865030127274275533}
   - component: {fileID: 4132712680190922041}
   - component: {fileID: 3640915152672987620}
+  - component: {fileID: 7664982818378953999}
   - component: {fileID: 877797045781911332}
   m_Layer: 2
   m_Name: Handgun
@@ -182,6 +183,19 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &7664982818378953999
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2006476113689740478}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.037177317, y: 0.17690209, z: 0.27511904}
+  m_Center: {x: 0.0010942696, y: 0.019760966, z: 0.093554705}
 --- !u!114 &877797045781911332
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -205,10 +219,11 @@ MonoBehaviour:
   offset: {x: 0, y: 0, z: 0}
   stats:
     damage: 3
-    range: 3
+    range: 5
     ammoMax: 3
     ammoCurrent: 0
     reloadSpeed: 0
+    accuracyModifier: 1.1
 --- !u!1 &6729600718463147584
 GameObject:
   m_ObjectHideFlags: 0

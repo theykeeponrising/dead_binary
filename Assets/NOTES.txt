@@ -7,4 +7,4 @@ exclude root
 copy/paste keyframes
 
 -- MATH FOR HIT CHANCE --
-aim / (globalHit - dodge) / 10
+aim * 20 * ((globalHit - coverBonus - dodge) / 100)
