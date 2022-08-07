@@ -561,11 +561,11 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
         equippedWeapon.stats.ammoCurrent = equippedWeapon.stats.ammoMax;
     }
 
-    IEnumerator ShootWeapon()
+    IEnumerator ShootWeapon(int distanceToTarget)
     {
         // Inflict damage on target character
         if (targetCharacter)
-            targetCharacter.TakeDamage(this, equippedWeapon.stats.damage);
+            targetCharacter.TakeDamage(this, equippedWeapon.stats.damage, distanceToTarget);
 
         AddFlag("shooting");
         animator.Play("Shoot", equippedWeapon.weaponLayer);
@@ -718,35 +718,39 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
         }
     }
 
-    bool RollForHit(Character attacker)
+    bool RollForHit(Character attacker, int distanceToTarget)
     {
         // Dodge change for character vs. attacker's aim
 
         // Dice roll performed
-        float baseChance;
         int randomChance = Random.Range(1, 100);
-        float weaponAccuracyModifier = attacker.equippedWeapon.stats.accuracyModifier;
+        float weaponAccuracyModifier = attacker.equippedWeapon.stats.baseAccuracyModifier;
+
+        float weaponAccuracyPenalty = attacker.equippedWeapon.GetAccuracyPenalty(distanceToTarget);
 
         // Calculate chance to be hit
-        if (currentCover)
-            baseChance = weaponAccuracyModifier * attacker.stats.aim * 20 * ((GlobalManager.globalHit - currentCover.CoverBonus() - stats.dodge) / 100);
-        else
-            baseChance = weaponAccuracyModifier * attacker.stats.aim * 20 * ((GlobalManager.globalHit - stats.dodge) / 100);
+        float hitModifier = GlobalManager.globalHit - stats.dodge - weaponAccuracyPenalty;
 
+        Debug.Log(weaponAccuracyPenalty);
+
+        //Add cover bonus
+        if (currentCover) hitModifier -= currentCover.CoverBonus();            
+        
+        float baseChance = (20 * attacker.stats.aim * weaponAccuracyModifier * hitModifier) / 100;
         // FOR TESTING PURPOSES ONLY -- REMOVE WHEN FINISHED
-        Debug.Log(string.Format("Base chance to hit: {0}%, Dice roll: {1}", baseChance, randomChance));
+        Debug.Log(string.Format("Distance: {0}, Base chance to hit: {1}%, Dice roll: {2}", distanceToTarget, baseChance, randomChance));
 
         // Return true/false if hit connected
         return (baseChance >= randomChance);
     }
 
-    void TakeDamage(Character attacker, int damage)
+    void TakeDamage(Character attacker, int damage, int distanceToTarget)
     {
         // Called by an attacking source when taking damage
         // TO DO: More complex damage reduction will be added here
 
         // If attacked missed, do not take damage
-        if (!RollForHit(attacker))
+        if (!RollForHit(attacker, distanceToTarget))
         {
             Debug.Log(string.Format("{0} missed target {1}!", attacker.attributes.name, attributes.name));
             AddFlag("dodging");
@@ -852,17 +856,17 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
         if (selectedTarget)
             if (action == "attack")
             {
-                int weaponRange = equippedWeapon.GetRange();
+                int minWeaponRange = equippedWeapon.GetMinimumRange();
                 int distanceToTarget = currentTile.FindCost(selectedTarget.currentTile, 15).Count;
 
                 //Check if target within weapon range
-                if (distanceToTarget <= weaponRange && distanceToTarget > 0)
+                if (distanceToTarget >= minWeaponRange)
                     {
                     if (equippedWeapon.stats.ammoCurrent > 0)
                     {
                         targetCharacter = selectedTarget;
                         stats.actionPointsCurrent -= currentAction.cost;
-                        StartCoroutine(ShootWeapon());
+                        StartCoroutine(ShootWeapon(distanceToTarget));
                         RemoveFlag("targeting");
                     }
                     else
@@ -870,7 +874,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
                         Debug.Log("Out of Ammo! Reload weapon"); // This will eventually be shown in UI
                     }
                 } 
-                else Debug.Log(string.Format("Target is out of range! \nDistance: {0}, Weapon Range: {1}", distanceToTarget, weaponRange)); // This will eventually be shown visually instead of told
+                else Debug.Log(string.Format("Target is too close! \nDistance: {0}, Weapon Range: {1}", distanceToTarget, minWeaponRange)); // This will eventually be shown visually instead of told
             }
     }
 

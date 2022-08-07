@@ -32,12 +32,14 @@ public class Weapon : MonoBehaviour
     public class Stats
     {
         public int damage;
-        public int range;
+        public int minRange;
+        public int maxRange;
         public int ammoMax;
         public int ammoCurrent;
         public float reloadSpeed;
         //Note: Not capped at 1.
-        public float accuracyModifier;
+        public float baseAccuracyModifier;
+        public float overRangeAccuracyPenalty;
     }
     public Stats stats;
 
@@ -101,9 +103,22 @@ public class Weapon : MonoBehaviour
         StartCoroutine(ShootEffect());
     }
 
-    public int GetRange()
+    public int GetMinimumRange()
     {
-        return stats.range;
+        return stats.minRange;
+    }
+
+    public int GetMaximumRange()
+    {
+        return stats.maxRange;
+    }
+
+    public float GetAccuracyPenalty(int range)
+    {
+        int rangeDiff = range - GetMaximumRange();
+        float penalty = rangeDiff > 0 ? rangeDiff * stats.overRangeAccuracyPenalty : 0.0f;
+        Debug.Log(string.Format("Penalty: {0}, RangePenalty: {1}", penalty, stats.overRangeAccuracyPenalty));
+        return penalty;
     }
 
     public IEnumerator ShootEffect()
