@@ -795,8 +795,6 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         // Calculate chance to be hit
         float hitModifier = GlobalManager.globalHit - stats.dodge - weaponAccuracyPenalty;
 
-        Debug.Log(weaponAccuracyPenalty);
-
         //Add cover bonus
         if (currentCover) hitModifier -= currentCover.CoverBonus();            
         
@@ -824,7 +822,6 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         // Inflict damage on character
         Debug.Log(string.Format("{0} has attacked {1} for {2} damage!", attacker.attributes.name, attributes.name, damage)); // This will eventually be shown visually instead of told
 
-        TakeDamageEffect();
         Vector3 direction =  (transform.position - attacker.transform.position);
         stats.healthCurrent -= damage;
 
