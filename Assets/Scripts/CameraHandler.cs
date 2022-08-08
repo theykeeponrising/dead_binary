@@ -10,31 +10,34 @@ public class CameraHandler : MonoBehaviour
 
     CameraInput cameraInput;
     InputAction movement;
+    public Transform parent;
 
     // horizontal motion
     [SerializeField]
-    float maxSpeed = 10f; //5f
+    [Range(5f, 50f)]
+    float maxSpeed = 10f;
     float speed;
     [SerializeField]
     float acceleration = 10f;
-    [SerializeField]
-    float damping = 15f;
 
     // vertical motion - zooming
     [SerializeField]
+    [Range(0.5f, 3f)]
     float stepSize = 2f;
     [SerializeField]
     float zoomDampening = 7.5f;
     [SerializeField]
-    float minHeight = 5f; //5f
+    float minHeight = 5f;
     [SerializeField]
-    float maxHeight = 50f; //50f
-    // [SerializeField]
-    // float zoomSpeed = 2f; // TO DO -- Fix issue with Z position during zoom
+    float maxHeight = 50f;
+    [SerializeField]
+    [Range(0.5f, 2f)]
+    float zoomSpeed = 2f;
 
     // rotation
     [SerializeField]
-    float maxRotationSpeed = 0.25f; //1f
+    [Range(0.1f, 1f)]
+    float maxRotationSpeed = 0.25f;
 
     // screen edge motion
     // [SerializeField]
@@ -59,6 +62,7 @@ public class CameraHandler : MonoBehaviour
     {
         cameraInput = new CameraInput();
         zoomHeight = transform.position.y;
+        parent = transform.parent;
     }
 
     void OnEnable()
@@ -88,13 +92,17 @@ public class CameraHandler : MonoBehaviour
 
     void UpdateVelocity()
     {
-        horizontalVelocity = (transform.position - lastPosition) / Time.deltaTime;
+        // Tracks velocity of camera movement
+
+        horizontalVelocity = (parent.transform.position - lastPosition) / Time.deltaTime;
         horizontalVelocity.y = 0;
-        lastPosition = transform.position;
+        lastPosition = parent.transform.position;
     }
 
     void GetKeyboardMovement()
     {
+        // Translates keyboard input into camera movement values
+
         Vector3 inputValue = movement.ReadValue<Vector2>().x * GetCameraRight()
             + movement.ReadValue<Vector2>().y * GetCameraForward();
 
@@ -106,6 +114,8 @@ public class CameraHandler : MonoBehaviour
 
     Vector3 GetCameraRight()
     {
+        // Returns camera right with a flattened y axis
+
         Vector3 right = transform.right;
         right.y = 0;
         return right;
@@ -113,6 +123,8 @@ public class CameraHandler : MonoBehaviour
 
     Vector3 GetCameraForward()
     {
+        // Returns camera forward with a flattened y axis
+
         Vector3 forward = transform.forward;
         forward.y = 0;
         return forward;
@@ -120,15 +132,12 @@ public class CameraHandler : MonoBehaviour
 
     void UpdateBasePosition()
     {
+        // Moves camera parent (Player) to new position
+
         if (targetPosition.sqrMagnitude > 0.1f)
         {
             speed = Mathf.Lerp(speed, maxSpeed, Time.deltaTime * acceleration);
-            transform.position += targetPosition * speed * Time.deltaTime;
-        }
-        else
-        {
-            horizontalVelocity = Vector3.Lerp(horizontalVelocity, Vector3.zero, Time.deltaTime * damping);
-            transform.position += horizontalVelocity * Time.deltaTime;
+            parent.transform.position += targetPosition * speed * Time.deltaTime;
         }
 
         targetPosition = Vector3.zero;
@@ -136,15 +145,20 @@ public class CameraHandler : MonoBehaviour
 
     void RotateCamera(InputAction.CallbackContext inputValue)
     {
+        // Rotate camera parent (Player) while holding middle mouse button
+        // TO DO -- Add keyboard rotation
+
         if (!Mouse.current.middleButton.isPressed)
             return;
 
         float value = inputValue.ReadValue<Vector2>().x;
-        transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, value * maxRotationSpeed + transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
+        parent.rotation = Quaternion.Euler(parent.rotation.eulerAngles.x, value * maxRotationSpeed + parent.rotation.eulerAngles.y, parent.rotation.eulerAngles.z);
     }
 
     void ZoomCamera(InputAction.CallbackContext inputValue)
     {
+        // Sets the expected zoom height based on input
+
         float value = -inputValue.ReadValue<Vector2>().y / 100f; // divided for tuning
 
         if (Mathf.Abs(value) > 0.1f)
@@ -159,8 +173,11 @@ public class CameraHandler : MonoBehaviour
 
     void UpdateCameraPosition()
     {
+        // Pulls camera backwards, giving a "zooming out" feel
+
         Vector3 zoomTarget = new Vector3(transform.localPosition.x, zoomHeight, transform.localPosition.z);
-        //zoomTarget -= zoomSpeed * (zoomHeight - transform.localPosition.y) * Vector3.forward; // TO DO - Figure out why this is making Z go nuts.
+        Vector3 moveVector = new Vector3(-0.5f, 0f, 0.5f); // Keep x and z inverted to center camera
+        zoomTarget -= zoomSpeed * (zoomHeight - transform.localPosition.y) * moveVector;
 
         transform.localPosition = Vector3.Lerp(transform.localPosition, zoomTarget, Time.deltaTime * zoomDampening);
     }
