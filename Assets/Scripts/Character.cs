@@ -37,7 +37,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
 
     AssetManager assetManager;
     InCombatPlayerAction playerAction;
-    Inventory inventory;
+    public Inventory inventory;
 
     [System.Serializable]
     public class Animators

@@ -24,7 +24,7 @@ public class ActionPanelScript : MonoBehaviour
         if (p == true)
         {
             apTextBox.text = player.selectedCharacter.stats.actionPointsCurrent.ToString();
-            ammoTextBox.text = player.selectedCharacter.equippedWeapon.stats.ammoCurrent.ToString();
+            ammoTextBox.text = player.selectedCharacter.inventory.equippedWeapon.stats.ammoCurrent.ToString();
         }
     }    
 }
