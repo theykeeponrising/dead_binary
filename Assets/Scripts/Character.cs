@@ -5,7 +5,8 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEditor;
 
-public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
+public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, IFaction
+
 {
     // Main script for Player-Controlled characters
 
@@ -18,7 +19,16 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
     public List<Tile> movePath;
     Tile moveTargetImmediate;
     Tile moveTargetDestination;
+
+    public bool isAtDestination => IsAtDestination();
+    private bool IsAtDestination()
+    {
+        bool b = moveTargetDestination == null ? true : false;
+        return b;
+    }
+
     CoverObject currentCover;
+
     Transform lookTarget;
     public Character targetCharacter;
 
@@ -85,6 +95,12 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
     public List<Actions.ActionsList> availableActions;
     public Actions.Action currentAction;
 
+    public Faction faction;
+    public IFaction ifaction;
+    Faction IFaction.faction { get { return faction; } set { faction = value; } }
+
+    public List<Character> potentialTargets;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -135,6 +151,9 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
             //if (part.bodyPart == CharacterPart.BodyPart.hand_left)
             //    body.handLeft = part.transform;
         }
+
+        ifaction = this;
+        potentialTargets = null;
     }
 
     // Update is called once per frame
@@ -142,6 +161,18 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
     {
         SetAnimation();
         Movement();
+
+        /*
+        if (stateMachine != null)
+        {
+            Debug.Log("SM on Char");
+            stateMachine.Update();
+            state = stateMachine.GetCurrentState();
+            CurrentState = state.ToString();
+        }
+        else
+            CurrentState = "None";
+        */
     }
 
     public bool KeyPress(PlayerInput.ControlsActions controls, InputAction action)
@@ -418,6 +449,8 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
 
     IEnumerator MoveToPath()
     {
+        //stateMachine.ChangeState(new SelectedStates.Moving(stateMachine));
+
         // Movement routine
         // Sets "moving" flag before and removes after
         AddFlag("moving");
@@ -468,9 +501,12 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
         }
         moveTargetImmediate = null;
         moveTargetDestination = null;
+
+
+       // stateMachine.ChangeState(new SelectedStates.Idle(stateMachine));
     }
 
-    bool CheckTileMove(Tile newTile)
+    public bool CheckTileMove(Tile newTile)
     {
         // Gets the shortest tile distance to target and compares to maximum allowed moves
         // If destination is too far, abort move action
@@ -588,11 +624,11 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
         inventory.equippedWeapon.stats.ammoCurrent = inventory.equippedWeapon.stats.ammoMax;
     }
 
-    IEnumerator ShootWeapon()
+    IEnumerator ShootWeapon(int distanceToTarget)
     {
         // Inflict damage on target character
         if (targetCharacter)
-            targetCharacter.TakeDamage(this, inventory.equippedWeapon.stats.damage);
+            targetCharacter.TakeDamage(this, inventory.equippedWeapon.stats.damage, distanceToTarget);
 
         AddFlag("shooting");
         animator.Play("Shoot", inventory.equippedWeapon.weaponLayer);
@@ -612,6 +648,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
         RemoveFlag("shooting");
 
         // If target is dodging, remove flag
+        if(targetCharacter)
         targetCharacter.RemoveFlag("dodging");
     }
 
@@ -636,7 +673,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
         // Weapon impact effect on target
         else if (context == AnimationEventContext.TAKE_DAMAGE)
         {
-            targetCharacter.TakeDamageEffect();
+          targetCharacter.TakeDamageEffect();
         }
 
         // Stow weapon animation is completed
@@ -745,35 +782,39 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
         }
     }
 
-    bool RollForHit(Character attacker)
+    bool RollForHit(Character attacker, int distanceToTarget)
     {
         // Dodge change for character vs. attacker's aim
 
         // Dice roll performed
-        float baseChance;
         int randomChance = Random.Range(1, 100);
-        float weaponAccuracyModifier = attacker.inventory.equippedWeapon.stats.accuracyModifier;
+        float weaponAccuracyModifier = attacker.inventory.equippedWeapon.stats.baseAccuracyModifier;
+
+        float weaponAccuracyPenalty = attacker.inventory.equippedWeapon.GetAccuracyPenalty(distanceToTarget);
 
         // Calculate chance to be hit
-        if (currentCover)
-            baseChance = weaponAccuracyModifier * attacker.stats.aim * 20 * ((GlobalManager.globalHit - currentCover.CoverBonus() - stats.dodge) / 100);
-        else
-            baseChance = weaponAccuracyModifier * attacker.stats.aim * 20 * ((GlobalManager.globalHit - stats.dodge) / 100);
+        float hitModifier = GlobalManager.globalHit - stats.dodge - weaponAccuracyPenalty;
 
+        Debug.Log(weaponAccuracyPenalty);
+
+        //Add cover bonus
+        if (currentCover) hitModifier -= currentCover.CoverBonus();            
+        
+        float baseChance = (20 * attacker.stats.aim * weaponAccuracyModifier * hitModifier) / 100;
         // FOR TESTING PURPOSES ONLY -- REMOVE WHEN FINISHED
-        Debug.Log(string.Format("Base chance to hit: {0}%, Dice roll: {1}", baseChance, randomChance));
+        Debug.Log(string.Format("Distance: {0}, Base chance to hit: {1}%, Dice roll: {2}", distanceToTarget, baseChance, randomChance));
 
         // Return true/false if hit connected
         return (baseChance >= randomChance);
     }
 
-    void TakeDamage(Character attacker, int damage)
+    void TakeDamage(Character attacker, int damage, int distanceToTarget)
     {
         // Called by an attacking source when taking damage
         // TO DO: More complex damage reduction will be added here
 
         // If attacked missed, do not take damage
-        if (!RollForHit(attacker))
+        if (!RollForHit(attacker, distanceToTarget))
         {
             Debug.Log(string.Format("{0} missed target {1}!", attacker.attributes.name, attributes.name));
             AddFlag("dodging");
@@ -782,6 +823,8 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
 
         // Inflict damage on character
         Debug.Log(string.Format("{0} has attacked {1} for {2} damage!", attacker.attributes.name, attributes.name, damage)); // This will eventually be shown visually instead of told
+
+        TakeDamageEffect();
         Vector3 direction =  (transform.position - attacker.transform.position);
         stats.healthCurrent -= damage;
 
@@ -871,7 +914,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
         yield return new WaitForSeconds(0.01f);
     }
 
-    void ShootAction(Character selectedTarget=null, string action="")
+    public void ShootAction(Character selectedTarget=null, string action="")
     {
         // Sets the character's target and performs action on them
         // Called by InCombatPlayerAction
@@ -879,17 +922,17 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
         if (selectedTarget)
             if (action == "attack")
             {
-                int weaponRange = inventory.equippedWeapon.GetRange();
+                int minWeaponRange = inventory.equippedWeapon.GetMinimumRange();
                 int distanceToTarget = currentTile.FindCost(selectedTarget.currentTile, 15).Count;
 
                 //Check if target within weapon range
-                if (distanceToTarget <= weaponRange && distanceToTarget > 0)
+                if (distanceToTarget >= minWeaponRange)
                     {
                     if (inventory.equippedWeapon.stats.ammoCurrent > 0)
                     {
                         targetCharacter = selectedTarget;
                         stats.actionPointsCurrent -= currentAction.cost;
-                        StartCoroutine(ShootWeapon());
+                        StartCoroutine(ShootWeapon(distanceToTarget));
                         RemoveFlag("targeting");
                     }
                     else
@@ -897,7 +940,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
                         Debug.Log("Out of Ammo! Reload weapon"); // This will eventually be shown in UI
                     }
                 } 
-                else Debug.Log(string.Format("Target is out of range! \nDistance: {0}, Weapon Range: {1}", distanceToTarget, weaponRange)); // This will eventually be shown visually instead of told
+                else Debug.Log(string.Format("Target is too close! \nDistance: {0}, Weapon Range: {1}", distanceToTarget, minWeaponRange)); // This will eventually be shown visually instead of told
             }
     }
 
