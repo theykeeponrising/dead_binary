@@ -50,6 +50,11 @@ public class InCombatPlayerAction : MonoBehaviour
         playerInput.Controls.ActionButton_2.performed += _ => KeyPress(playerInput.Controls, playerInput.Controls.ActionButton_2);
         playerInput.Controls.ActionButton_3.performed += _ => KeyPress(playerInput.Controls, playerInput.Controls.ActionButton_3);
         playerInput.Controls.ActionButton_4.performed += _ => KeyPress(playerInput.Controls, playerInput.Controls.ActionButton_4);
+        playerInput.Controls.ActionButton_5.performed += _ => KeyPress(playerInput.Controls, playerInput.Controls.ActionButton_5);
+        playerInput.Controls.ActionButton_6.performed += _ => KeyPress(playerInput.Controls, playerInput.Controls.ActionButton_6);
+        playerInput.Controls.ActionButton_7.performed += _ => KeyPress(playerInput.Controls, playerInput.Controls.ActionButton_7);
+        playerInput.Controls.ActionButton_8.performed += _ => KeyPress(playerInput.Controls, playerInput.Controls.ActionButton_8);
+        playerInput.Controls.ActionButton_9.performed += _ => KeyPress(playerInput.Controls, playerInput.Controls.ActionButton_9);
     }
     private void Start()
     {
