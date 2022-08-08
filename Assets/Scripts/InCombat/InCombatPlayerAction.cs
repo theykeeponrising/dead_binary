@@ -21,6 +21,8 @@ public class InCombatPlayerAction : MonoBehaviour
 
 
     public LayerMask uiLayermask;
+
+    /*
     [SerializeField] public ActionPanel actionPanel;
     [Serializable] public class ActionPanel
     {
@@ -28,7 +30,9 @@ public class InCombatPlayerAction : MonoBehaviour
         public TextMeshProUGUI actionPointsText;
         public Button moveButton;
         public Button shootButton;
-    }
+    }*/
+
+    private ActionPanelScript actionPanelScript;
 
     public StateMachine<InCombatPlayerAction> stateMachine;
     public TextMeshProUGUI stateText;
@@ -46,13 +50,13 @@ public class InCombatPlayerAction : MonoBehaviour
         playerInput.Controls.ActionButton_2.performed += _ => KeyPress(playerInput.Controls, playerInput.Controls.ActionButton_2);
         playerInput.Controls.ActionButton_3.performed += _ => KeyPress(playerInput.Controls, playerInput.Controls.ActionButton_3);
         playerInput.Controls.ActionButton_4.performed += _ => KeyPress(playerInput.Controls, playerInput.Controls.ActionButton_4);
-
-        
     }
     private void Start()
     {
         stateMachine = new StateMachine<InCombatPlayerAction>();
         stateMachine.Configure(this, new SelectedStates.NoTargetSelected(stateMachine));
+
+        actionPanelScript = GameObject.FindGameObjectWithTag("ActionPanel").GetComponent<ActionPanelScript>();
     }
 
     public void EnablePlayerInput()
@@ -70,20 +74,10 @@ public class InCombatPlayerAction : MonoBehaviour
     {
         PathPreview();
 
-        if (selectedCharacter != null)
-        {
-            actionPanel.panel.SetActive(true);
-            if (actionPanel != null)
-                actionPanel.actionPointsText.text =
-                    "AP: " + selectedCharacter.stats.actionPointsCurrent.ToString();
-        }
-        else
-            actionPanel.panel.SetActive(false);
-
         if (stateMachine != null)
         {
             stateMachine.Update();
-            stateText.text = stateMachine.GetCurrentState().StateName;
+            stateText.text = stateMachine.GetCurrentState().GetType().Name;
         }
     }
 
@@ -135,8 +129,8 @@ public class InCombatPlayerAction : MonoBehaviour
         // Orders target to move on right-click
         if (selectedCharacter)
         {
-            if (stateMachine.GetCurrentState().GetType() 
-                == typeof(SelectedStates.ChoosingMoveDestination))
+            //if (stateMachine.GetCurrentState().GetType() 
+            //    == typeof(SelectedStates.ChoosingMoveDestination))
             {
                 RaycastHit hit;
                 Ray ray;
@@ -205,8 +199,8 @@ public class InCombatPlayerAction : MonoBehaviour
         // Previews move path on mouse over
         if (selectedCharacter && targetTile)
         {
-            if(stateMachine.GetCurrentState().GetType() 
-                == typeof(SelectedStates.ChoosingMoveDestination))
+           //if(stateMachine.GetCurrentState().GetType() 
+            //    == typeof(SelectedStates.ChoosingMoveDestination))
             {
                 PathPreviewClear();
                 previewPath = selectedCharacter.currentTile.FindCost(targetTile, selectedCharacter.stats.movement);

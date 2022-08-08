@@ -483,7 +483,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
        // stateMachine.ChangeState(new SelectedStates.Idle(stateMachine));
     }
 
-    bool CheckTileMove(Tile newTile)
+    public bool CheckTileMove(Tile newTile)
     {
         // Gets the shortest tile distance to target and compares to maximum allowed moves
         // If destination is too far, abort move action
@@ -621,6 +621,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         RemoveFlag("shooting");
 
         // If target is dodging, remove flag
+        if(targetCharacter)
         targetCharacter.RemoveFlag("dodging");
     }
 

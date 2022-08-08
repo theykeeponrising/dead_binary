@@ -26,6 +26,47 @@ public class SelectedStates
         {
             t.SelectUnit();
         }
+        public override void InputSecndry(InCombatPlayerAction t)
+        {
+            if (t.selectedCharacter)
+            {
+                RaycastHit hit;
+                Ray ray;
+                ray = Camera.main.ScreenPointToRay(t.playerInput.Controls.InputPosition.ReadValue<Vector2>());
+                int layerMask = (1 << LayerMask.NameToLayer("TileMap"));
+
+                if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+                {
+                    if (hit.collider.GetComponent<Character>())
+                    {
+                        var v = hit.collider.GetComponent<Character>();
+
+                        // If Right Click on Target, shoot it.
+                        if (v.faction != t.selectedCharacter.faction)
+                        {
+                            t.selectedCharacter.targetCharacter = v;
+                            ChangeState(new ShootTarget(Machine));
+                        }else
+                        {
+                            Debug.Log("Cannot shoot a Character of the same Faction!");
+                        }
+                    }
+
+                    if (hit.collider.GetComponent<Tile>())
+                    {
+                        var tile = hit.collider.GetComponent<Tile>();
+
+                        t.selectedCharacter.ProcessAction(Actions.action_move, contextTile: tile, contextPath: t.previewPath);
+
+                        //TODO: Clean this up. Need to check that this is a valid move before sending to state machine.
+                        if(t.selectedCharacter.CheckTileMove(tile) == true)
+                            ChangeState(new Moving(Machine,tile));
+                    }
+                }
+            }
+        }
+
+        /*
         public override void InputAction1(InCombatPlayerAction t)
         {
             ChangeState(new ChoosingMoveDestination(Machine));
@@ -34,6 +75,8 @@ public class SelectedStates
         {
             ChangeState(new ChoosingShootTarget(Machine));
         }
+        */
+
         public override void InputAction3(InCombatPlayerAction t)
         {
             ChangeState(new Reloading(Machine));
@@ -77,7 +120,7 @@ public class SelectedStates
             if (t.selectedCharacter.stats.actionPointsCurrent > 0)
             {
                 t.MoveCharacter();
-                ChangeState(new Moving(Machine));
+               // ChangeState(new Moving(Machine));
             }
             else
                 ChangeState(new Idle(Machine));
@@ -87,7 +130,7 @@ public class SelectedStates
             if (t.selectedCharacter.stats.actionPointsCurrent > 0)
             {
                 t.MoveCharacter();
-                ChangeState(new Moving(Machine));
+               // ChangeState(new Moving(Machine));
             }
             else
                 ChangeState(new Idle(Machine));
@@ -108,17 +151,25 @@ public class SelectedStates
 
     public class Moving : FiniteState<InCombatPlayerAction>
     {
-        public Moving(StateMachine<InCombatPlayerAction> machine) : base(machine) { Machine = machine; }
+        public Moving(StateMachine<InCombatPlayerAction> machine, Tile destination) : base(machine) { Machine = machine; _destination = destination; }
 
+        Tile _destination;
+        float timer = 5; //Failsafe
+
+        public override void Enter(InCombatPlayerAction t)
+        {
+            timer += Time.time;
+        }
         public override void Execute(InCombatPlayerAction t)
         {
             if (t.selectedCharacter)
-                if (t.selectedCharacter.isAtDestination)
+                if (t.selectedCharacter.currentTile == _destination)
                     ChangeState(new Idle(Machine));
-            else
+
+            if (Time.time > timer)
             {
-                t.PathPreviewClear();
-                ChangeState(new NoTargetSelected(Machine));
+                Debug.LogWarning("Character timed out of Moving. Reverting to Idle state.");
+                ChangeState(new Idle(Machine));
             }
         }
     }
@@ -271,7 +322,7 @@ public class SelectedStates
     {
         public Reloading(StateMachine<InCombatPlayerAction> machine) : base(machine) { Machine = machine; }
 
-        float timer = 1;
+        float timer = 0.25f;
         public override void Enter(InCombatPlayerAction t)
         {
             timer += Time.time;
@@ -289,7 +340,7 @@ public class SelectedStates
     public class RefreshingAP : FiniteState<InCombatPlayerAction>
     {
         public RefreshingAP(StateMachine<InCombatPlayerAction> machine) : base(machine) { Machine = machine; }
-        float timer = 1;
+        float timer = 0.25f;
         public override void Enter(InCombatPlayerAction t)
         {
             t.selectedCharacter.RefreshActionPoints();
