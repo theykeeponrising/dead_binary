@@ -1961,6 +1961,7 @@ MonoBehaviour:
   currentTile: {fileID: 0}
   movePath: []
   targetCharacter: {fileID: 0}
+  inventory: {fileID: 0}
   animators:
     animatorBase: {fileID: 9100000, guid: 347ec8c34e26d9146b434b8d63ef1192, type: 2}
     animatorOverride: {fileID: 22100000, guid: 55e353f9f8d68454c8822e669cbd2c59, type: 2}
@@ -1976,7 +1977,9 @@ MonoBehaviour:
     actionPointsMax: 2
   attributes:
     name: 
-  availableActions: 000000000100000002000000
+  availableActions: 00000000010000000200000003000000
+  faction: 0
+  potentialTargets: []
 --- !u!114 &3296876834387543054
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1994,6 +1997,7 @@ MonoBehaviour:
   - {fileID: 877797045781911332, guid: 074955a812631f44b88f9cb1f37ff1be, type: 3}
   items: []
   equippedWeapon: {fileID: 0}
+  weaponsMax: 2
 --- !u!1 &7323553403757494216
 GameObject:
   m_ObjectHideFlags: 0

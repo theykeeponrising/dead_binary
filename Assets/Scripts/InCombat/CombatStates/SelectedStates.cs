@@ -14,7 +14,7 @@ public class SelectedStates
             if (t.selectedCharacter)
             {
                 t.selectedCharacter.potentialTargets = null;
-                t.selectedCharacter.targetCharacter = null;
+                // t.selectedCharacter.targetCharacter = null; // Commented out because this breaks dodging
             }
         }
         public override void Execute(InCombatPlayerAction t)
@@ -85,6 +85,10 @@ public class SelectedStates
         {
             ChangeState(new RefreshingAP(Machine));
         }
+        public override void InputAction5(InCombatPlayerAction t)
+        {
+            ChangeState(new SwapGun(Machine));
+        }
     }
 
     public class NoTargetSelected : FiniteState<InCombatPlayerAction>
@@ -146,6 +150,10 @@ public class SelectedStates
         public override void InputAction4(InCombatPlayerAction t)
         {
             ChangeState(new RefreshingAP(Machine));
+        }
+        public override void InputAction5(InCombatPlayerAction t)
+        {
+            ChangeState(new SwapGun(Machine));
         }
     }
 
@@ -282,6 +290,10 @@ public class SelectedStates
         {
             ChangeState(new RefreshingAP(Machine));
         }
+        public override void InputAction5(InCombatPlayerAction t)
+        {
+            ChangeState(new SwapGun(Machine));
+        }
     }
 
     public class ShootTarget : FiniteState<InCombatPlayerAction>
@@ -314,7 +326,7 @@ public class SelectedStates
         public override void Exit(InCombatPlayerAction t)
         {
             t.selectorBall.SetActive(false);
-            t.selectedCharacter.targetCharacter = null;
+            // t.selectedCharacter.targetCharacter = null; // Commented out because this breaks dodging
         }
     }
 
@@ -344,6 +356,23 @@ public class SelectedStates
         public override void Enter(InCombatPlayerAction t)
         {
             t.selectedCharacter.RefreshActionPoints();
+            timer += Time.time;
+        }
+
+        public override void Execute(InCombatPlayerAction t)
+        {
+            if (timer < Time.time)
+                ChangeState(new Idle(Machine));
+        }
+    }
+
+    public class SwapGun : FiniteState<InCombatPlayerAction>
+    {
+        public SwapGun(StateMachine<InCombatPlayerAction> machine) : base(machine) { Machine = machine; }
+        float timer = 0.25f;
+        public override void Enter(InCombatPlayerAction t)
+        {
+            t.selectedCharacter.ProcessAction(Actions.action_swap);
             timer += Time.time;
         }
 

@@ -23,6 +23,11 @@ abstract public class FiniteState<T>
             v.playerInput.Controls.ActionButton_2.performed += _InputAction2;
             v.playerInput.Controls.ActionButton_3.performed += _InputAction3;
             v.playerInput.Controls.ActionButton_4.performed += _InputAction4;
+            v.playerInput.Controls.ActionButton_5.performed += _InputAction5;
+            v.playerInput.Controls.ActionButton_6.performed += _InputAction6;
+            v.playerInput.Controls.ActionButton_7.performed += _InputAction7;
+            v.playerInput.Controls.ActionButton_8.performed += _InputAction8;
+            v.playerInput.Controls.ActionButton_9.performed += _InputAction9;
         }
     }
 
@@ -39,6 +44,11 @@ abstract public class FiniteState<T>
             v.playerInput.Controls.ActionButton_2.performed -= _InputAction2;
             v.playerInput.Controls.ActionButton_3.performed -= _InputAction3;
             v.playerInput.Controls.ActionButton_4.performed -= _InputAction4;
+            v.playerInput.Controls.ActionButton_5.performed -= _InputAction5;
+            v.playerInput.Controls.ActionButton_6.performed -= _InputAction6;
+            v.playerInput.Controls.ActionButton_7.performed -= _InputAction7;
+            v.playerInput.Controls.ActionButton_8.performed -= _InputAction8;
+            v.playerInput.Controls.ActionButton_9.performed -= _InputAction9;
         }
     }
 
@@ -60,8 +70,17 @@ abstract public class FiniteState<T>
     { InputAction3(Owner); }
     private void _InputAction4(InputAction.CallbackContext cxt)
     { InputAction4(Owner); }
+    private void _InputAction5(InputAction.CallbackContext cxt)
+    { InputAction5(Owner); }
+    private void _InputAction6(InputAction.CallbackContext cxt)
+    { InputAction6(Owner); }
+    private void _InputAction7(InputAction.CallbackContext cxt)
+    { InputAction7(Owner); }
+    private void _InputAction8(InputAction.CallbackContext cxt)
+    { InputAction8(Owner); }
+    private void _InputAction9(InputAction.CallbackContext cxt)
+    { InputAction9(Owner); }
 
-    
     // Do On Input
     public virtual void InputPrimary(T t) 
     { Debug.Log("Primary has no function in this State. (" + StateName + ")"); }
@@ -75,4 +94,14 @@ abstract public class FiniteState<T>
     { Debug.Log("Action (3) has no function in this State.(" + StateName + ")"); }
     public virtual void InputAction4(T t)
     { Debug.Log("Action (4) has no function in this State.(" + StateName + ")"); }
+    public virtual void InputAction5(T t)
+    { Debug.Log("Action (5) has no function in this State.(" + StateName + ")"); }
+    public virtual void InputAction6(T t)
+    { Debug.Log("Action (6) has no function in this State.(" + StateName + ")"); }
+    public virtual void InputAction7(T t)
+    { Debug.Log("Action (7) has no function in this State.(" + StateName + ")"); }
+    public virtual void InputAction8(T t)
+    { Debug.Log("Action (8) has no function in this State.(" + StateName + ")"); }
+    public virtual void InputAction9(T t)
+    { Debug.Log("Action (9) has no function in this State.(" + StateName + ")"); }
 }
