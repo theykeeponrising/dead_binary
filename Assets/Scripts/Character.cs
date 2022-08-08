@@ -5,7 +5,8 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEditor;
 
-public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
+public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, IFaction
+
 {
     // Main script for Player-Controlled characters
 
@@ -18,7 +19,16 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
     public List<Tile> movePath;
     Tile moveTargetImmediate;
     Tile moveTargetDestination;
+
+    public bool isAtDestination => IsAtDestination();
+    private bool IsAtDestination()
+    {
+        bool b = moveTargetDestination == null ? true : false;
+        return b;
+    }
+
     CoverObject currentCover;
+
     Transform lookTarget;
 
     float velocityX = 0f;
@@ -88,6 +98,12 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
     public List<Actions.ActionsList> availableActions;
     public Actions.Action currentAction;
 
+    public Faction faction;
+    public IFaction ifaction;
+    Faction IFaction.faction { get { return faction; } set { faction = value; } }
+
+    public List<Character> potentialTargets;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -151,6 +167,9 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
             //if (part.bodyPart == CharacterPart.BodyPart.hand_left)
             //    body.handLeft = part.transform;
         }
+
+        ifaction = this;
+        potentialTargets = null;
     }
 
     // Update is called once per frame
@@ -158,6 +177,18 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
     {
         SetAnimation();
         Movement();
+
+        /*
+        if (stateMachine != null)
+        {
+            Debug.Log("SM on Char");
+            stateMachine.Update();
+            state = stateMachine.GetCurrentState();
+            CurrentState = state.ToString();
+        }
+        else
+            CurrentState = "None";
+        */
     }
 
     public bool KeyPress(PlayerInput.ControlsActions controls, InputAction action)
@@ -395,6 +426,8 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
 
     IEnumerator MoveToPath()
     {
+        //stateMachine.ChangeState(new SelectedStates.Moving(stateMachine));
+
         // Movement routine
         // Sets "moving" flag before and removes after
         AddFlag("moving");
@@ -445,9 +478,12 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
         }
         moveTargetImmediate = null;
         moveTargetDestination = null;
+
+
+       // stateMachine.ChangeState(new SelectedStates.Idle(stateMachine));
     }
 
-    bool CheckTileMove(Tile newTile)
+    public bool CheckTileMove(Tile newTile)
     {
         // Gets the shortest tile distance to target and compares to maximum allowed moves
         // If destination is too far, abort move action
@@ -585,6 +621,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
         RemoveFlag("shooting");
 
         // If target is dodging, remove flag
+        if(targetCharacter)
         targetCharacter.RemoveFlag("dodging");
     }
 
@@ -609,7 +646,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
         // Weapon impact effect on target
         else if (context == AnimationEventContext.TAKE_DAMAGE)
         {
-            targetCharacter.TakeDamageEffect();
+          targetCharacter.TakeDamageEffect();
         }
 
         // Stow weapon animation is completed
@@ -759,6 +796,8 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
 
         // Inflict damage on character
         Debug.Log(string.Format("{0} has attacked {1} for {2} damage!", attacker.attributes.name, attributes.name, damage)); // This will eventually be shown visually instead of told
+
+        TakeDamageEffect();
         Vector3 direction =  (transform.position - attacker.transform.position);
         stats.healthCurrent -= damage;
 
@@ -848,7 +887,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler
         yield return new WaitForSeconds(0.01f);
     }
 
-    void ShootAction(Character selectedTarget=null, string action="")
+    public void ShootAction(Character selectedTarget=null, string action="")
     {
         // Sets the character's target and performs action on them
         // Called by InCombatPlayerAction
