@@ -31,7 +31,7 @@ public class Actions : MonoBehaviour
     }
 
     // All possible actions in enum form
-    public enum ActionsList { MOVE, SHOOT, RELOAD, SWAP }
+    public enum ActionsList { MOVE, SHOOT, RELOAD, SWAP, REFRESH }
 
     public class Action
     {
@@ -69,6 +69,7 @@ public class Actions : MonoBehaviour
     public static Action action_shoot = new Action("Shoot", ActionsList.SHOOT, "shoot", 1, 0, ActionButtons.btn_action_shoot);
     public static Action action_reload = new Action("Reload", ActionsList.RELOAD, "reload", 1, 0, ActionButtons.btn_action_reload);
     public static Action action_swap = new Action("Swap Guns", ActionsList.SWAP, "swap", 0, 0, ActionButtons.btn_action_swap);
+    public static Action action_refresh = new Action("Refresh AP", ActionsList.REFRESH, "refresh", 0, 0, ActionButtons.btn_action_swap); // TEMP ACTION TO REFRESH AP, REMOVE WHEN END TURN BTN IS ADDED
 
     // Dictionary used to match enum to actual action class object
     public static Dictionary<ActionsList, Action> ActionsDict = new Dictionary<ActionsList, Action>() { 
@@ -76,5 +77,6 @@ public class Actions : MonoBehaviour
         { ActionsList.SHOOT, action_shoot },
         { ActionsList.RELOAD, action_reload },
         { ActionsList.SWAP, action_swap },
+        { ActionsList.REFRESH, action_refresh },
     };
 }

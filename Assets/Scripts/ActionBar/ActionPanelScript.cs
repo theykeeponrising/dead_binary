@@ -17,7 +17,6 @@ public class ActionPanelScript : MonoBehaviour
     {
         // Assign the player.
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<InCombatPlayerAction>();
-
     }
 
     private void OnEnable()
@@ -27,12 +26,11 @@ public class ActionPanelScript : MonoBehaviour
 
         if (!player)
             return;
-
-        bool p = player.selectedCharacter ? true : false;
-        panel.SetActive(p);
-
+       
         if (player.selectedCharacter)
         {
+            panel.SetActive(true);
+
             List<Actions.ActionsList> actionsList = new List<Actions.ActionsList>();
             foreach(Actions.ActionsList characterAction in player.selectedCharacter.availableActions)
             {
@@ -43,22 +41,21 @@ public class ActionPanelScript : MonoBehaviour
                     int index = buttons.Count - 1;
 
                     buttons[index].GetComponentsInChildren<Image>()[1].sprite = Actions.ActionsDict[actionsList[index]].button.active;
-                    buttons[index].GetComponentInChildren<TextMeshProUGUI>().text = index.ToString();
+                    buttons[index].GetComponentInChildren<TextMeshProUGUI>().text = (index + 1).ToString();
                     buttons[index].gameObject.SetActive(true);
 
                     if (index > 0)
                     {
-                        buttons[index].transform.position = new Vector3(buttons[index].transform.position.x + (75f * index), buttons[index].transform.position.y, buttons[index].transform.position.z);
+                        Vector3 offset = new Vector3(75 * index, 0, 0);
+                        buttons[index].transform.position += offset;
                     }
                 }
             }
 
+            // Resize action panel to fit number of buttons
             float height = 100f;
             float width = 75 * buttons.Count + 15;
             GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
-
-            apTextBox.text = player.selectedCharacter.stats.actionPointsCurrent.ToString();
-            ammoTextBox.text = player.selectedCharacter.inventory.equippedWeapon.stats.ammoCurrent.ToString();
         }
     }
 
@@ -71,5 +68,13 @@ public class ActionPanelScript : MonoBehaviour
             Destroy(button.gameObject);
         }
         buttons = new List<Button>();
+    }
+
+    private void Update()
+    {
+        // Update ammo and ap
+
+        apTextBox.text = player.selectedCharacter.stats.actionPointsCurrent.ToString();
+        ammoTextBox.text = player.selectedCharacter.inventory.equippedWeapon.stats.ammoCurrent.ToString();
     }
 }

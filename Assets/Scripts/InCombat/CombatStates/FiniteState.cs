@@ -14,6 +14,7 @@ abstract public class FiniteState<T>
     {
         Owner = t;
         StateName = GetType().Name.ToString();
+
         if (t.GetType() == typeof(InCombatPlayerAction)) { }
         {
             var v = t as InCombatPlayerAction;
@@ -63,45 +64,30 @@ abstract public class FiniteState<T>
     private void _InputSecndry(InputAction.CallbackContext cxt)
     { InputSecndry(Owner); }
     private void _InputAction1(InputAction.CallbackContext cxt)
-    { InputAction1(Owner); }
+    { InputActionBtn(Owner, 1); }
     private void _InputAction2(InputAction.CallbackContext cxt)
-    { InputAction2(Owner); }
+    { InputActionBtn(Owner, 2); }
     private void _InputAction3(InputAction.CallbackContext cxt)
-    { InputAction3(Owner); }
+    { InputActionBtn(Owner, 3); }
     private void _InputAction4(InputAction.CallbackContext cxt)
-    { InputAction4(Owner); }
+    { InputActionBtn(Owner, 4); }
     private void _InputAction5(InputAction.CallbackContext cxt)
-    { InputAction5(Owner); }
+    { InputActionBtn(Owner, 5); }
     private void _InputAction6(InputAction.CallbackContext cxt)
-    { InputAction6(Owner); }
+    { InputActionBtn(Owner, 6); }
     private void _InputAction7(InputAction.CallbackContext cxt)
-    { InputAction7(Owner); }
+    { InputActionBtn(Owner, 7); }
     private void _InputAction8(InputAction.CallbackContext cxt)
-    { InputAction8(Owner); }
+    { InputActionBtn(Owner, 8); }
     private void _InputAction9(InputAction.CallbackContext cxt)
-    { InputAction9(Owner); }
+    { InputActionBtn(Owner, 9); }
 
     // Do On Input
     public virtual void InputPrimary(T t) 
     { Debug.Log("Primary has no function in this State. (" + StateName + ")"); }
     public virtual void InputSecndry(T t) 
     { Debug.Log("Secondary has no function in this State.(" + StateName + ")"); }
-    public virtual void InputAction1(T t)
-    { Debug.Log("Action (1) has no function in this State.(" + StateName + ")"); }
-    public virtual void InputAction2(T t)
-    { Debug.Log("Action (2) has no function in this State.(" + StateName + ")"); }
-    public virtual void InputAction3(T t)
-    { Debug.Log("Action (3) has no function in this State.(" + StateName + ")"); }
-    public virtual void InputAction4(T t)
-    { Debug.Log("Action (4) has no function in this State.(" + StateName + ")"); }
-    public virtual void InputAction5(T t)
-    { Debug.Log("Action (5) has no function in this State.(" + StateName + ")"); }
-    public virtual void InputAction6(T t)
-    { Debug.Log("Action (6) has no function in this State.(" + StateName + ")"); }
-    public virtual void InputAction7(T t)
-    { Debug.Log("Action (7) has no function in this State.(" + StateName + ")"); }
-    public virtual void InputAction8(T t)
-    { Debug.Log("Action (8) has no function in this State.(" + StateName + ")"); }
-    public virtual void InputAction9(T t)
-    { Debug.Log("Action (9) has no function in this State.(" + StateName + ")"); }
+    public virtual void InputActionBtn(T t, int index)
+    { Debug.Log(string.Format("Action {0} has no function in this State: {1}.", index, StateName)); }
+
 }
