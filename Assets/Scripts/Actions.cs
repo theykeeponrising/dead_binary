@@ -6,7 +6,7 @@ using UnityEngine;
 public class Actions : MonoBehaviour
 {
     // All possible actions in enum form
-    public enum ActionsList { MOVE, SHOOT, RELOAD }
+    public enum ActionsList { MOVE, SHOOT, RELOAD, SWAP }
 
     public class Action
     {
@@ -37,4 +37,5 @@ public class Actions : MonoBehaviour
     public static Action action_move = new Action(ActionsList.MOVE, "move", 1, 0);
     public static Action action_shoot = new Action(ActionsList.SHOOT, "shoot", 1, 0);
     public static Action action_reload = new Action(ActionsList.RELOAD, "reload", 1, 0);
+    public static Action action_swap = new Action(ActionsList.SWAP, "swap", 0, 0);
 }

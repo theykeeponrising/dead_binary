@@ -319,6 +319,9 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
                 case "reload":
                     ReloadAction();
                     break;
+                case "swap":
+                    StartCoroutine(EquipWeapon(inventory.CycleWeapon()));
+                    break;
             }
         }
     }
@@ -608,20 +611,9 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
             return;
         }
         stats.actionPointsCurrent -= currentAction.cost;
-        StartCoroutine(ReloadWeapon());
-    }
-
-    IEnumerator ReloadWeapon()
-    {
-        // Reload animation
-
         AddFlag("reload");
         animator.Play("Reload", inventory.equippedWeapon.weaponLayer);
         inventory.equippedWeapon.Reload();
-        while (AnimatorIsPlaying())
-            yield return new WaitForSeconds(0.01f);
-        RemoveFlag("reload");
-        inventory.equippedWeapon.stats.ammoCurrent = inventory.equippedWeapon.stats.ammoMax;
     }
 
     IEnumerator ShootWeapon(int distanceToTarget)
@@ -641,22 +633,25 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
             yield return new WaitForSeconds(0.01f);
         }
 
+        // If target is dodging, remove flag
+        if (targetCharacter)
+        {
+            targetCharacter.RemoveFlag("dodging");
+        }
+
         // Add a small delay before character exits shooting stance
         yield return new WaitForSeconds(1.0f);
 
         // Remove shooting flag
         RemoveFlag("shooting");
-
-        // If target is dodging, remove flag
-        if(targetCharacter)
-        targetCharacter.RemoveFlag("dodging");
     }
 
     bool AnimatorIsPlaying()
     {
         // True/False whether an animation is currently playing on the equipped weapon layer.
+        // Note -- lengthy transitions will not work
 
-        return animator.GetCurrentAnimatorStateInfo(inventory.equippedWeapon.weaponLayer).length > animator.GetCurrentAnimatorStateInfo(2).normalizedTime;
+        return animator.GetCurrentAnimatorStateInfo(inventory.equippedWeapon.weaponLayer).length > animator.GetCurrentAnimatorStateInfo(inventory.equippedWeapon.weaponLayer).normalizedTime;
     }
 
     void AnimationEvent(AnimationEventContext context)
@@ -690,10 +685,11 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
             RemoveFlag("drawing");
         }
 
-        // Reload weapon animation is completed -- NOT YET IMPLEMENTED
+        // Reload weapon animation is completed
         else if (context == AnimationEventContext.RELOAD)
         {
-            RemoveFlag("reloading");
+            RemoveFlag("reload");
+            inventory.equippedWeapon.stats.ammoCurrent = inventory.equippedWeapon.stats.ammoMax;
         }
 
         // Reload weapon animation is completed -- NOT YET IMPLEMENTED
@@ -885,7 +881,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
             inventory.equippedWeapon.DropGun();
 
         // TO DO -- DISABLE ENEMY AI
-        // TO DO -- DROP WEAPON
+
     }
 
     void GetTarget(string action)
