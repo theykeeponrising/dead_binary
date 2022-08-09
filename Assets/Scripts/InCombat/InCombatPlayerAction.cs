@@ -62,6 +62,7 @@ public class InCombatPlayerAction : MonoBehaviour
         stateMachine.Configure(this, new SelectedStates.NoTargetSelected(stateMachine));
 
         actionPanelScript = GameObject.FindGameObjectWithTag("ActionPanel").GetComponent<ActionPanelScript>();
+        actionPanelScript.gameObject.SetActive(false);
     }
 
     public void EnablePlayerInput()
@@ -103,6 +104,7 @@ public class InCombatPlayerAction : MonoBehaviour
         }
 
         SelectAction(targetCharacter);
+        actionPanelScript.gameObject.SetActive(targetCharacter != null);
 
         // ClickActions. - Obsolete?
         {

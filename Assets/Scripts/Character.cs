@@ -294,9 +294,9 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         // Determine if action can be performed, and perform action if so
 
         // Check if action is in allowed list of actions for character
-        if (!availableActions.Contains(actionToPerform.name))
+        if (!availableActions.Contains(actionToPerform.tag))
         {
-            Debug.Log("Invalid action");
+            Debug.Log(string.Format("{0} does not contain action {1}", this.attributes.name, actionToPerform.name));
             return;
         }    
 
