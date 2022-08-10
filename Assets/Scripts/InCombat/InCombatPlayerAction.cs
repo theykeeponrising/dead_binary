@@ -19,19 +19,7 @@ public class InCombatPlayerAction : MonoBehaviour
     public ClickAction clickAction;
     public string clickContext;
 
-
     public LayerMask uiLayermask;
-
-    /*
-    [SerializeField] public ActionPanel actionPanel;
-    [Serializable] public class ActionPanel
-    {
-        public GameObject panel;
-        public TextMeshProUGUI actionPointsText;
-        public Button moveButton;
-        public Button shootButton;
-    }*/
-
     private ActionPanelScript actionPanelScript;
 
     public StateMachine<InCombatPlayerAction> stateMachine;
@@ -39,22 +27,10 @@ public class InCombatPlayerAction : MonoBehaviour
 
     [Tooltip("The object to float above the Target's head.")]
     public GameObject selectorBall;
+
     private void Awake()
     {
         playerInput = new PlayerInput();
-
-       // playerInput.Controls.InputPrimary.performed += _ => SelectUnit();
-       // playerInput.Controls.InputSecondary.performed += _ => MoveCharacter();
-        //playerInput.Controls.AnyKey.performed += _ => KeyPress(playerInput.Controls.AnyKey); // For if we want any "PRESS ANY KEY" moments
-        playerInput.Controls.ActionButton_1.performed += _ => KeyPress(playerInput.Controls, playerInput.Controls.ActionButton_1);
-        playerInput.Controls.ActionButton_2.performed += _ => KeyPress(playerInput.Controls, playerInput.Controls.ActionButton_2);
-        playerInput.Controls.ActionButton_3.performed += _ => KeyPress(playerInput.Controls, playerInput.Controls.ActionButton_3);
-        playerInput.Controls.ActionButton_4.performed += _ => KeyPress(playerInput.Controls, playerInput.Controls.ActionButton_4);
-        playerInput.Controls.ActionButton_5.performed += _ => KeyPress(playerInput.Controls, playerInput.Controls.ActionButton_5);
-        playerInput.Controls.ActionButton_6.performed += _ => KeyPress(playerInput.Controls, playerInput.Controls.ActionButton_6);
-        playerInput.Controls.ActionButton_7.performed += _ => KeyPress(playerInput.Controls, playerInput.Controls.ActionButton_7);
-        playerInput.Controls.ActionButton_8.performed += _ => KeyPress(playerInput.Controls, playerInput.Controls.ActionButton_8);
-        playerInput.Controls.ActionButton_9.performed += _ => KeyPress(playerInput.Controls, playerInput.Controls.ActionButton_9);
     }
     private void Start()
     {
@@ -62,6 +38,7 @@ public class InCombatPlayerAction : MonoBehaviour
         stateMachine.Configure(this, new SelectedStates.NoTargetSelected(stateMachine));
 
         actionPanelScript = GameObject.FindGameObjectWithTag("ActionPanel").GetComponent<ActionPanelScript>();
+        actionPanelScript.gameObject.SetActive(false);
     }
 
     public void EnablePlayerInput()
@@ -102,32 +79,25 @@ public class InCombatPlayerAction : MonoBehaviour
                 targetCharacter = hit.collider.GetComponent<Character>();
         }
 
-        SelectAction(targetCharacter);
-
-        // ClickActions. - Obsolete?
-        {
-            /*
-            if (clickAction == ClickAction.select)
-                SelectAction(targetCharacter);
-            else if (clickAction == ClickAction.target)
-            {
-                if (targetCharacter)
-                {
-                    selectedCharacter.ProcessAction(Actions.action_shoot, contextCharacter: targetCharacter, contextString: clickContext);
-                    clickAction = ClickAction.select;
-                    clickContext = "";
-                }
-                else
-                {
-                    selectedCharacter.CancelTarget();
-                    clickAction = ClickAction.select;
-                    clickContext = "";
-                }
-            }
-            */
-        }
+        SelectAction(targetCharacter);        
     }
-    
+
+    public Actions.ActionsList GetBindings(int index)
+    {
+        // Returns which action should be bound to which action button index
+        if (!selectedCharacter)
+            return 0;
+
+        List<Actions.ActionsList> actionsList = new List<Actions.ActionsList>();
+        foreach (Actions.ActionsList characterAction in selectedCharacter.availableActions)
+            if (Actions.ActionsDict[characterAction].button != null)
+                actionsList.Add(characterAction);
+
+        if (index > actionsList.Count)
+            return 0;
+        return actionsList[index-1];
+    }
+
 
     public void MoveCharacter()
     {
@@ -157,6 +127,11 @@ public class InCombatPlayerAction : MonoBehaviour
     {
         // Select action, character selected, previous selection
         // Change character selection
+
+        // Clears current action bar
+        actionPanelScript.gameObject.SetActive(false);
+
+        // Deselects existing character if any
         if (targetCharacter)
         {
             if (selectedCharacter)
@@ -177,26 +152,9 @@ public class InCombatPlayerAction : MonoBehaviour
                 PathPreviewClear();
             }
         }
-    }
-
-    public bool KeyPress(PlayerInput.ControlsActions controls, InputAction action) 
-    {
-        bool keyPress = false;
-        {
-            if (action == controls.ActionButton_1)
-            {
-            }
-
-            if (action == controls.ActionButton_2)
-            {
-            }
-        }
-        return keyPress;
-    }
-
-    public int TriggerButton(int num)
-    {
-        return num;
+        
+        // Builds action bar if a character is selected
+        actionPanelScript.gameObject.SetActive(targetCharacter != null);
     }
 
     void PathPreview()

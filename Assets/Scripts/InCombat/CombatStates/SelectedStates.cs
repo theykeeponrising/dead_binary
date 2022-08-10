@@ -66,28 +66,28 @@ public class SelectedStates
             }
         }
 
-        /*
-        public override void InputAction1(InCombatPlayerAction t)
+        public override void InputActionBtn(InCombatPlayerAction t, int index)
         {
-            ChangeState(new ChoosingMoveDestination(Machine));
-        }
-        public override void InputAction2(InCombatPlayerAction t)
-        {
-            ChangeState(new ChoosingShootTarget(Machine));
-        }
-        */
+            Actions.ActionsList action = t.GetBindings(index);
 
-        public override void InputAction3(InCombatPlayerAction t)
-        {
-            ChangeState(new Reloading(Machine));
-        }
-        public override void InputAction4(InCombatPlayerAction t)
-        {
-            ChangeState(new RefreshingAP(Machine));
-        }
-        public override void InputAction5(InCombatPlayerAction t)
-        {
-            ChangeState(new SwapGun(Machine));
+            switch (action)
+            {
+                case (Actions.ActionsList.RELOAD):
+                    {
+                        ChangeState(new Reloading(Machine));
+                        break;
+                    }
+                case (Actions.ActionsList.SWAP):
+                    {
+                        ChangeState(new SwapGun(Machine));
+                        break;
+                    }
+                case (Actions.ActionsList.REFRESH):
+                    {
+                        ChangeState(new RefreshingAP(Machine));
+                        break;
+                    }
+            }
         }
     }
 
@@ -118,17 +118,7 @@ public class SelectedStates
         {
             base.Enter(t);
         }
-        public override void InputAction1(InCombatPlayerAction t)
-        {
-            Debug.Log("AP: " + t.selectedCharacter.stats.actionPointsCurrent);
-            if (t.selectedCharacter.stats.actionPointsCurrent > 0)
-            {
-                t.MoveCharacter();
-               // ChangeState(new Moving(Machine));
-            }
-            else
-                ChangeState(new Idle(Machine));
-        }
+
         public override void InputSecndry(InCombatPlayerAction t)
         {
             if (t.selectedCharacter.stats.actionPointsCurrent > 0)
@@ -139,21 +129,34 @@ public class SelectedStates
             else
                 ChangeState(new Idle(Machine));
         }
-        public override void InputAction2(InCombatPlayerAction t)
+
+        public override void InputActionBtn(InCombatPlayerAction t, int index)
         {
-            ChangeState(new ChoosingShootTarget(Machine));
-        }
-        public override void InputAction3(InCombatPlayerAction t)
-        {
-            ChangeState(new Reloading(Machine));
-        }
-        public override void InputAction4(InCombatPlayerAction t)
-        {
-            ChangeState(new RefreshingAP(Machine));
-        }
-        public override void InputAction5(InCombatPlayerAction t)
-        {
-            ChangeState(new SwapGun(Machine));
+            Actions.ActionsList action = t.GetBindings(index);
+
+            switch (action)
+            {
+                case (Actions.ActionsList.SHOOT):
+                    {
+                        ChangeState(new ChoosingShootTarget(Machine));
+                        break;
+                    }
+                case (Actions.ActionsList.RELOAD):
+                    {
+                        ChangeState(new Reloading(Machine));
+                        break;
+                    }
+                case (Actions.ActionsList.SWAP):
+                    {
+                        ChangeState(new SwapGun(Machine));
+                        break;
+                    }
+                case (Actions.ActionsList.REFRESH):
+                    {
+                        ChangeState(new RefreshingAP(Machine));
+                        break;
+                    }
+            }
         }
     }
 
@@ -271,28 +274,22 @@ public class SelectedStates
                 }
             }
         }
-        public override void InputAction1(InCombatPlayerAction t)
+
+        public override void InputActionBtn(InCombatPlayerAction t, int index)
         {
-            ChangeState(new ChoosingMoveDestination(Machine));
-        }
-        public override void InputAction2(InCombatPlayerAction t)
-        {
-            if (t.selectedCharacter.targetCharacter)
-                ChangeState(new ShootTarget(Machine));
-            else
-                Debug.Log("No Target -- But how? Ensure that both characters are set to different factions.");
-        }
-        public override void InputAction3(InCombatPlayerAction t)
-        {
-            ChangeState(new Reloading(Machine));
-        }
-        public override void InputAction4(InCombatPlayerAction t)
-        {
-            ChangeState(new RefreshingAP(Machine));
-        }
-        public override void InputAction5(InCombatPlayerAction t)
-        {
-            ChangeState(new SwapGun(Machine));
+            Actions.ActionsList action = t.GetBindings(index);
+
+            switch (action)
+            {
+                case (Actions.ActionsList.SHOOT):
+                    {
+                        if (t.selectedCharacter.targetCharacter)
+                            ChangeState(new ShootTarget(Machine));
+                        else
+                            Debug.Log("No Target -- But how? Ensure that both characters are set to different factions.");
+                        break;
+                    }
+            }
         }
     }
 
