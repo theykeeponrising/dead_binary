@@ -18,12 +18,9 @@ public class Weapon : MonoBehaviour
 
     AudioSource audioSource;
     public AudioClip[] fireSound;
-    public AudioClip reloadSound;
-    public AudioClip noAmmoSound;
+    public AudioClip[] reloadSound;
 
-    GameObject parentObj;
-    Transform handAttach;
-    public Vector3 offset;
+    [SerializeField] Vector3 offset;
 
     ParticleSystem gunParticles;
     Light gunLight;
@@ -43,6 +40,13 @@ public class Weapon : MonoBehaviour
     }
     public Stats stats;
 
+    private void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+        gunParticles = GetComponentInChildren<ParticleSystem>();
+        gunLight = GetComponentInChildren<Light>();
+    }
+
     private void Awake()
     {
         // Converts the Unity Editor value into a layer int
@@ -60,40 +64,14 @@ public class Weapon : MonoBehaviour
     {
         // Used to place newly-created weapon objects into the default position
 
-        parentObj = parent.gameObject;
-        handAttach = parent.body.handRight;
-        audioSource = GetComponent<AudioSource>();
-        gunParticles = GetComponentInChildren<ParticleSystem>();
-        gunLight = GetComponentInChildren<Light>();
-
-        //CREATE WEAPON AND ATTACH TO APPROPRIATE PARENT HAND
-        //int cnt = (!secondary) ? 0 : 1;
-        transform.parent = handAttach;
-
+        transform.parent = parent.body.handRight;
         transform.position = transform.parent.position;
         transform.localPosition = transform.localPosition + offset;
 
         if (weaponType == WeaponType.Gun)
         {
             transform.rotation = transform.parent.transform.rotation;
-
-            //if (!isPlayer) return;
-            //reloadSlider = parentObj.GetComponent<Character>().reloadSlider[cnt];
-            //floatingText = parentObj.GetComponent<Character>().floatingText.GetComponent<Text>();
         }
-        //if (weaponType == WeaponType.Melee)
-        //{
-        //    transform.rotation = transform.parent.transform.rotation;
-        //    if (altWeaponType == 0)
-        //        transform.Rotate(new Vector3(0, 0, 0));
-        //    else
-        //        transform.Rotate(new Vector3(-90, 0, 0));
-        //}
-        //if (weaponType == WeaponType.Shield)
-        //{
-        //    transform.rotation = transform.parent.transform.rotation;
-        //    transform.Rotate(new Vector3(0, -90, 0));
-        //}
     }
 
     public void Shoot()
@@ -123,7 +101,7 @@ public class Weapon : MonoBehaviour
 
     public IEnumerator ShootEffect()
     {
-        //DISPLAY GUN FLASH
+        // Display gun flash
         gunLight.enabled = true;
 
         // Stop the particles from playing if they were, then start the particles.
@@ -138,8 +116,9 @@ public class Weapon : MonoBehaviour
     public void Reload()
     {
         // Reload sound effect
-        
-        audioSource.PlayOneShot(reloadSound);
+
+        AudioClip audioClip = reloadSound[Random.Range(0, reloadSound.Length)];
+        audioSource.PlayOneShot(audioClip);
     }
 
     public void DropGun()

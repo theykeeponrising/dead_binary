@@ -213,9 +213,11 @@ MonoBehaviour:
   weaponLayer: 0
   weaponFamily: 1
   fireSound:
-  - {fileID: 8300000, guid: 445671b9f9d7a1a4f900883bce2f8318, type: 3}
-  reloadSound: {fileID: 8300000, guid: 8f0e40252b79e024b8017d02da23be92, type: 3}
-  noAmmoSound: {fileID: 0}
+  - {fileID: 8300000, guid: ac9cb7563984bad42b5027c924cc82c3, type: 3}
+  reloadSound:
+  - {fileID: 8300000, guid: 0cc6ec2f8b9a3874d861caca84c09792, type: 3}
+  - {fileID: 8300000, guid: 698cce35914ceb24589d33bbdcf85927, type: 3}
+  - {fileID: 8300000, guid: d902773249009044c8ae68a5c92b665d, type: 3}
   offset: {x: 0, y: 0, z: 0}
   stats:
     damage: 3
