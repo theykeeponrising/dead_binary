@@ -1,7 +1,7 @@
 Add proper credit in final release
 Royalty free sound effects:
 
-9mm-pistol-shoot-short-reverb-7152.mp3
+9mm-pistol-shoot-short-reverb-7152.mp3 (Handgun_Shoot_1)
 burstfirewav-14443.mp3
-semiautorifleshotwav-14725.mp3
-rifle-or-shotgun-reload-6787.mp3
+semiautorifleshotwav-14725.mp3 (AssaultRifle_Shoot_1)
+rifle-or-shotgun-reload-6787.mp3 (AssaultRifle_Reload_1)
