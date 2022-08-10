@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-using UnityEditor;
 
 public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, IFaction
 

@@ -21,26 +21,37 @@ public class ActionPanelScript : MonoBehaviour
 
     private void OnEnable()
     {
+        BuildActions();
+    }
+
+    private void OnDisable()
+    {
+        ClearActions();
+    }
+
+    public void BuildActions()
+    {
         // Dynamically creates buttons based on what actions the Character can perform
         // Will skip creating buttons for actions that do not use buttons (such as moving)
 
         if (!player)
             return;
-       
+
         if (player.selectedCharacter)
         {
             panel.SetActive(true);
 
             List<Actions.ActionsList> actionsList = new List<Actions.ActionsList>();
-            foreach(Actions.ActionsList characterAction in player.selectedCharacter.availableActions)
+            foreach (Actions.ActionsList characterAction in player.selectedCharacter.availableActions)
             {
-                if (Actions.ActionsDict[characterAction].button != null)
+                if (Actions.ActionsDict[characterAction].buttonPath != null)
                 {
                     actionsList.Add(characterAction);
                     buttons.Add(Instantiate(buttonPrefab, panel.transform));
                     int index = buttons.Count - 1;
+                    string spritePath = Actions.ActionsDict[actionsList[index]].buttonPath;
 
-                    buttons[index].GetComponentsInChildren<Image>()[1].sprite = Actions.ActionsDict[actionsList[index]].button.active;
+                    buttons[index].GetComponent<ActionButton>().LoadResources(spritePath);
                     buttons[index].GetComponentInChildren<TextMeshProUGUI>().text = (index + 1).ToString();
                     buttons[index].gameObject.SetActive(true);
 
@@ -59,9 +70,9 @@ public class ActionPanelScript : MonoBehaviour
         }
     }
 
-    private void OnDisable()
+    public void ClearActions()
     {
-        // Clean up buttons
+        // Remove buttons and clean button list
 
         foreach (Button button in buttons)
         {
@@ -76,5 +87,32 @@ public class ActionPanelScript : MonoBehaviour
 
         apTextBox.text = player.selectedCharacter.stats.actionPointsCurrent.ToString();
         ammoTextBox.text = player.selectedCharacter.inventory.equippedWeapon.stats.ammoCurrent.ToString();
+    }
+
+    public void BindButtons()
+    {
+        // Remove existing bindings if any
+        foreach (Button button in buttons)
+        {
+            button.GetComponent<ActionButton>().button.onClick.RemoveAllListeners();
+        }
+
+        // Bind buttons to inputs
+        foreach (Button button in buttons)
+        {
+            int index = buttons.IndexOf(button);
+            var state = player.stateMachine.GetCurrentState();
+            button.GetComponent<ActionButton>().button.onClick.AddListener(delegate { state.InputActionBtn(player, index + 1); });
+        }
+    }
+
+    public void ClearBindings()
+    {
+        // Removes bindings from buttons
+
+        foreach (Button button in buttons)
+        {
+            button.GetComponent<ActionButton>().button.onClick.RemoveAllListeners();
+        }
     }
 }
