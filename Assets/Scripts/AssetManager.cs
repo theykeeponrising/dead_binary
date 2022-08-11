@@ -5,7 +5,13 @@ using UnityEngine;
 public class AssetManager : MonoBehaviour
 {
     // Manifest of prefab assets for use in function calls
-    
+    public static AssetManager Instance = null;
+
+    void Start()
+    {
+        Instance = this;
+    }
+
     [System.Serializable]
     public class WeaponPrefabs
     {

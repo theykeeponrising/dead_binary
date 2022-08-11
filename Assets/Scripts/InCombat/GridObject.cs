@@ -5,8 +5,10 @@ using UnityEngine.EventSystems;
 
 public class GridObject : MonoBehaviour
 {
+    [Header("-GridObject Attributes")]
     public List<Tile> objectTiles;
     public bool isTraversable = false;
+    public AudioManager.ImpactType impactType;
 
     protected virtual void Awake()
     {

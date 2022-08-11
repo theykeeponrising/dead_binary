@@ -980,9 +980,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78c37f48f3f1655458f8a416fa058b77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  impactFlesh: []
-  impactRobot: []
-  impactConcrete: []
+  impactFlesh:
+  - {fileID: 8300000, guid: d82a3e2cccecbc34493df7cca8b63d22, type: 3}
+  - {fileID: 8300000, guid: 1576009b7272480458e30b0befab7c20, type: 3}
+  - {fileID: 8300000, guid: ad65faede56d2ff47a80e6615385a47f, type: 3}
+  - {fileID: 8300000, guid: 9e3eef60cd94d5040beb03252f3c7fb0, type: 3}
+  - {fileID: 8300000, guid: 9b0a4e6dbbf273e49af2b2711dbeed1f, type: 3}
+  - {fileID: 8300000, guid: 286ee0a9bc982d64d9f931acc4929975, type: 3}
+  - {fileID: 8300000, guid: f33e22a7fabcb9a4dae5aa12e9260b5f, type: 3}
+  - {fileID: 8300000, guid: 2e3e589c439eeba4bb8d1759a94d8240, type: 3}
+  impactRobot:
+  - {fileID: 8300000, guid: 54fe8925dad293c4fbd74869d9334271, type: 3}
+  - {fileID: 8300000, guid: 011de096bbf30a24399df5cf65aca662, type: 3}
+  - {fileID: 8300000, guid: 9fb78c415bdc367469de5c8d8d727afa, type: 3}
+  - {fileID: 8300000, guid: 62d96334137c8334cbf02eef8c3577d4, type: 3}
+  impactConcrete:
+  - {fileID: 8300000, guid: 229b05665d576e24e887fbe3dc82052b, type: 3}
+  - {fileID: 8300000, guid: e31c7a072bba37b4eadba314fc52d58f, type: 3}
+  - {fileID: 8300000, guid: 184a16b751cfc734c9d0ad5837fa03f7, type: 3}
+  - {fileID: 8300000, guid: cbd5d4c548d295949acac69728b9cb02, type: 3}
 --- !u!1 &353174119
 GameObject:
   m_ObjectHideFlags: 0
@@ -1511,6 +1527,10 @@ PrefabInstance:
       propertyPath: attributes.name
       value: Bob
       objectReference: {fileID: 0}
+    - target: {fileID: 7324549121527466970, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
+      propertyPath: attributes.faction
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7324549121527466971, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -1981,6 +2001,10 @@ PrefabInstance:
     - target: {fileID: 7324549121527466970, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
       propertyPath: attributes.name
       value: Joe
+      objectReference: {fileID: 0}
+    - target: {fileID: 7324549121527466970, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
+      propertyPath: attributes.faction
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7324549121527466971, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
       propertyPath: m_Enabled
