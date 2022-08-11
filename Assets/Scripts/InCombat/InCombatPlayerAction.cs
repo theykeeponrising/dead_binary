@@ -13,6 +13,7 @@ public class InCombatPlayerAction : MonoBehaviour
     // Used to manage user inputs
     public PlayerInput playerInput;
     public Character selectedCharacter;
+    public Character[] allCharacters; // TO DO -- Characters should be dynamically added to this list
     public List<Tile> previewPath = new List<Tile>();
     public Tile targetTile;
     public enum ClickAction { select, target }
@@ -191,5 +192,26 @@ public class InCombatPlayerAction : MonoBehaviour
         if (previewPath != null)
             foreach (Tile tile in previewPath)
                 tile.Highlighted(false);
+    }
+
+    public void StartTurn()
+    {
+        // Start player's next turn
+
+        Debug.Log("Starting player turn");
+
+        foreach (Character character in allCharacters)
+        {
+            character.RefreshActionPoints();
+        }
+    }
+
+    public void EndTurn()
+    {
+        // Ends player's current turn
+
+        // TO DO -- Any end of turn effects, and transfer to AI
+
+        StartTurn(); // TEMP
     }
 }
