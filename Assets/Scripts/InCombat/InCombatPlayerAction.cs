@@ -90,7 +90,7 @@ public class InCombatPlayerAction : MonoBehaviour
 
         List<Actions.ActionsList> actionsList = new List<Actions.ActionsList>();
         foreach (Actions.ActionsList characterAction in selectedCharacter.availableActions)
-            if (Actions.ActionsDict[characterAction].button != null)
+            if (Actions.ActionsDict[characterAction].buttonPath != null)
                 actionsList.Add(characterAction);
 
         if (index > actionsList.Count)
@@ -154,7 +154,9 @@ public class InCombatPlayerAction : MonoBehaviour
         }
         
         // Builds action bar if a character is selected
-        actionPanelScript.gameObject.SetActive(targetCharacter != null);
+        actionPanelScript.gameObject.SetActive(selectedCharacter != null);
+        if (actionPanelScript.gameObject.activeSelf)
+            actionPanelScript.BindButtons();
     }
 
     void PathPreview()

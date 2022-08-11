@@ -24,8 +24,10 @@ public class SelectedStates
         }
         public override void InputPrimary(InCombatPlayerAction t)
         {
-            t.SelectUnit();
+            if (!IsPointerOverUIElement(t))
+                t.SelectUnit();
         }
+
         public override void InputSecndry(InCombatPlayerAction t)
         {
             if (t.selectedCharacter)
@@ -106,7 +108,8 @@ public class SelectedStates
         }
         public override void InputPrimary(InCombatPlayerAction t)
         {
-            t.SelectUnit();
+            if (!IsPointerOverUIElement(t))
+                t.SelectUnit();
         }
     }
 
@@ -236,7 +239,8 @@ public class SelectedStates
         }
         public override void InputPrimary(InCombatPlayerAction t)
         {
-            t.SelectUnit();
+            if (!IsPointerOverUIElement(t))
+                t.SelectUnit();
         }
         public override void InputSecndry(InCombatPlayerAction t)
         {

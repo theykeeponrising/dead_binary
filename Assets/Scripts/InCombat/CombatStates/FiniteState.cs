@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 
 abstract public class FiniteState<T>
 {
@@ -29,6 +30,12 @@ abstract public class FiniteState<T>
             v.playerInput.Controls.ActionButton_7.performed += _InputAction7;
             v.playerInput.Controls.ActionButton_8.performed += _InputAction8;
             v.playerInput.Controls.ActionButton_9.performed += _InputAction9;
+
+            if (GameObject.FindGameObjectWithTag("ActionPanel"))
+            {
+                ActionPanelScript actionPanel = GameObject.FindGameObjectWithTag("ActionPanel").GetComponent<ActionPanelScript>();
+                actionPanel.BindButtons();
+            }
         }
     }
 
@@ -50,6 +57,12 @@ abstract public class FiniteState<T>
             v.playerInput.Controls.ActionButton_7.performed -= _InputAction7;
             v.playerInput.Controls.ActionButton_8.performed -= _InputAction8;
             v.playerInput.Controls.ActionButton_9.performed -= _InputAction9;
+
+            if (GameObject.FindGameObjectWithTag("ActionPanel"))
+            {
+                ActionPanelScript actionPanel = GameObject.FindGameObjectWithTag("ActionPanel").GetComponent<ActionPanelScript>();
+                actionPanel.ClearBindings();
+            }
         }
     }
 
@@ -90,4 +103,34 @@ abstract public class FiniteState<T>
     public virtual void InputActionBtn(T t, int index)
     { Debug.Log(string.Format("Action {0} has no function in this State: {1}.", index, StateName)); }
 
+    // Helper Functions
+
+    //Returns 'true' if we touched or hovering on Unity UI element.
+    public bool IsPointerOverUIElement(InCombatPlayerAction t)
+    {
+        return IsPointerOverUIElement(GetEventSystemRaycastResults(t));
+    }
+
+    //Returns 'true' if we touched or hovering on Unity UI element.
+    private bool IsPointerOverUIElement(List<RaycastResult> eventSystemRaysastResults)
+    {
+        int UILayer = LayerMask.NameToLayer("UI");
+        for (int index = 0; index < eventSystemRaysastResults.Count; index++)
+        {
+            RaycastResult curRaysastResult = eventSystemRaysastResults[index];
+            if (curRaysastResult.gameObject.layer == UILayer)
+                return true;
+        }
+        return false;
+    }
+
+    //Gets all event system raycast results of current mouse or touch position.
+    static List<RaycastResult> GetEventSystemRaycastResults(InCombatPlayerAction t)
+    {
+        PointerEventData eventData = new PointerEventData(EventSystem.current);
+        eventData.position = t.playerInput.Controls.InputPosition.ReadValue<Vector2>();
+        List<RaycastResult> raysastResults = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventData, raysastResults);
+        return raysastResults;
+    }
 }

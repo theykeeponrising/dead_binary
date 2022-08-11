@@ -1,35 +1,8 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Actions : MonoBehaviour
 {
-    public class ActionButton
-    {
-        // Class used to handle sprites for action buttons
-        // Will be used to control mouse-over effects as well
-
-        public Sprite active;
-        public Sprite inactive;
-
-        public ActionButton(string spritePath)
-        {
-            active = Resources.Load<Sprite>(spritePath);
-            inactive = Resources.Load<Sprite>(spritePath + "_1");
-        }
-    }
-
-    public static class ActionButtons
-    {
-        // Loads action button sprites from resources
-
-        public static ActionButton btn_action_move = new ActionButton("Buttons/btn_move");
-        public static ActionButton btn_action_shoot = new ActionButton("Buttons/btn_shoot");
-        public static ActionButton btn_action_reload = new ActionButton("Buttons/btn_reload");
-        public static ActionButton btn_action_swap = new ActionButton("Buttons/btn_swap");
-    }
-
     // All possible actions in enum form
     public enum ActionsList { MOVE, SHOOT, RELOAD, SWAP, REFRESH }
 
@@ -51,16 +24,16 @@ public class Actions : MonoBehaviour
         public string context;
         public int cost;
         public int cooldown;
-        public ActionButton button;
+        public string buttonPath;
 
-        public Action(string aName, ActionsList aTag, string aContext, int aCost, int aCooldown, ActionButton aButton)
+        public Action(string aName, ActionsList aTag, string aContext, int aCost, int aCooldown, string aButtonPath)
         {
             name = aName;
             tag = aTag;
             context = aContext;
             cost = aCost;
             cooldown = aCooldown;
-            button = aButton;
+            buttonPath = aButtonPath;
         }
     }   
 
