@@ -11,6 +11,7 @@ public class SelectedStates
         {
             base.Enter(t);
 
+            ChangeState(new UseItem(Machine, t.selectedCharacter.inventory.items[0]));
             if (t.selectedCharacter)
             {
                 t.selectedCharacter.potentialTargets = null;
@@ -68,11 +69,19 @@ public class SelectedStates
 
         /*
         public override void InputAction1(InCombatPlayerAction t)
+<<<<<<< Updated upstream
         {
             ChangeState(new ChoosingMoveDestination(Machine));
         }
         public override void InputAction2(InCombatPlayerAction t)
         {
+=======
+        {
+            ChangeState(new ChoosingMoveDestination(Machine));
+        }
+        public override void InputAction2(InCombatPlayerAction t)
+        {
+>>>>>>> Stashed changes
             ChangeState(new ChoosingShootTarget(Machine));
         }
         */
@@ -380,6 +389,70 @@ public class SelectedStates
         {
             if (timer < Time.time)
                 ChangeState(new Idle(Machine));
+        }
+    }
+
+    public class UseItem : FiniteState<InCombatPlayerAction>
+    {
+        Item Item;
+        public UseItem(StateMachine<InCombatPlayerAction> machine, Item item) : base(machine) { Machine = machine; Item = item; }
+
+        public override void Enter(InCombatPlayerAction t)
+        {
+            // The item panel
+            var iPanel = GameObject.FindGameObjectWithTag("UseItemPanel").GetComponent<UseItemPanelScript>();
+            iPanel.gameObject.SetActive(true);
+            iPanel.SetPanel(Item);
+            // Show UI
+            //Find Targets
+        }
+
+        public override void InputSecndry(InCombatPlayerAction t)
+        {
+            if (t.selectedCharacter)
+            {
+                RaycastHit hit;
+                Ray ray;
+                ray = Camera.main.ScreenPointToRay(t.playerInput.Controls.InputPosition.ReadValue<Vector2>());
+
+                if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+                {
+                    /*
+                    if (hit.collider.GetComponent<Character>())
+                    {
+                        var v = hit.collider.GetComponent<Character>();
+
+                        // If Right Click on Target, shoot it.
+                        if (v.faction != t.selectedCharacter.faction)
+                        {
+                            t.selectedCharacter.targetCharacter = v;
+                            ChangeState(new ShootTarget(Machine));
+                        }
+                        else
+                        {
+                            Debug.Log("Cannot shoot a Character of the same Faction!");
+                        }
+                    }*/
+
+                    if (hit.collider.GetComponent(Item.type))
+                    {
+                        var v = hit.collider.GetComponent(Item.type);
+
+                        if(v.GetType() == typeof(Character))
+                        {
+                           
+                        }
+                    }
+
+                }
+            }
+        }
+
+        public override void Exit(InCombatPlayerAction t)
+        {
+            // Disable UI
+            var iPanel = GameObject.FindGameObjectWithTag("UseItemPanel").GetComponent<UseItemPanelScript>();
+            iPanel.gameObject.SetActive(false);
         }
     }
 }
