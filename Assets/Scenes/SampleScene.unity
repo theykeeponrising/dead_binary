@@ -896,6 +896,7 @@ GameObject:
   - component: {fileID: 339635957}
   - component: {fileID: 339635956}
   - component: {fileID: 339635958}
+  - component: {fileID: 339635959}
   m_Layer: 0
   m_Name: GlobalManager
   m_TagString: GlobalManager
@@ -967,6 +968,21 @@ MonoBehaviour:
     grenadeLauncher: {fileID: 0}
   cover:
     halfWall: {fileID: 3384483706206358004, guid: 4053e00ce33e3f040b26bfa6f2cdbc39, type: 3}
+--- !u!114 &339635959
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 339635955}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78c37f48f3f1655458f8a416fa058b77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  impactFlesh: []
+  impactRobot: []
+  impactConcrete: []
 --- !u!1 &353174119
 GameObject:
   m_ObjectHideFlags: 0
