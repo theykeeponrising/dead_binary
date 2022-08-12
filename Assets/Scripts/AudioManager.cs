@@ -29,7 +29,7 @@ public class AudioManager : MonoBehaviour
     {
         // Returns a random impact sound for impact type
 
-        int range = Instance.impactFlesh.Length;
+        int range = Instance.ImpactSounds[impactType].Length;
         return ImpactSounds[impactType][Random.Range(0, range)];
     }
 
