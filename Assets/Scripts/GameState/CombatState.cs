@@ -9,6 +9,41 @@ public class CombatState : GameState
 {
     // Used to manage user inputs
     public InCombatPlayerAction inCombatPlayerAction;
+    public enum CombatSubState = {
+        PlayerTurnState,
+        EnemyTurnState,
+    }
+
+    public override void Init(GameState parentState) 
+    {
+        base.Init(parentState);
+        this.substates = new List<GameState> {
+            new PlayerTurnState(),
+            new EnemyTurnState(),
+        };
+
+        foreach (GameState gameState in substates) {
+            gameState.Init(this);
+        }
+    }
+
+    //Get the substate object from the CombatSubState enum type
+    public override GameState GetStateObject<CombatSubState>(CombatSubState stateName)
+    {
+        foreach (GameState state in substates)
+        {
+            switch(stateName)
+            {
+                case CombatSubState.PlayerTurnState:
+                    if (state is typeof(PlayerTurnState)) return state;
+                    break;
+                case CombatSubState.EnemyTurnState:
+                    if (state is typeof(EnemyTurnState)) return state; 
+                default:
+                    break;
+            }
+        }
+    }
 
     void SetClickHandler(InCombatPlayerAction inCombatPlayerAction)
     {
@@ -25,12 +60,12 @@ public class CombatState : GameState
     public override void SetStateActive()
     {
         inCombatPlayerAction.EnablePlayerInput();
-        inCombatPlayerAction.playerInput.Controls.InputMenu.performed += _ => stateHandler.TransitionState(StateHandler.State.StatusMenuState);
+        inCombatPlayerAction.playerInput.Controls.InputMenu.performed += _ => stateHandler.ChangeState(StateHandler.State.StatusMenuState);
     }
 
     public override void SetStateInactive()
     {
         inCombatPlayerAction.DisablePlayerInput();
-        inCombatPlayerAction.playerInput.Controls.InputMenu.performed += _ => stateHandler.TransitionState(StateHandler.State.StatusMenuState);
+        inCombatPlayerAction.playerInput.Controls.InputMenu.performed += _ => stateHandler.ChangeState(StateHandler.State.StatusMenuState);
     }
 }

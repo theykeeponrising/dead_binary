@@ -2,21 +2,24 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-//Class that manages all the states. Handles transitioning between states, passes inputs to the states, etc.
+//Class that manages all the (highest-level) states. Handles transitioning between states, passes inputs to the states, etc. 
 public class StateHandler: MonoBehaviour
 {
     private CombatState combatState;
     private StatusMenuState statusMenuState;
-    
-
     public enum State { StatusMenuState, CombatState };
     public State activeState;
     public List<GameState> gameStates;
     GlobalManager globalManager;
-
     public bool keypressPaused = false;
-	public void Initialize(GlobalManager globalManager)
+    
+	public void Init(GlobalManager globalManager)
 	{
+        gamestates = new List<GameState> {
+            new CombatState(),
+            new StatusMenuState(),
+        };
+
         if (gameStates.Count == 0) {
             throw new System.Exception("No gamestates were added to the game state manager.");
         }
@@ -30,6 +33,7 @@ public class StateHandler: MonoBehaviour
                 statusMenuState = (StatusMenuState) gameState;
             }
             gameState.SetStateManager(this);
+            gameState.Init();
         }
         this.globalManager = globalManager;
 	}
@@ -76,7 +80,7 @@ public class StateHandler: MonoBehaviour
         }
     }
 
-    public void TransitionState(State state) {
+    public void ChangeState(State state) {
         this.GetStateObject(this.activeState).SetStateInactive();
         this.SetStateActive(state);
     }
