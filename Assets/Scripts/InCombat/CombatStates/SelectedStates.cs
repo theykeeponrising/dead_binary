@@ -44,7 +44,7 @@ public class SelectedStates
                         var v = hit.collider.GetComponent<Character>();
 
                         // If Right Click on Target, shoot it.
-                        if (v.faction != t.selectedCharacter.faction)
+                        if (v.attributes.faction != t.selectedCharacter.attributes.faction)
                         {
                             t.selectedCharacter.targetCharacter = v;
                             ChangeState(new ShootTarget(Machine));
@@ -205,7 +205,7 @@ public class SelectedStates
             {
                 if (v.GetComponent<IFaction>() != null)
                 {
-                    if (t.selectedCharacter.faction != v.faction)
+                    if (t.selectedCharacter.attributes.faction != v.attributes.faction)
                     {
                         enemyList.Add(v);
                     }

@@ -9,11 +9,12 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
 {
     // Main script for Player-Controlled characters
 
+    [Header("-Character Attributes")]
     //[HideInInspector]
     public List<string> flags = new List<string>();
     GameObject selectionCircle;
 
-    [Header("Pathfinding")]
+    [Header("--Pathfinding")]
     public Tile currentTile;
     public List<Tile> movePath;
     Tile moveTargetImmediate;
@@ -34,7 +35,6 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
     float velocityX = 0f;
     float velocityZ = 0f;
 
-    AssetManager assetManager;
     InCombatPlayerAction playerAction;
     public Inventory inventory;
 
@@ -46,9 +46,10 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         public RuntimeAnimatorController animatorOverride;
     }
 
-    [Header("Animation")]
+    [Header("--Animation")]
     public Animators animators;
     public Animator animator;
+    AudioSource audioSource;
 
     enum AnimationEventContext { SHOOT, TAKE_DAMAGE, RELOAD, STOW, DRAW, VAULT }
 
@@ -70,12 +71,16 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
     public Body body = new Body();
     Rigidbody[] ragdoll;
 
+    // Attributes are mosty permanent descriptors about the character
     [System.Serializable]
     public class Attributes
     {
         public string name;
+        public Faction faction;
+
     }
 
+    // Stats are values that will be referenced and changed frequently during combat
     [System.Serializable]
     public class Stats
     {
@@ -88,16 +93,14 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         public int actionPointsCurrent;
         public int actionPointsMax;
     }
-    [Header("Character Info")]
+
+    [Header("--Character Info")]
     public Stats stats;
     public Attributes attributes;
     public List<Actions.ActionsList> availableActions;
     public Actions.Action currentAction;
-
-    public Faction faction;
     public IFaction ifaction;
-    Faction IFaction.faction { get { return faction; } set { faction = value; } }
-
+    Faction IFaction.faction { get { return attributes.faction; } set { attributes.faction = value; } }
     public List<Character> potentialTargets;
 
     // Start is called before the first frame update
@@ -111,9 +114,9 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
     protected override void Awake()
     {
         base.Awake();
-        assetManager = GameObject.FindGameObjectWithTag("GlobalManager").GetComponent<AssetManager>();
         playerAction = GameObject.FindGameObjectWithTag("Player").GetComponent<InCombatPlayerAction>();
         ragdoll = GetComponentsInChildren<Rigidbody>();
+        audioSource = GetComponent<AudioSource>();
 
         animator = GetComponent<Animator>();
         animators.animatorBase = animator.runtimeAnimatorController;
@@ -172,84 +175,6 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         else
             CurrentState = "None";
         */
-    }
-
-    public bool KeyPress(PlayerInput.ControlsActions controls, InputAction action)
-    {
-        // Clear any existing targeting
-        CancelTarget();
-
-        // ACTION BUTTON 1 -- Shoot
-        if (action == controls.ActionButton_1 && inventory.equippedWeapon)
-        {
-            if (inventory.equippedWeapon && availableActions.Contains(Actions.ActionsList.SHOOT))
-            {
-                GetTarget("attack");
-                return true;
-            }
-        }
-
-        // ACTION BUTTON 2 -- Reload
-        else if (action == controls.ActionButton_2 && inventory.equippedWeapon)
-        {
-            ProcessAction(Actions.action_reload);
-            return true;
-        }
-
-        // ACTION BUTTON 3 -- Swap Gun
-        else if (action == controls.ActionButton_3)
-        {
-            StartCoroutine(EquipWeapon(inventory.CycleWeapon()));
-            return true;
-        }
-
-        // ACTION BUTTON 4 -- Refresh AP (Temporary)
-        else if (action == controls.ActionButton_4)
-        {
-            Debug.Log("DEBUG -- AP Refreshed");
-            RefreshActionPoints();
-            return true;
-        }
-
-        // ACTION BUTTON 5 -- Spawn Pistol (Temporary)
-        else if (action == controls.ActionButton_5)
-        {
-            Debug.Log("DEBUG -- Spawn Pistol");
-            inventory.SpawnWeapon(assetManager.weapon.pistol);
-            return true;
-        }
-
-        // ACTION BUTTON 6 -- Spawn AR (Temporary)
-        else if (action == controls.ActionButton_6)
-        {
-            Debug.Log("DEBUG -- Spawn AR");
-            inventory.SpawnWeapon(assetManager.weapon.ar);
-            return true;
-        }
-
-        // ACTION BUTTON 7 -- Not implemented
-        else if (action == controls.ActionButton_7)
-        {
-            Debug.Log("DEBUG -- No action bound");
-            return true;
-        }
-
-        // ACTION BUTTON 8 -- Not implemented
-        else if (action == controls.ActionButton_8)
-        {
-            Debug.Log("DEBUG -- No action bound");
-            inventory.SpawnWeapon(assetManager.weapon.ar);
-            return true;
-        }
-
-        else if (action == controls.ActionButton_9)
-        // ACTION BUTTON 9 -- Not implemented
-        {
-            Debug.Log("DEBUG -- No action bound");
-            return true;
-        }
-
-        return false;
     }
 
     void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
@@ -556,7 +481,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         // Previous weapon is stowed in extra slot
 
         // If character has a weapon equipped currently, stow it
-        if (inventory.equippedWeapon && inventory.equippedWeapon != assetManager.weapon.noWeapon)
+        if (inventory.equippedWeapon && inventory.equippedWeapon != AssetManager.Instance.weapon.noWeapon)
         {
             // If crouching, do not play stow animation
             // This is until we can get a proper crouch-stow animation
@@ -835,6 +760,10 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
             // TO DO -- Play dodging animation instead
             return;
         }
+
+        // Get impact sound
+        AudioClip impactSound = AudioManager.Instance.GetRandomImpactSound(impactType);
+        audioSource.PlayOneShot(impactSound);
 
         // Effect shown when character is hit
         if (animator.GetCurrentAnimatorStateInfo(inventory.equippedWeapon.weaponLayer).IsName("Damage2"))
