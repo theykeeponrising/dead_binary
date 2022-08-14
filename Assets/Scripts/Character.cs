@@ -27,9 +27,9 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         return b;
     }
 
-    CoverObject currentCover;
+    public CoverObject currentCover;
 
-    Transform lookTarget;
+    // Transform lookTarget; -- NOT IMPLEMENTED
     public Character targetCharacter;
 
     float velocityX = 0f;
@@ -279,28 +279,23 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
             float distance = Vector3.Distance(transform.position, moveTargetPoint);
             velocityZ = distance / 2;
 
+            // Slow down movement speed if character is vaulting
+            float distanceDelta = (flags.Contains("vaulting")) ? 0.01f : 0.03f;
+
             // If the final move target is also the most immediate one, slow down move speed as we approach
             if (moveTargetDestination == moveTargetImmediate)
             {
-                // Slow down movement speed if character is vaulting
-                if (flags.Contains("vaulting"))
-                    transform.position = Vector3.MoveTowards(transform.position, moveTargetPoint, 0.01f);
-                else
-                    transform.position = Vector3.MoveTowards(transform.position, moveTargetPoint, 0.03f);
+                transform.position = Vector3.MoveTowards(transform.position, moveTargetPoint, distanceDelta);
                 relativePos = moveTargetPoint - transform.position;
             }
             else
             {
-                // Slow down movement speed if character is vaulting
-                if (flags.Contains("vaulting"))
-                    transform.position = Vector3.MoveTowards(transform.position, moveTargetImmediate.transform.position, 0.01f);
-                else
-                    transform.position = Vector3.MoveTowards(transform.position, moveTargetImmediate.transform.position, 0.03f);
+                transform.position = Vector3.MoveTowards(transform.position, moveTargetImmediate.transform.position, distanceDelta);
                 relativePos = moveTargetImmediate.transform.position - transform.position;
             }
 
             // Gradually rotate character to face towards move target
-            if (relativePos != new Vector3(0,0,0))
+            if (relativePos != Vector3.zero)
             {
                 Quaternion toRotation = Quaternion.LookRotation(relativePos);
                 toRotation.x = transform.rotation.x;
@@ -309,21 +304,33 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
             }
         }
 
-        // Gradually rotate character to face towards look target
-        else if (lookTarget)
-        {
-            Quaternion toRotation = Quaternion.LookRotation(lookTarget.position);
-            toRotation.x = transform.rotation.x;
-            toRotation.z = transform.rotation.z;
-            transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, 10 * Time.deltaTime);
-        }
+        //// Gradually rotate character to face towards look target -- NOT IMPLEMENTED
+        //else if (lookTarget)
+        //{
+        //    Quaternion toRotation = Quaternion.LookRotation(lookTarget.position);
+        //    toRotation.x = transform.rotation.x;
+        //    toRotation.z = transform.rotation.z;
+        //    transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, 10 * Time.deltaTime);
+        //}
 
         // Gradually rotate character to expected look direction while behind cover
         else if (currentCover && !flags.Contains("targeting") && !flags.Contains("shooting"))
         {
-            Debug.DrawRay(currentCover.transform.position, currentCover.transform.forward, Color.green, 20f);
-            transform.rotation = Quaternion.Lerp(transform.rotation, currentCover.transform.rotation, 10 * Time.deltaTime);
-            ToggleCrouch(true);
+            // Get which the direction the cover is relative to the tile
+            Vector3 lookDirection = (currentCover.transform.position - currentTile.transform.position);
+
+            // Add the direction to the tile world space position to get a world space point to look at
+            lookDirection = lookDirection + currentTile.transform.position;
+
+            // Remove vertical position for a flat lookat point
+            lookDirection = new Vector3(lookDirection.x, 0f, lookDirection.z);
+
+            // Character look at position
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(lookDirection - transform.position), 3 * Time.deltaTime);
+
+            // Crouch down if its a half-sized cover
+            if (currentCover.coverSize == CoverObject.CoverSize.half)
+                ToggleCrouch(true);
         }
     }
 
@@ -388,14 +395,14 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
             ToggleCrouch();
 
         moveTargetDestination = movePath[movePath.Count - 1];
-        currentTile.ChangeTileOccupant((GridObject) this, false);
+        currentTile.ChangeTileOccupant();
         currentCover = null;
 
         // Move to each tile in the provided path
         foreach (Tile path in movePath)
         {
             if (moveTargetImmediate)
-                moveTargetImmediate.ChangeTileOccupant((GridObject) this, false);
+                moveTargetImmediate.ChangeTileOccupant();
             moveTargetImmediate = path;
             //CheckForObstacle();
 
@@ -406,7 +413,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
                 currentTile = FindCurrentTile();
                 yield return new WaitForSeconds(0.01f);
             }
-            path.ChangeTileOccupant((GridObject) this, true);
+            path.ChangeTileOccupant(this);
             RemoveFlag("vaulting");
         }
 
@@ -421,10 +428,13 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
 
         // Clear movement flags
         RemoveFlag("moving");
-        if (currentTile.cover && currentTile.cover.coverSize == CoverObject.CoverSize.half)
+
+        // Register cover object
+        if (currentTile.cover)
         {
             currentCover = currentTile.cover;
-            ToggleCrouch();
+            if(currentTile.cover.coverSize == CoverObject.CoverSize.half)
+                ToggleCrouch();
         }
         moveTargetImmediate = null;
         moveTargetDestination = null;
@@ -461,7 +471,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         Vector3 direction = (moveTargetImmediate.transform.position - transform.position);
         RaycastHit hit;
         Ray ray = new Ray(transform.position, direction);
-        Debug.DrawRay(transform.position, direction, Color.red, 20, true); // For debug purposes
+        //Debug.DrawRay(transform.position, direction, Color.red, 20, true); // For debug purposes
         int layerMask = (1 << LayerMask.NameToLayer("VaultObject"));
         float distance = 0.5f;
 

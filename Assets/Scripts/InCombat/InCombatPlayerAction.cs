@@ -162,6 +162,13 @@ public class InCombatPlayerAction : MonoBehaviour
 
     void PathPreview()
     {
+        // Don't show path preview if mouse is over UI element
+        if (stateMachine.GetCurrentState().IsPointerOverUIElement(this))
+        {
+            PathPreviewClear();
+            return;
+        }
+
         // Previews move path on mouse over
         if (selectedCharacter && targetTile)
         {

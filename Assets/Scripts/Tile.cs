@@ -7,9 +7,9 @@ using UnityEngine.EventSystems;
 public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     // Main script for Tile behavior, such as pathing and cover objects
-
+    [HideInInspector]
+    public string choice;
     public List<Tile> neighbours;
-    public BoxCollider[] boxColliders;
     public Tile nearestTile;
     Color tileColor;
     [HideInInspector]
@@ -27,26 +27,10 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         Renderer renderer = this.gameObject.GetComponentInChildren(typeof(Renderer)) as Renderer;
         tileGlow = renderer.materials[1];
         tileColor = tileGlow.color;
-        boxColliders = gameObject.GetComponents<BoxCollider>();
-        standPoint = transform.position;
-        FindNeighbours();
-        SetNeighboursCover();
-    }
 
-    public void SetNeighboursCover()
-    {
-        if (this.occupant && this.occupant is CoverObject)
-        {
-            //TODO: Set the standpoints for the neighbors
-            //standPoint = ((CoverObject) occupant).standPoint;
-            foreach (Tile neighbourTile in neighbours)
-            {
-                if (!neighbourTile.occupant)
-                {
-                    neighbourTile.cover = (CoverObject) this.occupant;
-                }
-            }
-        }
+        FindNeighbours();
+        FindCoverObjects();
+        GetStandPoint();
     }
 
     void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
@@ -142,8 +126,13 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         // If destination is adjacent to current tile, skip tile find
         if (foundTiles.Contains(findTile))
         {
-            findTile.nearestTile = this;
-            return FindPath(findTile);
+            if (isTilePathObstructed(this, findTile))
+                foundTiles.Remove(findTile);
+            else
+            {
+                findTile.nearestTile = this;
+                return FindPath(findTile);
+            }
         }
 
         // Begin iterating through nearby tiles
@@ -156,13 +145,24 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             {
                 // Ensures tiles only use the closest path if found by multiple tiles
                 if (tile.nearestTile == null)
+                {
                     tile.nearestTile = this;
+                }
+
+                // If tile path is obstructed, remove it from the list and allow it to be found by alternative paths
+                if (tile.nearestTile == this && isTilePathObstructed(this, tile))
+                {
+                    tile.nearestTile = null;
+                    continue;
+                }
 
                 // Expands to next row of neighboring tiles, and returns path if destination tile is found
                 //foreach (Tile tile2 in tile.neighbours.OrderBy(item => rnd.Next()))
                 foreach (Tile tile2 in tile.neighbours)
                 {
                     if (!tile2.isTileTraversable() && tile2 != findTile)
+                        continue;
+                    if (isTilePathObstructed(tile, tile2))
                         continue;
                     if (tile2.nearestTile == null)
                         tile2.nearestTile = tile;
@@ -183,6 +183,22 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         return !this.occupant || this.occupant.isTraversable;
     }
 
+    public bool isTilePathObstructed(Tile tileStart, Tile tileDest)
+    {
+        // Returns True/False if any obstructions are blocking the path
+
+        // First, check if both tiles have any cover object
+        if (!tileStart.cover || !tileDest.cover)
+            return false;
+
+        // Then, check if the cover object is full sized
+        if (tileDest.cover.coverSize != CoverObject.CoverSize.full)
+            return false;
+
+        // Lastly, check if both tiles share the same cover object
+        return tileStart.cover == tileDest.cover;
+    }
+
     private List<Tile> FindPath(Tile reverseTile)
     {
         // Finds the nearest path to tile by checking tiles in reverse
@@ -197,26 +213,45 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         return movePath;
     }
 
-    public void ChangeTileOccupant(GridObject gridObject, bool occupied = true)
+    public void ChangeTileOccupant(GridObject gridObj = null)
     {
         // Used to change tile occupant.
+        occupant = gridObj;
 
-        if (occupied)
-        {
-            occupant = gridObject;
-        }
-        else
-            occupant = null;
     }
 
-    public bool CheckIfTileOccupant(GridObject gridObject)
+
+    public bool CheckIfTileOccupant(GridObject gridObj)
     {
         // True/False if tile is currently occupied by a character
         foreach (BoxCollider collider in GetComponents<BoxCollider>())
         {
-            Collider gridObjColl = gridObject.GetComponent<Collider>();
+            Collider gridObjColl = gridObj.GetComponent<Collider>();
             if (gridObjColl && gridObjColl.bounds.Intersects(collider.bounds)) return true;
         }
         return false;
+    }
+
+    void FindCoverObjects()
+    {
+        CoverObject[] coverObjs = FindObjectsOfType<CoverObject>();
+
+        foreach (CoverObject coverObj in coverObjs)
+            if (coverObj.gameObject.GetInstanceID() != gameObject.GetInstanceID())
+            {
+                float distance = Vector3.Distance(this.gameObject.transform.position, coverObj.gameObject.transform.position);
+                if (distance <= GlobalManager.tileSpacing) cover = coverObj;
+            }
+    }
+
+    void GetStandPoint()
+    {
+        if (cover)
+        {
+            standPoint = (transform.position + cover.transform.position) / 2;
+            standPoint = new Vector3(standPoint.x, 0, standPoint.z);
+        }
+        else
+            standPoint = transform.position;
     }
 }
