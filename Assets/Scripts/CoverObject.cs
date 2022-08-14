@@ -8,6 +8,7 @@ public class CoverObject : MonoBehaviour
 
     public enum CoverSize { half, full }
     public CoverSize coverSize;
+    public bool canVaultOver;
 
     public int CoverBonus()
     {

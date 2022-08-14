@@ -472,15 +472,44 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         RaycastHit hit;
         Ray ray = new Ray(transform.position, direction);
         //Debug.DrawRay(transform.position, direction, Color.red, 20, true); // For debug purposes
-        int layerMask = (1 << LayerMask.NameToLayer("VaultObject"));
+        int layerMask = (1 << LayerMask.NameToLayer("CoverObject"));
         float distance = 0.5f;
 
         // If vaultable object detected, play vaulting animation
         if (Physics.Raycast(ray, out hit, direction.magnitude * distance, layerMask))
         {
-            AddFlag("vaulting");
-            animator.Play("Vault-Over", inventory.equippedWeapon.weaponLayer);
-            return true;
+            if (hit.collider.GetComponent<CoverObject>().canVaultOver)
+            {
+                AddFlag("vaulting");
+                animator.Play("Vault-Over", inventory.equippedWeapon.weaponLayer);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool CheckIfCovered(Character attacker)
+    {
+        // Checks if any cover objects are between character and attacker
+        // Does raycast from character to attacker in order to find closest potential cover object
+
+        // NOTE -- We use the tiles for raycast, not the characters
+        // This is to prevent animations or standpoints from impacting the calculation
+
+        Vector3 defenderPosition = currentTile.transform.position;
+        Vector3 attackerPosition = attacker.currentTile.transform.position;
+
+        Vector3 direction = (attackerPosition - defenderPosition);
+        RaycastHit hit;
+        Ray ray = new Ray(defenderPosition, direction);
+        Debug.DrawRay(defenderPosition, direction, Color.red, 20, true); // For debug purposes
+        int layerMask = (1 << LayerMask.NameToLayer("CoverObject"));
+
+        // If cover object detected, and is the target character's current cover, return true
+        if (Physics.Raycast(ray, out hit, direction.magnitude * Mathf.Infinity, layerMask))
+        {
+            if (hit.collider.GetComponent<CoverObject>() && hit.collider.GetComponent<CoverObject>() == currentCover)
+                return true;
         }
         return false;
     }
@@ -725,8 +754,8 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         // Calculate chance to be hit
         float hitModifier = GlobalManager.globalHit - stats.dodge - weaponAccuracyPenalty;
 
-        //Add cover bonus
-        if (currentCover) hitModifier -= currentCover.CoverBonus();            
+        // Add cover bonus if not being flanked
+        if (currentCover && CheckIfCovered(attacker)) hitModifier -= currentCover.CoverBonus();
         
         float baseChance = (20 * attacker.stats.aim * weaponAccuracyModifier * hitModifier) / 100;
         // FOR TESTING PURPOSES ONLY -- REMOVE WHEN FINISHED

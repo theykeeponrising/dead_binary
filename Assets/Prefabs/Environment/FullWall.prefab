@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 8987846777526635159}
   - component: {fileID: 8987846777526635158}
   - component: {fileID: 8987846777526635155}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: FullWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -143,3 +143,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coverSize: 1
+  canVaultOver: 0

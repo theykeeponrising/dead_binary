@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 46544199}
   - component: {fileID: 46544198}
   - component: {fileID: 46544197}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: FullWall(Clone)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -154,6 +154,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coverSize: 1
+  canVaultOver: 0
 --- !u!65 &46544198
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3865,7 +3866,7 @@ GameObject:
   - component: {fileID: 769119855}
   - component: {fileID: 769119854}
   - component: {fileID: 769119853}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: FullWall(Clone)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3885,6 +3886,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coverSize: 1
+  canVaultOver: 0
 --- !u!65 &769119854
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4733,6 +4735,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coverSize: 0
+  canVaultOver: 1
 --- !u!65 &1566314626
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5456,6 +5459,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coverSize: 0
+  canVaultOver: 1
 --- !u!65 &1854104579
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5516,6 +5520,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coverSize: 0
+  canVaultOver: 1
 --- !u!65 &1907209384
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5648,6 +5653,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coverSize: 0
+  canVaultOver: 1
 --- !u!65 &2104797559
 BoxCollider:
   m_ObjectHideFlags: 0
