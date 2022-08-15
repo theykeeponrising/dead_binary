@@ -198,7 +198,6 @@ MonoBehaviour:
   parent: {fileID: 0}
   maxSpeed: 15
   acceleration: 10
-  damping: 15
   stepSize: 2
   zoomDampening: 7.5
   minHeight: 7
@@ -219,7 +218,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_EventMask:
     serializedVersion: 2
-    m_Bits: 2147483647
+    m_Bits: 243
   m_MaxRayIntersections: 0
 --- !u!1 &4146606119251336789
 GameObject:
@@ -268,7 +267,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   selectedCharacter: {fileID: 0}
+  allCharacters:
+  - {fileID: 0}
+  - {fileID: 0}
   previewPath: []
   targetTile: {fileID: 0}
   clickAction: 0
   clickContext: 
+  uiLayermask:
+    serializedVersion: 2
+    m_Bits: 0
+  stateText: {fileID: 0}
+  selectorBall: {fileID: 816552805644849248, guid: 33dd5f534f68b1c47ad326c7a285aff4, type: 3}
