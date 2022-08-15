@@ -7,8 +7,31 @@ public class Inventory : MonoBehaviour
 {
     Character character;
     public List<Weapon> weapons;
-    public List<Item> items;
+    [SerializeField] public List<Item> items;
+    [SerializeField] private List<ItemStats> itemStats;
 
+    [System.Serializable] public class ItemStats
+    {
+        [Tooltip("How many turns remain until the item can be used again.")]
+        [ReadOnly] public int currentCooldown;
+        [Tooltip("The name of the item.")]
+        [ReadOnly] public string itemName;
+        [Tooltip("The type of item. This is derived from the Class itself.")]
+        [ReadOnly] public ItemType itemType;
+        [Tooltip("The AP required to use this item.")]
+        [ReadOnly] public int itemCost;
+        [Tooltip("Does the item target Characters, or something else?")]
+        [ReadOnly] public TargetType targetType;
+        [Tooltip("The icon associated with this item.")]
+        [ReadOnly] public Sprite icon;
+        [Tooltip("Is the item able to be used more than once per match?")]
+        [ReadOnly] public bool isReusable;
+        [Tooltip("How many turns to wait before being available again.")]
+        [ReadOnly] public int cooldownMax;
+        [Tooltip("Does the item target allies, enemies, or combination?")]
+        [ReadOnly] public Affinity affinity;
+    }
+    
     public Weapon equippedWeapon;
 
     // TO DO -- Add armor
@@ -38,6 +61,41 @@ public class Inventory : MonoBehaviour
         equippedWeapon = weapons[0];
         equippedWeapon.gameObject.SetActive(true);
         character.animator.SetLayerWeight(equippedWeapon.weaponLayer, 1);
+
+        //Initialize Items
+        /*
+        if(itemDatas.Count > 0)
+            for (int i = 0; i < itemDatas.Count; i++)
+                items.Add(new Item(itemDatas[i]));
+        */
+
+        InitializeItems();
+    }
+
+    private void Update()
+    {
+        for (int i = 0; i < itemStats.Count; i++)
+        {
+            itemStats[i].currentCooldown = items[0].CurrentCooldown;
+        }
+    }
+
+    private void InitializeItems()
+    {
+        for (int i = 0; i < items.Count; i++)
+        {
+            ItemStats s = new ItemStats();
+            s.itemName = items[i].Name;
+            s.itemType = items[i].ItemType;
+            s.itemCost = items[i].ItemCost;
+            s.targetType = items[i].TargetType;
+            s.icon = items[i].Icon;
+            s.isReusable = items[i].IsReusable;
+            s.cooldownMax = items[i].CooldownMax;
+            s.affinity = items[i].Affinity;
+            s.currentCooldown = items[i].CurrentCooldown;
+            itemStats.Add(s);
+        }
     }
 
     public bool SpawnWeapon(Weapon weapon)

@@ -829,6 +829,11 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         }
     }
 
+    public void RestoreHealth(int amount)
+    {
+        stats.healthCurrent += amount;
+    }
+
     public void TakeDamageEffect()
     {
         if (flags.Contains("dodging"))
