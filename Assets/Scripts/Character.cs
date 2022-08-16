@@ -163,18 +163,6 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
     {
         SetAnimation();
         Movement();
-
-        /*
-        if (stateMachine != null)
-        {
-            Debug.Log("SM on Char");
-            stateMachine.Update();
-            state = stateMachine.GetCurrentState();
-            CurrentState = state.ToString();
-        }
-        else
-            CurrentState = "None";
-        */
     }
 
     void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
