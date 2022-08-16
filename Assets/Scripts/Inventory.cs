@@ -62,12 +62,6 @@ public class Inventory : MonoBehaviour
         equippedWeapon.gameObject.SetActive(true);
         character.animator.SetLayerWeight(equippedWeapon.weaponLayer, 1);
 
-        //Initialize Items
-        /*
-        if(itemDatas.Count > 0)
-            for (int i = 0; i < itemDatas.Count; i++)
-                items.Add(new Item(itemDatas[i]));
-        */
 
         InitializeItems();
     }
@@ -77,6 +71,25 @@ public class Inventory : MonoBehaviour
         for (int i = 0; i < itemStats.Count; i++)
         {
             itemStats[i].currentCooldown = items[0].CurrentCooldown;
+        }
+    }
+
+    public Item GetItem(int index)
+    {
+        if (itemStats.Count > 0)
+        {
+            if(items[index])
+            return items[index];
+            else
+            {
+                Debug.Log("No item in that slot! (Is this an error?)");
+                return null;
+            }    
+        }
+        else
+        {
+            Debug.Log("No items in inventory!");
+            return null;
         }
     }
 

@@ -60,16 +60,20 @@ public abstract class Item : MonoBehaviour
         return b;
     }
 
-    public void TryUseItem(Character owner, GameObject go)
+    public void TryUseItem(Character owner, GameObject go, out bool success)
     {
+        bool b = false;
         if (ItemType == ItemType.CONSUMABLE)
         {
             if (TargetType == TargetType.Character)
             {
                 if (go.TryGetComponent(out Character c))
                 {
-                    if (CheckAffinity(owner.faction, c.faction))
+                    if (CheckAffinity(owner.attributes.faction, c.attributes.faction))
+                    {
                         UseItem(owner, c);
+                        b = true;
+                    }
                     else
                         Debug.Log("Cannot use " + Name + " on '" + go.name + "'. \n" +
                             Name + " can only be used on " + Affinity);
@@ -88,6 +92,8 @@ public abstract class Item : MonoBehaviour
         {
             Debug.Log("Invalid Item Type. Can only use CONSUMABLE.");
         }
+
+        success = b;
     }
     protected abstract void UseItem(Character owner, Character charTarget = null, CoverObject covTarg = null);
 }

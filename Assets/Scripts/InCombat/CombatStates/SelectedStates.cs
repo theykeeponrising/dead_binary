@@ -90,6 +90,13 @@ public class SelectedStates
                         ChangeState(new RefreshingAP(Machine));
                         break;
                     }
+                case (Actions.ActionsList.USEITEM):
+                    {
+                        if(t.selectedCharacter.inventory.GetItem(0))
+                        ChangeState
+                            (new UseItem(Machine, t.selectedCharacter.inventory.GetItem(0)));
+                        break;
+                    }
             }
         }
     }
@@ -158,6 +165,12 @@ public class SelectedStates
                 case (Actions.ActionsList.REFRESH):
                     {
                         ChangeState(new RefreshingAP(Machine));
+                        break;
+                    }
+                case (Actions.ActionsList.USEITEM):
+                    {
+                        ChangeState
+                            (new UseItem(Machine, t.selectedCharacter.inventory.GetItem(0)));
                         break;
                     }
             }
@@ -414,8 +427,10 @@ public class SelectedStates
 
                 if (Physics.Raycast(ray, out hit, Mathf.Infinity))
                 {
-                    Debug.Log("NA: " + Item.Name);
-                    Item.TryUseItem(t.selectedCharacter, hit.collider.gameObject);
+                    Item.TryUseItem(t.selectedCharacter, hit.collider.gameObject, out bool success);
+
+                    if (success)
+                        ChangeState(new Idle(Machine));
                     /*
                     if (hit.collider.GetComponent<Character>())
                     {
@@ -449,6 +464,15 @@ public class SelectedStates
                     }
                     */
                 }
+            }
+        }
+        public override void InputActionBtn(InCombatPlayerAction t, int index)
+        {
+            Actions.ActionsList action = t.GetBindings(index);
+
+            if (action == Actions.ActionsList.USEITEM)
+            {
+                ChangeState(new Idle(Machine));
             }
         }
 

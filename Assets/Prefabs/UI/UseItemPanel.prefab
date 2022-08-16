@@ -305,7 +305,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3831543473933805333
 RectTransform:
   m_ObjectHideFlags: 0
@@ -378,7 +378,7 @@ GameObject:
   - component: {fileID: 3831543474865445494}
   m_Layer: 5
   m_Name: UseItemPanel
-  m_TagString: Untagged
+  m_TagString: UseItemPanel
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -416,6 +416,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f01340e724d1a341b12fed337616841, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  panel: {fileID: 0}
+  panel: {fileID: 3831543473933805332}
   image: {fileID: 3831543473494463729}
   nameText: {fileID: 3831543473814565658}
