@@ -198,17 +198,23 @@ MonoBehaviour:
   weaponHeld: 0
   weaponLayer: 0
   weaponFamily: 0
-  fireSound:
-  - {fileID: 8300000, guid: edfc19ec1f4c3ac4d9cb82456786cc10, type: 3}
-  reloadSound: {fileID: 8300000, guid: 3a461cb3638ff604fbc9586c07508fca, type: 3}
-  noAmmoSound: {fileID: 0}
+  fireSound: []
+  reloadSound: []
+  swapSound:
+  - {fileID: 8300000, guid: 218a2ce84cd24f247a491d6ad922bf57, type: 3}
+  - {fileID: 8300000, guid: c5ffcbf33e8a97e41ac5ccdc6e6df1d9, type: 3}
+  - {fileID: 8300000, guid: e4c8745ff880cec44a167323b3bcaace, type: 3}
+  - {fileID: 8300000, guid: a8a448ce98f99374286c2a145c80ffce, type: 3}
   offset: {x: 0, y: 0, z: 0}
   stats:
     damage: 0
-    range: 0
+    minRange: 0
+    maxRange: 0
     ammoMax: 0
     ammoCurrent: 0
     reloadSpeed: 0
+    baseAccuracyModifier: 0
+    overRangeAccuracyPenalty: 0
 --- !u!1 &6729600718463147584
 GameObject:
   m_ObjectHideFlags: 0

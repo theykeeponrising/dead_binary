@@ -16,9 +16,11 @@ public class Weapon : MonoBehaviour
     public enum WeaponFamily { MELEE, PISTOL, SMG, SHOTGUN, RIFLE, AR, LMG, SHIELD, LAUNCHER }
     public WeaponFamily weaponFamily;
 
-    AudioSource audioSource;
-    public AudioClip[] fireSound;
-    public AudioClip[] reloadSound;
+    public enum WeaponSound { FIRE, RELOAD, SWAP };
+
+    [SerializeField]  AudioClip[] fireSound;
+    [SerializeField] AudioClip[] reloadSound;
+    [SerializeField] AudioClip[] swapSound;
 
     [SerializeField] Vector3 offset;
 
@@ -42,7 +44,6 @@ public class Weapon : MonoBehaviour
 
     private void Start()
     {
-        audioSource = GetComponent<AudioSource>();
         gunParticles = GetComponentInChildren<ParticleSystem>();
         gunLight = GetComponentInChildren<Light>();
     }
@@ -107,8 +108,7 @@ public class Weapon : MonoBehaviour
         // Stop the particles from playing if they were, then start the particles.
         gunParticles.Stop();
         gunParticles.Play();
-        AudioClip audioClip = fireSound[Random.Range(0, fireSound.Length)];
-        audioSource.PlayOneShot(audioClip);
+        PlaySound(WeaponSound.FIRE);
         yield return new WaitForSecondsRealtime(gunParticles.main.duration);
         gunLight.enabled = false;
     }
@@ -117,8 +117,7 @@ public class Weapon : MonoBehaviour
     {
         // Reload sound effect
 
-        AudioClip audioClip = reloadSound[Random.Range(0, reloadSound.Length)];
-        audioSource.PlayOneShot(audioClip);
+        PlaySound(WeaponSound.RELOAD);
     }
 
     public void DropGun()
@@ -127,5 +126,34 @@ public class Weapon : MonoBehaviour
 
         transform.parent = null;
         gameObject.AddComponent<Rigidbody>();
+    }
+
+    public void PlaySound(WeaponSound weaponSound, Character character=null)
+    {
+        // Plays sound from selected weapon sound choice
+        // Optionally can play sound from Character's audio source instead of weapon
+
+        AudioClip audioClip = null;
+        AudioSource audioSource = GetComponent<AudioSource>();
+
+        if (character)
+            audioSource = character.GetComponent<AudioSource>();
+
+        // Determine sound to play
+        switch (weaponSound)
+        {
+            case (WeaponSound.FIRE):
+                audioClip = fireSound[Random.Range(0, fireSound.Length)];
+                break;
+            case (WeaponSound.RELOAD):
+                audioClip = reloadSound[Random.Range(0, reloadSound.Length)];
+                break;
+            case (WeaponSound.SWAP):
+                audioClip = swapSound[Random.Range(0, swapSound.Length)];
+                break;
+        }
+
+        // Play the sound at the desired audio source
+        audioSource.PlayOneShot(audioClip);
     }
 }
