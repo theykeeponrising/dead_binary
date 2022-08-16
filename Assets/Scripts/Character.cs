@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-using UnityEditor;
 
 public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, IFaction
 
 {
     // Main script for Player-Controlled characters
 
+    [Header("-Character Attributes")]
     //[HideInInspector]
     public List<string> flags = new List<string>();
     GameObject selectionCircle;
 
-    [Header("Pathfinding")]
+    [Header("--Pathfinding")]
     public Tile currentTile;
     public List<Tile> movePath;
     Tile moveTargetImmediate;
@@ -27,15 +27,14 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         return b;
     }
 
-    CoverObject currentCover;
+    public CoverObject currentCover;
 
-    Transform lookTarget;
+    // Transform lookTarget; -- NOT IMPLEMENTED
     public Character targetCharacter;
 
     float velocityX = 0f;
     float velocityZ = 0f;
 
-    AssetManager assetManager;
     InCombatPlayerAction playerAction;
     public Inventory inventory;
 
@@ -47,9 +46,10 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         public RuntimeAnimatorController animatorOverride;
     }
 
-    [Header("Animation")]
+    [Header("--Animation")]
     public Animators animators;
     public Animator animator;
+    AudioSource audioSource;
 
     enum AnimationEventContext { SHOOT, TAKE_DAMAGE, RELOAD, STOW, DRAW, VAULT }
 
@@ -71,12 +71,16 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
     public Body body = new Body();
     Rigidbody[] ragdoll;
 
+    // Attributes are mosty permanent descriptors about the character
     [System.Serializable]
     public class Attributes
     {
         public string name;
+        public Faction faction;
+
     }
 
+    // Stats are values that will be referenced and changed frequently during combat
     [System.Serializable]
     public class Stats
     {
@@ -89,16 +93,14 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         public int actionPointsCurrent;
         public int actionPointsMax;
     }
-    [Header("Character Info")]
+
+    [Header("--Character Info")]
     public Stats stats;
     public Attributes attributes;
     public List<Actions.ActionsList> availableActions;
     public Actions.Action currentAction;
-
-    public Faction faction;
     public IFaction ifaction;
-    Faction IFaction.faction { get { return faction; } set { faction = value; } }
-
+    Faction IFaction.faction { get { return attributes.faction; } set { attributes.faction = value; } }
     public List<Character> potentialTargets;
 
     // Start is called before the first frame update
@@ -112,9 +114,9 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
     protected override void Awake()
     {
         base.Awake();
-        assetManager = GameObject.FindGameObjectWithTag("GlobalManager").GetComponent<AssetManager>();
         playerAction = GameObject.FindGameObjectWithTag("Player").GetComponent<InCombatPlayerAction>();
         ragdoll = GetComponentsInChildren<Rigidbody>();
+        audioSource = GetComponent<AudioSource>();
 
         animator = GetComponent<Animator>();
         animators.animatorBase = animator.runtimeAnimatorController;
@@ -175,84 +177,6 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         */
     }
 
-    public bool KeyPress(PlayerInput.ControlsActions controls, InputAction action)
-    {
-        // Clear any existing targeting
-        CancelTarget();
-
-        // ACTION BUTTON 1 -- Shoot
-        if (action == controls.ActionButton_1 && inventory.equippedWeapon)
-        {
-            if (inventory.equippedWeapon && availableActions.Contains(Actions.ActionsList.SHOOT))
-            {
-                GetTarget("attack");
-                return true;
-            }
-        }
-
-        // ACTION BUTTON 2 -- Reload
-        else if (action == controls.ActionButton_2 && inventory.equippedWeapon)
-        {
-            ProcessAction(Actions.action_reload);
-            return true;
-        }
-
-        // ACTION BUTTON 3 -- Swap Gun
-        else if (action == controls.ActionButton_3)
-        {
-            StartCoroutine(EquipWeapon(inventory.CycleWeapon()));
-            return true;
-        }
-
-        // ACTION BUTTON 4 -- Refresh AP (Temporary)
-        else if (action == controls.ActionButton_4)
-        {
-            Debug.Log("DEBUG -- AP Refreshed");
-            RefreshActionPoints();
-            return true;
-        }
-
-        // ACTION BUTTON 5 -- Spawn Pistol (Temporary)
-        else if (action == controls.ActionButton_5)
-        {
-            Debug.Log("DEBUG -- Spawn Pistol");
-            inventory.SpawnWeapon(assetManager.weapon.pistol);
-            return true;
-        }
-
-        // ACTION BUTTON 6 -- Spawn AR (Temporary)
-        else if (action == controls.ActionButton_6)
-        {
-            Debug.Log("DEBUG -- Spawn AR");
-            inventory.SpawnWeapon(assetManager.weapon.ar);
-            return true;
-        }
-
-        // ACTION BUTTON 7 -- Not implemented
-        else if (action == controls.ActionButton_7)
-        {
-            Debug.Log("DEBUG -- No action bound");
-            return true;
-        }
-
-        // ACTION BUTTON 8 -- Not implemented
-        else if (action == controls.ActionButton_8)
-        {
-            Debug.Log("DEBUG -- No action bound");
-            inventory.SpawnWeapon(assetManager.weapon.ar);
-            return true;
-        }
-
-        else if (action == controls.ActionButton_9)
-        // ACTION BUTTON 9 -- Not implemented
-        {
-            Debug.Log("DEBUG -- No action bound");
-            return true;
-        }
-
-        return false;
-    }
-
     void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
     {
         // Highlights unit on mouse over
@@ -294,9 +218,9 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         // Determine if action can be performed, and perform action if so
 
         // Check if action is in allowed list of actions for character
-        if (!availableActions.Contains(actionToPerform.name))
+        if (!availableActions.Contains(actionToPerform.tag))
         {
-            Debug.Log("Invalid action");
+            Debug.Log(string.Format("{0} does not contain action {1}", this.attributes.name, actionToPerform.name));
             return;
         }    
 
@@ -355,28 +279,23 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
             float distance = Vector3.Distance(transform.position, moveTargetPoint);
             velocityZ = distance / 2;
 
+            // Slow down movement speed if character is vaulting
+            float distanceDelta = (flags.Contains("vaulting")) ? 0.01f : 0.03f;
+
             // If the final move target is also the most immediate one, slow down move speed as we approach
             if (moveTargetDestination == moveTargetImmediate)
             {
-                // Slow down movement speed if character is vaulting
-                if (flags.Contains("vaulting"))
-                    transform.position = Vector3.MoveTowards(transform.position, moveTargetPoint, 0.01f);
-                else
-                    transform.position = Vector3.MoveTowards(transform.position, moveTargetPoint, 0.03f);
+                transform.position = Vector3.MoveTowards(transform.position, moveTargetPoint, distanceDelta);
                 relativePos = moveTargetPoint - transform.position;
             }
             else
             {
-                // Slow down movement speed if character is vaulting
-                if (flags.Contains("vaulting"))
-                    transform.position = Vector3.MoveTowards(transform.position, moveTargetImmediate.transform.position, 0.01f);
-                else
-                    transform.position = Vector3.MoveTowards(transform.position, moveTargetImmediate.transform.position, 0.03f);
+                transform.position = Vector3.MoveTowards(transform.position, moveTargetImmediate.transform.position, distanceDelta);
                 relativePos = moveTargetImmediate.transform.position - transform.position;
             }
 
             // Gradually rotate character to face towards move target
-            if (relativePos != new Vector3(0,0,0))
+            if (relativePos != Vector3.zero)
             {
                 Quaternion toRotation = Quaternion.LookRotation(relativePos);
                 toRotation.x = transform.rotation.x;
@@ -385,21 +304,33 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
             }
         }
 
-        // Gradually rotate character to face towards look target
-        else if (lookTarget)
-        {
-            Quaternion toRotation = Quaternion.LookRotation(lookTarget.position);
-            toRotation.x = transform.rotation.x;
-            toRotation.z = transform.rotation.z;
-            transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, 10 * Time.deltaTime);
-        }
+        //// Gradually rotate character to face towards look target -- NOT IMPLEMENTED
+        //else if (lookTarget)
+        //{
+        //    Quaternion toRotation = Quaternion.LookRotation(lookTarget.position);
+        //    toRotation.x = transform.rotation.x;
+        //    toRotation.z = transform.rotation.z;
+        //    transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, 10 * Time.deltaTime);
+        //}
 
         // Gradually rotate character to expected look direction while behind cover
         else if (currentCover && !flags.Contains("targeting") && !flags.Contains("shooting"))
         {
-            Debug.DrawRay(currentCover.transform.position, currentCover.transform.forward, Color.green, 20f);
-            transform.rotation = Quaternion.Lerp(transform.rotation, currentCover.transform.rotation, 10 * Time.deltaTime);
-            ToggleCrouch(true);
+            // Get which the direction the cover is relative to the tile
+            Vector3 lookDirection = (currentCover.transform.position - currentTile.transform.position);
+
+            // Add the direction to the tile world space position to get a world space point to look at
+            lookDirection = lookDirection + currentTile.transform.position;
+
+            // Remove vertical position for a flat lookat point
+            lookDirection = new Vector3(lookDirection.x, 0f, lookDirection.z);
+
+            // Character look at position
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(lookDirection - transform.position), 3 * Time.deltaTime);
+
+            // Crouch down if its a half-sized cover
+            if (currentCover.coverSize == CoverObject.CoverSize.half)
+                ToggleCrouch(true);
         }
     }
 
@@ -464,14 +395,14 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
             ToggleCrouch();
 
         moveTargetDestination = movePath[movePath.Count - 1];
-        currentTile.ChangeTileOccupant((GridObject) this, false);
+        currentTile.ChangeTileOccupant();
         currentCover = null;
 
         // Move to each tile in the provided path
         foreach (Tile path in movePath)
         {
             if (moveTargetImmediate)
-                moveTargetImmediate.ChangeTileOccupant((GridObject) this, false);
+                moveTargetImmediate.ChangeTileOccupant();
             moveTargetImmediate = path;
             //CheckForObstacle();
 
@@ -482,7 +413,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
                 currentTile = FindCurrentTile();
                 yield return new WaitForSeconds(0.01f);
             }
-            path.ChangeTileOccupant((GridObject) this, true);
+            path.ChangeTileOccupant(this);
             RemoveFlag("vaulting");
         }
 
@@ -497,10 +428,13 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
 
         // Clear movement flags
         RemoveFlag("moving");
-        if (currentTile.cover && currentTile.cover.coverSize == CoverObject.CoverSize.half)
+
+        // Register cover object
+        if (currentTile.cover)
         {
             currentCover = currentTile.cover;
-            ToggleCrouch();
+            if(currentTile.cover.coverSize == CoverObject.CoverSize.half)
+                ToggleCrouch();
         }
         moveTargetImmediate = null;
         moveTargetDestination = null;
@@ -537,16 +471,45 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         Vector3 direction = (moveTargetImmediate.transform.position - transform.position);
         RaycastHit hit;
         Ray ray = new Ray(transform.position, direction);
-        Debug.DrawRay(transform.position, direction, Color.red, 20, true); // For debug purposes
-        int layerMask = (1 << LayerMask.NameToLayer("VaultObject"));
+        //Debug.DrawRay(transform.position, direction, Color.red, 20, true); // For debug purposes
+        int layerMask = (1 << LayerMask.NameToLayer("CoverObject"));
         float distance = 0.5f;
 
         // If vaultable object detected, play vaulting animation
         if (Physics.Raycast(ray, out hit, direction.magnitude * distance, layerMask))
         {
-            AddFlag("vaulting");
-            animator.Play("Vault-Over", inventory.equippedWeapon.weaponLayer);
-            return true;
+            if (hit.collider.GetComponent<CoverObject>().canVaultOver)
+            {
+                AddFlag("vaulting");
+                animator.Play("Vault-Over", inventory.equippedWeapon.weaponLayer);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool CheckIfCovered(Character attacker)
+    {
+        // Checks if any cover objects are between character and attacker
+        // Does raycast from character to attacker in order to find closest potential cover object
+
+        // NOTE -- We use the tiles for raycast, not the characters
+        // This is to prevent animations or standpoints from impacting the calculation
+
+        Vector3 defenderPosition = currentTile.transform.position;
+        Vector3 attackerPosition = attacker.currentTile.transform.position;
+
+        Vector3 direction = (attackerPosition - defenderPosition);
+        RaycastHit hit;
+        Ray ray = new Ray(defenderPosition, direction);
+        Debug.DrawRay(defenderPosition, direction, Color.red, 20, true); // For debug purposes
+        int layerMask = (1 << LayerMask.NameToLayer("CoverObject"));
+
+        // If cover object detected, and is the target character's current cover, return true
+        if (Physics.Raycast(ray, out hit, direction.magnitude * Mathf.Infinity, layerMask))
+        {
+            if (hit.collider.GetComponent<CoverObject>() && hit.collider.GetComponent<CoverObject>() == currentCover)
+                return true;
         }
         return false;
     }
@@ -557,7 +520,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         // Previous weapon is stowed in extra slot
 
         // If character has a weapon equipped currently, stow it
-        if (inventory.equippedWeapon && inventory.equippedWeapon != assetManager.weapon.noWeapon)
+        if (inventory.equippedWeapon && inventory.equippedWeapon != AssetManager.Instance.weapon.noWeapon)
         {
             // If crouching, do not play stow animation
             // This is until we can get a proper crouch-stow animation
@@ -791,8 +754,8 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         // Calculate chance to be hit
         float hitModifier = GlobalManager.globalHit - stats.dodge - weaponAccuracyPenalty;
 
-        //Add cover bonus
-        if (currentCover) hitModifier -= currentCover.CoverBonus();            
+        // Add cover bonus if not being flanked
+        if (currentCover && CheckIfCovered(attacker)) hitModifier -= currentCover.CoverBonus();
         
         float baseChance = (20 * attacker.stats.aim * weaponAccuracyModifier * hitModifier) / 100;
         // FOR TESTING PURPOSES ONLY -- REMOVE WHEN FINISHED
@@ -841,6 +804,10 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
             // TO DO -- Play dodging animation instead
             return;
         }
+
+        // Get impact sound
+        AudioClip impactSound = AudioManager.Instance.GetRandomImpactSound(impactType);
+        audioSource.PlayOneShot(impactSound);
 
         // Effect shown when character is hit
         if (animator.GetCurrentAnimatorStateInfo(inventory.equippedWeapon.weaponLayer).IsName("Damage2"))

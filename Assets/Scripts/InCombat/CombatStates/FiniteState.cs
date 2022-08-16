@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 
 abstract public class FiniteState<T>
 {
@@ -14,6 +15,7 @@ abstract public class FiniteState<T>
     {
         Owner = t;
         StateName = GetType().Name.ToString();
+
         if (t.GetType() == typeof(InCombatPlayerAction)) { }
         {
             var v = t as InCombatPlayerAction;
@@ -28,6 +30,12 @@ abstract public class FiniteState<T>
             v.playerInput.Controls.ActionButton_7.performed += _InputAction7;
             v.playerInput.Controls.ActionButton_8.performed += _InputAction8;
             v.playerInput.Controls.ActionButton_9.performed += _InputAction9;
+
+            if (GameObject.FindGameObjectWithTag("ActionPanel"))
+            {
+                ActionPanelScript actionPanel = GameObject.FindGameObjectWithTag("ActionPanel").GetComponent<ActionPanelScript>();
+                actionPanel.BindButtons();
+            }
         }
     }
 
@@ -49,6 +57,12 @@ abstract public class FiniteState<T>
             v.playerInput.Controls.ActionButton_7.performed -= _InputAction7;
             v.playerInput.Controls.ActionButton_8.performed -= _InputAction8;
             v.playerInput.Controls.ActionButton_9.performed -= _InputAction9;
+
+            if (GameObject.FindGameObjectWithTag("ActionPanel"))
+            {
+                ActionPanelScript actionPanel = GameObject.FindGameObjectWithTag("ActionPanel").GetComponent<ActionPanelScript>();
+                actionPanel.ClearBindings();
+            }
         }
     }
 
@@ -63,45 +77,60 @@ abstract public class FiniteState<T>
     private void _InputSecndry(InputAction.CallbackContext cxt)
     { InputSecndry(Owner); }
     private void _InputAction1(InputAction.CallbackContext cxt)
-    { InputAction1(Owner); }
+    { InputActionBtn(Owner, 1); }
     private void _InputAction2(InputAction.CallbackContext cxt)
-    { InputAction2(Owner); }
+    { InputActionBtn(Owner, 2); }
     private void _InputAction3(InputAction.CallbackContext cxt)
-    { InputAction3(Owner); }
+    { InputActionBtn(Owner, 3); }
     private void _InputAction4(InputAction.CallbackContext cxt)
-    { InputAction4(Owner); }
+    { InputActionBtn(Owner, 4); }
     private void _InputAction5(InputAction.CallbackContext cxt)
-    { InputAction5(Owner); }
+    { InputActionBtn(Owner, 5); }
     private void _InputAction6(InputAction.CallbackContext cxt)
-    { InputAction6(Owner); }
+    { InputActionBtn(Owner, 6); }
     private void _InputAction7(InputAction.CallbackContext cxt)
-    { InputAction7(Owner); }
+    { InputActionBtn(Owner, 7); }
     private void _InputAction8(InputAction.CallbackContext cxt)
-    { InputAction8(Owner); }
+    { InputActionBtn(Owner, 8); }
     private void _InputAction9(InputAction.CallbackContext cxt)
-    { InputAction9(Owner); }
+    { InputActionBtn(Owner, 9); }
 
     // Do On Input
     public virtual void InputPrimary(T t) 
     { Debug.Log("Primary has no function in this State. (" + StateName + ")"); }
     public virtual void InputSecndry(T t) 
     { Debug.Log("Secondary has no function in this State.(" + StateName + ")"); }
-    public virtual void InputAction1(T t)
-    { Debug.Log("Action (1) has no function in this State.(" + StateName + ")"); }
-    public virtual void InputAction2(T t)
-    { Debug.Log("Action (2) has no function in this State.(" + StateName + ")"); }
-    public virtual void InputAction3(T t)
-    { Debug.Log("Action (3) has no function in this State.(" + StateName + ")"); }
-    public virtual void InputAction4(T t)
-    { Debug.Log("Action (4) has no function in this State.(" + StateName + ")"); }
-    public virtual void InputAction5(T t)
-    { Debug.Log("Action (5) has no function in this State.(" + StateName + ")"); }
-    public virtual void InputAction6(T t)
-    { Debug.Log("Action (6) has no function in this State.(" + StateName + ")"); }
-    public virtual void InputAction7(T t)
-    { Debug.Log("Action (7) has no function in this State.(" + StateName + ")"); }
-    public virtual void InputAction8(T t)
-    { Debug.Log("Action (8) has no function in this State.(" + StateName + ")"); }
-    public virtual void InputAction9(T t)
-    { Debug.Log("Action (9) has no function in this State.(" + StateName + ")"); }
+    public virtual void InputActionBtn(T t, int index)
+    { Debug.Log(string.Format("Action {0} has no function in this State: {1}.", index, StateName)); }
+
+    // Helper Functions
+
+    //Returns 'true' if we touched or hovering on Unity UI element.
+    public bool IsPointerOverUIElement(InCombatPlayerAction t)
+    {
+        return IsPointerOverUIElement(GetEventSystemRaycastResults(t));
+    }
+
+    //Returns 'true' if we touched or hovering on Unity UI element.
+    private bool IsPointerOverUIElement(List<RaycastResult> eventSystemRaysastResults)
+    {
+        int UILayer = LayerMask.NameToLayer("UI");
+        for (int index = 0; index < eventSystemRaysastResults.Count; index++)
+        {
+            RaycastResult curRaysastResult = eventSystemRaysastResults[index];
+            if (curRaysastResult.gameObject.layer == UILayer)
+                return true;
+        }
+        return false;
+    }
+
+    //Gets all event system raycast results of current mouse or touch position.
+    static List<RaycastResult> GetEventSystemRaycastResults(InCombatPlayerAction t)
+    {
+        PointerEventData eventData = new PointerEventData(EventSystem.current);
+        eventData.position = t.playerInput.Controls.InputPosition.ReadValue<Vector2>();
+        List<RaycastResult> raysastResults = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventData, raysastResults);
+        return raysastResults;
+    }
 }

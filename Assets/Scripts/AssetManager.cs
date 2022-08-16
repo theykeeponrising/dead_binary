@@ -5,7 +5,15 @@ using UnityEngine;
 public class AssetManager : MonoBehaviour
 {
     // Manifest of prefab assets for use in function calls
-    
+    public static AssetManager Instance = null;
+
+    void Start()
+    {
+        Instance = this;
+    }
+
+    public Transform mapObjects; // TO DO -- Map handler script
+
     [System.Serializable]
     public class WeaponPrefabs
     {
@@ -35,6 +43,7 @@ public class AssetManager : MonoBehaviour
     public class CoverPrefabs
     {
         public CoverObject halfWall;
+        public CoverObject fullWall;
     }
     public CoverPrefabs cover;
 }

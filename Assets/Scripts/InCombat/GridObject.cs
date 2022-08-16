@@ -5,13 +5,15 @@ using UnityEngine.EventSystems;
 
 public class GridObject : MonoBehaviour
 {
+    [Header("-GridObject Attributes")]
     public List<Tile> objectTiles;
     public bool isTraversable = false;
+    public AudioManager.ImpactType impactType;
 
     protected virtual void Awake()
     {
         this.objectTiles = FindCurrentTiles();
-        foreach (Tile tile in objectTiles) tile.ChangeTileOccupant(this, true);
+        foreach (Tile tile in objectTiles) tile.ChangeTileOccupant(this);
     }
 
     protected virtual List<Tile> FindCurrentTiles()
