@@ -552,6 +552,8 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
             // This is until we can get a proper crouch-draw animation
             if (!flags.Contains("crouching"))
             {
+                inventory.equippedWeapon.PlaySound(Weapon.WeaponSound.SWAP, this);
+
                 AddFlag("drawing");
                 animator.Play("Draw", inventory.equippedWeapon.weaponLayer);
                 while (flags.Contains("drawing"))
