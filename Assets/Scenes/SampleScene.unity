@@ -4703,6 +4703,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stateText: {fileID: 888779301}
+  selectorBall: {fileID: 816552805644849248, guid: 33dd5f534f68b1c47ad326c7a285aff4, type: 3}
 --- !u!4 &1564026178 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7170183927917255904, guid: 97ef3f1875d6ac9499ba6c0c5a5a9d9c, type: 3}
