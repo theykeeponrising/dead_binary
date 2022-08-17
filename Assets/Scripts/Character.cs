@@ -167,18 +167,6 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
     {
         SetAnimation();
         Movement();
-
-        /*
-        if (stateMachine != null)
-        {
-            Debug.Log("SM on Char");
-            stateMachine.Update();
-            state = stateMachine.GetCurrentState();
-            CurrentState = state.ToString();
-        }
-        else
-            CurrentState = "None";
-        */
     }
 
     void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
@@ -796,6 +784,11 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
             StartCoroutine(Death(attacker, direction));
             Debug.DrawRay(transform.position, direction, Color.red, 20, true); // For debug purposes
         }
+    }
+
+    public void RestoreHealth(int amount)
+    {
+        stats.healthCurrent += amount;
     }
 
     public void TakeDamageEffect()
