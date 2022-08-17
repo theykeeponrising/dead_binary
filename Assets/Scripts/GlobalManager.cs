@@ -17,11 +17,7 @@ public class GlobalManager : MonoBehaviour
 
     private void Awake() 
     {
-        stateHandler.Initialize(this);    
-    }
-    private void Start()
-    {
-        // gravity = Physics.gravity;
+        stateHandler.Init(this);    
     }
 
     private void Update()
@@ -30,10 +26,5 @@ public class GlobalManager : MonoBehaviour
         Time.timeScale = gameSpeed;
         //Time.maximumDeltaTime = gameSpeed;
         Time.fixedDeltaTime = gameSpeed * 0.02f;
-    }
-
-    public void SetStateHandler(StateHandler stateHandler)
-    {
-        this.stateHandler = stateHandler;
     }
 }

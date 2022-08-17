@@ -7,6 +7,9 @@ TagManager:
   - GlobalManager
   - VaultObject
   - ActionPanel
+  - StateHandler
+  - UI
+  - Character
   - UseItemPanel
   layers:
   - Default

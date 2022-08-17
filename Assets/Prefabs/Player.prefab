@@ -229,7 +229,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8240788655257104905}
-  - component: {fileID: 549040073027086333}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -254,28 +253,3 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &549040073027086333
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4146606119251336789}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 89f22663317e62149b11d1aae9495dbc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  selectedCharacter: {fileID: 0}
-  allCharacters:
-  - {fileID: 0}
-  - {fileID: 0}
-  previewPath: []
-  targetTile: {fileID: 0}
-  clickAction: 0
-  clickContext: 
-  uiLayermask:
-    serializedVersion: 2
-    m_Bits: 0
-  stateText: {fileID: 0}
-  selectorBall: {fileID: 816552805644849248, guid: 33dd5f534f68b1c47ad326c7a285aff4, type: 3}
