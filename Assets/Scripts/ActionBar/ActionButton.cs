@@ -62,4 +62,5 @@ public static class ActionButtons
     public static string btn_action_shoot = "Buttons/btn_shoot";
     public static string btn_action_reload = "Buttons/btn_reload";
     public static string btn_action_swap = "Buttons/btn_swap";
+    public static string btn_action_useItem = "Buttons/btn_useItem";
 }
