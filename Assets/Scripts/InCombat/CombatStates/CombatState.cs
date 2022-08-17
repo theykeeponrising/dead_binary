@@ -22,18 +22,8 @@ public class CombatState : GameState
         foreach (GameState gameState in substates) {
             gameState.Init(this, stateHandler);
         }
-    }
 
-    public override void SetStateActive()
-    {
         this.activeSubState = FindSubState(StateHandler.State.PlayerTurnState);
-        // inCombatPlayerAction.EnablePlayerInput();
-        // inCombatPlayerAction.playerInput.Controls.InputMenu.performed += _ => stateHandler.ChangeState(StateHandler.State.StatusMenuState);
+        this.activeSubState.SetStateActive();
     }
-
-    // public override void SetStateInactive()
-    // {
-    //     inCombatPlayerAction.DisablePlayerInput();
-    //     inCombatPlayerAction.playerInput.Controls.InputMenu.performed += _ => stateHandler.ChangeState(StateHandler.State.StatusMenuState);
-    // }
 }

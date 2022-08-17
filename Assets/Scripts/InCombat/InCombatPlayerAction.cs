@@ -66,7 +66,6 @@ public class InCombatPlayerAction
 
     public void SelectUnit()
     {
-        Debug.Log("Ran");
         // Default context - select a unit, or deselect if none targeted
         // If unit is selected, send action to the unit along with context (such as attack target)
         RaycastHit hit;
