@@ -26,7 +26,7 @@ public class PlayerTurnState : GameState
         base.Init(parentState, stateHandler);
         this.stateEnum = StateHandler.State.PlayerTurnState;
         playerAction = new InCombatPlayerAction();
-        playerAction.Init();
+        playerAction.Init(this);
         playerActionStateMachine = new StateMachine<InCombatPlayerAction>();
         playerActionStateMachine.Configure(playerAction, new SelectedStates.NoTargetSelected(playerActionStateMachine));   
     }
@@ -54,6 +54,11 @@ public class PlayerTurnState : GameState
         base.FixedUpdate();
         HandleContinuousInput();
     }
+
+    public void EndTurn()
+    {
+        this.ChangeState(StateHandler.State.EnemyTurnState);
+    }
     
     public InCombatPlayerAction GetPlayerAction()
     {
@@ -71,6 +76,7 @@ public class PlayerTurnState : GameState
     {
         playerAction.EnablePlayerInput();
         playerAction.playerInput.Controls.InputMenu.performed += _ => stateHandler.ChangeState(StateHandler.State.StatusMenuState);
+        playerAction.StartTurn();
     }
 
     public override void SetStateInactive()

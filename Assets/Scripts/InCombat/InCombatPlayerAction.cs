@@ -19,14 +19,17 @@ public class InCombatPlayerAction
     public enum ClickAction { select, target }
     public ClickAction clickAction;
     public string clickContext;
+    
     private ActionPanelScript actionPanelScript;
     public StateMachine<InCombatPlayerAction> stateMachine;
     public LayerMask uiLayermask;
+    private PlayerTurnState playerTurnState; 
     InCombatPlayerActionUI playerActionUI;
 
-    public void Init() 
+    public void Init(PlayerTurnState playerTurnState) 
     {
         playerInput = new PlayerInput();
+        this.playerTurnState = playerTurnState;
     }
 
     public void Start()
@@ -220,7 +223,6 @@ public class InCombatPlayerAction
         // Ends player's current turn
 
         // TO DO -- Any end of turn effects, and transfer to AI
-
-        StartTurn(); // TEMP
+        this.playerTurnState.EndTurn();
     }
 }

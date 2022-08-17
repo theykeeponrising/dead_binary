@@ -15,6 +15,8 @@ public class EnemyTurnState : GameState
 
     public override void SetStateActive()
     {
+        //TEMP: Add AI handling and etc.
+        this.ChangeState(StateHandler.State.PlayerTurnState);
     }
 
     public override void SetStateInactive()
