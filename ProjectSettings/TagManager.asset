@@ -9,6 +9,7 @@ TagManager:
   - ActionPanel
   - StateHandler
   - InCombatPlayerActionUI
+  - Character
   layers:
   - Default
   - TransparentFX

@@ -8,6 +8,9 @@ using TMPro;
 public class InCombatPlayerActionUI : MonoBehaviour
 {
     public TextMeshProUGUI stateText;
+    
+    [Tooltip("The object to float above the Target's head.")]
+    public GameObject selectorBall;
 
     void Awake() { }
     void Start() { }

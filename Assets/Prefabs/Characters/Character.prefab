@@ -1856,7 +1856,7 @@ GameObject:
   - component: {fileID: 3296876834387543054}
   m_Layer: 0
   m_Name: Character
-  m_TagString: Untagged
+  m_TagString: Character
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2058,6 +2058,7 @@ MonoBehaviour:
   flags: []
   currentTile: {fileID: 0}
   movePath: []
+  currentCover: {fileID: 0}
   targetCharacter: {fileID: 0}
   inventory: {fileID: 0}
   animators:

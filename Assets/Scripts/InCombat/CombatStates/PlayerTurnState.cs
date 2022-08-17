@@ -40,6 +40,7 @@ public class PlayerTurnState : GameState
     public override void Update() {
         base.Update();
         HandleInput();
+        playerAction.Update();
         
         if (playerActionStateMachine != null)
         {

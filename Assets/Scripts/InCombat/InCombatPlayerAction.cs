@@ -13,7 +13,7 @@ public class InCombatPlayerAction
     // Used to manage user inputs
     public PlayerInput playerInput;
     public Character selectedCharacter;
-    public Character[] allCharacters; // TO DO -- Characters should be dynamically added to this list
+    public List<Character> allCharacters; // TO DO -- Characters should be dynamically added to this list
     public List<Tile> previewPath = new List<Tile>();
     public Tile targetTile;
     public enum ClickAction { select, target }
@@ -23,9 +23,6 @@ public class InCombatPlayerAction
     public StateMachine<InCombatPlayerAction> stateMachine;
     public LayerMask uiLayermask;
     InCombatPlayerActionUI playerActionUI;
-
-    [Tooltip("The object to float above the Target's head.")]
-    public GameObject selectorBall;
 
     public void Init() 
     {
@@ -41,6 +38,11 @@ public class InCombatPlayerAction
         actionPanelScript.gameObject.SetActive(false);
 
         playerActionUI = GameObject.FindGameObjectWithTag("InCombatPlayerActionUI").GetComponent<InCombatPlayerActionUI>();
+
+        // Add characters to allCharacters list
+        allCharacters = new List<Character>();
+        GameObject[] characterGOs = GameObject.FindGameObjectsWithTag("Character");
+        foreach (GameObject go in characterGOs) allCharacters.Add(go.GetComponent<Character>());
     }
 
     public void EnablePlayerInput()
@@ -54,7 +56,7 @@ public class InCombatPlayerAction
     }
 
     // Update is called once per frame
-    void Update()
+    public void Update()
     {
         PathPreview();
     }

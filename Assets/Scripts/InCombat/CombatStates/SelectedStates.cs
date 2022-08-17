@@ -228,13 +228,13 @@ public class SelectedStates
             if (t.selectedCharacter.targetCharacter)
             {
                // Place a small ball above the target.
-               t.selectorBall.SetActive(true);
-               t.selectorBall.transform.position = t.selectedCharacter.targetCharacter.transform.position + Vector3.up * 2;
+               t.GetPlayerActionUI().selectorBall.SetActive(true);
+               t.GetPlayerActionUI().selectorBall.transform.position = t.selectedCharacter.targetCharacter.transform.position + Vector3.up * 2;
             }
             else
             {
-                t.selectorBall.transform.position = Vector3.zero;
-                t.selectorBall.SetActive(false);
+                t.GetPlayerActionUI().selectorBall.transform.position = Vector3.zero;
+                t.GetPlayerActionUI().selectorBall.SetActive(false);
             }
         }
         public override void InputPrimary(InCombatPlayerAction t)
@@ -326,7 +326,7 @@ public class SelectedStates
         }
         public override void Exit(InCombatPlayerAction t)
         {
-            t.selectorBall.SetActive(false);
+            t.GetPlayerActionUI().selectorBall.SetActive(false);
             // t.selectedCharacter.targetCharacter = null; // Commented out because this breaks dodging
         }
     }
