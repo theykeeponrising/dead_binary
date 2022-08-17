@@ -27,7 +27,6 @@ public class StateHandler: MonoBehaviour
 	{
         gameRunningState = new GameRunningState();
         gameRunningState.Init(null, this);
-        gameRunningState.SetStateActive();
 
         // gameStates = new List<GameState> {
         //     new CombatState(),
@@ -57,6 +56,7 @@ public class StateHandler: MonoBehaviour
 
     private void Start() {
         this.gameRunningState.Start();
+        gameRunningState.SetStateActive();
     }
     
 	public void Update()
@@ -83,15 +83,9 @@ public class StateHandler: MonoBehaviour
         return this.activeState;
     }
 
-    //TODO Move relevant functionality to GameStates
     public GameState GetStateObject(State state) {
         if (state == State.GameRunningState) return gameRunningState;
         return gameRunningState.FindSubState(state);
-    }
-
-    public void ChangeState(State state) {
-        this.GetStateObject(this.activeState).SetStateInactive();
-        this.SetStateActive(state);
     }
 
     // Ensures that the same key doesn't get registered multiple times when only pressing a single time

@@ -10,6 +10,27 @@ public class StatusMenuState : GameState
     public StatusMenuUI statusMenuUI;
     public enum StatusState {};
 
+    public override void Init(GameState parentState, StateHandler stateHandler)
+    {
+        base.Init(parentState, stateHandler);
+        this.stateEnum = StateHandler.State.StatusMenuState;
+        GameObject[] gameObjects = GameObject.FindGameObjectsWithTag("UI");
+        foreach (GameObject go in gameObjects)
+        {
+            StatusMenuUI ui = go.GetComponent<StatusMenuUI>();
+            if (ui) {
+                statusMenuUI = ui;
+                statusMenuUI.SetStatusMenuState(this);
+            }
+        }
+    }
+
+    public override void Update()
+    {
+        base.Update();
+        HandleKeyPress();
+    }
+
     // Update is called once per frame
     public override bool HandleKeyPress()
     {

@@ -8,7 +8,7 @@ TagManager:
   - VaultObject
   - ActionPanel
   - StateHandler
-  - InCombatPlayerActionUI
+  - UI
   - Character
   layers:
   - Default

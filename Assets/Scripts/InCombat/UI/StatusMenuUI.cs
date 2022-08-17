@@ -23,6 +23,11 @@ public class StatusMenuUI : MonoBehaviour
         gameObject.GetComponent<CanvasGroup>().alpha = 0;
     }
 
+    public void SetStatusMenuState(StatusMenuState statusMenuState)
+    {
+        this.statusMenuState = statusMenuState;
+    }
+
     public void EnablePlayerInput()
     {
         playerInput.Enable();

@@ -8,9 +8,9 @@ public abstract class GameState
 {
     protected StateHandler stateHandler;
     protected List<GameState> substates;
-    protected GameState activeSubState;
+    public GameState activeSubState;
     protected GameState parentState; 
-    protected StateHandler.State stateEnum;
+    public StateHandler.State stateEnum;
     public bool stateActive;
     protected bool keypressPaused;
 
@@ -31,15 +31,17 @@ public abstract class GameState
         {
             if (state.stateEnum == newStateEnum)
             {
+                Debug.Log(newStateEnum);
                 this.activeSubState.SetStateInactive();
-                state.SetStateActive();
                 this.activeSubState = state;
+                state.SetStateActive();
             }
         }
     }
 
     public virtual void ChangeState(StateHandler.State newStateEnum) {
         this.parentState.ChangeSubState(newStateEnum);
+
     }
 
     public virtual void HandleInput() {
@@ -118,6 +120,7 @@ public abstract class GameState
     public virtual void SetStateActive()
     {
         this.stateActive = true;
+        if (this.activeSubState != null) this.activeSubState.SetStateActive();
     }
     //Method to run when state become inactive (e.g. hide UI, show message, etc.)
     public virtual void SetStateInactive()

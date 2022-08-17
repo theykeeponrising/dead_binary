@@ -26,8 +26,8 @@ public class CombatState : GameState
         this.activeSubState = FindSubState(StateHandler.State.PlayerTurnState);
     }
 
-    public override void Start() {
-        base.Start();
-        this.activeSubState.SetStateActive();
+    public override void Update() 
+    {
+        base.Update();
     }
 }

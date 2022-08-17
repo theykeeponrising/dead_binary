@@ -74,13 +74,15 @@ public class PlayerTurnState : GameState
 
     public override void SetStateActive()
     {
+        base.SetStateActive();
         playerAction.EnablePlayerInput();
-        playerAction.playerInput.Controls.InputMenu.performed += _ => stateHandler.ChangeState(StateHandler.State.StatusMenuState);
+        playerAction.playerInput.Controls.InputMenu.performed += _ => this.parentState.ChangeState(StateHandler.State.StatusMenuState);
         playerAction.StartTurn();
     }
 
     public override void SetStateInactive()
     {
+        base.SetStateInactive();
         playerAction.DisablePlayerInput();
     }
 }

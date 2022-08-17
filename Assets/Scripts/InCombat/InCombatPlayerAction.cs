@@ -40,7 +40,12 @@ public class InCombatPlayerAction
         actionPanelScript = GameObject.FindGameObjectWithTag("ActionPanel").GetComponent<ActionPanelScript>();
         actionPanelScript.gameObject.SetActive(false);
 
-        playerActionUI = GameObject.FindGameObjectWithTag("InCombatPlayerActionUI").GetComponent<InCombatPlayerActionUI>();
+        GameObject[] gameObjects = GameObject.FindGameObjectsWithTag("UI");
+        foreach (GameObject go in gameObjects)
+        {
+            InCombatPlayerActionUI ui = go.GetComponent<InCombatPlayerActionUI>();
+            if (ui) playerActionUI = ui;
+        }
 
         // Add characters to allCharacters list
         allCharacters = new List<Character>();
