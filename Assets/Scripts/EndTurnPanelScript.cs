@@ -5,15 +5,19 @@ using UnityEngine.UI;
 
 public class EndTurnPanelScript : MonoBehaviour
 {
-    public InCombatPlayerAction player;
+    public InCombatPlayerAction playerAction;
     public Button button;
 
     // Start is called before the first frame update
     void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<InCombatPlayerAction>();
+        //A bit of a hack to get the InCombatPlayerAction
+        StateHandler stateHandler = GameObject.FindGameObjectWithTag("StateHandler").GetComponent<StateHandler>();
+        PlayerTurnState playerTurnState = (PlayerTurnState) stateHandler.GetStateObject(StateHandler.State.PlayerTurnState);
+        playerAction = playerTurnState.GetPlayerAction();
+
         button = GetComponentInChildren<Button>();
-        button.onClick.AddListener(player.EndTurn);
+        button.onClick.AddListener(playerAction.EndTurn);
     }
 
     // Update is called once per frame

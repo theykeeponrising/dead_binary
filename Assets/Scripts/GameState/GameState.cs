@@ -9,39 +9,95 @@ public abstract class GameState
     protected StateHandler stateHandler;
     protected List<GameState> substates;
     protected GameState activeSubState;
-    protected GameState parentState;
-    protected 
+    protected GameState parentState; 
+    protected StateHandler.State stateEnum;
     public bool stateActive;
     protected bool keypressPaused;
 
-    public abstract GameState GetStateObject<T>(T stateName);
-
-    public virtual void Init(GameState parentState)
+    public virtual void Init(GameState parentState, StateHandler stateHandler)
     {
         this.parentState = parentState;
+        this.stateHandler = stateHandler;
+        this.substates = new List<GameState>();
     }
 
-    public virtual void ChangeState<T>(T stateName) {
-        this.activeSubState.SetStateInactive();
-        GameState subState = this.GetStateObject(stateName);
-        subState.SetStateActive();
-        this.activeSubState = subState;
+    public virtual void Start() {
+        foreach (GameState substate in substates) substate.Start();
+    }
+
+    //Note newState must be a substate of this GameState
+    public virtual void ChangeSubState(StateHandler.State newStateEnum) {
+        foreach (GameState state in substates)
+        {
+            if (state.stateEnum == newStateEnum)
+            {
+                this.activeSubState.SetStateInactive();
+                state.SetStateActive();
+                this.activeSubState = state;
+            }
+        }
+    }
+
+    public virtual void ChangeState(StateHandler.State newStateEnum) {
+        this.parentState.ChangeSubState(newStateEnum);
     }
 
     public virtual void HandleInput() {
         
         if (!keypressPaused) {
             bool keyPressed = HandleKeyPress();
-            if (keyPressed && this.isActiveAndEnabled)
+            if (keyPressed && stateActive)
             {
-                StartCoroutine(WaitKeyPress());
+                stateHandler.WaitAfterKeyPress();
             }
         }
+    }
+
+    public StateHandler.State GetStateEnum()
+    {
+        return this.stateEnum;
+    }
+
+    //Get the substate object from the CombatSubState enum type
+    public GameState GetSubStateObject(StateHandler.State stateObjectEnum)
+    {
+        foreach (GameState state in substates)
+        {
+            if (state.GetStateEnum() == stateObjectEnum) return state;
+        }
+        return null;
+    }
+
+    //Called via StateHandler.cs
+    public virtual void Update() 
+    {
+        if (this.activeSubState != null) this.activeSubState.Update();
+        //HandleInput();
+    }
+
+    //Called via StateHandler.cs
+    public virtual void FixedUpdate()
+    {
+        if (this.activeSubState != null) this.activeSubState.FixedUpdate();
+        //HandleContinuousInput();
     }
 
     public virtual void HandleContinuousInput()
     {
         HandleMovement();
+    }
+
+    public GameState FindSubState(StateHandler.State state) 
+    {
+        foreach (GameState substate in substates)
+        {
+            if (substate.stateEnum == state) return substate;
+            else {
+                GameState substateFound = substate.FindSubState(state);
+                if (substateFound != null) return substateFound;
+            }
+        }
+        return null;
     }
 
     //Handle key press for a particular game state
@@ -71,10 +127,6 @@ public abstract class GameState
         {
             if (substate.isActive()) substate.SetStateInactive();
         }
-    }
-
-    public virtual void SetStateManager(StateHandler stateHandler) {
-        this.stateHandler = stateHandler;
     }
 
     public virtual IEnumerator WaitKeyPress()

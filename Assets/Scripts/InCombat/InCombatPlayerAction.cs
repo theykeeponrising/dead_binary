@@ -8,7 +8,7 @@ using TMPro;
 using UnityEngine.InputSystem;
 
 
-public class InCombatPlayerAction : MonoBehaviour
+public class InCombatPlayerAction
 {
     // Used to manage user inputs
     public PlayerInput playerInput;
@@ -19,27 +19,28 @@ public class InCombatPlayerAction : MonoBehaviour
     public enum ClickAction { select, target }
     public ClickAction clickAction;
     public string clickContext;
-
-    public LayerMask uiLayermask;
     private ActionPanelScript actionPanelScript;
-
     public StateMachine<InCombatPlayerAction> stateMachine;
-    public TextMeshProUGUI stateText;
+    public LayerMask uiLayermask;
+    InCombatPlayerActionUI playerActionUI;
 
     [Tooltip("The object to float above the Target's head.")]
     public GameObject selectorBall;
 
-    private void Awake()
+    public void Init() 
     {
         playerInput = new PlayerInput();
     }
-    private void Start()
+
+    public void Start()
     {
         stateMachine = new StateMachine<InCombatPlayerAction>();
         stateMachine.Configure(this, new SelectedStates.NoTargetSelected(stateMachine));
 
         actionPanelScript = GameObject.FindGameObjectWithTag("ActionPanel").GetComponent<ActionPanelScript>();
         actionPanelScript.gameObject.SetActive(false);
+
+        playerActionUI = GameObject.FindGameObjectWithTag("InCombatPlayerActionUI").GetComponent<InCombatPlayerActionUI>();
     }
 
     public void EnablePlayerInput()
@@ -56,16 +57,16 @@ public class InCombatPlayerAction : MonoBehaviour
     void Update()
     {
         PathPreview();
+    }
 
-        if (stateMachine != null)
-        {
-            stateMachine.Update();
-            stateText.text = stateMachine.GetCurrentState().GetType().Name;
-        }
+    public InCombatPlayerActionUI GetPlayerActionUI()
+    {
+        return playerActionUI;
     }
 
     public void SelectUnit()
     {
+        Debug.Log("Ran");
         // Default context - select a unit, or deselect if none targeted
         // If unit is selected, send action to the unit along with context (such as attack target)
         RaycastHit hit;

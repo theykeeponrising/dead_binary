@@ -19,10 +19,6 @@ public class GlobalManager : MonoBehaviour
     {
         stateHandler.Init(this);    
     }
-    private void Start()
-    {
-        // gravity = Physics.gravity;
-    }
 
     private void Update()
     {

@@ -7,6 +7,7 @@ TagManager:
   - GlobalManager
   - VaultObject
   - ActionPanel
+  - StateHandler
   layers:
   - Default
   - TransparentFX

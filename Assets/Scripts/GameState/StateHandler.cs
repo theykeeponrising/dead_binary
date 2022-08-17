@@ -5,9 +5,19 @@ using System.Collections.Generic;
 //Class that manages all the (highest-level) states. Handles transitioning between states, passes inputs to the states, etc. 
 public class StateHandler: MonoBehaviour
 {
+    private GameRunningState gameRunningState;
     private CombatState combatState;
     private StatusMenuState statusMenuState;
-    public enum State { StatusMenuState, CombatState };
+    private PlayerTurnState playerTurnState;
+    private EnemyTurnState enemyTurnState;
+    public enum State { 
+        GameRunningState,
+        StatusMenuState,
+        CombatState,
+        PlayerTurnState,
+        EnemyTurnState
+    };
+
     public State activeState;
     public List<GameState> gameStates;
     GlobalManager globalManager;
@@ -15,40 +25,48 @@ public class StateHandler: MonoBehaviour
     
 	public void Init(GlobalManager globalManager)
 	{
-        gamestates = new List<GameState> {
-            new CombatState(),
-            new StatusMenuState(),
-        };
+        gameRunningState = new GameRunningState();
+        gameRunningState.Init(null, this);
+        gameRunningState.SetStateActive();
 
-        if (gameStates.Count == 0) {
-            throw new System.Exception("No gamestates were added to the game state manager.");
-        }
+        // gameStates = new List<GameState> {
+        //     new CombatState(),
+        //     new StatusMenuState(),
+        // };
+
+        // if (gameStates.Count == 0) {
+        //     throw new System.Exception("No gamestates were added to the game state manager.");
+        // }
         
-        foreach (GameState gameState in gameStates) {
+
+        // foreach (GameState gameState in gameStates) {
            
-            if (gameState is CombatState)
-            {
-                combatState = (CombatState) gameState;
-            } else if (gameState is StatusMenuState) {
-                statusMenuState = (StatusMenuState) gameState;
-            }
-            gameState.SetStateManager(this);
-            gameState.Init();
-        }
+        //     if (gameState is CombatState)
+        //     {
+        //         combatState = (CombatState) gameState;
+        //     } else if (gameState is StatusMenuState) {
+        //         statusMenuState = (StatusMenuState) gameState;
+        //     } else if (gameState is PlayerTurnState) {
+        //         playerTurnState = (PlayerTurnState) gameState;
+        //     } else if (gameState is EnemyTurnState) {
+        //         enemyTurnState = (EnemyTurnState) gameState;
+        //     }
+        // }
         this.globalManager = globalManager;
 	}
 
     private void Start() {
-        this.GetStateObject(this.activeState).SetStateActive();
+        this.gameRunningState.Start();
     }
+    
 	public void Update()
 	{
-        this.GetStateObject(this.activeState).HandleInput();
+        this.gameRunningState.Update();
 	}
 
     public void FixedUpdate()
     {
-        this.GetStateObject(this.activeState).HandleContinuousInput();
+        this.gameRunningState.FixedUpdate();
     }
 
     public State SetStateActive(State state) {
@@ -65,19 +83,10 @@ public class StateHandler: MonoBehaviour
         return this.activeState;
     }
 
+    //TODO Move relevant functionality to GameStates
     public GameState GetStateObject(State state) {
-        if (state == State.CombatState)
-        {
-            return combatState;
-        }
-        else if (state == State.StatusMenuState)
-        {
-            return statusMenuState;
-        }
-        else
-        {
-            return null;
-        }
+        if (state == State.GameRunningState) return gameRunningState;
+        return gameRunningState.FindSubState(state);
     }
 
     public void ChangeState(State state) {
@@ -86,11 +95,16 @@ public class StateHandler: MonoBehaviour
     }
 
     // Ensures that the same key doesn't get registered multiple times when only pressing a single time
-    public IEnumerator WaitKeypress()
+    public IEnumerator WaitKeyPress()
     {
         keypressPaused = true;
         yield return new WaitForSeconds(0.01f);
         keypressPaused = false;
+    }
+
+    public void WaitAfterKeyPress()
+    {
+        StartCoroutine(WaitKeyPress());
     }
 
     public void PauseKeypress(bool paused) {

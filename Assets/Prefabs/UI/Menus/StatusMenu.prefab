@@ -372,8 +372,8 @@ GameObject:
   - component: {fileID: 1955676042054940186}
   - component: {fileID: 1955676042054940185}
   - component: {fileID: 1955676042054940184}
-  - component: {fileID: 1955676042054940187}
   - component: {fileID: 1955676042054940190}
+  - component: {fileID: 3314381479865994830}
   m_Layer: 5
   m_Name: StatusMenu
   m_TagString: Untagged
@@ -440,20 +440,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &1955676042054940187
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1955676042054940181}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 097af96b5a9944949bc54312643c9ed2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  yesPanel: {fileID: 1955676043366179612}
-  noPanel: {fileID: 1955676042050177837}
 --- !u!225 &1955676042054940190
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -466,6 +452,21 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &3314381479865994830
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1955676042054940181}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1653a3386a49e0d40bcbae5a39fd5e99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  yesPanel: {fileID: 1955676043366179612}
+  noPanel: {fileID: 1955676042050177837}
+  shouldQuit: 0
 --- !u!1 &1955676043226921164
 GameObject:
   m_ObjectHideFlags: 0

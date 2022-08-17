@@ -8,6 +8,7 @@ using TMPro;
 public class StatusMenuState : GameState
 {
     public StatusMenuUI statusMenuUI;
+    public enum StatusState {};
 
     // Update is called once per frame
     public override bool HandleKeyPress()
@@ -20,13 +21,13 @@ public class StatusMenuState : GameState
     {
         statusMenuUI.EnablePlayerInput();
         statusMenuUI.DisplayMenu(true);
-        statusMenuUI.playerInput.Controls.InputMenu.performed += _ => stateHandler.ChangeState(StateHandler.State.CombatState);
+        //statusMenuUI.playerInput.Controls.InputMenu.performed += _ => this.ChangeState(StateHandler.State.CombatState);
     }
 
     public override void SetStateInactive()
     {
         statusMenuUI.DisablePlayerInput();
         statusMenuUI.DisplayMenu(false);
-        statusMenuUI.playerInput.Controls.InputMenu.performed += _ => stateHandler.ChangeState(StateHandler.State.CombatState);
+        //statusMenuUI.playerInput.Controls.InputMenu.performed += _ => this.ChangeState(StateHandler.State.CombatState);
     }
 }

@@ -4,25 +4,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-//State is active during player turn, and inactive during enemy turn
+//State is active during enemy turn, and inactive during plaayer turn
 public class EnemyTurnState : GameState
 {
-    // Update is called once per frame
-    public override bool HandleKeyPress()
+    public override void Init(GameState parentState, StateHandler stateHandler)
     {
-        // True/False if any key is pressed while in state
-        return (inCombatPlayerAction.playerInput.Controls.AnyKey.ReadValue<float>() > 0.5f);
+        base.Init(parentState, stateHandler);
+        this.stateEnum = StateHandler.State.EnemyTurnState;
     }
 
     public override void SetStateActive()
     {
-        inCombatPlayerAction.EnablePlayerInput();
-        inCombatPlayerAction.playerInput.Controls.InputMenu.performed += _ => stateHandler.ChangeState(StateHandler.State.StatusMenuState);
     }
 
     public override void SetStateInactive()
     {
-        inCombatPlayerAction.DisablePlayerInput();
-        inCombatPlayerAction.playerInput.Controls.InputMenu.performed += _ => stateHandler.ChangeState(StateHandler.State.StatusMenuState);
     }
 }

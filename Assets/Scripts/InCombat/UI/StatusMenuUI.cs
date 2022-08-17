@@ -10,7 +10,8 @@ public class StatusMenuUI : MonoBehaviour
     public GameObject yesPanel;
     public GameObject noPanel;
     public StatusMenuState statusMenuState;
-    PlayerInput playerInput;
+    public PlayerInput playerInput;
+    public bool shouldQuit;
 
     void Awake()
     {
@@ -22,12 +23,12 @@ public class StatusMenuUI : MonoBehaviour
         gameObject.GetComponent<CanvasGroup>().alpha = 0;
     }
 
-    void EnablePlayerInput()
+    public void EnablePlayerInput()
     {
         playerInput.Enable();
     }
 
-    void DisablePlayerInput()
+    public void DisablePlayerInput()
     {
         playerInput.Disable();
     }
@@ -38,7 +39,7 @@ public class StatusMenuUI : MonoBehaviour
 
         if (playerInput.Controls.InputCancel.triggered || playerInput.Controls.InputMenu.triggered)
         {
-            stateHandler.ChangeState(StateHandler.State.CombatState);
+            statusMenuState.ChangeState(StateHandler.State.CombatState);
             keyPressed = true;
         }
 
@@ -59,8 +60,9 @@ public class StatusMenuUI : MonoBehaviour
             {
                 // UnityEditor.EditorApplication.isPlaying = false;
                 Application.Quit();
+                return true;
             }
-            else stateHandler.ChangeState(StateHandler.State.CombatState);
+            else statusMenuState.ChangeState(StateHandler.State.CombatState);
         }
         return keyPressed;
     }
