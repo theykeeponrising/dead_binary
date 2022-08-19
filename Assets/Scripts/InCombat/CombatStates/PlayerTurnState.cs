@@ -29,6 +29,7 @@ public class PlayerTurnState : GameState
         playerAction.Init(this);
         playerActionStateMachine = new StateMachine<InCombatPlayerAction>();
         playerActionStateMachine.Configure(playerAction, new SelectedStates.NoTargetSelected(playerActionStateMachine));   
+        playerAction.SetStateMachine(playerActionStateMachine);
     }
 
     public override void Start()
