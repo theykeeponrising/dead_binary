@@ -210,7 +210,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponType: 0
   weaponHeld: 0
-  weaponLayer: 0
+  weaponLayer: 2
   weaponFamily: 1
   fireSound:
   - {fileID: 8300000, guid: ac9cb7563984bad42b5027c924cc82c3, type: 3}
@@ -219,6 +219,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 698cce35914ceb24589d33bbdcf85927, type: 3}
   - {fileID: 8300000, guid: d902773249009044c8ae68a5c92b665d, type: 3}
   offset: {x: 0, y: 0, z: 0}
+  attributes:
+    animSpeed: 1
   stats:
     damage: 3
     minRange: 1

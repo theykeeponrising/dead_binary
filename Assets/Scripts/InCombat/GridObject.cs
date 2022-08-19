@@ -32,4 +32,21 @@ public class GridObject : MonoBehaviour
                 }
         return foundTiles;
     }
+
+    protected virtual Tile FindCurrentTile()
+    {
+        // Finds the tile the character is currently standing on
+        // Called during start
+
+        Tile[] tiles = FindObjectsOfType<Tile>();
+
+        foreach (Tile tile in tiles)
+            if (tile.gameObject.GetInstanceID() != gameObject.GetInstanceID())
+                if (tile.CheckIfTileOccupant(this))
+                {
+                    return tile;
+                }
+        return null;
+    }
+
 }
