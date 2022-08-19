@@ -60,8 +60,8 @@ public class Inventory : MonoBehaviour
         // Equip first slotted weapon
         equippedWeapon = weapons[0];
         equippedWeapon.gameObject.SetActive(true);
-        character.animator.SetLayerWeight(equippedWeapon.weaponLayer, 1);
-
+        character.GetComponent<Animator>().SetLayerWeight(equippedWeapon.weaponLayer, 1);
+        character.GetComponent<Animator>().SetFloat("animSpeed", equippedWeapon.attributes.animSpeed);
 
         InitializeItems();
     }

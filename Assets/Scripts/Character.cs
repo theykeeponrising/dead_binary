@@ -153,7 +153,6 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
     {
         SetAnimation();
         Movement();
-
     }
 
     void LateUpdate()

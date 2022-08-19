@@ -52,13 +52,12 @@ public class Weapon : MonoBehaviour
 
     private void Start()
     {
-        gunParticles = GetComponentInChildren<ParticleSystem>();
-        gunLight = GetComponentInChildren<Light>();
+        // Weapon always starts with full ammo
+        stats.ammoCurrent = stats.ammoMax;
     }
 
     private void Awake()
     {
-        audioSource = GetComponent<AudioSource>();
         gunParticles = GetComponentInChildren<ParticleSystem>();
         gunLight = GetComponentInChildren<Light>();
     }
