@@ -34,9 +34,6 @@ public class InCombatPlayerAction
 
     public void Start()
     {
-        stateMachine = new StateMachine<InCombatPlayerAction>();
-        stateMachine.Configure(this, new SelectedStates.NoTargetSelected(stateMachine));
-
         actionPanelScript = GameObject.FindGameObjectWithTag("ActionPanel").GetComponent<ActionPanelScript>();
         actionPanelScript.gameObject.SetActive(false);
 
@@ -72,6 +69,11 @@ public class InCombatPlayerAction
     public InCombatPlayerActionUI GetPlayerActionUI()
     {
         return playerActionUI;
+    }
+
+    public void SetStateMachine(StateMachine<InCombatPlayerAction> stateMachine)
+    {
+        this.stateMachine = stateMachine;
     }
 
     public void SelectUnit()
