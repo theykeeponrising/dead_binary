@@ -23,7 +23,11 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     // Use this for initialization
     void Start()
     {
-        playerAction = GameObject.FindGameObjectWithTag("Player").GetComponent<InCombatPlayerAction>();
+        //A bit of a hack to get the InCombatPlayerAction
+        StateHandler stateHandler = GameObject.FindGameObjectWithTag("StateHandler").GetComponent<StateHandler>();
+        PlayerTurnState playerTurnState = (PlayerTurnState) stateHandler.GetStateObject(StateHandler.State.PlayerTurnState);
+        playerAction = playerTurnState.GetPlayerAction();
+        
         Renderer renderer = this.gameObject.GetComponentInChildren(typeof(Renderer)) as Renderer;
         tileGlow = renderer.materials[1];
         tileColor = tileGlow.color;

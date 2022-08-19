@@ -108,12 +108,18 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         // Characters start with full health and action points
         stats.healthCurrent = stats.healthMax;
         stats.actionPointsCurrent = stats.actionPointsMax;
+        
+        //A bit of a hack to get the InCombatPlayerAction
+        StateHandler stateHandler = GameObject.FindGameObjectWithTag("StateHandler").GetComponent<StateHandler>();
+        PlayerTurnState playerTurnState = (PlayerTurnState) stateHandler.GetStateObject(StateHandler.State.PlayerTurnState);
+        playerAction = playerTurnState.GetPlayerAction();
     }
 
     protected override void Awake()
     {
         base.Awake();
-        playerAction = GameObject.FindGameObjectWithTag("Player").GetComponent<InCombatPlayerAction>();
+        ragdoll = GetComponentsInChildren<Rigidbody>();
+        audioSource = GetComponent<AudioSource>();
 
         // Animator, bones, and body transforms
         animator = GetComponent<Animator>();
@@ -507,6 +513,8 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
             // This is until we can get a proper crouch-draw animation
             if (!flags.Contains("crouching"))
             {
+                inventory.equippedWeapon.PlaySound(Weapon.WeaponSound.SWAP, this);
+
                 AddFlag("drawing");
                 //animator.Play("Draw", inventory.equippedWeapon.weaponLayer);
                 animator.Play("Draw");
@@ -782,6 +790,11 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
             StartCoroutine(Death(attacker, direction));
             Debug.DrawRay(transform.position, direction, Color.red, 20, true); // For debug purposes
         }
+    }
+
+    public void RestoreHealth(int amount)
+    {
+        stats.healthCurrent += amount;
     }
 
     public void TakeDamageEffect(Weapon weapon=null)

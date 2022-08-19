@@ -6,7 +6,7 @@ using TMPro;
 
 public class ActionPanelScript : MonoBehaviour
 {
-    [SerializeField] private InCombatPlayerAction player;
+    [SerializeField] private InCombatPlayerAction playerAction;
     [SerializeField] private GameObject panel;
     [SerializeField] private TextMeshProUGUI apTextBox;
     [SerializeField] private TextMeshProUGUI ammoTextBox;
@@ -16,7 +16,10 @@ public class ActionPanelScript : MonoBehaviour
     private void Start()
     {
         // Assign the player.
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<InCombatPlayerAction>();
+        //A bit of a hack to get the InCombatPlayerAction
+        StateHandler stateHandler = GameObject.FindGameObjectWithTag("StateHandler").GetComponent<StateHandler>();
+        PlayerTurnState playerTurnState = (PlayerTurnState) stateHandler.GetStateObject(StateHandler.State.PlayerTurnState);
+        playerAction = playerTurnState.GetPlayerAction();
     }
 
     private void OnEnable()
@@ -34,15 +37,15 @@ public class ActionPanelScript : MonoBehaviour
         // Dynamically creates buttons based on what actions the Character can perform
         // Will skip creating buttons for actions that do not use buttons (such as moving)
 
-        if (!player)
+        if (playerAction is null)
             return;
 
-        if (player.selectedCharacter)
+        if (playerAction.selectedCharacter)
         {
             panel.SetActive(true);
 
             List<Actions.ActionsList> actionsList = new List<Actions.ActionsList>();
-            foreach (Actions.ActionsList characterAction in player.selectedCharacter.availableActions)
+            foreach (Actions.ActionsList characterAction in playerAction.selectedCharacter.availableActions)
             {
                 if (Actions.ActionsDict[characterAction].buttonPath != null)
                 {
@@ -84,9 +87,11 @@ public class ActionPanelScript : MonoBehaviour
     private void Update()
     {
         // Update ammo and ap
-
-        apTextBox.text = player.selectedCharacter.stats.actionPointsCurrent.ToString();
-        ammoTextBox.text = player.selectedCharacter.inventory.equippedWeapon.stats.ammoCurrent.ToString();
+        if (playerAction.selectedCharacter != null)
+        {
+            apTextBox.text = playerAction.selectedCharacter.stats.actionPointsCurrent.ToString();
+            ammoTextBox.text = playerAction.selectedCharacter.inventory.equippedWeapon.stats.ammoCurrent.ToString();
+        }
     }
 
     public void BindButtons()
@@ -101,8 +106,8 @@ public class ActionPanelScript : MonoBehaviour
         foreach (Button button in buttons)
         {
             int index = buttons.IndexOf(button);
-            var state = player.stateMachine.GetCurrentState();
-            button.GetComponent<ActionButton>().button.onClick.AddListener(delegate { state.InputActionBtn(player, index + 1); });
+            var state = playerAction.stateMachine.GetCurrentState();
+            button.GetComponent<ActionButton>().button.onClick.AddListener(delegate { state.InputActionBtn(playerAction, index + 1); });
         }
     }
 

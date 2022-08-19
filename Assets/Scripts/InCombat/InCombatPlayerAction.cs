@@ -8,38 +8,49 @@ using TMPro;
 using UnityEngine.InputSystem;
 
 
-public class InCombatPlayerAction : MonoBehaviour
+public class InCombatPlayerAction
 {
     // Used to manage user inputs
     public PlayerInput playerInput;
     public Character selectedCharacter;
-    public Character[] allCharacters; // TO DO -- Characters should be dynamically added to this list
+    public List<Character> allCharacters; // TO DO -- Characters should be dynamically added to this list
     public List<Tile> previewPath = new List<Tile>();
     public Tile targetTile;
     public enum ClickAction { select, target }
     public ClickAction clickAction;
     public string clickContext;
-
-    public LayerMask uiLayermask;
+    
     private ActionPanelScript actionPanelScript;
-
     public StateMachine<InCombatPlayerAction> stateMachine;
-    public TextMeshProUGUI stateText;
+    public LayerMask uiLayermask;
+    private PlayerTurnState playerTurnState; 
+    InCombatPlayerActionUI playerActionUI;
 
-    [Tooltip("The object to float above the Target's head.")]
-    public GameObject selectorBall;
-
-    private void Awake()
+    public void Init(PlayerTurnState playerTurnState) 
     {
         playerInput = new PlayerInput();
+        this.playerTurnState = playerTurnState;
     }
-    private void Start()
+
+    public void Start()
     {
         stateMachine = new StateMachine<InCombatPlayerAction>();
         stateMachine.Configure(this, new SelectedStates.NoTargetSelected(stateMachine));
 
         actionPanelScript = GameObject.FindGameObjectWithTag("ActionPanel").GetComponent<ActionPanelScript>();
         actionPanelScript.gameObject.SetActive(false);
+
+        GameObject[] gameObjects = GameObject.FindGameObjectsWithTag("UI");
+        foreach (GameObject go in gameObjects)
+        {
+            InCombatPlayerActionUI ui = go.GetComponent<InCombatPlayerActionUI>();
+            if (ui) playerActionUI = ui;
+        }
+
+        // Add characters to allCharacters list
+        allCharacters = new List<Character>();
+        GameObject[] characterGOs = GameObject.FindGameObjectsWithTag("Character");
+        foreach (GameObject go in characterGOs) allCharacters.Add(go.GetComponent<Character>());
     }
 
     public void EnablePlayerInput()
@@ -53,15 +64,14 @@ public class InCombatPlayerAction : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    public void Update()
     {
         PathPreview();
+    }
 
-        if (stateMachine != null)
-        {
-            stateMachine.Update();
-            stateText.text = stateMachine.GetCurrentState().GetType().Name;
-        }
+    public InCombatPlayerActionUI GetPlayerActionUI()
+    {
+        return playerActionUI;
     }
 
     public void SelectUnit()
@@ -218,7 +228,6 @@ public class InCombatPlayerAction : MonoBehaviour
         // Ends player's current turn
 
         // TO DO -- Any end of turn effects, and transfer to AI
-
-        StartTurn(); // TEMP
+        this.playerTurnState.EndTurn();
     }
 }

@@ -48,7 +48,8 @@ public class SelectedStates
                         {
                             t.selectedCharacter.targetCharacter = v;
                             ChangeState(new ShootTarget(Machine));
-                        }else
+                        }
+                        else
                         {
                             Debug.Log("Cannot shoot a Character of the same Faction!");
                         }
@@ -61,8 +62,8 @@ public class SelectedStates
                         t.selectedCharacter.ProcessAction(Actions.action_move, contextTile: tile, contextPath: t.previewPath);
 
                         //TODO: Clean this up. Need to check that this is a valid move before sending to state machine.
-                        if(t.selectedCharacter.CheckTileMove(tile) == true)
-                            ChangeState(new Moving(Machine,tile));
+                        if (t.selectedCharacter.CheckTileMove(tile) == true)
+                            ChangeState(new Moving(Machine, tile));
                     }
                 }
             }
@@ -87,6 +88,13 @@ public class SelectedStates
                 case (Actions.ActionsList.REFRESH):
                     {
                         ChangeState(new RefreshingAP(Machine));
+                        break;
+                    }
+                case (Actions.ActionsList.USEITEM):
+                    {
+                        if(t.selectedCharacter.inventory.GetItem(0))
+                        ChangeState
+                            (new UseItem(Machine, t.selectedCharacter.inventory.GetItem(0)));
                         break;
                     }
             }
@@ -127,7 +135,7 @@ public class SelectedStates
             if (t.selectedCharacter.stats.actionPointsCurrent > 0)
             {
                 t.MoveCharacter();
-               // ChangeState(new Moving(Machine));
+                // ChangeState(new Moving(Machine));
             }
             else
                 ChangeState(new Idle(Machine));
@@ -157,6 +165,12 @@ public class SelectedStates
                 case (Actions.ActionsList.REFRESH):
                     {
                         ChangeState(new RefreshingAP(Machine));
+                        break;
+                    }
+                case (Actions.ActionsList.USEITEM):
+                    {
+                        ChangeState
+                            (new UseItem(Machine, t.selectedCharacter.inventory.GetItem(0)));
                         break;
                     }
             }
@@ -227,14 +241,14 @@ public class SelectedStates
         {
             if (t.selectedCharacter.targetCharacter)
             {
-               // Place a small ball above the target.
-               t.selectorBall.SetActive(true);
-               t.selectorBall.transform.position = t.selectedCharacter.targetCharacter.transform.position + Vector3.up * 2;
+                // Place a small ball above the target.
+                t.GetPlayerActionUI().selectorBall.SetActive(true);
+                t.GetPlayerActionUI().selectorBall.transform.position = t.selectedCharacter.targetCharacter.transform.position + Vector3.up * 2;
             }
             else
             {
-                t.selectorBall.transform.position = Vector3.zero;
-                t.selectorBall.SetActive(false);
+                t.GetPlayerActionUI().selectorBall.transform.position = Vector3.zero;
+                t.GetPlayerActionUI().selectorBall.SetActive(false);
             }
         }
         public override void InputPrimary(InCombatPlayerAction t)
@@ -245,7 +259,7 @@ public class SelectedStates
         public override void InputSecndry(InCombatPlayerAction t)
         {
             // Check for Target (Should already have).
-            if(t.selectedCharacter.targetCharacter)
+            if (t.selectedCharacter.targetCharacter)
             {
                 RaycastHit hit;
                 Ray ray;
@@ -271,7 +285,7 @@ public class SelectedStates
                         else if (!t.selectedCharacter.potentialTargets.Contains(v))
                             Debug.Log("Unit not Targetable.");
                     }
-                    
+
                     // If no character is pressed, revert to Idle.
                     else
                         ChangeState(new Idle(Machine));
@@ -326,7 +340,7 @@ public class SelectedStates
         }
         public override void Exit(InCombatPlayerAction t)
         {
-            t.selectorBall.SetActive(false);
+            t.GetPlayerActionUI().selectorBall.SetActive(false);
             // t.selectedCharacter.targetCharacter = null; // Commented out because this breaks dodging
         }
     }
@@ -383,4 +397,95 @@ public class SelectedStates
                 ChangeState(new Idle(Machine));
         }
     }
+
+    public class UseItem : FiniteState<InCombatPlayerAction>
+    {
+        Item Item;
+        public UseItem(StateMachine<InCombatPlayerAction> machine, Item item) : base(machine) { Machine = machine; Item = item; }
+
+        float timer;
+        public override void Enter(InCombatPlayerAction t)
+        {
+            base.Enter(t);
+            // The item panel
+            var iPanel = GameObject.FindGameObjectWithTag("UseItemPanel").GetComponent<UseItemPanelScript>();
+            //iPanel.gameObject.SetActive(true);
+            iPanel.SetPanel(true, Item);
+            // Show UI
+            //Find Targets
+
+            timer = Time.time + 2;
+        }
+
+        public override void InputSecndry(InCombatPlayerAction t)
+        {
+            if (t.selectedCharacter)
+            {
+                RaycastHit hit;
+                Ray ray;
+                ray = Camera.main.ScreenPointToRay(t.playerInput.Controls.InputPosition.ReadValue<Vector2>());
+
+                if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+                {
+                    Item.TryUseItem(t.selectedCharacter, hit.collider.gameObject, out bool success);
+
+                    if (success)
+                        ChangeState(new Idle(Machine));
+                    /*
+                    if (hit.collider.GetComponent<Character>())
+                    {
+                        var v = hit.collider.GetComponent<Character>();
+
+                        // If Right Click on Target, shoot it.
+                        if (v.faction != t.selectedCharacter.faction)
+                        {
+                            t.selectedCharacter.targetCharacter = v;
+                            ChangeState(new ShootTarget(Machine));
+                        }
+                        else
+                        {
+                            Debug.Log("Cannot shoot a Character of the same Faction!");
+                        }
+                    }*/
+                    /*
+                    switch(Item.targetType)
+                    {
+                        case TargetType.Character:
+                            if (hit.collider.GetComponent<Character>())
+                            {
+                                var v = hit.collider.GetComponent<Character>();
+                                Item.TryUseItem(t.selectedCharacter, v.gameObject);
+                               // if (Item.GetType() == typeof(Consumable))
+                             //   { Debug.Log("CONSUMABLE!!!"); }
+                               // else { Debug.Log("Type: " + Item.GetType().Name); }
+                               // Item.CheckAffinity(t.selectedCharacter.faction, v.faction,)
+                            }
+                            break;
+                    }
+                    */
+                }
+            }
+        }
+        public override void InputActionBtn(InCombatPlayerAction t, int index)
+        {
+            Actions.ActionsList action = t.GetBindings(index);
+
+            if (action == Actions.ActionsList.USEITEM)
+            {
+                ChangeState(new Idle(Machine));
+            }
+        }
+
+        public override void Exit(InCombatPlayerAction t)
+        {
+            // Disable UI
+            var iPanel = GameObject.FindGameObjectWithTag("UseItemPanel").GetComponent<UseItemPanelScript>();
+            // iPanel.gameObject.SetActive(false);
+            iPanel.SetPanel(false);
+
+            base.Exit(t);
+        }
+    }
 }
+
+    
