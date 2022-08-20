@@ -217,6 +217,11 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 4161c0cedab3a4f499dd169695ff8d8f, type: 3}
   reloadSound:
   - {fileID: 8300000, guid: 559bbdd6c4c2a2740a922a6440e106f4, type: 3}
+  swapSound:
+  - {fileID: 8300000, guid: 218a2ce84cd24f247a491d6ad922bf57, type: 3}
+  - {fileID: 8300000, guid: c5ffcbf33e8a97e41ac5ccdc6e6df1d9, type: 3}
+  - {fileID: 8300000, guid: e4c8745ff880cec44a167323b3bcaace, type: 3}
+  - {fileID: 8300000, guid: a8a448ce98f99374286c2a145c80ffce, type: 3}
   offset: {x: 0, y: 0.07, z: -0.05}
   attributes:
     animSpeed: 1
