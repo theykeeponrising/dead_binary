@@ -15,7 +15,8 @@ public class Weapon : MonoBehaviour
 
     public enum WeaponFamily { MELEE, PISTOL, SMG, SHOTGUN, RIFLE, AR, LMG, SHIELD, LAUNCHER }
     public WeaponFamily weaponFamily;
-
+    public enum WeaponImpact { LIGHT, MEDIUM, HEAVY }
+    public WeaponImpact weaponImpact;
     public enum WeaponSound { FIRE, RELOAD, SWAP };
 
     [SerializeField]  AudioClip[] fireSound;
@@ -26,7 +27,14 @@ public class Weapon : MonoBehaviour
 
     ParticleSystem gunParticles;
     Light gunLight;
-    
+
+    [System.Serializable]
+    public class Attributes
+    {
+        public float animSpeed = 1.0f;
+    }
+    public Attributes attributes;
+
     [System.Serializable]
     public class Stats
     {
@@ -44,35 +52,26 @@ public class Weapon : MonoBehaviour
 
     private void Start()
     {
-        gunParticles = GetComponentInChildren<ParticleSystem>();
-        gunLight = GetComponentInChildren<Light>();
+        // Weapon always starts with full ammo
+        stats.ammoCurrent = stats.ammoMax;
     }
 
     private void Awake()
     {
-        // Converts the Unity Editor value into a layer int
-
-        if (weaponHeld == WeaponHeld.Onehand)
-            weaponLayer = 1;
-        else if (weaponHeld == WeaponHeld.Twohand)
-            weaponLayer = 2;
-
-        // Weapon always starts with full ammo
-        stats.ammoCurrent = stats.ammoMax;
+        gunParticles = GetComponentInChildren<ParticleSystem>();
+        gunLight = GetComponentInChildren<Light>();
     }
 
     public void DefaultPosition(Character parent)
     {
         // Used to place newly-created weapon objects into the default position
 
-        transform.parent = parent.body.handRight;
+        transform.parent = parent.body.handRight.Find("AttachPoint");
         transform.position = transform.parent.position;
         transform.localPosition = transform.localPosition + offset;
 
         if (weaponType == WeaponType.Gun)
-        {
             transform.rotation = transform.parent.transform.rotation;
-        }
     }
 
     public void Shoot()

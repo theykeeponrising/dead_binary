@@ -5,3 +5,4 @@ Royalty free sound effects:
 burstfirewav-14443.mp3
 semiautorifleshotwav-14725.mp3 (AssaultRifle_Shoot_1)
 rifle-or-shotgun-reload-6787.mp3 (AssaultRifle_Reload_1)
+m1-garand-rifle-80192.mp3 (Rifle_Shoot_1)
