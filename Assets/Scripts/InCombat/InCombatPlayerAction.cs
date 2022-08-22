@@ -26,21 +26,16 @@ public class InCombatPlayerAction
     private PlayerTurnState playerTurnState; 
     InCombatPlayerActionUI playerActionUI;
 
+
+
     public void Init(PlayerTurnState playerTurnState) 
     {
         playerInput = new PlayerInput();
         this.playerTurnState = playerTurnState;
-
-        //stateMachine = new StateMachine<InCombatPlayerAction>();
-       // stateMachine.Configure(this,new SelectedStates.NoTargetSelected(stateMachine));
-
-       
     }
 
     public void Start()
     {
-
-
         actionPanelScript = GameObject.FindGameObjectWithTag("ActionPanel").GetComponent<ActionPanelScript>();
         actionPanelScript.gameObject.SetActive(false);
 
@@ -71,8 +66,7 @@ public class InCombatPlayerAction
     public void Update()
     {
         PathPreview();
-        Debug.Log(stateMachine.GetCurrentState());
-        Debug.Log("Sub: " + playerTurnState.activeSubState);
+        Debug.Log(stateMachine.GetCurrentState().GetType().Name);
     }
 
     public InCombatPlayerActionUI GetPlayerActionUI()
