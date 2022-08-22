@@ -44,6 +44,10 @@ public class AssetManager : MonoBehaviour
     {
         public CoverObject halfWall;
         public CoverObject fullWall;
+        public CoverObject concreteBarrier1;
+        public CoverObject concreteBarrier2;
+        public CoverObject metalRail;
+        public CoverObject metalRailLarge;
     }
     public CoverPrefabs cover;
 }

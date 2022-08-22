@@ -244,7 +244,11 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             if (coverObj.gameObject.GetInstanceID() != gameObject.GetInstanceID())
             {
                 float distance = Vector3.Distance(this.gameObject.transform.position, coverObj.gameObject.transform.position);
-                if (distance <= GlobalManager.tileSpacing) cover = coverObj;
+                if (distance <= GlobalManager.tileSpacing)
+                {
+                    cover = coverObj;
+                    break;
+                }
             }
     }
 
