@@ -1,11 +1,15 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class SelectedStates
 {
+    #region Basics
     public class Idle : FiniteState<InCombatPlayerAction>
     {
         public Idle(StateMachine<InCombatPlayerAction> machine) : base(machine) { Machine = machine; }
+
+        List<Character> _allies;
 
         public override void Enter(InCombatPlayerAction t)
         {
@@ -13,7 +17,14 @@ public class SelectedStates
 
             if (t.selectedCharacter)
             {
+                if(t.selectedCharacter.potentialTargets != null)
+                    foreach (var v in t.selectedCharacter.potentialTargets)
+                    v.IsTargetUX(false, false);
+
                 t.selectedCharacter.potentialTargets = null;
+
+                if (t.selectedCharacter.targetCharacter != null && t.selectedCharacter.targetCharacter.stats.healthCurrent <= 0)
+                    t.selectedCharacter.targetCharacter = null;
                 // t.selectedCharacter.targetCharacter = null; // Commented out because this breaks dodging
             }
         }
@@ -24,10 +35,16 @@ public class SelectedStates
         }
         public override void InputPrimary(InCombatPlayerAction t)
         {
+            Character c = t.selectedCharacter;
+
             if (!IsPointerOverUIElement(t))
                 t.SelectUnit();
+
+            if (t.selectedCharacter == null) ChangeState(new NoTargetSelected(Machine));
+            if (t.selectedCharacter != c) ChangeState(new Idle(Machine));
         }
 
+        
         public override void InputSecndry(InCombatPlayerAction t)
         {
             if (t.selectedCharacter)
@@ -43,15 +60,23 @@ public class SelectedStates
                     {
                         var v = hit.collider.GetComponent<Character>();
 
-                        // If Right Click on Target, shoot it.
-                        if (v.attributes.faction != t.selectedCharacter.attributes.faction)
+                        // TODO: Hold RMB = UI Popup with unit information.
+
+                        Debug.Log("Right-cliked on a character. No functionality yet.");
+                        //Right Click to shoot. NOT USED
                         {
-                            t.selectedCharacter.targetCharacter = v;
-                            ChangeState(new ShootTarget(Machine));
-                        }
-                        else
-                        {
-                            Debug.Log("Cannot shoot a Character of the same Faction!");
+                            /*
+                            // If Right Click on Target, shoot it.
+                            if (v.attributes.faction != t.selectedCharacter.attributes.faction)
+                            {
+                                t.selectedCharacter.targetCharacter = v;
+                                ChangeState(new ShootTarget(Machine, v));
+                            }
+                            else
+                            {
+                                Debug.Log("Cannot shoot a Character of the same Faction!");
+                            }
+                            */
                         }
                     }
 
@@ -97,7 +122,17 @@ public class SelectedStates
                             (new UseItem(Machine, t.selectedCharacter.inventory.GetItem(0)));
                         break;
                     }
+                case (Actions.ActionsList.SHOOT):
+                    {
+                        ChangeState(new ChoosingShootTarget(Machine));
+                        break;
+                    }
             }
+        }
+
+        public override void InputTab(InCombatPlayerAction t, bool shift)
+        {
+            
         }
     }
 
@@ -105,10 +140,12 @@ public class SelectedStates
     {
         public NoTargetSelected(StateMachine<InCombatPlayerAction> machine) : base(machine) { Machine = machine; }
 
+        /*
         public override void Enter(InCombatPlayerAction t)
         {
             base.Enter(t);
         }
+        */
         public override void Execute(InCombatPlayerAction t)
         {
             if (t.selectedCharacter)
@@ -120,7 +157,9 @@ public class SelectedStates
                 t.SelectUnit();
         }
     }
+    #endregion
 
+    #region Movement
     public class ChoosingMoveDestination : FiniteState<InCombatPlayerAction>
     {
         public ChoosingMoveDestination(StateMachine<InCombatPlayerAction> machine) : base(machine) { Machine = machine; }
@@ -201,7 +240,9 @@ public class SelectedStates
             }
         }
     }
+    #endregion
 
+    #region Combat
     public class ChoosingShootTarget : FiniteState<InCombatPlayerAction>
     {
         public ChoosingShootTarget(StateMachine<InCombatPlayerAction> machine) : base(machine) { Machine = machine; }
@@ -218,46 +259,90 @@ public class SelectedStates
             foreach (var v in gos)
             {
                 if (v.GetComponent<IFaction>() != null)
-                {
                     if (t.selectedCharacter.attributes.faction != v.attributes.faction)
-                    {
-                        enemyList.Add(v);
-                    }
-                }
+                        if (v.stats.healthCurrent > 0)
+                            enemyList.Add(v);
             }
 
-            // t.selectedCharacter.potentialTargets = new Character[enemyList.Count];
-            //t.selectedCharacter.potentialTargets = enemyList.ToArray();
+            //Find closest target
+            if(enemyList.Count > 0)
+            {
+                enemyList.Sort(delegate (Character a, Character b)
+                {
+                    return Vector2.Distance(t.selectedCharacter.transform.position, a.transform.position).CompareTo(Vector2.Distance(t.selectedCharacter.transform.position, b.transform.position));
+                });
 
-            t.selectedCharacter.potentialTargets = new List<Character>();
-            t.selectedCharacter.potentialTargets = enemyList;
+                t.selectedCharacter.potentialTargets = enemyList;
 
-            if (t.selectedCharacter.potentialTargets.Count > 0)
-                t.selectedCharacter.targetCharacter = t.selectedCharacter.potentialTargets[0];
+                //t.selectedCharacter.targetCharacter = enemyList[0];
+                t.selectedCharacter.targetCharacter = t.selectedCharacter.targetCharacter != null ? t.selectedCharacter.targetCharacter : enemyList[0];
+            }
             else
-                Debug.LogWarning("There are no nearby enemies. If there should be, check to see that their Faction is not the same as the Selected Character.");
+            {
+                Debug.LogWarning("There are no nearby enemies. If there should be, check to see that their Faction is not the same as the Selected Character. Reverting to Idle");
+                ChangeState(new Idle(Machine));
+            }
         }
         public override void Execute(InCombatPlayerAction t)
         {
-            if (t.selectedCharacter.targetCharacter)
+            if (t.selectedCharacter == null) ChangeState(new NoTargetSelected(Machine));
+
+            foreach(var v in enemyList)
             {
-                // Place a small ball above the target.
-                t.GetPlayerActionUI().selectorBall.SetActive(true);
-                t.GetPlayerActionUI().selectorBall.transform.position = t.selectedCharacter.targetCharacter.transform.position + Vector3.up * 2;
+                if (v == t.selectedCharacter.targetCharacter)
+                    v.IsTargetUX(true, true);
+                else
+                    v.IsTargetUX(false, true);
             }
-            else
+        }
+        public override void Exit(InCombatPlayerAction t)
+        {
+            base.Exit(t);
+            foreach (var v in enemyList)
             {
-                t.GetPlayerActionUI().selectorBall.transform.position = Vector3.zero;
-                t.GetPlayerActionUI().selectorBall.SetActive(false);
+                v.IsTargetUX(false, false);
             }
         }
         public override void InputPrimary(InCombatPlayerAction t)
         {
+            //if (!IsPointerOverUIElement(t))
+                //t.SelectUnit();
+                
+            // If valid target, make Target
             if (!IsPointerOverUIElement(t))
-                t.SelectUnit();
+            {
+                RaycastHit hit;
+                Ray ray;
+                ray = Camera.main.ScreenPointToRay(t.playerInput.Controls.InputPosition.ReadValue<Vector2>());
+
+                int layerMask = (1 << LayerMask.NameToLayer("TileMap"));
+
+                if (Physics.Raycast(ray, out hit, Mathf.Infinity, ~layerMask))
+                {
+                    if (hit.collider.GetComponent<Character>())
+                    {
+                        var c = hit.collider.GetComponent<Character>();
+
+                        if (enemyList.Contains(c))
+                            t.selectedCharacter.targetCharacter = c;
+                        else if (c.attributes.faction == t.selectedCharacter.attributes.faction)
+                        { 
+                            t.SelectUnit();
+                            ChangeState(new Idle(Machine));
+                        }
+                        else
+                        {
+                            Debug.Log("Clicked character but unable to process. Possibly not Ally or Enemy.");
+                        }
+                    } 
+                }
+                else
+                    ChangeState(new NoTargetSelected(Machine));
+            }
         }
         public override void InputSecndry(InCombatPlayerAction t)
         {
+            /*
             // Check for Target (Should already have).
             if (t.selectedCharacter.targetCharacter)
             {
@@ -275,7 +360,7 @@ public class SelectedStates
 
                         // If Right Click on Target, shoot it.
                         if (v == t.selectedCharacter.targetCharacter)
-                            ChangeState(new ShootTarget(Machine));
+                            ChangeState(new ShootTarget(Machine, v));
 
                         // If Potential Target, Switch Target
                         else if (t.selectedCharacter.potentialTargets.Contains(v))
@@ -291,6 +376,7 @@ public class SelectedStates
                         ChangeState(new Idle(Machine));
                 }
             }
+            */
         }
 
         public override void InputActionBtn(InCombatPlayerAction t, int index)
@@ -301,50 +387,65 @@ public class SelectedStates
             {
                 case (Actions.ActionsList.SHOOT):
                     {
+                        /*
                         if (t.selectedCharacter.targetCharacter)
-                            ChangeState(new ShootTarget(Machine));
+                            ChangeState(new ShootTarget(Machine,t.selectedCharacter.targetCharacter));
                         else
-                            Debug.Log("No Target -- But how? Ensure that both characters are set to different factions.");
+                            Debug.Log("No Target -- But how? Ensure that both characters are set to different factions.");*/
+
+                        ChangeState(new Idle(Machine));
                         break;
                     }
             }
+        }
+
+        public override void InputSpacebar(InCombatPlayerAction t)
+        {
+            if (t.selectedCharacter.targetCharacter)
+                ChangeState(new ShootTarget(Machine, t.selectedCharacter.targetCharacter));
+            else
+                Debug.Log("No Target -- But how? Ensure that both characters are set to different factions. (spacebar)");
+        }
+
+        public override void InputTab(InCombatPlayerAction t, bool shift)
+        {
+            int index = enemyList.IndexOf(t.selectedCharacter.targetCharacter);
+            int n = shift ? index - 1 : index + 1;
+
+            if (n < 0) n = enemyList.Count - 1;
+            if (n > enemyList.Count - 1) n = 0;
+
+            t.selectedCharacter.targetCharacter = enemyList[n];
         }
     }
 
     public class ShootTarget : FiniteState<InCombatPlayerAction>
     {
-        public ShootTarget(StateMachine<InCombatPlayerAction> machine) : base(machine) { Machine = machine; }
+        Character Target;
+        public ShootTarget(StateMachine<InCombatPlayerAction> machine, Character target) : base(machine) { Machine = machine; Target = target; }
 
         float timer;
 
         public override void Enter(InCombatPlayerAction t)
         {
-            t.selectedCharacter.ProcessAction(Actions.action_shoot, contextCharacter: t.selectedCharacter.targetCharacter, contextString: "attack");
+            t.selectedCharacter.ProcessAction(Actions.action_shoot, contextCharacter: Target, contextString: "attack");
 
             timer = Time.time + 1;
         }
         public override void Execute(InCombatPlayerAction t)
         {
             if (timer < Time.time)
-                ChangeState(new PostShootTarget(Machine));
+                ChangeState(new Idle(Machine));
         }
     }
 
     public class PostShootTarget : FiniteState<InCombatPlayerAction>
     {
         public PostShootTarget(StateMachine<InCombatPlayerAction> machine) : base(machine) { Machine = machine; }
-
-        public override void Enter(InCombatPlayerAction t)
-        {
-            ChangeState(new Idle(Machine));
-        }
-        public override void Exit(InCombatPlayerAction t)
-        {
-            t.GetPlayerActionUI().selectorBall.SetActive(false);
-            // t.selectedCharacter.targetCharacter = null; // Commented out because this breaks dodging
-        }
     }
+    #endregion
 
+    #region Actions
     public class Reloading : FiniteState<InCombatPlayerAction>
     {
         public Reloading(StateMachine<InCombatPlayerAction> machine) : base(machine) { Machine = machine; }
@@ -486,6 +587,6 @@ public class SelectedStates
             base.Exit(t);
         }
     }
+    #endregion
 }
 
-    

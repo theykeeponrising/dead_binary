@@ -196,6 +196,25 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         }
     }
 
+    public void IsTargetUX(bool isTarget, bool isPotentialTarget)
+    {
+
+        if(isPotentialTarget)
+        {
+            selectionCircle.SetActive(true);
+
+            if (isTarget)
+                selectionCircle.GetComponent<Renderer>().material.color = Color.red;
+            else
+                selectionCircle.GetComponent<Renderer>().material.color = Color.yellow;
+        }
+        else
+        {
+            selectionCircle.SetActive(false);
+            selectionCircle.GetComponent<Renderer>().material.color = Color.white;
+        }
+    }
+
     public void ProcessAction(Actions.Action actionToPerform, Tile contextTile=null, List<Tile> contextPath=null, Character contextCharacter=null, string contextString=null)
     {
         // Determine if action can be performed, and perform action if so
@@ -629,7 +648,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
 
         // Wait until shoot animation completes
         while (AnimatorIsPlaying()) yield return new WaitForSeconds(0.01f);
-        targetCharacter = null;
+        //targetCharacter = null;
     }
 
     bool AnimatorIsPlaying()

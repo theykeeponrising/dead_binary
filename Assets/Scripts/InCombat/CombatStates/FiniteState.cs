@@ -30,6 +30,9 @@ abstract public class FiniteState<T>
             v.playerInput.Controls.ActionButton_7.performed += _InputAction7;
             v.playerInput.Controls.ActionButton_8.performed += _InputAction8;
             v.playerInput.Controls.ActionButton_9.performed += _InputAction9;
+            v.playerInput.Controls.InputSpacebar.performed += _InputSpacebar;
+            v.playerInput.Controls.InputTab.performed += _InputTab;
+
 
             if (GameObject.FindGameObjectWithTag("ActionPanel"))
             {
@@ -57,6 +60,8 @@ abstract public class FiniteState<T>
             v.playerInput.Controls.ActionButton_7.performed -= _InputAction7;
             v.playerInput.Controls.ActionButton_8.performed -= _InputAction8;
             v.playerInput.Controls.ActionButton_9.performed -= _InputAction9;
+            v.playerInput.Controls.InputSpacebar.performed -= _InputSpacebar;
+            v.playerInput.Controls.InputTab.performed -= _InputTab;
 
             if (GameObject.FindGameObjectWithTag("ActionPanel"))
             {
@@ -94,6 +99,13 @@ abstract public class FiniteState<T>
     { InputActionBtn(Owner, 8); }
     private void _InputAction9(InputAction.CallbackContext cxt)
     { InputActionBtn(Owner, 9); }
+    private void _InputSpacebar(InputAction.CallbackContext cxt)
+    { InputSpacebar(Owner); }
+    private void _InputTab(InputAction.CallbackContext cxt)
+    {
+        var shift = Keyboard.current.shiftKey.isPressed;
+        InputTab(Owner, shift);
+    }
 
     // Do On Input
     public virtual void InputPrimary(T t) 
@@ -102,7 +114,10 @@ abstract public class FiniteState<T>
     { Debug.Log("Secondary has no function in this State.(" + StateName + ")"); }
     public virtual void InputActionBtn(T t, int index)
     { Debug.Log(string.Format("Action {0} has no function in this State: {1}.", index, StateName)); }
-
+    public virtual void InputSpacebar(T t)
+    { Debug.Log("Spacebar has no function in this State. (" + StateName + ")"); }
+    public virtual void InputTab(T t, bool shift)
+    { Debug.Log("Tab has no function in this State. (" + StateName + ")"); }
     // Helper Functions
 
     //Returns 'true' if we touched or hovering on Unity UI element.
