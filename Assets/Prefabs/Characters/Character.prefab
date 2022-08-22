@@ -1847,13 +1847,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7329307604263240806}
-  - component: {fileID: 7324549121527466970}
-  - component: {fileID: 3296876834387543054}
   - component: {fileID: 7274816835234447552}
   - component: {fileID: 7324549121527466964}
   - component: {fileID: 7324549121527466971}
   - component: {fileID: 1573632515060724147}
   - component: {fileID: 6291031834349497891}
+  - component: {fileID: 7324549121527466970}
+  - component: {fileID: 3296876834387543054}
   m_Layer: 0
   m_Name: Character
   m_TagString: Character
@@ -1880,64 +1880,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7324549121527466970
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7323552420328571708}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a32bbe332c45aee41aa6226d2d2fe659, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  objectTiles: []
-  isTraversable: 0
-  impactType: 0
-  flags: []
-  currentTile: {fileID: 0}
-  movePath: []
-  currentCover: {fileID: 0}
-  targetCharacter: {fileID: 0}
-  inventory: {fileID: 0}
-  animators:
-    animatorBase: {fileID: 9100000, guid: 347ec8c34e26d9146b434b8d63ef1192, type: 2}
-    animatorOverride: {fileID: 22100000, guid: 55e353f9f8d68454c8822e669cbd2c59, type: 2}
-  animator: {fileID: 0}
-  stats:
-    healthCurrent: 10
-    healthMax: 10
-    movement: 5
-    aim: 4
-    armor: 0
-    dodge: 10
-    actionPointsCurrent: 0
-    actionPointsMax: 2
-  attributes:
-    name: 
-    faction: 0
-  availableActions: 00000000010000000200000003000000
-  potentialTargets: []
---- !u!114 &3296876834387543054
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7323552420328571708}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1c490b25532104d418f8ebcd479a7e15, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  weapons:
-  - {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
-  - {fileID: 877797045781911332, guid: 074955a812631f44b88f9cb1f37ff1be, type: 3}
-  items: []
-  itemStats: []
-  equippedWeapon: {fileID: 0}
-  weaponsMax: 2
 --- !u!95 &7274816835234447552
 Animator:
   serializedVersion: 4
@@ -1948,7 +1890,7 @@ Animator:
   m_GameObject: {fileID: 7323552420328571708}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 0ddafde2003ca4d4196523175ecec146, type: 3}
-  m_Controller: {fileID: 22100000, guid: eb2a3bcd62a378d42a44994dde68d087, type: 2}
+  m_Controller: {fileID: 9100000, guid: 347ec8c34e26d9146b434b8d63ef1192, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -2098,6 +2040,59 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &7324549121527466970
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7323552420328571708}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a32bbe332c45aee41aa6226d2d2fe659, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objectTiles: []
+  isTraversable: 0
+  impactType: 0
+  flags: []
+  currentTile: {fileID: 0}
+  movePath: []
+  currentCover: {fileID: 0}
+  targetCharacter: {fileID: 0}
+  inventory: {fileID: 0}
+  stats:
+    healthCurrent: 10
+    healthMax: 10
+    movement: 5
+    aim: 4
+    armor: 0
+    dodge: 10
+    actionPointsCurrent: 0
+    actionPointsMax: 2
+  attributes:
+    name: 
+    faction: 0
+  availableActions: 00000000010000000200000003000000
+  potentialTargets: []
+--- !u!114 &3296876834387543054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7323552420328571708}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c490b25532104d418f8ebcd479a7e15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weapons:
+  - {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
+  - {fileID: 877797045781911332, guid: 074955a812631f44b88f9cb1f37ff1be, type: 3}
+  items: []
+  equippedWeapon: {fileID: 0}
+  weaponsMax: 2
 --- !u!1 &7323553403757494216
 GameObject:
   m_ObjectHideFlags: 0
@@ -2859,7 +2854,6 @@ GameObject:
   - component: {fileID: 4900198497116331503}
   - component: {fileID: 6154039033493386458}
   - component: {fileID: 2907674999693277238}
-  - component: {fileID: 6335012454316540632}
   m_Layer: 0
   m_Name: B-chest
   m_TagString: Untagged
@@ -2959,19 +2953,6 @@ CharacterJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!114 &6335012454316540632
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7323799200088613592}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 65f3822253fc4ab45adda52cb01da1b6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bodyPart: 1
 --- !u!1 &7323844900541948784
 GameObject:
   m_ObjectHideFlags: 0
@@ -3973,9 +3954,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4975336512631346630}
-  - component: {fileID: 2751289550826081219}
   m_Layer: 0
-  m_Name: CharPart-HAND
+  m_Name: AttachPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3996,16 +3976,3 @@ Transform:
   m_Father: {fileID: 7329290590517794768}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 180, y: 90, z: 0}
---- !u!114 &2751289550826081219
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8566444867832285230}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 65f3822253fc4ab45adda52cb01da1b6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bodyPart: 9

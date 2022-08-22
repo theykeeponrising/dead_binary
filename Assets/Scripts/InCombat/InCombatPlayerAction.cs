@@ -74,6 +74,11 @@ public class InCombatPlayerAction
         return playerActionUI;
     }
 
+    public void SetStateMachine(StateMachine<InCombatPlayerAction> stateMachine)
+    {
+        this.stateMachine = stateMachine;
+    }
+
     public void SelectUnit()
     {
         // Default context - select a unit, or deselect if none targeted

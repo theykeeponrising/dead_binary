@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -30,28 +31,30 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
     public CoverObject currentCover;
 
     // Transform lookTarget; -- NOT IMPLEMENTED
+    Quaternion aimTowards = Quaternion.identity;
     public Character targetCharacter;
 
     float velocityX = 0f;
     float velocityZ = 0f;
 
     InCombatPlayerAction playerAction;
-    public Inventory inventory;
-
-    [System.Serializable]
-    public class Animators
-    {
-
-        public RuntimeAnimatorController animatorBase;
-        public RuntimeAnimatorController animatorOverride;
-    }
+    [HideInInspector] public Inventory inventory;
 
     [Header("--Animation")]
-    public Animators animators;
-    public Animator animator;
+    Transform[] boneTransforms;
+    class HumanBone
+    {
+        public HumanBodyBones bone;
+        public HumanBone(HumanBodyBones setBone)
+        {
+            bone = setBone;
+        }
+    }
+    HumanBone[] humanBones;
+    Animator animator;
     AudioSource audioSource;
 
-    enum AnimationEventContext { SHOOT, TAKE_DAMAGE, RELOAD, STOW, DRAW, VAULT }
+    enum AnimationEventContext { SHOOT, TAKE_DAMAGE, RELOAD, STOW, DRAW, VAULT, CROUCH_DOWN, CROUCH_UP };
 
     public class Body
     {
@@ -67,22 +70,18 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         public Transform foot;
         public Transform mask;
     }
-    //[HideInInspector]
     public Body body = new Body();
     Rigidbody[] ragdoll;
 
     // Attributes are mosty permanent descriptors about the character
-    [System.Serializable]
-    public class Attributes
+    [System.Serializable] public class Attributes
     {
         public string name;
         public Faction faction;
-
     }
 
     // Stats are values that will be referenced and changed frequently during combat
-    [System.Serializable]
-    public class Stats
+    [System.Serializable] public class Stats
     {
         public int healthCurrent;
         public int healthMax;
@@ -122,41 +121,28 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         ragdoll = GetComponentsInChildren<Rigidbody>();
         audioSource = GetComponent<AudioSource>();
 
+        // Animator, bones, and body transforms
         animator = GetComponent<Animator>();
-        animators.animatorBase = animator.runtimeAnimatorController;
+        ragdoll = GetComponentsInChildren<Rigidbody>();
+        humanBones = new HumanBone[]
+        {
+            new HumanBone(HumanBodyBones.Chest),
+            new HumanBone(HumanBodyBones.UpperChest),
+            new HumanBone(HumanBodyBones.Spine)
+        };
+        boneTransforms = new Transform[humanBones.Length];
+        for (int i = 0; i < humanBones.Length; i++)
+            boneTransforms[i] = animator.GetBoneTransform(humanBones[i].bone);
 
+        body.chest = animator.GetBoneTransform(HumanBodyBones.Chest);
+        body.head = animator.GetBoneTransform(HumanBodyBones.Head);
+        body.handRight = animator.GetBoneTransform(HumanBodyBones.RightHand);
+
+        audioSource = GetComponent<AudioSource>();
         inventory = GetComponent<Inventory>();
-
+        
         if (objectTiles.Count > 0) currentTile = objectTiles[0];
         selectionCircle = transform.Find("SelectionCircle").gameObject;
-
-        // Body parts for use in armor placement
-        CharacterPart[] characterPart = GetComponentsInChildren<CharacterPart>();
-        foreach (CharacterPart part in characterPart)
-        {
-            //if (part.bodyPart == CharacterPart.BodyPart.head)
-            //    body.headArmor = part.transform;
-            if (part.bodyPart == CharacterPart.BodyPart.chest)
-                body.chest = part.transform;
-            //if (part.bodyPart == CharacterPart.BodyPart.shoulders)
-            //    body.shoulderArmor = part.transform;
-            //if (part.bodyPart == CharacterPart.BodyPart.arms)
-            //    body.armArmor = part.transform;
-            //if (part.bodyPart == CharacterPart.BodyPart.hands)
-            //    body.handArmor = part.transform;
-            //if (part.bodyPart == CharacterPart.BodyPart.legs)
-            //    body.legArmor = part.transform;
-            //if (part.bodyPart == CharacterPart.BodyPart.shins)
-            //    body.shinArmor = part.transform;
-            //if (part.bodyPart == CharacterPart.BodyPart.feet)
-            //    body.footArmor = part.transform;
-            //if (part.bodyPart == CharacterPart.BodyPart.mask)
-            //    body.maskArmor = part.transform;
-            if (part.bodyPart == CharacterPart.BodyPart.hand_right)
-            body.handRight = part.transform;
-            //if (part.bodyPart == CharacterPart.BodyPart.hand_left)
-            //    body.handLeft = part.transform;
-        }
 
         ifaction = this;
         potentialTargets = null;
@@ -167,6 +153,11 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
     {
         SetAnimation();
         Movement();
+    }
+
+    void LateUpdate()
+    {
+        AimGetTarget();
     }
 
     void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
@@ -244,7 +235,8 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
 
     void SetAnimation()
     {
-        // Changes animation based on flags
+        // Changes movement animation based on flags
+
         if (flags.Contains("moving"))
         {
             animator.SetFloat("velocityX", velocityX / GlobalManager.gameSpeed);
@@ -296,17 +288,8 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
             }
         }
 
-        //// Gradually rotate character to face towards look target -- NOT IMPLEMENTED
-        //else if (lookTarget)
-        //{
-        //    Quaternion toRotation = Quaternion.LookRotation(lookTarget.position);
-        //    toRotation.x = transform.rotation.x;
-        //    toRotation.z = transform.rotation.z;
-        //    transform.rotation = Quaternion.Lerp(transform.rotation, toRotation, 10 * Time.deltaTime);
-        //}
-
         // Gradually rotate character to expected look direction while behind cover
-        else if (currentCover && !flags.Contains("targeting") && !flags.Contains("shooting"))
+        else if (currentCover && !AnimationPause())
         {
             // Get which the direction the cover is relative to the tile
             Vector3 lookDirection = (currentCover.transform.position - currentTile.transform.position);
@@ -321,25 +304,9 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(lookDirection - transform.position), 3 * Time.deltaTime);
 
             // Crouch down if its a half-sized cover
-            if (currentCover.coverSize == CoverObject.CoverSize.half)
-                ToggleCrouch(true);
+            if (currentCover.coverSize == CoverObject.CoverSize.half && !flags.Contains("crouching"))
+                AnimationTransition(AnimationEventContext.CROUCH_DOWN);
         }
-    }
-
-    Tile FindCurrentTile()
-    {
-        // Finds the tile the character is currently standing on
-        // Called during start
-
-        Tile[] tiles = FindObjectsOfType<Tile>();
-
-        foreach (Tile tile in tiles)
-            if (tile.gameObject.GetInstanceID() != gameObject.GetInstanceID())
-                if (tile.CheckIfTileOccupant(this))
-                {
-                    return tile;
-                }
-        return null;
     }
 
     void MoveAction(Tile newTile, List<Tile> previewPath)
@@ -384,7 +351,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
 
         // Stand up if crouched
         if (flags.Contains("crouching"))
-            ToggleCrouch();
+            ToggleCrouch(false, true);
 
         moveTargetDestination = movePath[movePath.Count - 1];
         currentTile.ChangeTileOccupant();
@@ -396,7 +363,6 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
             if (moveTargetImmediate)
                 moveTargetImmediate.ChangeTileOccupant();
             moveTargetImmediate = path;
-            //CheckForObstacle();
 
             // Wait until immediate tile is reached before moving to the next one
             while (currentTile != path)
@@ -425,8 +391,8 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         if (currentTile.cover)
         {
             currentCover = currentTile.cover;
-            if(currentTile.cover.coverSize == CoverObject.CoverSize.half)
-                ToggleCrouch();
+            if (currentTile.cover.coverSize == CoverObject.CoverSize.half && !flags.Contains("crouching"))
+                AnimationTransition(AnimationEventContext.CROUCH_DOWN);
         }
         moveTargetImmediate = null;
         moveTargetDestination = null;
@@ -463,7 +429,6 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         Vector3 direction = (moveTargetImmediate.transform.position - transform.position);
         RaycastHit hit;
         Ray ray = new Ray(transform.position, direction);
-        //Debug.DrawRay(transform.position, direction, Color.red, 20, true); // For debug purposes
         int layerMask = (1 << LayerMask.NameToLayer("CoverObject"));
         float distance = 0.5f;
 
@@ -473,7 +438,9 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
             if (hit.collider.GetComponent<CoverObject>().canVaultOver)
             {
                 AddFlag("vaulting");
-                animator.Play("Vault-Over", inventory.equippedWeapon.weaponLayer);
+                //animator.Play("Default", inventory.equippedWeapon.weaponLayer);
+                animator.Play("Default");
+                animator.SetTrigger("vaulting");
                 return true;
             }
         }
@@ -485,7 +452,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         // Checks if any cover objects are between character and attacker
         // Does raycast from character to attacker in order to find closest potential cover object
 
-        // NOTE -- We use the tiles for raycast, not the characters
+        // NOTE -- We use the tiles for raycast, not the characters or weapons
         // This is to prevent animations or standpoints from impacting the calculation
 
         Vector3 defenderPosition = currentTile.transform.position;
@@ -519,7 +486,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
             if (!flags.Contains("crouching"))
             {
                 AddFlag("stowing");
-                animator.Play("Stow", inventory.equippedWeapon.weaponLayer);
+                animator.Play("Stow");
                 while (flags.Contains("stowing"))
                     yield return new WaitForSeconds(0.01f);
             }
@@ -539,6 +506,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
             inventory.equippedWeapon.gameObject.SetActive(true);
             inventory.equippedWeapon.DefaultPosition(this);
             animator.SetLayerWeight(inventory.equippedWeapon.weaponLayer, 1);
+            animator.SetFloat("animSpeed", inventory.equippedWeapon.attributes.animSpeed);
 
             // If crouching, do not play draw animation
             // This is until we can get a proper crouch-draw animation
@@ -547,7 +515,8 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
                 inventory.equippedWeapon.PlaySound(Weapon.WeaponSound.SWAP, this);
 
                 AddFlag("drawing");
-                animator.Play("Draw", inventory.equippedWeapon.weaponLayer);
+                //animator.Play("Draw", inventory.equippedWeapon.weaponLayer);
+                animator.Play("Draw");
                 while (flags.Contains("drawing"))
                     yield return new WaitForSeconds(0.01f);
             }
@@ -569,38 +538,98 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         }
         stats.actionPointsCurrent -= currentAction.cost;
         AddFlag("reload");
-        animator.Play("Reload", inventory.equippedWeapon.weaponLayer);
+        animator.Play("Reload");
         inventory.equippedWeapon.Reload();
+    }
+
+    void AimGetTarget()
+    {
+        // Twists characters torso to aim gun at target
+        if (!targetCharacter)
+            return;
+        
+        // Iterations improve accuracy of aim position
+        int iterations = 10;
+
+        for (int i = 0; i < iterations; i++)
+        {
+            for (int b = 0; b < boneTransforms.Length; b++)
+            {
+                // Gets the rotation needed to point weapon at enemy
+                Transform bone = boneTransforms[b];
+                Vector3 targetPosition = GetTargetPosition();
+                Vector3 aimDirection = inventory.equippedWeapon.transform.forward;
+                Vector3 targetDirection = targetPosition - inventory.equippedWeapon.transform.position;
+                
+
+                // Updates rotation up until the actual shoot animation happens
+                if (flags.Contains("aiming"))
+                    aimTowards = Quaternion.FromToRotation(aimDirection, targetDirection);
+
+                // Rotates the character to face the target
+                if (Vector3.Angle(targetDirection, transform.position) > 90f) transform.LookAt(new Vector3(targetPosition.x, 0f, targetPosition.z));
+                bone.rotation = (aimTowards * bone.rotation).normalized;
+
+                // TO DO -- Fix weirdness during shoot animation
+            }
+        }
+    }
+
+    Vector3 GetTargetPosition()
+    {
+        // Gets target's position relative to the tip of the gun
+
+        Vector3 targetDirection = targetCharacter.body.chest.position - inventory.equippedWeapon.transform.position;
+        Vector3 aimDirection = inventory.equippedWeapon.transform.forward;
+        float blendOut = 0.0f;
+        float angleLimit = 90f;
+
+        float targetAngle = Vector3.Angle(targetDirection, aimDirection);
+        if (targetAngle > angleLimit)
+        {
+            blendOut += (targetAngle - angleLimit) / 50f;
+        }
+
+        Vector3 direction = Vector3.Slerp(targetDirection, aimDirection, blendOut);
+        return inventory.equippedWeapon.transform.position + direction;
     }
 
     IEnumerator ShootWeapon(int distanceToTarget)
     {
+        animator.SetBool("aiming", true);
+        animator.updateMode = AnimatorUpdateMode.AnimatePhysics;
+        //transform.LookAt(targetCharacter.transform);
+
+        yield return new WaitForSeconds(0.5f);
+        AddFlag("aiming");
+        yield return new WaitForSeconds(0.25f);
         // Inflict damage on target character
         if (targetCharacter)
             targetCharacter.TakeDamage(this, inventory.equippedWeapon.stats.damage, distanceToTarget);
 
         AddFlag("shooting");
-        animator.Play("Shoot", inventory.equippedWeapon.weaponLayer);
+        animator.Play("Shoot");
         inventory.equippedWeapon.stats.ammoCurrent -= 1;
-        transform.LookAt(targetCharacter.transform);
 
         // Wait until shoot animation completes
-        while (AnimatorIsPlaying())
-        {
-            yield return new WaitForSeconds(0.01f);
-        }
+        while (animator.IsInTransition(inventory.equippedWeapon.weaponLayer)) yield return new WaitForSeconds(0.01f);
+        while (animator.GetCurrentAnimatorStateInfo(inventory.equippedWeapon.weaponLayer).IsName("Shoot")) yield return new WaitForSeconds(0.01f);
 
         // If target is dodging, remove flag
-        if (targetCharacter)
-        {
-            targetCharacter.RemoveFlag("dodging");
-        }
+        if (targetCharacter) targetCharacter.RemoveFlag("dodging");
 
         // Add a small delay before character exits shooting stance
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(0.25f);
 
         // Remove shooting flag
         RemoveFlag("shooting");
+        animator.SetBool("aiming", false);
+        RemoveFlag("aiming");
+        animator.updateMode = AnimatorUpdateMode.Normal;
+
+        // Wait until shoot animation completes
+        while (AnimatorIsPlaying()) yield return new WaitForSeconds(0.01f);
+        targetCharacter = null;
     }
 
     bool AnimatorIsPlaying()
@@ -611,52 +640,90 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         return animator.GetCurrentAnimatorStateInfo(inventory.equippedWeapon.weaponLayer).length > animator.GetCurrentAnimatorStateInfo(inventory.equippedWeapon.weaponLayer).normalizedTime;
     }
 
+    void AnimationTransition(AnimationEventContext context)
+    {
+        // Used to better control when circumstantial animations are played
+
+        if (AnimationPause())
+            return;
+
+        switch (context)
+        {
+            case (AnimationEventContext.CROUCH_DOWN):
+                ToggleCrouch(true);
+                break;
+            case (AnimationEventContext.CROUCH_UP):
+                ToggleCrouch(false);
+                break;
+        }
+    }
+
+    bool AnimationPause()
+    {
+        // True/False if any of the listed animations are playing
+
+        bool[] uninterruptibleAnims = { 
+            animator.GetCurrentAnimatorStateInfo(inventory.equippedWeapon.weaponLayer).IsName("Aiming"), 
+            animator.GetCurrentAnimatorStateInfo(inventory.equippedWeapon.weaponLayer).IsName("Shoot"), 
+            animator.GetCurrentAnimatorStateInfo(inventory.equippedWeapon.weaponLayer).IsName("Crouch-Up"),
+            animator.GetCurrentAnimatorStateInfo(inventory.equippedWeapon.weaponLayer).IsName("Crouch")};
+        return uninterruptibleAnims.Any(x => x == true);
+    }
+
     void AnimationEvent(AnimationEventContext context)
     {
         // Handler for animation events
         // Evaluate context and perform appropriate actions
 
         // Weapon shooting effect and sound
-        if (context == AnimationEventContext.SHOOT)
+        switch (context)
         {
-            inventory.equippedWeapon.Shoot();
-        }
+            // Fire weapon effect
+            case (AnimationEventContext.SHOOT):
+                inventory.equippedWeapon.Shoot();
+                break;
 
-        // Weapon impact effect on target
-        else if (context == AnimationEventContext.TAKE_DAMAGE)
-        {
-          targetCharacter.TakeDamageEffect();
-        }
+            // Weapon impact effect on target
+            case (AnimationEventContext.TAKE_DAMAGE):
+                targetCharacter.TakeDamageEffect(inventory.equippedWeapon);
+                break;
 
-        // Stow weapon animation is completed
-        else if (context == AnimationEventContext.STOW)
-        {
-            RemoveFlag("stowing");
-            inventory.equippedWeapon.gameObject.SetActive(false);
-            animator.SetLayerWeight(inventory.equippedWeapon.weaponLayer, 0);
-        }
+            // Stow weapon animation is completed
+            case (AnimationEventContext.STOW):
+                RemoveFlag("stowing");
+                inventory.equippedWeapon.gameObject.SetActive(false);
+                animator.SetLayerWeight(inventory.equippedWeapon.weaponLayer, 0);
+                break;
 
-        // Draw weapon animation is completed
-        else if (context == AnimationEventContext.DRAW)
-        {
-            RemoveFlag("drawing");
-        }
+            // Draw weapon animation is completed
+            case (AnimationEventContext.DRAW):
+                RemoveFlag("drawing");
+                break;
 
-        // Reload weapon animation is completed
-        else if (context == AnimationEventContext.RELOAD)
-        {
-            RemoveFlag("reload");
-            inventory.equippedWeapon.stats.ammoCurrent = inventory.equippedWeapon.stats.ammoMax;
-        }
+            // Reload weapon animation is completed
+            case (AnimationEventContext.RELOAD):
+                RemoveFlag("reload");
+                inventory.equippedWeapon.stats.ammoCurrent = inventory.equippedWeapon.stats.ammoMax;
+                break;
 
-        // Reload weapon animation is completed -- NOT YET IMPLEMENTED
-        else if (context == AnimationEventContext.VAULT)
-        {
-            RemoveFlag("vaulting");
+            // Reload weapon animation is completed -- NOT YET IMPLEMENTED
+            case (AnimationEventContext.VAULT):
+                RemoveFlag("vaulting");
+                break;
+
+            // Crouch-down
+            case (AnimationEventContext.CROUCH_DOWN):
+                AddFlag("crouching");
+                break;
+
+            // Crouch-up
+            case (AnimationEventContext.CROUCH_UP):
+                RemoveFlag("crouching");
+                break;
         }
     }
 
-    void ToggleCrouch(bool crouching)
+    void ToggleCrouch(bool crouching=false, bool instant=false)
     {
         // Placeholder function
         // Test crouch animation when button pressed
@@ -664,74 +731,12 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         if (!crouching)
         {
             animator.SetBool("crouching", false);
-            RemoveFlag("crouching");
+            if (instant) RemoveFlag("crouching");
         }
         else
         {
             animator.SetBool("crouching", true);
-            AddFlag("crouching");
-        }
-    }
-
-    void ToggleCrouch()
-    {
-        // Placeholder function
-        // Test crouch animation when button pressed
-
-        if (flags.Contains("crouching"))
-        {
-            animator.SetBool("crouching", false);
-            RemoveFlag("crouching");
-        }
-        else
-        {
-            animator.SetBool("crouching", true);
-            AddFlag("crouching");
-        }
-    }
-
-    void ToggleCombat()
-    {
-        // Placeholder function
-        // Test combat transition animation when button pressed
-
-        if (flags.Contains("combat"))
-        {
-            animator.runtimeAnimatorController = animators.animatorBase;
-            if (!flags.Contains("crouching"))
-                animator.Play("Combat-Transition", inventory.equippedWeapon.weaponLayer);
-            RemoveFlag("combat");
-        }
-        else
-        {
-            animator.runtimeAnimatorController = animators.animatorOverride;
-            if (!flags.Contains("crouching"))
-                animator.Play("Combat-Transition", inventory.equippedWeapon.weaponLayer);
-            AddFlag("combat");
-        }
-    }
-
-    void ToggleCombat(bool inCombat)
-    {
-        // Placeholder function
-        // Test combat transition animation when button pressed
-
-        // Leaving combat
-        if (!inCombat && flags.Contains("combat"))
-        {
-            animator.runtimeAnimatorController = animators.animatorBase;
-            if (!flags.Contains("crouching"))
-                animator.Play("Combat-Transition", inventory.equippedWeapon.weaponLayer);
-            RemoveFlag("combat");
-        }
-
-        // Entering combat
-        else if (inCombat && !flags.Contains("combat"))
-        {
-            animator.runtimeAnimatorController = animators.animatorOverride;
-            if (!flags.Contains("crouching"))
-                animator.Play("Combat-Transition", inventory.equippedWeapon.weaponLayer);
-            AddFlag("combat");
+            if (instant) AddFlag("crouching");
         }
     }
 
@@ -791,7 +796,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         stats.healthCurrent += amount;
     }
 
-    public void TakeDamageEffect()
+    public void TakeDamageEffect(Weapon weapon=null)
     {
         if (flags.Contains("dodging"))
         {
@@ -805,9 +810,11 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
 
         // Effect shown when character is hit
         if (animator.GetCurrentAnimatorStateInfo(inventory.equippedWeapon.weaponLayer).IsName("Damage2"))
-            animator.Play("Damage3", inventory.equippedWeapon.weaponLayer, .1f);
+            animator.Play("Damage3", 0, normalizedTime: .1f);
+        else if (weapon.weaponImpact == Weapon.WeaponImpact.HEAVY)
+            animator.Play("Damage1");
         else
-            animator.Play("Damage2", inventory.equippedWeapon.weaponLayer);
+            animator.Play("Damage2");
     }
 
     IEnumerator Death(Character attacker, Vector3 attackDirection, float impactForce = 2f)
@@ -868,7 +875,6 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
     {
         // Makes character fully stand before shooting to prevent animation skipping
 
-        ToggleCombat(true);
         ToggleCrouch(false);
         yield return new WaitForSeconds(0.01f);
     }
@@ -908,7 +914,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         // Removes targeting flag and combat stance
 
         RemoveFlag("targeting");
-        ToggleCombat(false);
+        animator.SetBool("aiming", false);
     }
 
     public void RefreshActionPoints()

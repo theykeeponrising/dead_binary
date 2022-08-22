@@ -210,8 +210,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponType: 0
   weaponHeld: 2
-  weaponLayer: 0
+  weaponLayer: 3
   weaponFamily: 5
+  weaponImpact: 1
   fireSound:
   - {fileID: 8300000, guid: e1595f29e076edb46a5ba8040725c717, type: 3}
   reloadSound:
@@ -222,6 +223,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: e4c8745ff880cec44a167323b3bcaace, type: 3}
   - {fileID: 8300000, guid: a8a448ce98f99374286c2a145c80ffce, type: 3}
   offset: {x: 0, y: 0, z: 0}
+  attributes:
+    animSpeed: 1.5
   stats:
     damage: 5
     minRange: 1
