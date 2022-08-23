@@ -72,6 +72,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
     }
     public Body body = new Body();
     Rigidbody[] ragdoll;
+    [SerializeField] bool useTorsoTwist = true;
 
     // Attributes are mosty permanent descriptors about the character
     [System.Serializable] public class Attributes
@@ -564,7 +565,8 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
     void AimGetTarget()
     {
         // Twists characters torso to aim gun at target
-        if (!targetCharacter)
+
+        if (!targetCharacter || !useTorsoTwist)
             return;
         
         // Iterations improve accuracy of aim position
