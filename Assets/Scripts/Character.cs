@@ -72,6 +72,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
     }
     public Body body = new Body();
     Rigidbody[] ragdoll;
+    [SerializeField] bool useTorsoTwist = true;
 
     // Attributes are mosty permanent descriptors about the character
     [System.Serializable] public class Attributes
@@ -188,6 +189,25 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         {
             selectionCircle.SetActive(true);
             selectionCircle.GetComponent<Renderer>().material.color = Color.green;
+        }
+        else
+        {
+            selectionCircle.SetActive(false);
+            selectionCircle.GetComponent<Renderer>().material.color = Color.white;
+        }
+    }
+
+    public void IsTargetUX(bool isTarget, bool isPotentialTarget)
+    {
+
+        if(isPotentialTarget)
+        {
+            selectionCircle.SetActive(true);
+
+            if (isTarget)
+                selectionCircle.GetComponent<Renderer>().material.color = Color.red;
+            else
+                selectionCircle.GetComponent<Renderer>().material.color = Color.yellow;
         }
         else
         {
@@ -545,7 +565,8 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
     void AimGetTarget()
     {
         // Twists characters torso to aim gun at target
-        if (!targetCharacter)
+
+        if (!targetCharacter || !useTorsoTwist)
             return;
         
         // Iterations improve accuracy of aim position
@@ -629,7 +650,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
 
         // Wait until shoot animation completes
         while (AnimatorIsPlaying()) yield return new WaitForSeconds(0.01f);
-        targetCharacter = null;
+        //targetCharacter = null;
     }
 
     bool AnimatorIsPlaying()

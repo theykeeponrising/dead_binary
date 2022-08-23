@@ -179,6 +179,24 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""InputSpacebar"",
+                    ""type"": ""Button"",
+                    ""id"": ""b2a10b37-dc92-4b91-8fd9-2d7b43d29d7e"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""InputTab"",
+                    ""type"": ""Button"",
+                    ""id"": ""f6b11174-1dd9-4d01-80ad-81da9fbf2848"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -555,6 +573,28 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                     ""action"": ""ActionButton_9"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""345f64d8-b2c7-4116-9f50-0a36da3a2d08"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""InputSpacebar"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1de35f9e-55e8-4f24-ad81-0488559deb13"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""InputTab"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -580,6 +620,8 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         m_Controls_InputMenu = m_Controls.FindAction("InputMenu", throwIfNotFound: true);
         m_Controls_InputPosition = m_Controls.FindAction("InputPosition", throwIfNotFound: true);
         m_Controls_InputJoystick = m_Controls.FindAction("InputJoystick", throwIfNotFound: true);
+        m_Controls_InputSpacebar = m_Controls.FindAction("InputSpacebar", throwIfNotFound: true);
+        m_Controls_InputTab = m_Controls.FindAction("InputTab", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -656,6 +698,8 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
     private readonly InputAction m_Controls_InputMenu;
     private readonly InputAction m_Controls_InputPosition;
     private readonly InputAction m_Controls_InputJoystick;
+    private readonly InputAction m_Controls_InputSpacebar;
+    private readonly InputAction m_Controls_InputTab;
     public struct ControlsActions
     {
         private @PlayerInput m_Wrapper;
@@ -677,6 +721,8 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         public InputAction @InputMenu => m_Wrapper.m_Controls_InputMenu;
         public InputAction @InputPosition => m_Wrapper.m_Controls_InputPosition;
         public InputAction @InputJoystick => m_Wrapper.m_Controls_InputJoystick;
+        public InputAction @InputSpacebar => m_Wrapper.m_Controls_InputSpacebar;
+        public InputAction @InputTab => m_Wrapper.m_Controls_InputTab;
         public InputActionMap Get() { return m_Wrapper.m_Controls; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -737,6 +783,12 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 @InputJoystick.started -= m_Wrapper.m_ControlsActionsCallbackInterface.OnInputJoystick;
                 @InputJoystick.performed -= m_Wrapper.m_ControlsActionsCallbackInterface.OnInputJoystick;
                 @InputJoystick.canceled -= m_Wrapper.m_ControlsActionsCallbackInterface.OnInputJoystick;
+                @InputSpacebar.started -= m_Wrapper.m_ControlsActionsCallbackInterface.OnInputSpacebar;
+                @InputSpacebar.performed -= m_Wrapper.m_ControlsActionsCallbackInterface.OnInputSpacebar;
+                @InputSpacebar.canceled -= m_Wrapper.m_ControlsActionsCallbackInterface.OnInputSpacebar;
+                @InputTab.started -= m_Wrapper.m_ControlsActionsCallbackInterface.OnInputTab;
+                @InputTab.performed -= m_Wrapper.m_ControlsActionsCallbackInterface.OnInputTab;
+                @InputTab.canceled -= m_Wrapper.m_ControlsActionsCallbackInterface.OnInputTab;
             }
             m_Wrapper.m_ControlsActionsCallbackInterface = instance;
             if (instance != null)
@@ -792,6 +844,12 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 @InputJoystick.started += instance.OnInputJoystick;
                 @InputJoystick.performed += instance.OnInputJoystick;
                 @InputJoystick.canceled += instance.OnInputJoystick;
+                @InputSpacebar.started += instance.OnInputSpacebar;
+                @InputSpacebar.performed += instance.OnInputSpacebar;
+                @InputSpacebar.canceled += instance.OnInputSpacebar;
+                @InputTab.started += instance.OnInputTab;
+                @InputTab.performed += instance.OnInputTab;
+                @InputTab.canceled += instance.OnInputTab;
             }
         }
     }
@@ -815,5 +873,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         void OnInputMenu(InputAction.CallbackContext context);
         void OnInputPosition(InputAction.CallbackContext context);
         void OnInputJoystick(InputAction.CallbackContext context);
+        void OnInputSpacebar(InputAction.CallbackContext context);
+        void OnInputTab(InputAction.CallbackContext context);
     }
 }
