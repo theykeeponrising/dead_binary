@@ -85,6 +85,7 @@ public class StateHandler: MonoBehaviour
 
     public GameState GetStateObject(State state) {
         if (state == State.GameRunningState) return gameRunningState;
+
         return gameRunningState.FindSubState(state);
     }
 

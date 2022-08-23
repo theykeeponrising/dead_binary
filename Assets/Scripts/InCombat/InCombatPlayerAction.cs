@@ -26,6 +26,8 @@ public class InCombatPlayerAction
     private PlayerTurnState playerTurnState; 
     InCombatPlayerActionUI playerActionUI;
 
+    private TextMeshProUGUI stateDebugText;
+
     public void Init(PlayerTurnState playerTurnState) 
     {
         playerInput = new PlayerInput();
@@ -48,6 +50,8 @@ public class InCombatPlayerAction
         allCharacters = new List<Character>();
         GameObject[] characterGOs = GameObject.FindGameObjectsWithTag("Character");
         foreach (GameObject go in characterGOs) allCharacters.Add(go.GetComponent<Character>());
+
+        stateDebugText = GameObject.Find("StateDebugText").GetComponent<TextMeshProUGUI>();
     }
 
     public void EnablePlayerInput()
@@ -64,6 +68,8 @@ public class InCombatPlayerAction
     public void Update()
     {
         PathPreview();
+        //Debug.Log(stateMachine.GetCurrentState().GetType().Name);
+        stateDebugText.text = stateMachine.GetCurrentState().GetType().Name;
     }
 
     public InCombatPlayerActionUI GetPlayerActionUI()
@@ -110,7 +116,6 @@ public class InCombatPlayerAction
             return 0;
         return actionsList[index-1];
     }
-
 
     public void MoveCharacter()
     {
