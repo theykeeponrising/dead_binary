@@ -3,12 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 
 public class CameraHandler : MonoBehaviour
 {
     // Used for Camera controls
 
+    Camera thisCamera;
     CameraInput cameraInput;
+    PhysicsRaycaster raycaster;
     InputAction movement;
     public Transform parent;
 
@@ -60,7 +63,9 @@ public class CameraHandler : MonoBehaviour
 
     void Awake()
     {
+        thisCamera = GetComponent<Camera>();
         cameraInput = new CameraInput();
+        raycaster = GetComponent<PhysicsRaycaster>();
         zoomHeight = transform.position.y;
         parent = transform.parent;
     }
@@ -83,10 +88,21 @@ public class CameraHandler : MonoBehaviour
 
     void Update()
     {
+        CheckActiveCamera();
         GetKeyboardMovement();
         UpdateVelocity();
         UpdateCameraPosition();
         UpdateBasePosition();
+    }
+
+    void CheckActiveCamera()
+    {
+        // Ensures physics raycaster is only active is the camera is in use
+
+        if (Camera.current == thisCamera && !raycaster.enabled)
+            raycaster.enabled = true;
+        else if (Camera.current != thisCamera && raycaster.enabled)
+            raycaster.enabled = false;
     }
 
 

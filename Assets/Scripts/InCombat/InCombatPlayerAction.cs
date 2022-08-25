@@ -186,6 +186,10 @@ public class InCombatPlayerAction
             return;
         }
 
+        // Don't show if we are not currently using the main camera
+        if (Camera.current != Camera.main)
+            return;
+
         // Previews move path on mouse over
         if (selectedCharacter && targetTile)
         {

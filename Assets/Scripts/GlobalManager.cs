@@ -4,7 +4,8 @@ using System.Collections;
 public class GlobalManager : MonoBehaviour
 {
     // Used for handling constants and other globals
-    
+    public static GlobalManager Instance = null;
+
     public static float gameSpeed = 1.0f;
     static Vector3 gravity;
     public StateHandler stateHandler;
@@ -17,7 +18,7 @@ public class GlobalManager : MonoBehaviour
 
     private void Awake() 
     {
-        stateHandler.Init(this);    
+        Instance = this;
     }
 
     private void Update()
