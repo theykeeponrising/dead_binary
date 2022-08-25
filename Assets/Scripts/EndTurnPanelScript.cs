@@ -12,8 +12,7 @@ public class EndTurnPanelScript : MonoBehaviour
     void Start()
     {
         //A bit of a hack to get the InCombatPlayerAction
-        StateHandler stateHandler = GameObject.FindGameObjectWithTag("StateHandler").GetComponent<StateHandler>();
-        PlayerTurnState playerTurnState = (PlayerTurnState) stateHandler.GetStateObject(StateHandler.State.PlayerTurnState);
+        PlayerTurnState playerTurnState = (PlayerTurnState) StateHandler.Instance.GetStateObject(StateHandler.State.PlayerTurnState);
         playerAction = playerTurnState.GetPlayerAction();
 
         button = GetComponentInChildren<Button>();

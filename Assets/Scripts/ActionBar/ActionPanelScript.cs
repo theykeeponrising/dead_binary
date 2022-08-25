@@ -11,15 +11,14 @@ public class ActionPanelScript : MonoBehaviour
     [SerializeField] private TextMeshProUGUI apTextBox;
     [SerializeField] private TextMeshProUGUI ammoTextBox;
     [SerializeField] private List<Button> buttons;
+    PlayerTurnState playerTurnState;
     public Button buttonPrefab; // TO DO -- Alternative to using inspector prefab
 
     private void Start()
     {
-        // Assign the player.
-        //A bit of a hack to get the InCombatPlayerAction
-        StateHandler stateHandler = GameObject.FindGameObjectWithTag("StateHandler").GetComponent<StateHandler>();
-        PlayerTurnState playerTurnState = (PlayerTurnState) stateHandler.GetStateObject(StateHandler.State.PlayerTurnState);
+        playerTurnState = (PlayerTurnState)StateHandler.Instance.GetStateObject(StateHandler.State.PlayerTurnState);
         playerAction = playerTurnState.GetPlayerAction();
+        BuildActions();
     }
 
     private void OnEnable()
@@ -37,8 +36,7 @@ public class ActionPanelScript : MonoBehaviour
         // Dynamically creates buttons based on what actions the Character can perform
         // Will skip creating buttons for actions that do not use buttons (such as moving)
 
-        if (playerAction is null)
-            return;
+        if (playerTurnState == null || playerAction == null) return;
 
         if (playerAction.selectedCharacter)
         {
