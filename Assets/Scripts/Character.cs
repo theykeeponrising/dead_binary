@@ -37,7 +37,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
     float velocityX = 0f;
     float velocityZ = 0f;
 
-    InCombatPlayerAction playerAction;
+    [HideInInspector] public InCombatPlayerAction playerAction;
     [HideInInspector] public Inventory inventory;
 
     [Header("--Animation")]
@@ -109,10 +109,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         // Characters start with full health and action points
         stats.healthCurrent = stats.healthMax;
         stats.actionPointsCurrent = stats.actionPointsMax;
-        
-        //A bit of a hack to get the InCombatPlayerAction
-        StateHandler stateHandler = GameObject.FindGameObjectWithTag("StateHandler").GetComponent<StateHandler>();
-        PlayerTurnState playerTurnState = (PlayerTurnState) stateHandler.GetStateObject(StateHandler.State.PlayerTurnState);
+        PlayerTurnState playerTurnState = (PlayerTurnState) StateHandler.Instance.GetStateObject(StateHandler.State.PlayerTurnState);
         playerAction = playerTurnState.GetPlayerAction();
     }
 
@@ -581,14 +578,19 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
                 Vector3 targetPosition = GetTargetPosition();
                 Vector3 aimDirection = inventory.equippedWeapon.transform.forward;
                 Vector3 targetDirection = targetPosition - inventory.equippedWeapon.transform.position;
-                
 
                 // Updates rotation up until the actual shoot animation happens
                 if (flags.Contains("aiming"))
                     aimTowards = Quaternion.FromToRotation(aimDirection, targetDirection);
 
+                // Gets absolute angle
+                float dot = Vector3.Dot(targetDirection.normalized, transform.forward);
+                float angle = Mathf.Acos(dot) * Mathf.Rad2Deg;
+
+                GetComponentInChildren<CharacterCamera>().AdjustAngle(targetDirection.x, targetPosition);
+
                 // Rotates the character to face the target
-                if (Vector3.Angle(targetDirection, transform.position) > 90f) transform.LookAt(new Vector3(targetPosition.x, 0f, targetPosition.z));
+                if (Mathf.Abs(angle) > 70f) transform.LookAt(new Vector3(targetPosition.x, 0f, targetPosition.z));
                 bone.rotation = (aimTowards * bone.rotation).normalized;
 
                 // TO DO -- Fix weirdness during shoot animation
@@ -640,7 +642,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         if (targetCharacter) targetCharacter.RemoveFlag("dodging");
 
         // Add a small delay before character exits shooting stance
-        yield return new WaitForSeconds(0.25f);
+        yield return new WaitForSeconds(2f);
 
         // Remove shooting flag
         RemoveFlag("shooting");
@@ -878,28 +880,6 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
 
     }
 
-    void GetTarget(string action)
-    {
-        // Character it put into "targeting" mode
-        // Target selected with left-click will have action done to it (such as attack action)
-
-        if (!flags.Contains("targeting"))
-        {
-            AddFlag("targeting");
-            StartCoroutine(StandAndShoot());
-            playerAction.clickAction = InCombatPlayerAction.ClickAction.target;
-            playerAction.clickContext = action;
-        }
-    }
-
-    IEnumerator StandAndShoot()
-    {
-        // Makes character fully stand before shooting to prevent animation skipping
-
-        ToggleCrouch(false);
-        yield return new WaitForSeconds(0.01f);
-    }
-
     public void ShootAction(Character selectedTarget=null, string action="")
     {
         // Sets the character's target and performs action on them
@@ -930,12 +910,25 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
             }
     }
 
-    public void CancelTarget()
+    public void GetTarget()
+    {
+        // Character it put into "targeting" mode
+        // Target selected with left-click will have action done to it (such as attack action)
+
+        animator.SetBool("aiming", true);
+        animator.updateMode = AnimatorUpdateMode.AnimatePhysics;
+        AddFlag("aiming");
+        ToggleCrouch(false);
+    }
+
+    public void ClearTarget()
     {
         // Removes targeting flag and combat stance
 
-        RemoveFlag("targeting");
         animator.SetBool("aiming", false);
+        animator.updateMode = AnimatorUpdateMode.Normal;
+        RemoveFlag("aiming");
+        targetCharacter = null;
     }
 
     public void RefreshActionPoints()
