@@ -84,7 +84,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             if (tile.gameObject.GetInstanceID() != gameObject.GetInstanceID())
             {
                 float distance = Vector3.Distance(this.gameObject.transform.position, tile.gameObject.transform.position);
-                if (distance <= GlobalManager.tileSpacing) neighbours.Add(tile);
+                if (distance <= Grid.tileSpacing) neighbours.Add(tile);
             }
     }
 
@@ -100,7 +100,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         return null;
     }
 
-    //TODO: Simplify this to just calculate distance using GlobalManager.tileSpacing and the transform.positions of the tiles
+    //TODO: Simplify this to just calculate distance using Grid.tileSpacing and the transform.positions of the tiles
     public List<Tile> FindCost(Tile findTile, int maxDist = 10)
     {
         // Finds the nearest path to the destination tile
@@ -244,7 +244,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             if (coverObj.gameObject.GetInstanceID() != gameObject.GetInstanceID())
             {
                 float distance = Vector3.Distance(this.gameObject.transform.position, coverObj.gameObject.transform.position);
-                if (distance <= GlobalManager.tileSpacing)
+                if (distance <= Grid.tileSpacing) 
                 {
                     cover = coverObj;
                     break;
