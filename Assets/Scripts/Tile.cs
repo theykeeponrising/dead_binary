@@ -193,8 +193,8 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         if (!tileStart.cover || !tileDest.cover)
             return false;
 
-        // Then, check if the cover object is full sized
-        if (tileDest.cover.coverSize != CoverObject.CoverSize.full)
+        // Then, check if the cover object is full sized or vaultable
+        if (tileDest.cover.coverSize != CoverObject.CoverSize.full && tileDest.cover.canVaultOver)
             return false;
 
         // Lastly, check if both tiles share the same cover object
@@ -242,7 +242,11 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             if (coverObj.gameObject.GetInstanceID() != gameObject.GetInstanceID())
             {
                 float distance = Vector3.Distance(this.gameObject.transform.position, coverObj.gameObject.transform.position);
-                if (distance <= GlobalManager.tileSpacing) cover = coverObj;
+                if (distance <= GlobalManager.tileSpacing)
+                {
+                    cover = coverObj;
+                    break;
+                }
             }
     }
 
