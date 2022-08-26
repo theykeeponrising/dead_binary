@@ -212,6 +212,7 @@ MonoBehaviour:
   weaponHeld: 0
   weaponLayer: 2
   weaponFamily: 1
+  weaponImpact: 0
   fireSound:
   - {fileID: 8300000, guid: ac9cb7563984bad42b5027c924cc82c3, type: 3}
   reloadSound:
@@ -5168,7 +5169,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_RenderMode: 0
   m_MeshDistribution: 0
   m_SortMode: 0
