@@ -11,7 +11,7 @@ public class TileCustom : Editor
 {
 	private Tile script;
     Dictionary<string, CoverObject> coverDict;
-    string[] _choices = new[] { "Half Wall", "Full Wall", "Concrete Barrier 1", "Concrete Barrier 2", "Metal Rail", "Metal Rail Large", "Street Light" };
+    string[] _choices = new[] { "Half Wall", "Full Wall", "Concrete Barrier 1", "Concrete Barrier 2", "Metal Barrier", "Metal Rail", "Metal Rail Large", "Street Light" };
     int _choiceIndex = 0;
 
     private void OnEnable()
@@ -29,6 +29,7 @@ public class TileCustom : Editor
             { "Full Wall", assetManager.cover.fullWall },
             { "Concrete Barrier 1", assetManager.cover.concreteBarrier1 },
             { "Concrete Barrier 2", assetManager.cover.concreteBarrier2 },
+            { "Metal Barrier", assetManager.cover.metalBarrier },
             { "Metal Rail", assetManager.cover.metalRail },
             { "Metal Rail Large", assetManager.cover.metalRailLarge },
             { "Street Light", assetManager.cover.streetLight },
