@@ -54,7 +54,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
     Animator animator;
     AudioSource audioSource;
 
-    enum AnimationEventContext { SHOOT, TAKE_DAMAGE, RELOAD, STOW, DRAW, VAULT, CROUCH_DOWN, CROUCH_UP };
+    enum AnimationEventContext { SHOOT, TAKE_DAMAGE, RELOAD, STOW, DRAW, VAULT, CROUCH_DOWN, CROUCH_UP, FOOTSTEP_LEFT, FOOTSTEP_RIGHT };
 
     public class Body
     {
@@ -743,6 +743,16 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
             case (AnimationEventContext.CROUCH_UP):
                 RemoveFlag("crouching");
                 break;
+
+            // Footstep Left
+            case (AnimationEventContext.FOOTSTEP_LEFT):
+                Footsteps(AnimationEventContext.FOOTSTEP_LEFT);
+                break;
+
+            // Footstep
+            case (AnimationEventContext.FOOTSTEP_RIGHT):
+                Footsteps(AnimationEventContext.FOOTSTEP_RIGHT);
+                break;
         }
     }
 
@@ -761,6 +771,27 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
             animator.SetBool("crouching", true);
             if (instant) AddFlag("crouching");
         }
+    }
+
+    void Footsteps(AnimationEventContext whichFoot)
+    {
+        // Plays a random footstep sound based on tile data
+
+        AudioClip footstep = AudioManager.Instance.GetRandomFootstepSound(currentTile.footstepType);
+        AudioSource footAudioSource;
+
+        // Determine which foot to play the sound at
+        if (whichFoot == AnimationEventContext.FOOTSTEP_LEFT)
+            footAudioSource = animator.GetBoneTransform(HumanBodyBones.LeftFoot).GetComponent<AudioSource>();
+        else
+            footAudioSource = animator.GetBoneTransform(HumanBodyBones.RightFoot).GetComponent<AudioSource>();
+
+        // Prevent overlapping footstep sounds from the same foot
+        if (!footAudioSource.isPlaying)
+            footAudioSource.Stop();
+        
+        if (velocityZ > 0.75f)
+            footAudioSource.PlayOneShot(footstep);
     }
 
     bool RollForHit(Character attacker, int distanceToTarget)
@@ -816,11 +847,16 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
 
     public void RestoreHealth(int amount)
     {
+        // Heals character by the indicated amount
+
         stats.healthCurrent += amount;
     }
 
     public void TakeDamageEffect(Weapon weapon=null)
     {
+        // Animation that plays when character is taking damage
+        // Damage is not actually applied in this function
+
         if (flags.Contains("dodging"))
         {
             // TO DO -- Play dodging animation instead
@@ -842,6 +878,8 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
 
     IEnumerator Death(Character attacker, Vector3 attackDirection, float impactForce = 2f)
     {
+        // Disables animator, turns on ragdoll effect, and applies a small force to push the character over
+
         // Wait for attacker animation to complete
         while (attacker.AnimatorIsPlaying())
             yield return new WaitForSeconds(0.01f);
@@ -917,8 +955,16 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
 
         animator.SetBool("aiming", true);
         animator.updateMode = AnimatorUpdateMode.AnimatePhysics;
-        AddFlag("aiming");
+        StartCoroutine(WaitForAiming());
         ToggleCrouch(false);
+    }
+
+    IEnumerator WaitForAiming()
+    {
+        // Small buffer to prevent janky torso twist
+
+        yield return new WaitForSeconds(0.25f);
+        AddFlag("aiming");
     }
 
     public void ClearTarget()

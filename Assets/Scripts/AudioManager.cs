@@ -16,7 +16,12 @@ public class AudioManager : MonoBehaviour
             {ImpactType.ROBOT, Instance.impactRobot },
             {ImpactType.CONCRETE, Instance.impactConcrete },
         };
+        FootstepSounds = new Dictionary<FootstepType, AudioClip[]> {
+            {FootstepType.CONCRETE, Instance.footstepConcrete },
+        };
     }
+
+    // Impact sounds //
 
     public AudioClip GetImpactSound(ImpactType impactType, int index)
     {
@@ -40,4 +45,30 @@ public class AudioManager : MonoBehaviour
     public AudioClip[] impactConcrete;
 
     public Dictionary<ImpactType, AudioClip[]> ImpactSounds;
+
+    // Footstep sounds //
+
+    public AudioClip GetFootstepSound(FootstepType footstepType, int index)
+    {
+        // Used to get a specific footstep sound
+
+        return FootstepSounds[footstepType][index];
+    }
+
+    public AudioClip GetRandomFootstepSound(FootstepType footstepType)
+    {
+        // Returns a random footstep sound for footstep type
+
+        int range = Instance.FootstepSounds[footstepType].Length;
+        return FootstepSounds[footstepType][Random.Range(0, range)];
+    }
+
+    public enum FootstepType { CONCRETE }; // METAL, DIRT, WATER
+
+    public AudioClip[] footstepConcrete;
+    // public AudioClip[] footstepMetal;
+    // public AudioClip[] footstepDirt;
+    // public AudioClip[] footstepWater;
+
+    public Dictionary<FootstepType, AudioClip[]> FootstepSounds;
 }

@@ -1042,6 +1042,15 @@ MonoBehaviour:
   - {fileID: 8300000, guid: e31c7a072bba37b4eadba314fc52d58f, type: 3}
   - {fileID: 8300000, guid: 184a16b751cfc734c9d0ad5837fa03f7, type: 3}
   - {fileID: 8300000, guid: cbd5d4c548d295949acac69728b9cb02, type: 3}
+  footstepConcrete:
+  - {fileID: 8300000, guid: 1c38d9f4ee002a045b9f5b5bda905c54, type: 3}
+  - {fileID: 8300000, guid: 9d450d55f0472e54fb08cc64193632b2, type: 3}
+  - {fileID: 8300000, guid: 47fe6460df65e804c8705c0fcc5f889e, type: 3}
+  - {fileID: 8300000, guid: b7b0b57c9291d4f42af9206b3b4d2df6, type: 3}
+  - {fileID: 8300000, guid: 5d118636847ef294f9ce9b693a4bef20, type: 3}
+  - {fileID: 8300000, guid: f8f3a36ab9f29194aabdcc9ccec45dac, type: 3}
+  - {fileID: 8300000, guid: fd02c5394019954498df1cb20bddeb30, type: 3}
+  - {fileID: 8300000, guid: 5aadc36bfe23dcc4cb6ab2c6ce077a40, type: 3}
 --- !u!1 &353174119
 GameObject:
   m_ObjectHideFlags: 0
