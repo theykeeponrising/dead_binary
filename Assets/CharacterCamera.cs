@@ -51,9 +51,10 @@ public class CharacterCamera : MonoBehaviour
 
     public void AdjustAngle(float angle, Vector3 targetPosition)
     {
-        //Debug.Log(angle);
+        // Changes camera angle to look at the character's target
+
         Vector3 newPosition;
-        Vector3 lookPosition = (character.transform.position + targetPosition) / 2;
+        Vector3 lookPosition = (character.body.chest.transform.position + targetPosition) / 2;
 
         if (angle <= 0)
             newPosition = new Vector3(0.75f, 2f, -1f);
