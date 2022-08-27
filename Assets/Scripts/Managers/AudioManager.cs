@@ -19,9 +19,15 @@ public class AudioManager : MonoBehaviour
         FootstepSounds = new Dictionary<FootstepType, AudioClip[]> {
             {FootstepType.CONCRETE, Instance.footstepConcrete },
         };
+        InterfaceSounds = new Dictionary<InterfaceSFX, AudioClip[]> {
+            {InterfaceSFX.MOUSE_CLICK, Instance.interfaceMouseClick },
+            {InterfaceSFX.MOUSE_OVER, Instance.interfaceMouseOver },
+        };
     }
 
+    ///////////////////
     // Impact sounds //
+    ///////////////////
 
     public AudioClip GetImpactSound(ImpactType impactType, int index)
     {
@@ -46,7 +52,9 @@ public class AudioManager : MonoBehaviour
 
     public Dictionary<ImpactType, AudioClip[]> ImpactSounds;
 
+    /////////////////////
     // Footstep sounds //
+    /////////////////////
 
     public AudioClip GetFootstepSound(FootstepType footstepType, int index)
     {
@@ -71,4 +79,32 @@ public class AudioManager : MonoBehaviour
     // public AudioClip[] footstepWater;
 
     public Dictionary<FootstepType, AudioClip[]> FootstepSounds;
+
+    //////////////////////
+    // Interface sounds //
+    //////////////////////
+
+    public enum InterfaceSFX { MOUSE_OVER, MOUSE_CLICK }; // METAL, DIRT, WATER
+
+    public AudioClip[] interfaceMouseClick;
+    public AudioClip[] interfaceMouseOver;
+
+    public Dictionary<InterfaceSFX, AudioClip[]> InterfaceSounds;
+
+
+    public AudioClip GetInterfaceSound(InterfaceSFX interfaceSFX, int index)
+    {
+        // Used to get a specific footstep sound
+
+        return InterfaceSounds[interfaceSFX][index];
+    }
+
+    public AudioClip GetRandomInterfaceSound(InterfaceSFX interfaceSFX)
+    {
+        // Returns a random footstep sound for footstep type
+
+        int range = Instance.InterfaceSounds[interfaceSFX].Length;
+        return InterfaceSounds[interfaceSFX][Random.Range(0, range)];
+    }
+
 }

@@ -32,13 +32,6 @@ abstract public class FiniteState<T>
             v.playerInput.Controls.ActionButton_9.performed += _InputAction9;
             v.playerInput.Controls.InputSpacebar.performed += _InputSpacebar;
             v.playerInput.Controls.InputTab.performed += _InputTab;
-
-
-            if (GameObject.FindGameObjectWithTag("ActionPanel"))
-            {
-                ActionPanelScript actionPanel = GameObject.FindGameObjectWithTag("ActionPanel").GetComponent<ActionPanelScript>();
-                actionPanel.BindButtons();
-            }
         }
     }
 
@@ -62,12 +55,6 @@ abstract public class FiniteState<T>
             v.playerInput.Controls.ActionButton_9.performed -= _InputAction9;
             v.playerInput.Controls.InputSpacebar.performed -= _InputSpacebar;
             v.playerInput.Controls.InputTab.performed -= _InputTab;
-
-            if (GameObject.FindGameObjectWithTag("ActionPanel"))
-            {
-                ActionPanelScript actionPanel = GameObject.FindGameObjectWithTag("ActionPanel").GetComponent<ActionPanelScript>();
-                actionPanel.ClearBindings();
-            }
         }
     }
 
