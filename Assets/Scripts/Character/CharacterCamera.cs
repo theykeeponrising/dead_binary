@@ -16,6 +16,9 @@ public class CharacterCamera : MonoBehaviour
         characterCamera = GetComponent<Camera>();
         raycaster = GetComponent<PhysicsRaycaster>();
 
+        name = string.Format("{0} (Camera)", character.attributes.name);
+
+        Camera.main.gameObject.GetComponent<CameraHandler>().AddSceneCamera(characterCamera);
     }
 
     // Update is called once per frame
@@ -56,11 +59,13 @@ public class CharacterCamera : MonoBehaviour
         Vector3 newPosition;
         Vector3 lookPosition = (character.body.chest.transform.position + targetPosition) / 2;
 
+        // Move camera to the appropriate side of the character depending on angle
         if (angle <= 0)
             newPosition = new Vector3(0.75f, 2f, -1f);
         else
             newPosition = new Vector3(-0.75f, 2f, -1f);
 
+        // Point camera so that both character and target position are visible in same shot
         transform.localPosition = Vector3.Lerp(transform.localPosition, newPosition, 2f);
         transform.LookAt(lookPosition);
     }
