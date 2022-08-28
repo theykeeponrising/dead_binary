@@ -18,23 +18,26 @@ public class ActionPanelScript : MonoBehaviour
     {
         playerTurnState = (PlayerTurnState)StateHandler.Instance.GetStateObject(StateHandler.State.PlayerTurnState);
         playerAction = playerTurnState.GetPlayerAction();
-        BuildActions();
-    }
-
-    private void OnEnable()
-    {
-        BuildActions();
     }
 
     private void OnDisable()
     {
-        ClearActions();
+        // When action panel is disabled, destroy all buttons
+
+        foreach (Button button in buttons)
+        {
+            Destroy(button.gameObject);
+        }
+        buttons = new List<Button>();
     }
 
-    public void BuildActions()
+    void BuildActions()
     {
         // Dynamically creates buttons based on what actions the Character can perform
         // Will skip creating buttons for actions that do not use buttons (such as moving)
+
+        playerTurnState = (PlayerTurnState)StateHandler.Instance.GetStateObject(StateHandler.State.PlayerTurnState);
+        playerAction = playerTurnState.GetPlayerAction();
 
         if (playerTurnState == null || playerAction == null) return;
 
@@ -71,20 +74,10 @@ public class ActionPanelScript : MonoBehaviour
         }
     }
 
-    public void ClearActions()
-    {
-        // Remove buttons and clean button list
-
-        foreach (Button button in buttons)
-        {
-            Destroy(button.gameObject);
-        }
-        buttons = new List<Button>();
-    }
-
     private void Update()
     {
         // Update ammo and ap
+
         if (playerAction.selectedCharacter != null)
         {
             apTextBox.text = playerAction.selectedCharacter.stats.actionPointsCurrent.ToString();
@@ -94,28 +87,15 @@ public class ActionPanelScript : MonoBehaviour
 
     public void BindButtons()
     {
+        // Binds actions to buttons
+
+        // Build actions list before creating bindings
+        BuildActions();
+
         // Remove existing bindings if any
-        foreach (Button button in buttons)
-        {
-            button.GetComponent<ActionButton>().button.onClick.RemoveAllListeners();
-        }
+        foreach (Button button in buttons) button.GetComponent<ActionButton>().UnbindButton();
 
         // Bind buttons to inputs
-        foreach (Button button in buttons)
-        {
-            int index = buttons.IndexOf(button);
-            var state = playerAction.stateMachine.GetCurrentState();
-            button.GetComponent<ActionButton>().button.onClick.AddListener(delegate { state.InputActionBtn(playerAction, index + 1); });
-        }
-    }
-
-    public void ClearBindings()
-    {
-        // Removes bindings from buttons
-
-        foreach (Button button in buttons)
-        {
-            button.GetComponent<ActionButton>().button.onClick.RemoveAllListeners();
-        }
+        foreach (Button button in buttons) button.GetComponent<ActionButton>().BindButton(buttons.IndexOf(button));
     }
 }

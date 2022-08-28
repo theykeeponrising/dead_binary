@@ -116,6 +116,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
     protected override void Awake()
     {
         base.Awake();
+        this.name = string.Format("{0} (Character)", attributes.name);
         ragdoll = GetComponentsInChildren<Rigidbody>();
         audioSource = GetComponent<AudioSource>();
 

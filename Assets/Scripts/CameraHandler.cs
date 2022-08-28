@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
@@ -10,6 +11,7 @@ public class CameraHandler : MonoBehaviour
     // Used for Camera controls
 
     Camera thisCamera;
+    [SerializeField] List<Camera> sceneCameras = new List<Camera>();
     CameraInput cameraInput;
     PhysicsRaycaster raycaster;
     InputAction movement;
@@ -72,6 +74,8 @@ public class CameraHandler : MonoBehaviour
 
     void OnEnable()
     {
+        // Add bindings when enabled and begin tracking position
+
         lastPosition = transform.position;
         movement = cameraInput.Controls.Movement;
         cameraInput.Controls.RotateCamera.performed += RotateCamera;
@@ -81,6 +85,8 @@ public class CameraHandler : MonoBehaviour
 
     void OnDisable()
     {
+        // Remove bindings when disabled
+
         cameraInput.Controls.RotateCamera.performed -= RotateCamera;
         cameraInput.Controls.ZoomCamera.performed -= ZoomCamera;
         cameraInput.Disable();
@@ -88,21 +94,34 @@ public class CameraHandler : MonoBehaviour
 
     void Update()
     {
-        CheckActiveCamera();
         GetKeyboardMovement();
         UpdateVelocity();
         UpdateCameraPosition();
         UpdateBasePosition();
+        CheckActiveCamera();
+    }
+
+    public void AddSceneCamera(Camera addCamera)
+    {
+        // Adds camera from the current scene to be tracked
+
+        if (!sceneCameras.Contains(addCamera))
+            sceneCameras.Add(addCamera);
     }
 
     void CheckActiveCamera()
     {
-        // Ensures physics raycaster is only active is the camera is in use
+        // Ensures physics raycaster is only active if no other camera is in use
 
-        if (Camera.current == thisCamera && !raycaster.enabled)
-            raycaster.enabled = true;
-        else if (Camera.current != thisCamera && raycaster.enabled)
+        // If there are any scene cameras currently active, disable raycaster on this camera
+        if (sceneCameras.Any() && sceneCameras.Any(checkCamera => checkCamera.enabled))
+        {
             raycaster.enabled = false;
+            return;
+        }
+        
+        // If this is the only camera active, turn raycaster back on
+        if (!raycaster.enabled) raycaster.enabled = true;
     }
 
 
