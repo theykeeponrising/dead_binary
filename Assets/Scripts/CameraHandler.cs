@@ -14,6 +14,7 @@ public class CameraHandler : MonoBehaviour
     [SerializeField] List<Camera> sceneCameras = new List<Camera>();
     CameraInput cameraInput;
     PhysicsRaycaster raycaster;
+    AudioListener audioListener;
     InputAction movement;
     public Transform parent;
 
@@ -68,6 +69,7 @@ public class CameraHandler : MonoBehaviour
         thisCamera = GetComponent<Camera>();
         cameraInput = new CameraInput();
         raycaster = GetComponent<PhysicsRaycaster>();
+        audioListener = GetComponent<AudioListener>();
         zoomHeight = transform.position.y;
         parent = transform.parent;
     }
@@ -117,11 +119,16 @@ public class CameraHandler : MonoBehaviour
         if (sceneCameras.Any() && sceneCameras.Any(checkCamera => checkCamera.enabled))
         {
             raycaster.enabled = false;
+            audioListener.enabled = false;
             return;
         }
-        
-        // If this is the only camera active, turn raycaster back on
-        if (!raycaster.enabled) raycaster.enabled = true;
+
+        // If this is the only camera active, ensure raycaster and audio listener are turned back on
+        if (!raycaster.enabled || !audioListener.enabled)
+        {
+            raycaster.enabled = true;
+            audioListener.enabled = true;
+        }
     }
 
 
