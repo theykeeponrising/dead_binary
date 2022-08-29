@@ -4,7 +4,7 @@ using UnityEngine;
 public class Actions : MonoBehaviour
 {
     // All possible actions in enum form
-    public enum ActionsList { MOVE, SHOOT, RELOAD, SWAP, REFRESH, USEITEM }
+    public enum ActionsList { MOVE, SHOOT, RELOAD, SWAP, REFRESH, CHOOSEITEM, USEITEM }
 
     public class Action
     {
@@ -45,15 +45,18 @@ public class Actions : MonoBehaviour
 
     public static Action action_refresh = new Action("Refresh AP", ActionsList.REFRESH, "refresh", 0, 0, ActionButtons.btn_action_swap); // TEMP ACTION TO REFRESH AP, REMOVE WHEN END TURN BTN IS ADDED
 
-    public static Action action_useItem = new Action("Use Item", ActionsList.USEITEM, "useItem", 0, 0, ActionButtons.btn_action_useItem);
+    public static Action action_chooseItem = new Action("Choose Item", ActionsList.CHOOSEITEM, "chooseItem", 0, 0, ActionButtons.btn_action_chooseItem);
+
+    public static Action action_useItem = new Action("Use Item", ActionsList.USEITEM, "useItem", 1, 0, ActionButtons.btn_action_useItem);
 
     // Dictionary used to match enum to actual action class object
-    public static Dictionary<ActionsList, Action> ActionsDict = new Dictionary<ActionsList, Action>() { 
+    public static Dictionary<ActionsList, Action> ActionsDict = new Dictionary<ActionsList, Action>() {
         { ActionsList.MOVE, action_move },
         { ActionsList.SHOOT, action_shoot },
         { ActionsList.RELOAD, action_reload },
         { ActionsList.SWAP, action_swap },
         { ActionsList.REFRESH, action_refresh },
+        { ActionsList.CHOOSEITEM, action_chooseItem },
         { ActionsList.USEITEM, action_useItem },
     };
 }

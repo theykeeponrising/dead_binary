@@ -20,6 +20,8 @@ public class Inventory : MonoBehaviour
         [ReadOnly] public ItemType itemType;
         [Tooltip("The AP required to use this item.")]
         [ReadOnly] public int itemCost;
+        [Tooltip("The amount of uses before depletion.")]
+        [ReadOnly] public int itemCharges;
         [Tooltip("Does the item target Characters, or something else?")]
         [ReadOnly] public TargetType targetType;
         [Tooltip("The icon associated with this item.")]
@@ -101,6 +103,7 @@ public class Inventory : MonoBehaviour
             s.itemName = items[i].Name;
             s.itemType = items[i].ItemType;
             s.itemCost = items[i].ItemCost;
+            s.itemCharges = items[i].Charges;
             s.targetType = items[i].TargetType;
             s.icon = items[i].Icon;
             s.isReusable = items[i].IsReusable;
@@ -173,5 +176,16 @@ public class Inventory : MonoBehaviour
             index = 0;
 
         return weapons[index];
+    }
+
+    public void RemoveChargeFromItem(int index, int amount)
+    {
+        itemStats[index].itemCharges -= amount;
+
+        if (itemStats[index].itemCharges <= 0)
+        {
+            items.Remove(items[index]);
+            itemStats.Remove(itemStats[index]);
+        }
     }
 }
