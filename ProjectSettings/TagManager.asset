@@ -7,10 +7,10 @@ TagManager:
   - GlobalManager
   - VaultObject
   - ActionPanel
-  - StateHandler
   - UI
   - Character
   - UseItemPanel
+  - InCombatPlayerActionUI
   layers:
   - Default
   - TransparentFX

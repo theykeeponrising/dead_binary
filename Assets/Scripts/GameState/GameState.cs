@@ -31,7 +31,6 @@ public abstract class GameState
         {
             if (state.stateEnum == newStateEnum)
             {
-                Debug.Log(newStateEnum);
                 this.activeSubState.SetStateInactive();
                 this.activeSubState = state;
                 state.SetStateActive();

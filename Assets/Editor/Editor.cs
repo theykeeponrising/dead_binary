@@ -11,7 +11,7 @@ public class TileCustom : Editor
 {
 	private Tile script;
     Dictionary<string, CoverObject> coverDict;
-    string[] _choices = new[] { "Half Wall", "Full Wall" };
+    string[] _choices = new[] { "Half Wall", "Full Wall", "Concrete Barrier 1", "Concrete Barrier 2", "Metal Barrier", "Metal Rail", "Metal Rail Large", "Street Light" };
     int _choiceIndex = 0;
 
     private void OnEnable()
@@ -24,7 +24,16 @@ public class TileCustom : Editor
     public override void OnInspectorGUI()
     {
         AssetManager assetManager = GameObject.FindGameObjectWithTag("GlobalManager").GetComponent<AssetManager>();
-        coverDict = new Dictionary<string, CoverObject> { { "Half Wall", assetManager.cover.halfWall }, { "Full Wall", assetManager.cover.fullWall } };
+        coverDict = new Dictionary<string, CoverObject> { 
+            { "Half Wall", assetManager.cover.halfWall }, 
+            { "Full Wall", assetManager.cover.fullWall },
+            { "Concrete Barrier 1", assetManager.cover.concreteBarrier1 },
+            { "Concrete Barrier 2", assetManager.cover.concreteBarrier2 },
+            { "Metal Barrier", assetManager.cover.metalBarrier },
+            { "Metal Rail", assetManager.cover.metalRail },
+            { "Metal Rail Large", assetManager.cover.metalRailLarge },
+            { "Street Light", assetManager.cover.streetLight },
+        };
 
         EditorGUILayout.BeginHorizontal();
 

@@ -275,6 +275,7 @@ public class SelectedStates
 
                 t.selectedCharacter.potentialTargets = enemyList;
                 t.selectedCharacter.targetCharacter = t.selectedCharacter.targetCharacter != null ? t.selectedCharacter.targetCharacter : enemyList[0];
+                t.selectedCharacter.GetTarget();
             }
             else
             {
@@ -310,9 +311,14 @@ public class SelectedStates
             // If valid target, make Target
             if (!IsPointerOverUIElement(t))
             {
+                Camera raycastCamera = Camera.main;
                 RaycastHit hit;
                 Ray ray;
-                ray = Camera.main.ScreenPointToRay(t.playerInput.Controls.InputPosition.ReadValue<Vector2>());
+
+                if (t.selectedCharacter.GetComponentInChildren<Camera>())
+                    raycastCamera = t.selectedCharacter.GetComponentInChildren<Camera>();
+
+                ray = raycastCamera.ScreenPointToRay(t.playerInput.Controls.InputPosition.ReadValue<Vector2>());
 
                 int layerMask = (1 << LayerMask.NameToLayer("TileMap"));
 
@@ -324,75 +330,43 @@ public class SelectedStates
 
                         if (enemyList.Contains(c))
                             t.selectedCharacter.targetCharacter = c;
-                        else if (c.attributes.faction == t.selectedCharacter.attributes.faction)
-                        { 
-                            t.SelectUnit();
-                            ChangeState(new Idle(Machine));
-                        }
-                        else
-                        {
-                            Debug.Log("Clicked character but unable to process. Possibly not Ally or Enemy.");
-                        }
+                        //else if (c.attributes.faction == t.selectedCharacter.attributes.faction)
+                        //{ 
+                        //    t.SelectUnit();
+                        //    ChangeState(new Idle(Machine));
+                        //}
+                        //else
+                        //{
+                        //    Debug.Log("Clicked character but unable to process. Possibly not Ally or Enemy.");
+                        //}
                     } 
                 }
-                else
-                    ChangeState(new NoTargetSelected(Machine));
+                //else
+                //    ChangeState(new NoTargetSelected(Machine));
             }
         }
         public override void InputSecndry(InCombatPlayerAction t)
         {
-            /*
-            // Check for Target (Should already have).
-            if (t.selectedCharacter.targetCharacter)
-            {
-                RaycastHit hit;
-                Ray ray;
-                ray = Camera.main.ScreenPointToRay(t.playerInput.Controls.InputPosition.ReadValue<Vector2>());
-                int layerMask = (1 << LayerMask.NameToLayer("TileMap"));
+            // Right mouse button will exit targeting
 
-                // What are we hitting?
-                if (Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask))
-                {
-                    if (hit.collider.GetComponent<Character>())
-                    {
-                        var v = hit.collider.GetComponent<Character>();
-
-                        // If Right Click on Target, shoot it.
-                        if (v == t.selectedCharacter.targetCharacter)
-                            ChangeState(new ShootTarget(Machine, v));
-
-                        // If Potential Target, Switch Target
-                        else if (t.selectedCharacter.potentialTargets.Contains(v))
-                            t.selectedCharacter.targetCharacter = v;
-
-                        // If character is not potential target, throw error
-                        else if (!t.selectedCharacter.potentialTargets.Contains(v))
-                            Debug.Log("Unit not Targetable.");
-                    }
-
-                    // If no character is pressed, revert to Idle.
-                    else
-                        ChangeState(new Idle(Machine));
-                }
-            }
-            */
+            ChangeState(new Idle(Machine));
+            t.selectedCharacter.ClearTarget();
         }
 
         public override void InputActionBtn(InCombatPlayerAction t, int index)
         {
+            // Spacebar and shoot action will execute shoot while in targeting
+
             Actions.ActionsList action = t.GetBindings(index);
 
             switch (action)
             {
                 case (Actions.ActionsList.SHOOT):
                     {
-                        /*
                         if (t.selectedCharacter.targetCharacter)
-                            ChangeState(new ShootTarget(Machine,t.selectedCharacter.targetCharacter));
+                            ChangeState(new ShootTarget(Machine, t.selectedCharacter.targetCharacter));
                         else
-                            Debug.Log("No Target -- But how? Ensure that both characters are set to different factions.");*/
-
-                        ChangeState(new Idle(Machine));
+                            Debug.Log("No Target -- But how? Ensure that both characters are set to different factions. (spacebar)");
                         break;
                     }
             }
@@ -400,6 +374,8 @@ public class SelectedStates
 
         public override void InputSpacebar(InCombatPlayerAction t)
         {
+            // Spacebar and shoot action will execute shoot while in targeting
+
             if (t.selectedCharacter.targetCharacter)
                 ChangeState(new ShootTarget(Machine, t.selectedCharacter.targetCharacter));
             else
@@ -408,6 +384,8 @@ public class SelectedStates
 
         public override void InputTab(InCombatPlayerAction t, bool shift)
         {
+            // Cylces between available targets
+
             int index = enemyList.IndexOf(t.selectedCharacter.targetCharacter);
             int n = shift ? index - 1 : index + 1;
 
@@ -432,8 +410,11 @@ public class SelectedStates
         }
         public override void Execute(InCombatPlayerAction t)
         {
-            if (timer < Time.time)
+            if (timer < Time.time - 1.5f)
+            {
+                t.selectedCharacter.ClearTarget();
                 ChangeState(new Idle(Machine));
+            }
         }
     }
     public class PostShootTarget : FiniteState<InCombatPlayerAction>
