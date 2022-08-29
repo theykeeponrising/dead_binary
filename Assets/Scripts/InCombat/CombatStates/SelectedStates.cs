@@ -117,7 +117,7 @@ public class SelectedStates
                     }
                 case (Actions.ActionsList.CHOOSEITEM):
                     {
-                        if (t.selectedCharacter.inventory.GetItem(0))
+                        //if (t.selectedCharacter.inventory.GetItem(0))
                             ChangeState
                                 //(new UseItem(Machine, t.selectedCharacter.inventory.GetItem(0)));
                                 (new ChooseItem(Machine, t.selectedCharacter.inventory.items.ToArray()));
@@ -208,8 +208,8 @@ public class SelectedStates
                     }
                 case (Actions.ActionsList.CHOOSEITEM):
                     {
-                        ChangeState
-                            (new UseItem(Machine, t.selectedCharacter.inventory.GetItem(0)));
+                        ChangeState (new ChooseItem
+                            (Machine, t.selectedCharacter.inventory.items.ToArray()));
                         break;
                     }
             }
