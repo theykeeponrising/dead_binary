@@ -11,7 +11,7 @@ public class TileCustom : Editor
 {
 	private Tile script;
     Dictionary<string, CoverObject> coverDict;
-    string[] _choices = new[] { "Half Wall", "Full Wall", "Concrete Barrier 1", "Concrete Barrier 2", "Metal Barrier", "Metal Rail", "Metal Rail Large", "Street Light" };
+    string[] _choices = new[] { "Half Wall", "Full Wall", "Concrete Barrier 1", "Concrete Barrier 2", "Metal Barrier", "Metal Rail", "Metal Rail Large", "Street Light", "Mailbox", "Guardrail End Left", "Guardrail Middle", "Guardrail End Right" };
     int _choiceIndex = 0;
 
     private void OnEnable()
@@ -33,6 +33,10 @@ public class TileCustom : Editor
             { "Metal Rail", assetManager.cover.metalRail },
             { "Metal Rail Large", assetManager.cover.metalRailLarge },
             { "Street Light", assetManager.cover.streetLight },
+            { "Mailbox", assetManager.cover.mailbox },
+            { "Guardrail End Left", assetManager.cover.guardrailEndLeft },
+            { "Guardrail Middle", assetManager.cover.guardrailMiddle },
+            { "Guardrail End Right", assetManager.cover.guardrailEndRight },
         };
 
         EditorGUILayout.BeginHorizontal();

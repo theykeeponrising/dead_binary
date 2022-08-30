@@ -50,6 +50,10 @@ public class AssetManager : MonoBehaviour
         public CoverObject metalRail;
         public CoverObject metalRailLarge;
         public CoverObject streetLight;
+        public CoverObject mailbox;
+        public CoverObject guardrailEndLeft;
+        public CoverObject guardrailMiddle;
+        public CoverObject guardrailEndRight;
     }
     public CoverPrefabs cover;
 }
