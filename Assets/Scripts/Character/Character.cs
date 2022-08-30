@@ -618,42 +618,38 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         return inventory.equippedWeapon.transform.position + direction;
     }
 
-    IEnumerator ShootWeapon(int distanceToTarget)
+    IEnumerator ShootWeapon(int distanceToTarget, Character shootTarget=null)
     {
+        // Sets the characters aiming and physics flags
+        // Performs the shoot animation and inflicts damage on the target
+        // When done, returns flags and physics to default
+
         animator.SetBool("aiming", true);
         animator.updateMode = AnimatorUpdateMode.AnimatePhysics;
-        //transform.LookAt(targetCharacter.transform);
 
         yield return new WaitForSeconds(0.5f);
         AddFlag("aiming");
         yield return new WaitForSeconds(0.25f);
+
         // Inflict damage on target character
-        if (targetCharacter)
-            targetCharacter.TakeDamage(this, inventory.equippedWeapon.stats.damage, distanceToTarget);
+        if (shootTarget)
+            shootTarget.TakeDamage(this, inventory.equippedWeapon.stats.damage, distanceToTarget);
 
         AddFlag("shooting");
         animator.Play("Shoot");
         inventory.equippedWeapon.stats.ammoCurrent -= 1;
 
-        // Wait until shoot animation completes
-        while (animator.IsInTransition(inventory.equippedWeapon.weaponLayer)) yield return new WaitForSeconds(0.01f);
-        while (animator.GetCurrentAnimatorStateInfo(inventory.equippedWeapon.weaponLayer).IsName("Shoot")) yield return new WaitForSeconds(0.01f);
+        // Wait until shoot state completes
+        while (playerAction.stateMachine.GetCurrentState().GetType() == typeof(SelectedStates.ShootTarget)) yield return new WaitForSeconds(0.01f);
 
-        // If target is dodging, remove flag
-        if (targetCharacter) targetCharacter.RemoveFlag("dodging");
-
-        // Add a small delay before character exits shooting stance
-        yield return new WaitForSeconds(2f);
+        // If target is dodging, remove flag        
+        if (shootTarget && shootTarget.flags.Contains("dodging")) shootTarget.RemoveFlag("dodging");
 
         // Remove shooting flag
         RemoveFlag("shooting");
         animator.SetBool("aiming", false);
         RemoveFlag("aiming");
         animator.updateMode = AnimatorUpdateMode.Normal;
-
-        // Wait until shoot animation completes
-        while (AnimatorIsPlaying()) yield return new WaitForSeconds(0.01f);
-        //targetCharacter = null;
     }
 
     bool AnimatorIsPlaying()
@@ -937,7 +933,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
                     {
                         targetCharacter = selectedTarget;
                         stats.actionPointsCurrent -= currentAction.cost;
-                        StartCoroutine(ShootWeapon(distanceToTarget));
+                        StartCoroutine(ShootWeapon(distanceToTarget, targetCharacter));
                         RemoveFlag("targeting");
                     }
                     else
@@ -954,6 +950,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         // Character it put into "targeting" mode
         // Target selected with left-click will have action done to it (such as attack action)
 
+        GetComponentInChildren<CharacterCamera>().enabled = true;
         animator.SetBool("aiming", true);
         animator.updateMode = AnimatorUpdateMode.AnimatePhysics;
         StartCoroutine(WaitForAiming());
@@ -964,6 +961,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
     {
         // Small buffer to prevent janky torso twist
 
+        while (flags.Contains("crouching")) yield return new WaitForSeconds(0.01f);
         yield return new WaitForSeconds(0.25f);
         AddFlag("aiming");
     }
@@ -972,6 +970,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
     {
         // Removes targeting flag and combat stance
 
+        GetComponentInChildren<CharacterCamera>().enabled = false;
         animator.SetBool("aiming", false);
         animator.updateMode = AnimatorUpdateMode.Normal;
         RemoveFlag("aiming");

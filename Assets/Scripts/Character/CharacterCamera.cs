@@ -8,23 +8,39 @@ public class CharacterCamera : MonoBehaviour
     Character character;
     Camera characterCamera;
     PhysicsRaycaster raycaster;
+    AudioListener audioListener;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         character = GetComponentInParent<Character>();
         characterCamera = GetComponent<Camera>();
         raycaster = GetComponent<PhysicsRaycaster>();
+        audioListener = GetComponent<AudioListener>();
 
         name = string.Format("{0} (Camera)", character.attributes.name);
 
         Camera.main.gameObject.GetComponent<CameraHandler>().AddSceneCamera(characterCamera);
     }
 
+    private void OnEnable()
+    {
+        (audioListener.enabled, Camera.main.GetComponent<AudioListener>().enabled) = (true, false);
+        characterCamera.enabled = true;
+        raycaster.enabled = true;
+    }
+
+    private void OnDisable()
+    {
+        (audioListener.enabled, Camera.main.GetComponent<AudioListener>().enabled) = (false, true);
+        characterCamera.enabled = false;
+        raycaster.enabled = false;
+    }
+
     // Update is called once per frame
     void Update()
     {
-        EnableCamera();
+        //EnableCamera();
     }
 
     void EnableCamera()
@@ -48,8 +64,10 @@ public class CharacterCamera : MonoBehaviour
         // If we are in "choosing" or "shooting" target states, and there is a valid target, we use the character camera
         bool useCharacterCam = ((targeting || shooting) && target) ? true : false;
 
+        if (useCharacterCam) 
         characterCamera.enabled = useCharacterCam;
         raycaster.enabled = useCharacterCam;
+        audioListener.enabled = useCharacterCam;
     }
 
     public void AdjustAngle(float angle, Vector3 targetPosition)
