@@ -48,39 +48,19 @@ public class SelectedStates
         }
         public override void InputSecndry(InCombatPlayerAction t)
         {
-            if (t.selectedCharacter)
+            // Orders selected character to move to target tile
+
+            // Check that we have a selected character and they meet the AP cost
+            if (t.selectedCharacter && t.selectedCharacter.stats.actionPointsCurrent >= Actions.action_move.cost)
             {
                 RaycastHit hit;
                 Ray ray;
                 ray = Camera.main.ScreenPointToRay(t.playerInput.Controls.InputPosition.ReadValue<Vector2>());
                 int layerMask = (1 << LayerMask.NameToLayer("TileMap"));
 
-                if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+                // Find tile from right-click action
+                if (Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask))
                 {
-                    if (hit.collider.GetComponent<Character>())
-                    {
-                        var v = hit.collider.GetComponent<Character>();
-
-                        // TODO: Hold RMB = UI Popup with unit information.
-
-                        Debug.Log("Right-cliked on a character. No functionality yet.");
-                        //Right Click to shoot. NOT USED
-                        {
-                            /*
-                            // If Right Click on Target, shoot it.
-                            if (v.attributes.faction != t.selectedCharacter.attributes.faction)
-                            {
-                                t.selectedCharacter.targetCharacter = v;
-                                ChangeState(new ShootTarget(Machine, v));
-                            }
-                            else
-                            {
-                                Debug.Log("Cannot shoot a Character of the same Faction!");
-                            }
-                            */
-                        }
-                    }
-
                     if (hit.collider.GetComponent<Tile>())
                     {
                         var tile = hit.collider.GetComponent<Tile>();
@@ -93,6 +73,16 @@ public class SelectedStates
                     }
                 }
             }
+
+            // If we can't perform move, inform player
+            else if (t.selectedCharacter && t.selectedCharacter.stats.actionPointsCurrent < Actions.action_move.cost)
+            {
+                Debug.Log("Out of AP, cannot move!"); // TODO: Display this to player in UI
+            }
+
+            // Something went wrong
+            else
+                Debug.Log("WARNING - Invalid move order detected");
         }
         public override void InputActionBtn(InCombatPlayerAction t, int index)
         {
