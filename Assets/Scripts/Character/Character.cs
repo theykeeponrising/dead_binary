@@ -197,7 +197,6 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
 
     public void IsTargetUX(bool isTarget, bool isPotentialTarget)
     {
-
         if(isPotentialTarget)
         {
             selectionCircle.SetActive(true);
@@ -246,6 +245,9 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
                     break;
                 case "swap":
                     StartCoroutine(EquipWeapon(inventory.CycleWeapon()));
+                    break;
+                case "useItem":
+                    //The item is used in the State Machine. WOrk on bringing it over here.
                     break;
             }
         }

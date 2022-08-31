@@ -48,6 +48,7 @@ MonoBehaviour:
     itemName: Medkit
     itemType: 2
     itemCost: 1
+    itemCharges: 2
     targetType: 0
     icon: {fileID: 21300000, guid: ac394e6e5080d754e8b437e5936fca3b, type: 3}
     isReusable: 0
