@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 using System;
 
 /// <summary>
@@ -40,17 +39,3 @@ public partial class Medkit : Item
         }
     }
 }
-
-
-public partial class Medkit
-{
-    [CustomEditor(typeof(Medkit), true)]
-    public class MedkitEditor : Editor
-    {
-        public override void OnInspectorGUI()
-        {
-            base.OnInspectorGUI();
-        }
-    }
-}
-

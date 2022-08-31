@@ -256,7 +256,9 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         if (cover)
         {
-            Collider collider = cover.GetComponentInParent<Collider>();
+            Collider collider = cover.GetComponent<Collider>();
+            if (!collider)
+                collider = cover.GetComponentInParent<Collider>();
             float offset = collider.bounds.size.z / 2;
             Vector3 direction = transform.position - cover.transform.position;
             standPoint = (transform.position + cover.transform.position) / 2;
