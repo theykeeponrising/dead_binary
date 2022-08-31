@@ -906,6 +906,10 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
             playerAction.selectedCharacter = null;
         SelectUnit(false);
 
+        // Disable any character lights
+        foreach (Light light in GetComponentsInChildren<Light>())
+            light.enabled = false;
+
         // Remove character as a obstacle on the map
         currentTile.occupant = null;
         this.enabled = false;
