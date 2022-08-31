@@ -20,6 +20,8 @@ public abstract class Item : MonoBehaviour
         [SerializeField] public ItemType itemType;
         [Tooltip("The AP required to use this item.")]
         [SerializeField] public int itemCost;
+        [Tooltip("The amount of times this item can be used before depletion.")]
+        [SerializeField] public int itemCharges = 1;
         [Tooltip("Does the item target Characters, or something else?")]
         [SerializeField] public TargetType targetType;
         [Tooltip("The icon associated with this item.")]
@@ -40,6 +42,7 @@ public abstract class Item : MonoBehaviour
     public bool IsReusable => statics.isReusable;
     public int CooldownMax => statics.cooldownMax;
     public Affinity Affinity => statics.affinity;
+    public int Charges => statics.itemCharges;
 
     public int CurrentCooldown;
 
@@ -71,7 +74,7 @@ public abstract class Item : MonoBehaviour
                 {
                     if (CheckAffinity(owner.attributes.faction, c.attributes.faction))
                     {
-                        UseItem(owner, c);
+                        //UseItem(owner, c);
                         b = true;
                     }
                     else
@@ -94,6 +97,10 @@ public abstract class Item : MonoBehaviour
         }
 
         success = b;
+    }
+    public void UseTheUseItem(Character owner, Character charTarget = null, CoverObject covTarg = null)
+    {
+        UseItem(owner, charTarget, covTarg);
     }
     protected abstract void UseItem(Character owner, Character charTarget = null, CoverObject covTarg = null);
 }
