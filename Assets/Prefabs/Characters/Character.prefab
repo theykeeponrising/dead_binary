@@ -260,7 +260,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: de1a2924fe391dc468c0155e2abb7b49, type: 2}
+  - {fileID: 2100000, guid: 95ad1a694aa47b1409b8fdeb0faeb43d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2278,7 +2278,7 @@ MonoBehaviour:
     healthCurrent: 10
     healthMax: 10
     movement: 5
-    aim: 4
+    aim: 5
     armor: 0
     dodge: 10
     actionPointsCurrent: 0
