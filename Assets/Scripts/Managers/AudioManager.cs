@@ -7,23 +7,13 @@ public class AudioManager : MonoBehaviour
     // Used to store and quickly reference various audio clip arrays
 
     public static AudioManager Instance = null;
+    AudioSource audioSource;
 
-    void Start()
-    {
-        Instance = this;
-        ImpactSounds = new Dictionary<ImpactType, AudioClip[]> {
-            {ImpactType.FLESH, Instance.impactFlesh },
-            {ImpactType.ROBOT, Instance.impactRobot },
-            {ImpactType.CONCRETE, Instance.impactConcrete },
-        };
-        FootstepSounds = new Dictionary<FootstepType, AudioClip[]> {
-            {FootstepType.CONCRETE, Instance.footstepConcrete },
-        };
-        InterfaceSounds = new Dictionary<InterfaceSFX, AudioClip[]> {
-            {InterfaceSFX.MOUSE_CLICK, Instance.interfaceMouseClick },
-            {InterfaceSFX.MOUSE_OVER, Instance.interfaceMouseOver },
-        };
-    }
+    ////////////////
+    // Soundtrack //
+    ////////////////
+
+    public AudioClip musicGroundZero;
 
     ///////////////////
     // Impact sounds //
@@ -46,11 +36,11 @@ public class AudioManager : MonoBehaviour
 
     public enum ImpactType { FLESH, ROBOT, CONCRETE };
 
-    public AudioClip[] impactFlesh;
-    public AudioClip[] impactRobot;
-    public AudioClip[] impactConcrete;
+    [SerializeField] AudioClip[] impactFlesh;
+    [SerializeField] AudioClip[] impactRobot;
+    [SerializeField] AudioClip[] impactConcrete;
 
-    public Dictionary<ImpactType, AudioClip[]> ImpactSounds;
+    [SerializeField] Dictionary<ImpactType, AudioClip[]> ImpactSounds;
 
     /////////////////////
     // Footstep sounds //
@@ -73,12 +63,12 @@ public class AudioManager : MonoBehaviour
 
     public enum FootstepType { CONCRETE }; // METAL, DIRT, WATER
 
-    public AudioClip[] footstepConcrete;
+    [SerializeField] AudioClip[] footstepConcrete;
     // public AudioClip[] footstepMetal;
     // public AudioClip[] footstepDirt;
     // public AudioClip[] footstepWater;
 
-    public Dictionary<FootstepType, AudioClip[]> FootstepSounds;
+    [SerializeField] Dictionary<FootstepType, AudioClip[]> FootstepSounds;
 
     //////////////////////
     // Interface sounds //
@@ -86,11 +76,10 @@ public class AudioManager : MonoBehaviour
 
     public enum InterfaceSFX { MOUSE_OVER, MOUSE_CLICK }; // METAL, DIRT, WATER
 
-    public AudioClip[] interfaceMouseClick;
-    public AudioClip[] interfaceMouseOver;
+    [SerializeField] AudioClip[] interfaceMouseClick;
+    [SerializeField] AudioClip[] interfaceMouseOver;
 
-    public Dictionary<InterfaceSFX, AudioClip[]> InterfaceSounds;
-
+    [SerializeField] Dictionary<InterfaceSFX, AudioClip[]> InterfaceSounds;
 
     public AudioClip GetInterfaceSound(InterfaceSFX interfaceSFX, int index)
     {
@@ -107,4 +96,61 @@ public class AudioManager : MonoBehaviour
         return InterfaceSounds[interfaceSFX][Random.Range(0, range)];
     }
 
+    /////////////////////
+    // Ambience sounds //
+    /////////////////////
+
+    public enum AmbienceSFX { URBAN_OUTSIDE }; // URBAN_INSIDE, OTHER ENVS??
+
+    [SerializeField] AudioClip[] ambienceCityOutside;
+
+    [SerializeField] Dictionary<AmbienceSFX, AudioClip[]> AmbienceSounds;
+
+    public AudioClip GetAmbienceSound(AmbienceSFX ambienceSFX, int index)
+    {
+        // Used to get a specific footstep sound
+
+        return AmbienceSounds[ambienceSFX][index];
+    }
+
+    public AudioClip GetRandomAmbienceSound(AmbienceSFX ambienceSFX)
+    {
+        // Returns a random footstep sound for footstep type
+
+        int range = Instance.AmbienceSounds[ambienceSFX].Length;
+        return AmbienceSounds[ambienceSFX][Random.Range(0, range)];
+    }
+
+    void Start()
+    {
+        Instance = this;
+        audioSource = GetComponent<AudioSource>();
+
+        ImpactSounds = new Dictionary<ImpactType, AudioClip[]> {
+            {ImpactType.FLESH, Instance.impactFlesh },
+            {ImpactType.ROBOT, Instance.impactRobot },
+            {ImpactType.CONCRETE, Instance.impactConcrete },
+        };
+        FootstepSounds = new Dictionary<FootstepType, AudioClip[]> {
+            {FootstepType.CONCRETE, Instance.footstepConcrete },
+        };
+        InterfaceSounds = new Dictionary<InterfaceSFX, AudioClip[]> {
+            {InterfaceSFX.MOUSE_CLICK, Instance.interfaceMouseClick },
+            {InterfaceSFX.MOUSE_OVER, Instance.interfaceMouseOver },
+        };
+        AmbienceSounds = new Dictionary<AmbienceSFX, AudioClip[]> {
+            {AmbienceSFX.URBAN_OUTSIDE, Instance.ambienceCityOutside },
+        };
+
+        // TO DO -- Add a more robust music system
+        PlayMusic(musicGroundZero);
+    }
+    
+    public void PlayMusic(AudioClip audioClip)
+    {
+        // Plays provided music clip
+
+        audioSource.clip = audioClip;
+        audioSource.Play();
+    }
 }

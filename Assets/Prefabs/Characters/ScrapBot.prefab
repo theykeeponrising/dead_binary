@@ -1246,7 +1246,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8498240859159995900}
   - component: {fileID: 4332000174413875583}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: SpotLight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1372,7 +1372,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4303810092273273448}
   - component: {fileID: 8595010554958611884}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: RedLight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3729,7 +3729,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1100383871508069547}
   - component: {fileID: 7159337938065066761}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: YellowLight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4046,7 +4046,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4270055694314999205}
   - component: {fileID: 5416229388247927170}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: RedLight
   m_TagString: Untagged
   m_Icon: {fileID: 0}

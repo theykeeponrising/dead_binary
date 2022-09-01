@@ -574,13 +574,16 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
 
         for (int i = 0; i < iterations; i++)
         {
+            Vector3 targetPosition = GetTargetPosition();
+            Vector3 targetDirection = targetPosition - inventory.equippedWeapon.transform.position;
+            GetComponentInChildren<CharacterCamera>().AdjustAngle(targetDirection.x, targetPosition);
+
             for (int b = 0; b < boneTransforms.Length; b++)
             {
                 // Gets the rotation needed to point weapon at enemy
                 Transform bone = boneTransforms[b];
-                Vector3 targetPosition = GetTargetPosition();
                 Vector3 aimDirection = inventory.equippedWeapon.transform.forward;
-                Vector3 targetDirection = targetPosition - inventory.equippedWeapon.transform.position;
+                
 
                 // Updates rotation up until the actual shoot animation happens
                 if (flags.Contains("aiming"))
@@ -589,8 +592,6 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
                 // Gets absolute angle
                 float dot = Vector3.Dot(targetDirection.normalized, transform.forward);
                 float angle = Mathf.Acos(dot) * Mathf.Rad2Deg;
-
-                GetComponentInChildren<CharacterCamera>().AdjustAngle(targetDirection.x, targetPosition);
 
                 // Rotates the character to face the target
                 if (Mathf.Abs(angle) > 70f) transform.LookAt(new Vector3(targetPosition.x, 0f, targetPosition.z));
