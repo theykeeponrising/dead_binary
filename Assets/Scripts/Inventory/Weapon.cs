@@ -81,6 +81,11 @@ public class Weapon : MonoBehaviour
         StartCoroutine(ShootEffect());
     }
 
+    public int GetDamage()
+    {
+        return stats.damage;
+    }
+
     public int GetMinimumRange()
     {
         return stats.minRange;
@@ -95,7 +100,6 @@ public class Weapon : MonoBehaviour
     {
         int rangeDiff = range - GetMaximumRange();
         float penalty = rangeDiff > 0 ? rangeDiff * stats.overRangeAccuracyPenalty : 0.0f;
-        Debug.Log(string.Format("Penalty: {0}, RangePenalty: {1}", penalty, stats.overRangeAccuracyPenalty));
         return penalty;
     }
 

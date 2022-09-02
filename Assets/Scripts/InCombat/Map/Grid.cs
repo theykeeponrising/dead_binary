@@ -16,7 +16,7 @@ public class Grid : MonoBehaviour
     // Distance between neighboring tiles
     public static float tileSpacing = 2.0f;
     
-    void Start() 
+    void Awake() 
     {
         GameObject[] gameObjects = GameObject.FindGameObjectsWithTag("Tile");
         float minX = float.MaxValue;
@@ -42,8 +42,8 @@ public class Grid : MonoBehaviour
         height = Mathf.RoundToInt((maxZ - minZ) / tileSpacing) + 1;
         Debug.Log(string.Format("Min X: {0}, Max X: {1}, Min Y: {2}, Max Y: {3}", minX, maxX, minZ, maxZ));
 
-        gridOffsetX = minX;
-        gridOffsetZ = minZ;
+        gridOffsetX = minX / tileSpacing;
+        gridOffsetZ = minZ / tileSpacing;
 
         Debug.Log(string.Format("Grid Width: {0}, Grid Height: {1}", width, height));
         grid = new Tile[width * height];
@@ -59,38 +59,73 @@ public class Grid : MonoBehaviour
     public void AddTile(Tile tile) 
     {
         //Get position of tile
-        Vector3 pos = tile.gameObject.transform.position;
-        int flattened_xz = GetFlattenedIndex(pos.x, pos.z);
-        string fs = string.Format("Position {0}, {1}, Index: {2}", pos.x, pos.z, flattened_xz);
-        Debug.Log(fs);
+        Vector3 pos = NormalizePositionToGrid(tile.gameObject.transform.position);
+        int flattened_xz = GetFlattenedIndex(pos);
         if (grid[flattened_xz] != null)
         {
             string s = string.Format("Tile at position {0}, {1} already exists! Index: {2}", pos.x, pos.z, flattened_xz);
             Debug.LogError(s, tile);
-            Tile otherTile = grid[flattened_xz];
-            Vector3 pos2 = otherTile.gameObject.transform.position;
-            int otherx = Mathf.RoundToInt(pos2.x);
-            int otherz = Mathf.RoundToInt(pos2.z);
-            string f = string.Format("Other tile is at position {0}, {1}", otherx, otherz);
-            string f2 = string.Format("GridOffsetX: {0}, GridOffsetY: {1}", gridOffsetX, gridOffsetZ);
-            Debug.Log(f);
-            Debug.Log(f2);
         } else {
             grid[flattened_xz] = tile;
+            tile.SetGrid(this);
         }
     }
 
     //Convert the 2-D index to a 1-D flattened array index
-    public int GetFlattenedIndex(float x, float z)
+    public int GetFlattenedIndex(Vector3 pos)
     {
-        int zLoc = Mathf.RoundToInt(((float) (z - gridOffsetZ) / tileSpacing));
-        int xLoc = Mathf.RoundToInt(((float) (x - gridOffsetX) / tileSpacing));
+        int zLoc = Mathf.RoundToInt(pos.z - gridOffsetZ);
+        int xLoc = Mathf.RoundToInt(pos.x - gridOffsetX);
+
+        //Bounds check
+        if (xLoc < 0 || xLoc >= width || zLoc < 0 || zLoc >= height) return -1;
         return zLoc * width + xLoc;
     }
 
-    //Get the tile at a particular index
-    public Tile GetTile(float x, float z)
+    public Vector3 NormalizePositionToGrid(Vector3 pos)
     {
-        return grid[GetFlattenedIndex(x, z)];
+        return pos / tileSpacing;
+    } 
+
+    //Get the tile at a particular position
+    public Tile GetTile(Vector3 pos)
+    {
+        pos = NormalizePositionToGrid(pos);
+        return grid[GetFlattenedIndex(pos)];
+    }
+
+    //Get all tiles within a certain distance of the start tile
+    public List<Tile> GetTilesInRange(Vector3 startPos, int tileDist)
+    {
+        List<Tile> tilesInRange = new List<Tile>();
+        startPos = NormalizePositionToGrid(startPos);
+        for (int i = 0; i < tileDist; i++)
+        {
+            for (int j = i; j < tileDist; j++)
+            {
+                Vector3 nextPos = startPos + new Vector3((float) i, 0.0f, (float) j);
+                int flattened_index = GetFlattenedIndex(nextPos);
+
+                //Ignore any indices that would be out of bounds
+                if (flattened_index >= 0)
+                {
+                    Tile nextTile = grid[flattened_index];
+                    tilesInRange.Add(nextTile);
+                }
+            }
+        }
+        return tilesInRange;
+    }
+
+    //Path distance between two tiles (Note: Not straight-line distance!)
+    public int GetTileDistance(Tile a, Tile b)
+    {
+        Vector3 pos_a = a.gameObject.transform.position;
+        Vector3 pos_b = b.gameObject.transform.position;
+        Vector3 diff = pos_a - pos_b;
+
+        //Note: Not straight line distance
+        float dist = diff.x + diff.z;
+        return Mathf.RoundToInt(dist / tileSpacing);
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 public class Actions : MonoBehaviour
 {
     // All possible actions in enum form
-    public enum ActionsList { MOVE, SHOOT, RELOAD, SWAP, REFRESH, CHOOSEITEM, USEITEM }
+    public enum ActionsList { MOVE, SHOOT, RELOAD, SWAP, REFRESH, CHOOSEITEM, USEITEM, NONE }
 
     public class Action
     {

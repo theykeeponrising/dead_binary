@@ -19,9 +19,9 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     [HideInInspector]
     public Vector3 standPoint;
     InCombatPlayerAction playerAction;
-
     public AudioManager.FootstepType footstepType;
-
+    Grid grid;
+    
     // Use this for initialization
     void Start()
     {
@@ -50,6 +50,16 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         if (playerAction.targetTile == this)
             playerAction.targetTile = null;
         Highlighted(false, "preview");
+    }
+
+    public Grid GetGrid()
+    {
+        return grid;
+    }
+
+    public void SetGrid(Grid grid)
+    {
+        this.grid = grid;
     }
 
     public void Highlighted(bool highlighted = true, string highlightType = "error", string eval = "movement")
@@ -266,5 +276,10 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         }
         else
             standPoint = transform.position;
+    }
+
+    public bool IsCover()
+    {
+        return this.cover != null;
     }
 }

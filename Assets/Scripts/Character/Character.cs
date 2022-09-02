@@ -16,23 +16,23 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
     GameObject selectionCircle;
 
     [Header("--Pathfinding")]
-    public Tile currentTile;
-    public List<Tile> movePath;
+    [HideInInspector] public Tile currentTile;
+    [HideInInspector] public List<Tile> movePath;
     Tile moveTargetImmediate;
     Tile moveTargetDestination;
+    [HideInInspector] Grid grid;
+    [HideInInspector] public bool isAtDestination => IsAtDestination();
 
-    public bool isAtDestination => IsAtDestination();
     private bool IsAtDestination()
     {
         bool b = moveTargetDestination == null ? true : false;
         return b;
     }
-
-    public CoverObject currentCover;
+    [HideInInspector] public CoverObject currentCover;
 
     // Transform lookTarget; -- NOT IMPLEMENTED
-    Quaternion aimTowards = Quaternion.identity;
-    public Character targetCharacter;
+    [HideInInspector] Quaternion aimTowards = Quaternion.identity;
+    [HideInInspector] public Character targetCharacter;
 
     float velocityX = 0f;
     float velocityZ = 0f;
@@ -329,7 +329,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         }
     }
 
-    void MoveAction(Tile newTile, List<Tile> previewPath)
+    public void MoveAction(Tile newTile, List<Tile> previewPath)
     {
         // Sets the target destination tile
         // Once a path is found, begin movement routine
@@ -467,7 +467,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         return false;
     }
 
-    bool CheckIfCovered(Character attacker)
+    public bool CheckIfCovered(Character attacker)
     {
         // Checks if any cover objects are between character and attacker
         // Does raycast from character to attacker in order to find closest potential cover object
@@ -547,7 +547,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         }
     }
 
-    void ReloadAction()
+    public void ReloadAction()
     {
         // Reload action handler
 
