@@ -75,7 +75,7 @@ public class CharacterCamera : MonoBehaviour
         // Changes camera angle to look at the character's target
 
         Vector3 newPosition;
-        Vector3 lookPosition = (character.body.chest.transform.position + targetPosition) / 2;
+        Vector3 lookPosition = (character.GetCharacterChestPosition() + targetPosition) / 2;
 
         // Move camera to the appropriate side of the character depending on angle
         if (angle <= 0)

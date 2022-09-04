@@ -50740,23 +50740,23 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_Events:
   - time: 0.3
-    functionName: AnimationEvent
+    functionName: Event_PlaySound
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
-    intParameter: 8
+    intParameter: 2
     messageOptions: 0
   - time: 1.0666667
-    functionName: AnimationEvent
+    functionName: Event_PlaySound
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
-    intParameter: 9
+    intParameter: 3
     messageOptions: 0
   - time: 1.3
-    functionName: AnimationEvent
+    functionName: Event_OnAnimationEnd
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
-    intParameter: 5
+    intParameter: 7
     messageOptions: 0

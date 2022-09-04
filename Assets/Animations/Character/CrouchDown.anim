@@ -52108,9 +52108,9 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_Events:
   - time: 0.6333333
-    functionName: AnimationEvent
+    functionName: Event_OnAnimationEnd
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
-    intParameter: 6
+    intParameter: 8
     messageOptions: 0

@@ -66,7 +66,7 @@ public class Weapon : MonoBehaviour
     {
         // Used to place newly-created weapon objects into the default position
 
-        transform.parent = parent.body.handRight.Find("AttachPoint");
+        transform.parent = parent.GetAnimator().GetWeaponDefaultPosition();
         transform.position = transform.parent.position;
         transform.localPosition = transform.localPosition + offset;
 

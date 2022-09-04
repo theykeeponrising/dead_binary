@@ -12,7 +12,6 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
 
     [Header("-Character Attributes")]
     //[HideInInspector]
-    public List<string> flags = new List<string>();
     GameObject selectionCircle;
 
     [Header("--Pathfinding")]
@@ -31,48 +30,16 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
     [HideInInspector] public CoverObject currentCover;
 
     // Transform lookTarget; -- NOT IMPLEMENTED
-    [HideInInspector] Quaternion aimTowards = Quaternion.identity;
     [HideInInspector] public Character targetCharacter;
 
-    float velocityX = 0f;
-    float velocityZ = 0f;
+    public float velocityX = 0f;
+    public float velocityZ = 0f;
 
     [HideInInspector] public InCombatPlayerAction playerAction;
     [HideInInspector] public Inventory inventory;
-
-    [Header("--Animation")]
-    Transform[] boneTransforms;
-    class HumanBone
-    {
-        public HumanBodyBones bone;
-        public HumanBone(HumanBodyBones setBone)
-        {
-            bone = setBone;
-        }
-    }
-    HumanBone[] humanBones;
-    Animator animator;
-    AudioSource audioSource;
-
-    enum AnimationEventContext { SHOOT, TAKE_DAMAGE, RELOAD, STOW, DRAW, VAULT, CROUCH_DOWN, CROUCH_UP, FOOTSTEP_LEFT, FOOTSTEP_RIGHT };
-
-    public class Body
-    {
-        public Transform handLeft;
-        public Transform handRight;
-        public Transform chest;
-        public Transform head;
-        public Transform shoulder;
-        public Transform arm;
-        public Transform hand;
-        public Transform leg;
-        public Transform shin;
-        public Transform foot;
-        public Transform mask;
-    }
-    public Body body = new Body();
-    Rigidbody[] ragdoll;
-    [SerializeField] bool useTorsoTwist = true;
+    
+    CharacterAnimator charAnim;
+    CharacterSFX charSFX;
 
     // Attributes are mosty permanent descriptors about the character
     [System.Serializable] public class Attributes
@@ -117,28 +84,15 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
     {
         base.Awake();
         this.name = string.Format("{0} (Character)", attributes.name);
-        ragdoll = GetComponentsInChildren<Rigidbody>();
-        audioSource = GetComponent<AudioSource>();
+        charAnim = new CharacterAnimator(this);
+        charAnim.SetRagdoll(GetComponentsInChildren<Rigidbody>());
+        
+        charSFX = new CharacterSFX(this);
+        charSFX.SetAudioSource(GetComponent<AudioSource>());
 
-        // Animator, bones, and body transforms
-        animator = GetComponent<Animator>();
-        ragdoll = GetComponentsInChildren<Rigidbody>();
-        humanBones = new HumanBone[]
-        {
-            new HumanBone(HumanBodyBones.Chest),
-            new HumanBone(HumanBodyBones.UpperChest),
-            new HumanBone(HumanBodyBones.Spine)
-        };
-        boneTransforms = new Transform[humanBones.Length];
-        for (int i = 0; i < humanBones.Length; i++)
-            boneTransforms[i] = animator.GetBoneTransform(humanBones[i].bone);
-
-        body.chest = animator.GetBoneTransform(HumanBodyBones.Chest);
-        body.head = animator.GetBoneTransform(HumanBodyBones.Head);
-        body.handRight = animator.GetBoneTransform(HumanBodyBones.RightHand);
-
-        audioSource = GetComponent<AudioSource>();
         inventory = GetComponent<Inventory>();
+
+        
         
         if (objectTiles.Count > 0) currentTile = objectTiles[0];
         selectionCircle = transform.Find("SelectionCircle").gameObject;
@@ -147,16 +101,26 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         potentialTargets = null;
     }
 
+    public CharacterSFX GetSFX()
+    {
+        return charSFX;
+    }
+
+    public CharacterAnimator GetAnimator()
+    {
+        return charAnim;
+    }
+
     // Update is called once per frame
     void Update()
     {
-        SetAnimation();
+        charAnim.Update();
         Movement();
     }
 
     void LateUpdate()
     {
-        AimGetTarget();
+        charAnim.LateUpdate();
     }
 
     void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
@@ -177,6 +141,33 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
             selectionCircle.SetActive(false);
             selectionCircle.GetComponent<Renderer>().material.color = Color.white;
         }
+    }
+
+    //TODO: Should add additional events to specifically play a sound
+    //These ones probably aren't good places for that 
+    public void Event_OnAnimationStart(CharacterAnimator.AnimationEventContext context)
+    {
+        charAnim.Event_OnAnimationStart(context);
+    }
+
+    public void Event_OnAnimationEnd(CharacterAnimator.AnimationEventContext context)
+    {
+        charAnim.Event_OnAnimationEnd(context);
+    }
+
+    public void Event_PlayAnimation(CharacterAnimator.AnimationEventContext context)
+    {
+        charAnim.Event_PlayAnimation(context);
+    }
+
+    public void Event_PlaySound(CharacterSFX.AnimationEventSound sound)
+    {
+        charSFX.Event_PlaySound(sound);
+    }
+
+    public Vector3 GetCharacterChestPosition()
+    {
+        return charAnim.GetCharacterChestPosition();
     }
 
     public void SelectUnit(bool selected)
@@ -253,23 +244,6 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         }
     }
 
-    void SetAnimation()
-    {
-        // Changes movement animation based on flags
-
-        if (flags.Contains("moving"))
-        {
-            animator.SetFloat("velocityX", velocityX / GlobalManager.gameSpeed);
-            animator.SetFloat("velocityZ", velocityZ / GlobalManager.gameSpeed);
-        }
-        else
-        {
-            animator.SetBool("moving", false);
-            animator.SetFloat("velocityX", 0);
-            animator.SetFloat("velocityZ", 0);
-        }
-    }
-
     void Movement()
     {
         // Function that actually moves target towards destination
@@ -284,7 +258,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
             velocityZ = distance / 2;
 
             // Slow down movement speed if character is vaulting
-            float distanceDelta = (flags.Contains("vaulting")) ? 0.01f : 0.03f;
+            float distanceDelta = (charAnim.GetFlag("vaulting")) ? 0.01f : 0.03f;
 
             // If the final move target is also the most immediate one, slow down move speed as we approach
             if (moveTargetDestination == moveTargetImmediate)
@@ -309,7 +283,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         }
 
         // Gradually rotate character to expected look direction while behind cover
-        else if (currentCover && !AnimationPause())
+        else if (currentCover && !charAnim.AnimationPause())
         {
             // Get which the direction the cover is relative to the tile
             Vector3 lookDirection = (currentCover.transform.position - currentTile.transform.position);
@@ -324,8 +298,8 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(lookDirection - transform.position), 3 * Time.deltaTime);
 
             // Crouch down if its a half-sized cover
-            if (currentCover.coverSize == CoverObject.CoverSize.half && !flags.Contains("crouching"))
-                AnimationTransition(AnimationEventContext.CROUCH_DOWN);
+            if (currentCover.coverSize == CoverObject.CoverSize.half && !charAnim.GetFlag("crouching"))
+                ToggleCrouch(true, false);
         }
     }
 
@@ -341,7 +315,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
             foreach (Tile tile in previewPath)
                 tile.Highlighted(false);
 
-        if (!flags.Contains("moving"))
+        if (!charAnim.GetFlag("moving"))
         {
             if (CheckTileMove(newTile))
             {
@@ -366,11 +340,10 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
 
         // Movement routine
         // Sets "moving" flag before and removes after
-        AddFlag("moving");
-        animator.SetBool("moving", true);
+        charAnim.ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.MOVE, true);
 
         // Stand up if crouched
-        if (flags.Contains("crouching"))
+        if (charAnim.GetFlag("crouching"))
             ToggleCrouch(false, true);
 
         moveTargetDestination = movePath[movePath.Count - 1];
@@ -392,7 +365,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
                 yield return new WaitForSeconds(0.01f);
             }
             path.ChangeTileOccupant(this);
-            RemoveFlag("vaulting");
+            charAnim.ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.VAULT, false);
         }
 
         // Wait until character comes to a stop before completing movement action
@@ -404,15 +377,17 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
                 yield return new WaitForSeconds(0.001f);
         transform.position = new Vector3(currentTile.standPoint.x, 0f, currentTile.standPoint.z);
 
-        // Clear movement flags
-        RemoveFlag("moving");
+        // End movement animation
+        charAnim.ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.MOVE, false);
 
         // Register cover object
         if (currentTile.cover)
         {
             currentCover = currentTile.cover;
-            if (currentTile.cover.coverSize == CoverObject.CoverSize.half && !flags.Contains("crouching"))
-                AnimationTransition(AnimationEventContext.CROUCH_DOWN);
+            //Crouch, should maybe set a bool outside of the animator
+            if (currentTile.cover.coverSize == CoverObject.CoverSize.half && !charAnim.GetFlag("crouching"))
+                // charAnim.AnimationTransition(CharacterAnimator.AnimationEventContext.CROUCH_DOWN);
+                ToggleCrouch(true, false);
         }
         moveTargetImmediate = null;
         moveTargetDestination = null;
@@ -443,7 +418,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
     bool CheckForObstacle()
     {
         // Checks a short distance in front of character for objects in the "VaultOver" layer
-        if (flags.Contains("vaulting"))
+        if (charAnim.GetFlag("vaulting"))
             return false;
 
         Vector3 direction = (moveTargetImmediate.transform.position - transform.position);
@@ -457,10 +432,8 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         {
             if (hit.collider.GetComponent<CoverObject>().canVaultOver)
             {
-                AddFlag("vaulting");
+                charAnim.ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.VAULT, true);
                 //animator.Play("Default", inventory.equippedWeapon.weaponLayer);
-                animator.Play("Default");
-                animator.SetTrigger("vaulting");
                 return true;
             }
         }
@@ -503,18 +476,16 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         {
             // If crouching, do not play stow animation
             // This is until we can get a proper crouch-stow animation
-            if (!flags.Contains("crouching"))
+            if (!charAnim.GetFlag("crouching"))
             {
-                AddFlag("stowing");
-                animator.Play("Stow");
-                while (flags.Contains("stowing"))
+                charAnim.ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.STOW, true);
+                while (charAnim.GetFlag("stowing"))
                     yield return new WaitForSeconds(0.01f);
             }
             else
             {
-                AnimationEvent(AnimationEventContext.STOW);
+                charAnim.ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.STOW, false);
             }
-            
         }
 
         // Equipping the new weapon
@@ -525,24 +496,23 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
             // Enable weapon object, set position and animation layer
             inventory.equippedWeapon.gameObject.SetActive(true);
             inventory.equippedWeapon.DefaultPosition(this);
-            animator.SetLayerWeight(inventory.equippedWeapon.weaponLayer, 1);
-            animator.SetFloat("animSpeed", inventory.equippedWeapon.attributes.animSpeed);
+            
+            charAnim.SetLayerWeight(inventory.equippedWeapon.weaponLayer, 1);
+            charAnim.SetAnimationSpeed(inventory.equippedWeapon.attributes.animSpeed);
 
             // If crouching, do not play draw animation
             // This is until we can get a proper crouch-draw animation
-            if (!flags.Contains("crouching"))
+            if (!charAnim.GetFlag("crouching"))
             {
                 inventory.equippedWeapon.PlaySound(Weapon.WeaponSound.SWAP, this);
+                charAnim.ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.DRAW, true);
 
-                AddFlag("drawing");
-                //animator.Play("Draw", inventory.equippedWeapon.weaponLayer);
-                animator.Play("Draw");
-                while (flags.Contains("drawing"))
+                while (charAnim.GetFlag("drawing"))
                     yield return new WaitForSeconds(0.01f);
             }
             else
             {
-                AnimationEvent(AnimationEventContext.DRAW);
+                charAnim.ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.DRAW, false);
             }
         }
     }
@@ -557,56 +527,15 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
             return;
         }
         stats.actionPointsCurrent -= currentAction.cost;
-        AddFlag("reload");
-        animator.Play("Reload");
+        charAnim.ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.RELOAD, true);
         inventory.equippedWeapon.Reload();
     }
 
-    void AimGetTarget()
-    {
-        // Twists characters torso to aim gun at target
-
-        if (!targetCharacter || !useTorsoTwist)
-            return;
-        
-        // Iterations improve accuracy of aim position
-        int iterations = 10;
-
-        for (int i = 0; i < iterations; i++)
-        {
-            Vector3 targetPosition = GetTargetPosition();
-            Vector3 targetDirection = targetPosition - inventory.equippedWeapon.transform.position;
-            GetComponentInChildren<CharacterCamera>().AdjustAngle(targetDirection.x, targetPosition);
-
-            for (int b = 0; b < boneTransforms.Length; b++)
-            {
-                // Gets the rotation needed to point weapon at enemy
-                Transform bone = boneTransforms[b];
-                Vector3 aimDirection = inventory.equippedWeapon.transform.forward;
-                
-
-                // Updates rotation up until the actual shoot animation happens
-                if (flags.Contains("aiming"))
-                    aimTowards = Quaternion.FromToRotation(aimDirection, targetDirection);
-
-                // Gets absolute angle
-                float dot = Vector3.Dot(targetDirection.normalized, transform.forward);
-                float angle = Mathf.Acos(dot) * Mathf.Rad2Deg;
-
-                // Rotates the character to face the target
-                if (Mathf.Abs(angle) > 70f) transform.LookAt(new Vector3(targetPosition.x, 0f, targetPosition.z));
-                bone.rotation = (aimTowards * bone.rotation).normalized;
-
-                // TO DO -- Fix weirdness during shoot animation
-            }
-        }
-    }
-
-    Vector3 GetTargetPosition()
+    public Vector3 GetTargetPosition()
     {
         // Gets target's position relative to the tip of the gun
 
-        Vector3 targetDirection = targetCharacter.body.chest.position - inventory.equippedWeapon.transform.position;
+        Vector3 targetDirection = targetCharacter.GetCharacterChestPosition() - inventory.equippedWeapon.transform.position;
         Vector3 aimDirection = inventory.equippedWeapon.transform.forward;
         float blendOut = 0.0f;
         float angleLimit = 90f;
@@ -627,171 +556,40 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         // Performs the shoot animation and inflicts damage on the target
         // When done, returns flags and physics to default
 
-        animator.SetBool("aiming", true);
-        animator.updateMode = AnimatorUpdateMode.AnimatePhysics;
+        charAnim.ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.AIMING, true);
+
+        // animator.SetBool("aiming", true);
+        // animator.updateMode = AnimatorUpdateMode.AnimatePhysics;
 
         yield return new WaitForSeconds(0.5f);
-        AddFlag("aiming");
+        charAnim.AddFlag("aiming");
         yield return new WaitForSeconds(0.25f);
 
         // Inflict damage on target character
         if (shootTarget)
             shootTarget.TakeDamage(this, inventory.equippedWeapon.stats.damage, distanceToTarget);
 
-        AddFlag("shooting");
-        animator.Play("Shoot");
+        charAnim.ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.SHOOT, true);
         inventory.equippedWeapon.stats.ammoCurrent -= 1;
 
         // Wait until shoot state completes
         while (playerAction.stateMachine.GetCurrentState().GetType() == typeof(SelectedStates.ShootTarget)) yield return new WaitForSeconds(0.01f);
 
         // If target is dodging, remove flag        
-        if (shootTarget && shootTarget.flags.Contains("dodging")) shootTarget.RemoveFlag("dodging");
+        if (shootTarget && shootTarget.charAnim.GetFlag("dodging")) shootTarget.charAnim.RemoveFlag("dodging");
 
-        // Remove shooting flag
-        RemoveFlag("shooting");
-        animator.SetBool("aiming", false);
-        RemoveFlag("aiming");
-        animator.updateMode = AnimatorUpdateMode.Normal;
-    }
-
-    bool AnimatorIsPlaying()
-    {
-        // True/False whether an animation is currently playing on the equipped weapon layer.
-        // Note -- lengthy transitions will not work
-
-        return animator.GetCurrentAnimatorStateInfo(inventory.equippedWeapon.weaponLayer).length > animator.GetCurrentAnimatorStateInfo(inventory.equippedWeapon.weaponLayer).normalizedTime;
-    }
-
-    void AnimationTransition(AnimationEventContext context)
-    {
-        // Used to better control when circumstantial animations are played
-
-        if (AnimationPause())
-            return;
-
-        switch (context)
-        {
-            case (AnimationEventContext.CROUCH_DOWN):
-                ToggleCrouch(true);
-                break;
-            case (AnimationEventContext.CROUCH_UP):
-                ToggleCrouch(false);
-                break;
-        }
-    }
-
-    bool AnimationPause()
-    {
-        // True/False if any of the listed animations are playing
-
-        bool[] uninterruptibleAnims = { 
-            animator.GetCurrentAnimatorStateInfo(inventory.equippedWeapon.weaponLayer).IsName("Aiming"), 
-            animator.GetCurrentAnimatorStateInfo(inventory.equippedWeapon.weaponLayer).IsName("Shoot"), 
-            animator.GetCurrentAnimatorStateInfo(inventory.equippedWeapon.weaponLayer).IsName("Crouch-Up"),
-            animator.GetCurrentAnimatorStateInfo(inventory.equippedWeapon.weaponLayer).IsName("Crouch")};
-        return uninterruptibleAnims.Any(x => x == true);
-    }
-
-    void AnimationEvent(AnimationEventContext context)
-    {
-        // Handler for animation events
-        // Evaluate context and perform appropriate actions
-
-        // Weapon shooting effect and sound
-        switch (context)
-        {
-            // Fire weapon effect
-            case (AnimationEventContext.SHOOT):
-                inventory.equippedWeapon.Shoot();
-                break;
-
-            // Weapon impact effect on target
-            case (AnimationEventContext.TAKE_DAMAGE):
-                targetCharacter.TakeDamageEffect(inventory.equippedWeapon);
-                break;
-
-            // Stow weapon animation is completed
-            case (AnimationEventContext.STOW):
-                RemoveFlag("stowing");
-                inventory.equippedWeapon.gameObject.SetActive(false);
-                animator.SetLayerWeight(inventory.equippedWeapon.weaponLayer, 0);
-                break;
-
-            // Draw weapon animation is completed
-            case (AnimationEventContext.DRAW):
-                RemoveFlag("drawing");
-                break;
-
-            // Reload weapon animation is completed
-            case (AnimationEventContext.RELOAD):
-                RemoveFlag("reload");
-                inventory.equippedWeapon.stats.ammoCurrent = inventory.equippedWeapon.stats.ammoMax;
-                break;
-
-            // Reload weapon animation is completed -- NOT YET IMPLEMENTED
-            case (AnimationEventContext.VAULT):
-                RemoveFlag("vaulting");
-                break;
-
-            // Crouch-down
-            case (AnimationEventContext.CROUCH_DOWN):
-                AddFlag("crouching");
-                break;
-
-            // Crouch-up
-            case (AnimationEventContext.CROUCH_UP):
-                RemoveFlag("crouching");
-                break;
-
-            // Footstep Left
-            case (AnimationEventContext.FOOTSTEP_LEFT):
-                Footsteps(AnimationEventContext.FOOTSTEP_LEFT);
-                break;
-
-            // Footstep
-            case (AnimationEventContext.FOOTSTEP_RIGHT):
-                Footsteps(AnimationEventContext.FOOTSTEP_RIGHT);
-                break;
-        }
+        // Shooting animation completed (should maybe just implement this with a callback function, honestly)
+        charAnim.ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.SHOOT, false);
+        charAnim.ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.AIMING, false);
+        charAnim.ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.IDLE, true);
     }
 
     void ToggleCrouch(bool crouching=false, bool instant=false)
     {
         // Placeholder function
         // Test crouch animation when button pressed
-
-        if (!crouching)
-        {
-            animator.SetBool("crouching", false);
-            if (instant) RemoveFlag("crouching");
-        }
-        else
-        {
-            animator.SetBool("crouching", true);
-            if (instant) AddFlag("crouching");
-        }
-    }
-
-    void Footsteps(AnimationEventContext whichFoot)
-    {
-        // Plays a random footstep sound based on tile data
-
-        AudioClip footstep = AudioManager.Instance.GetRandomFootstepSound(currentTile.footstepType);
-        AudioSource footAudioSource;
-
-        // Determine which foot to play the sound at
-        if (whichFoot == AnimationEventContext.FOOTSTEP_LEFT)
-            footAudioSource = animator.GetBoneTransform(HumanBodyBones.LeftFoot).GetComponent<AudioSource>();
-        else
-            footAudioSource = animator.GetBoneTransform(HumanBodyBones.RightFoot).GetComponent<AudioSource>();
-
-        // Prevent overlapping footstep sounds from the same foot
-        if (!footAudioSource.isPlaying)
-            footAudioSource.Stop();
-        
-        if (velocityZ > 0.75f)
-            footAudioSource.PlayOneShot(footstep);
+        // Just call char animation for now. Left in character.cs in case of more crouching logic
+        charAnim.ToggleCrouch(crouching, instant);
     }
 
     bool RollForHit(Character attacker, int distanceToTarget)
@@ -827,7 +625,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         if (!RollForHit(attacker, distanceToTarget))
         {
             Debug.Log(string.Format("{0} missed target {1}!", attacker.attributes.name, attributes.name));
-            AddFlag("dodging");
+            charAnim.ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.DODGE, true);
             return;
         }
 
@@ -852,54 +650,20 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         stats.healthCurrent += amount;
     }
 
-    public void TakeDamageEffect(Weapon weapon=null)
-    {
-        // Animation that plays when character is taking damage
-        // Damage is not actually applied in this function
-
-        if (flags.Contains("dodging"))
-        {
-            // TO DO -- Play dodging animation instead
-            return;
-        }
-
-        // Get impact sound
-        AudioClip impactSound = AudioManager.Instance.GetRandomImpactSound(impactType);
-        audioSource.PlayOneShot(impactSound);
-
-        // Effect shown when character is hit
-        if (animator.GetCurrentAnimatorStateInfo(inventory.equippedWeapon.weaponLayer).IsName("Damage2"))
-            animator.Play("Damage3", 0, normalizedTime: .1f);
-        else if (weapon.weaponImpact == Weapon.WeaponImpact.HEAVY)
-            animator.Play("Damage1");
-        else
-            animator.Play("Damage2");
-    }
-
     IEnumerator Death(Character attacker, Vector3 attackDirection, float impactForce = 2f)
     {
         // Disables animator, turns on ragdoll effect, and applies a small force to push the character over
 
         // Wait for attacker animation to complete
-        while (attacker.AnimatorIsPlaying())
+        while (attacker.GetAnimator().AnimatorIsPlaying())
             yield return new WaitForSeconds(0.01f);
 
         // Disable top collider
         GetComponent<CapsuleCollider>().enabled = false;
 
         // Disable animator and top rigidbody
-        animator.enabled = false;
-        Destroy(ragdoll[0]);
-        
-        // Enable bodypart physics for the ragdoll effect
-        foreach (Rigidbody rag in ragdoll)
-        {
-            rag.isKinematic = false;
-            rag.GetComponent<Collider>().isTrigger = false;
-        }
+        charAnim.OnDeath(attackDirection * impactForce, ForceMode.Impulse);
 
-        // Apply impact force to center of mass
-        body.chest.GetComponent<Rigidbody>().AddForce(attackDirection * impactForce, ForceMode.Impulse);
         gameObject.layer = LayerMask.NameToLayer("Ignore Raycast"); // TO DO -- Layer specifically for dead characters??
 
         // Remove player selection
@@ -941,7 +705,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
                         targetCharacter = selectedTarget;
                         stats.actionPointsCurrent -= currentAction.cost;
                         StartCoroutine(ShootWeapon(distanceToTarget, targetCharacter));
-                        RemoveFlag("targeting");
+                        // RemoveFlag("targeting");
                     }
                     else
                     {
@@ -958,29 +722,17 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         // Target selected with left-click will have action done to it (such as attack action)
 
         GetComponentInChildren<CharacterCamera>().enabled = true;
-        animator.SetBool("aiming", true);
-        animator.updateMode = AnimatorUpdateMode.AnimatePhysics;
-        StartCoroutine(WaitForAiming());
+        charAnim.ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.AIMING, true);
         ToggleCrouch(false);
     }
 
-    IEnumerator WaitForAiming()
-    {
-        // Small buffer to prevent janky torso twist
-
-        while (flags.Contains("crouching")) yield return new WaitForSeconds(0.01f);
-        yield return new WaitForSeconds(0.25f);
-        AddFlag("aiming");
-    }
 
     public void ClearTarget()
     {
         // Removes targeting flag and combat stance
 
         GetComponentInChildren<CharacterCamera>().enabled = false;
-        animator.SetBool("aiming", false);
-        animator.updateMode = AnimatorUpdateMode.Normal;
-        RemoveFlag("aiming");
+        charAnim.ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.AIMING, false);
         targetCharacter = null;
     }
 
@@ -990,23 +742,5 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         // Ideally this would be called when a player's turn is started.
 
         stats.actionPointsCurrent = stats.actionPointsMax;
-    }
-
-    void AddFlag(string flag)
-    {
-        // Handler for adding new flags
-        // Used to prevent duplicate flags
-
-        if (!flags.Contains(flag))
-            flags.Add(flag);
-    }
-
-    void RemoveFlag(string flag)
-    {
-        // Handler for adding new flags
-        // Used for consistency with AddFlag function
-
-        if (flags.Contains(flag))
-            flags.Remove(flag);
     }
 }
