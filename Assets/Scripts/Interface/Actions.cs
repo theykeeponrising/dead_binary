@@ -50,6 +50,7 @@ public class Actions : MonoBehaviour
     public static Action action_useItem = new Action("Use Item", ActionsList.USEITEM, "useItem", 1, 0, ActionButtons.btn_action_useItem);
 
     // Dictionary used to match enum to actual action class object
+    // Note - not all actions in ActionsList will correspond to a button! Some actions are enemy-only, etc.
     public static Dictionary<ActionsList, Action> ActionsDict = new Dictionary<ActionsList, Action>() {
         { ActionsList.MOVE, action_move },
         { ActionsList.SHOOT, action_shoot },

@@ -9,7 +9,9 @@ public class CharacterAnimator
 {
     [Header("--Animation")]
     Transform[] boneTransforms;
-    Character character;
+    Unit unit;
+
+    //TODO: Maybe handle these in unit class
     public List<string> flags = new List<string>();
 
     [HideInInspector] Quaternion aimTowards = Quaternion.identity;
@@ -44,13 +46,13 @@ public class CharacterAnimator
 
     public enum AnimationEventContext { SHOOT, TAKE_DAMAGE, AIMING, RELOAD, STOW, DRAW, DODGE, VAULT, CROUCH_DOWN, CROUCH_UP, FOOTSTEP_LEFT, FOOTSTEP_RIGHT, IDLE, MOVE };
 
-    public CharacterAnimator(Character character)
+    public CharacterAnimator(Unit unit)
     {
-        this.character = character;
+        this.unit = unit;
 
         // Animator, bones, and body transforms
-        animator = character.GetComponent<Animator>();
-        ragdoll = character.GetComponentsInChildren<Rigidbody>();
+        animator = unit.GetComponent<Animator>();
+        ragdoll = unit.GetComponentsInChildren<Rigidbody>();
         humanBones = new HumanBone[]
         {
             new HumanBone(HumanBodyBones.Chest),
@@ -92,8 +94,8 @@ public class CharacterAnimator
 
         if (flags.Contains("moving"))
         {
-            animator.SetFloat("velocityX", character.velocityX / GlobalManager.gameSpeed);
-            animator.SetFloat("velocityZ", character.velocityZ / GlobalManager.gameSpeed);
+            animator.SetFloat("velocityX", unit.velocityX / GlobalManager.gameSpeed);
+            animator.SetFloat("velocityZ", unit.velocityZ / GlobalManager.gameSpeed);
         }
         else
         {
@@ -123,7 +125,7 @@ public class CharacterAnimator
         // True/False whether an animation is currently playing on the equipped weapon layer.
         // Note -- lengthy transitions will not work
 
-        return animator.GetCurrentAnimatorStateInfo(character.inventory.equippedWeapon.weaponLayer).length > animator.GetCurrentAnimatorStateInfo(character.inventory.equippedWeapon.weaponLayer).normalizedTime;
+        return animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).length > animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).normalizedTime;
     }
 
     // void AnimationTransition(AnimationEventContext context)
@@ -149,10 +151,10 @@ public class CharacterAnimator
         // True/False if any of the listed animations are playing
 
         bool[] uninterruptibleAnims = { 
-            animator.GetCurrentAnimatorStateInfo(character.inventory.equippedWeapon.weaponLayer).IsName("Aiming"), 
-            animator.GetCurrentAnimatorStateInfo(character.inventory.equippedWeapon.weaponLayer).IsName("Shoot"), 
-            animator.GetCurrentAnimatorStateInfo(character.inventory.equippedWeapon.weaponLayer).IsName("Crouch-Up"),
-            animator.GetCurrentAnimatorStateInfo(character.inventory.equippedWeapon.weaponLayer).IsName("Crouch")};
+            animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Aiming"), 
+            animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Shoot"), 
+            animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Crouch-Up"),
+            animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Crouch")};
         return uninterruptibleAnims.Any(x => x == true);
     }
 
@@ -190,7 +192,7 @@ public class CharacterAnimator
                 animator.updateMode = AnimatorUpdateMode.AnimatePhysics;
 
                 //Non-monobehaviour, so coroutine called through Character
-                character.StartCoroutine(WaitForAiming());
+                unit.StartCoroutine(WaitForAiming());
                 break;
             
             case (AnimationEventContext.DODGE):
@@ -250,7 +252,7 @@ public class CharacterAnimator
             case (AnimationEventContext.RELOAD):
                 // Reload weapon animation is completed
                 RemoveFlag("reload");
-                character.inventory.equippedWeapon.stats.ammoCurrent = character.inventory.equippedWeapon.stats.ammoMax;
+                unit.inventory.equippedWeapon.stats.ammoCurrent = unit.inventory.equippedWeapon.stats.ammoMax;
                 break;
             
             case (AnimationEventContext.AIMING):
@@ -266,8 +268,8 @@ public class CharacterAnimator
             // Stow weapon animation is completed
             case (AnimationEventContext.STOW):
                 RemoveFlag("stowing");
-                character.inventory.equippedWeapon.gameObject.SetActive(false);
-                animator.SetLayerWeight(character.inventory.equippedWeapon.weaponLayer, 0);
+                unit.inventory.equippedWeapon.gameObject.SetActive(false);
+                animator.SetLayerWeight(unit.inventory.equippedWeapon.weaponLayer, 0);
                 break;
 
             // Draw weapon animation is completed
@@ -297,7 +299,7 @@ public class CharacterAnimator
         switch (context)
         {
             case (AnimationEventContext.TAKE_DAMAGE):
-                character.targetCharacter.GetAnimator().TakeDamageEffect(character.inventory.equippedWeapon);
+                unit.GetActor().targetCharacter.GetAnimator().TakeDamageEffect(unit.inventory.equippedWeapon);
                 break;
         }
     }
@@ -375,15 +377,15 @@ public class CharacterAnimator
 
         for (int i = 0; i < iterations; i++)
         {
-            Vector3 targetPosition = character.GetTargetPosition();
-            Vector3 targetDirection = targetPosition - character.inventory.equippedWeapon.transform.position;
-            character.GetComponentInChildren<CharacterCamera>().AdjustAngle(targetDirection.x, targetPosition);
+            Vector3 targetPosition = unit.GetActor().GetTargetPosition();
+            Vector3 targetDirection = targetPosition - unit.inventory.equippedWeapon.transform.position;
+            unit.GetComponentInChildren<CharacterCamera>().AdjustAngle(targetDirection.x, targetPosition);
 
             for (int b = 0; b < boneTransforms.Length; b++)
             {
                 // Gets the rotation needed to point weapon at enemy
                 Transform bone = boneTransforms[b];
-                Vector3 aimDirection = character.inventory.equippedWeapon.transform.forward;
+                Vector3 aimDirection = unit.inventory.equippedWeapon.transform.forward;
                 
 
                 // Updates rotation up until the actual shoot animation happens
@@ -391,11 +393,11 @@ public class CharacterAnimator
                     aimTowards = Quaternion.FromToRotation(aimDirection, targetDirection);
 
                 // Gets absolute angle
-                float dot = Vector3.Dot(targetDirection.normalized, character.transform.forward);
+                float dot = Vector3.Dot(targetDirection.normalized, unit.transform.forward);
                 float angle = Mathf.Acos(dot) * Mathf.Rad2Deg;
 
                 // Rotates the character to face the target
-                if (Mathf.Abs(angle) > 70f) character.transform.LookAt(new Vector3(targetPosition.x, 0f, targetPosition.z));
+                if (Mathf.Abs(angle) > 70f) unit.transform.LookAt(new Vector3(targetPosition.x, 0f, targetPosition.z));
                 bone.rotation = (aimTowards * bone.rotation).normalized;
 
                 // TO DO -- Fix weirdness during shoot animation
@@ -420,10 +422,10 @@ public class CharacterAnimator
         }
 
         // Play impact sound
-        character.GetSFX().PlayRandomImpactSound();
+        unit.GetSFX().PlayRandomImpactSound();
 
         // Effect shown when character is hit
-        if (animator.GetCurrentAnimatorStateInfo(character.inventory.equippedWeapon.weaponLayer).IsName("Damage2"))
+        if (animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Damage2"))
             animator.Play("Damage3", 0, normalizedTime: .1f);
         else if (weapon.weaponImpact == Weapon.WeaponImpact.HEAVY)
             animator.Play("Damage1");

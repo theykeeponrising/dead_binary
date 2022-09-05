@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Inventory : MonoBehaviour
 {
-    Character character;
+    Unit unit;
     public List<Weapon> weapons;
     [SerializeField] public List<Item> items;
     [SerializeField] private List<ItemStats> itemStats;
@@ -49,21 +49,21 @@ public class Inventory : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        character = GetComponent<Character>();
+        unit = GetComponent<Unit>();
 
         // Init starting weapons from inspector
         for (int index = 0; index < weapons.Count; index++)
         {
             weapons[index] = Instantiate(weapons[index]);
-            weapons[index].DefaultPosition(character);
+            weapons[index].DefaultPosition(unit);
             weapons[index].gameObject.SetActive(false);
         }
 
         // Equip first slotted weapon
         equippedWeapon = weapons[0];
         equippedWeapon.gameObject.SetActive(true);
-        character.GetComponent<Animator>().SetLayerWeight(equippedWeapon.weaponLayer, 1);
-        character.GetComponent<Animator>().SetFloat("animSpeed", equippedWeapon.attributes.animSpeed);
+        unit.GetComponent<Animator>().SetLayerWeight(equippedWeapon.weaponLayer, 1);
+        unit.GetComponent<Animator>().SetFloat("animSpeed", equippedWeapon.attributes.animSpeed);
 
         InitializeItems();
     }
@@ -127,15 +127,15 @@ public class Inventory : MonoBehaviour
 
         weapon = Instantiate(weapon);
         weapons.Add(weapon);
-        weapon.DefaultPosition(character);
+        weapon.DefaultPosition(unit);
         weapon.gameObject.SetActive(false);
 
         if (!equippedWeapon && weapons.IndexOf(weapon) == 0)
         {
             equippedWeapon = weapon;
             weapon.gameObject.SetActive(true);
-            character.GetComponent<Animator>().SetLayerWeight(weapon.weaponLayer, 1);
-            character.GetComponent<Animator>().SetFloat("animSpeed", weapon.attributes.animSpeed);
+            unit.GetComponent<Animator>().SetLayerWeight(weapon.weaponLayer, 1);
+            unit.GetComponent<Animator>().SetFloat("animSpeed", weapon.attributes.animSpeed);
         }
         return true;
     }
@@ -152,15 +152,15 @@ public class Inventory : MonoBehaviour
         }
 
         weapons.Add(weapon);
-        weapon.DefaultPosition(character);
+        weapon.DefaultPosition(unit);
         weapon.gameObject.SetActive(false);
 
         if (!equippedWeapon && weapons.IndexOf(weapon) == 0)
         {
             equippedWeapon = weapon;
             weapon.gameObject.SetActive(true);
-            character.GetComponent<Animator>().SetLayerWeight(weapon.weaponLayer, 1);
-            character.GetComponent<Animator>().SetFloat("animSpeed", weapon.attributes.animSpeed);
+            unit.GetComponent<Animator>().SetLayerWeight(weapon.weaponLayer, 1);
+            unit.GetComponent<Animator>().SetFloat("animSpeed", weapon.attributes.animSpeed);
         }
         return true;
     }

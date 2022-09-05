@@ -7,13 +7,13 @@ using UnityEngine.InputSystem;
 
 public class CharacterSFX
 {
-    Character character;
+    Unit unit;
     AudioSource audioSource;
     public enum AnimationEventSound { NONE, IMPACT, FOOTSTEP_LEFT, FOOTSTEP_RIGHT };
 
-    public CharacterSFX(Character character)
+    public CharacterSFX(Unit unit)
     {
-        this.character = character;
+        this.unit = unit;
     }
 
     public void PlayOneShot(AudioClip clip)
@@ -31,26 +31,26 @@ public class CharacterSFX
     {
         // Plays a random footstep sound based on tile data
 
-        AudioClip footstep = AudioManager.Instance.GetRandomFootstepSound(character.currentTile.footstepType);
+        AudioClip footstep = AudioManager.Instance.GetRandomFootstepSound(unit.currentTile.footstepType);
         AudioSource footAudioSource;
 
         // Determine which foot to play the sound at
         if (whichFoot == AnimationEventSound.FOOTSTEP_LEFT)
-            footAudioSource = character.GetAnimator().GetBoneTransform(HumanBodyBones.LeftFoot).GetComponent<AudioSource>();
+            footAudioSource = unit.GetAnimator().GetBoneTransform(HumanBodyBones.LeftFoot).GetComponent<AudioSource>();
         else
-            footAudioSource = character.GetAnimator().GetBoneTransform(HumanBodyBones.RightFoot).GetComponent<AudioSource>();
+            footAudioSource = unit.GetAnimator().GetBoneTransform(HumanBodyBones.RightFoot).GetComponent<AudioSource>();
 
         // Prevent overlapping footstep sounds from the same foot
         if (!footAudioSource.isPlaying)
             footAudioSource.Stop();
         
-        if (character.velocityZ > 0.75f)
+        if (unit.velocityZ > 0.75f)
             footAudioSource.PlayOneShot(footstep);
     }
 
     public void PlayRandomImpactSound()
     {
-        AudioClip impactSound = AudioManager.Instance.GetRandomImpactSound(character.impactType);
+        AudioClip impactSound = AudioManager.Instance.GetRandomImpactSound(unit.impactType);
         PlayOneShot(impactSound);
     }
 

@@ -46,8 +46,9 @@ public class ActionPanelScript : MonoBehaviour
             panel.SetActive(true);
 
             List<Actions.ActionsList> actionsList = new List<Actions.ActionsList>();
-            foreach (Actions.ActionsList characterAction in playerAction.selectedCharacter.availableActions)
+            foreach (Actions.ActionsList characterAction in playerAction.selectedCharacter.GetAvailableActions())
             {
+                if (!Actions.ActionsDict.ContainsKey(characterAction)) continue;
                 if (Actions.ActionsDict[characterAction].buttonPath != null)
                 {
                     actionsList.Add(characterAction);

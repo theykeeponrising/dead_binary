@@ -35,11 +35,11 @@ public class EnemyUnit : Unit
         List<Actions.ActionsList> enemyActions = new List<Actions.ActionsList>();
 
         //If no ammo, either reload or switch weapon
-        if (character.inventory.equippedWeapon.stats.ammoCurrent == 0)
+        if (inventory.equippedWeapon.stats.ammoCurrent == 0)
         {
-            character.ReloadAction();
+            GetActor().ReloadAction();
             enemyActions.Add(Actions.ActionsList.RELOAD);
-            character.stats.actionPointsCurrent--;
+            stats.actionPointsCurrent--;
         }
 
         Debug.Log(oppFactionUnits.Count);
@@ -53,13 +53,13 @@ public class EnemyUnit : Unit
         
 
         //Use the rest of the units action points
-        while (character.stats.actionPointsCurrent >= 2) {
+        while (stats.actionPointsCurrent >= 2) {
             List<Actions.ActionsList> moveAndShootActions = MoveAndShoot(tilesInRange);
             enemyActions.AddRange(moveAndShootActions);
-            character.stats.actionPointsCurrent -= 2;
+            stats.actionPointsCurrent -= 2;
         }
 
-        while (character.stats.actionPointsCurrent > 0)
+        while (stats.actionPointsCurrent > 0)
         {
             //Find cover if possible
             Actions.ActionsList findCoverResult = FindCover(tilesInRange);
@@ -73,12 +73,12 @@ public class EnemyUnit : Unit
                 bool wouldKill = false;
                 foreach (Unit other in oppFactionUnits)
                 {
-                    float expectedDamage = CalculateExpectedDamage(this, other, this.character.currentTile);
-                    expectedDamage = Math.Min(expectedDamage, other.character.stats.healthCurrent);
+                    float expectedDamage = CalculateExpectedDamage(this, other, currentTile);
+                    expectedDamage = Math.Min(expectedDamage, other.stats.healthCurrent);
 
                     //Determine whether shooting the unit would kill
                     //Always favor shots that would kill
-                    if (expectedDamage == other.character.stats.healthCurrent && !wouldKill)
+                    if (expectedDamage == other.stats.healthCurrent && !wouldKill)
                     {
                         wouldKill = true;
                         highestExpectedDamage = expectedDamage;    
@@ -96,7 +96,7 @@ public class EnemyUnit : Unit
                 enemyActions.Add(Actions.ActionsList.SHOOT);
             } 
 
-            character.stats.actionPointsCurrent--;
+            stats.actionPointsCurrent--;
         }
         return enemyActions;
     }
@@ -108,7 +108,7 @@ public class EnemyUnit : Unit
         foreach (Tile tile in tilesInRange)
         {
             if (tile.IsCover()) {
-                character.MoveAction(tile, null);
+                GetActor().MoveAction(tile, null);
                 return Actions.ActionsList.MOVE;
             }
         }
@@ -135,11 +135,11 @@ public class EnemyUnit : Unit
             foreach (Unit other in oppFactionUnits)
             {
                 float expectedDamage = CalculateExpectedDamage(this, other, tile);
-                expectedDamage = Mathf.Min(expectedDamage, other.character.stats.healthCurrent);
+                expectedDamage = Mathf.Min(expectedDamage, other.stats.healthCurrent);
 
                 //Determine whether shooting the unit would kill
                 //Always favor shots that would kill
-                if (expectedDamage == other.character.stats.healthCurrent && !wouldKill)
+                if (expectedDamage == other.stats.healthCurrent && !wouldKill)
                 {
                     wouldKill = true;
                     highestExpectedDamage = expectedDamage;    
@@ -158,8 +158,8 @@ public class EnemyUnit : Unit
         }
 
         //Perform actions
-        character.MoveAction(bestTile, null);
-        character.ShootAction(currentTarget.character, "attack");
+        GetActor().MoveAction(bestTile, null);
+        GetActor().ShootAction(currentTarget, "attack");
 
         List<Actions.ActionsList> enemyActions = new List<Actions.ActionsList>();
         enemyActions.Add(Actions.ActionsList.MOVE);

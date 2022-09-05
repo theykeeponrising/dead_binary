@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 public class CharacterCamera : MonoBehaviour
 {
-    Character character;
+    Unit unit;
     Camera characterCamera;
     PhysicsRaycaster raycaster;
     AudioListener audioListener;
@@ -13,12 +13,12 @@ public class CharacterCamera : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        character = GetComponentInParent<Character>();
+        unit = GetComponentInParent<Unit>();
         characterCamera = GetComponent<Camera>();
         raycaster = GetComponent<PhysicsRaycaster>();
         audioListener = GetComponent<AudioListener>();
 
-        name = string.Format("{0} (Camera)", character.attributes.name);
+        name = string.Format("{0} (Camera)", unit.attributes.name);
 
         Camera.main.gameObject.GetComponent<CameraHandler>().AddSceneCamera(characterCamera);
     }
@@ -46,20 +46,20 @@ public class CharacterCamera : MonoBehaviour
     void EnableCamera()
     {
         // If this character isn't selected, disalbe the character camera
-        if (character.playerAction.selectedCharacter != character)
+        if (unit.GetActor().GetPlayerAction().selectedCharacter != unit)
         {
             characterCamera.enabled = false;
             return;
         }
 
         // State machine is "Choosing Target"
-        bool targeting = (character.playerAction.stateMachine.GetCurrentState().GetType() == typeof(SelectedStates.ChoosingShootTarget));
+        bool targeting = (unit.GetActor().GetPlayerAction().stateMachine.GetCurrentState().GetType() == typeof(SelectedStates.ChoosingShootTarget));
 
         // State machine is "Shooting Target"
-        bool shooting = (character.playerAction.stateMachine.GetCurrentState().GetType() == typeof(SelectedStates.ShootTarget));
+        bool shooting = (unit.GetActor().GetPlayerAction().stateMachine.GetCurrentState().GetType() == typeof(SelectedStates.ShootTarget));
 
         // There is a target character
-        bool target = character.targetCharacter != null;
+        bool target = unit.GetActor().targetCharacter != null;
 
         // If we are in "choosing" or "shooting" target states, and there is a valid target, we use the character camera
         bool useCharacterCam = ((targeting || shooting) && target) ? true : false;
@@ -75,7 +75,7 @@ public class CharacterCamera : MonoBehaviour
         // Changes camera angle to look at the character's target
 
         Vector3 newPosition;
-        Vector3 lookPosition = (character.GetCharacterChestPosition() + targetPosition) / 2;
+        Vector3 lookPosition = (unit.GetAnimator().GetCharacterChestPosition() + targetPosition) / 2;
 
         // Move camera to the appropriate side of the character depending on angle
         if (angle <= 0)

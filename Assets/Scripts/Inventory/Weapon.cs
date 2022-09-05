@@ -62,7 +62,7 @@ public class Weapon : MonoBehaviour
         gunLight = GetComponentInChildren<Light>();
     }
 
-    public void DefaultPosition(Character parent)
+    public void DefaultPosition(Unit parent)
     {
         // Used to place newly-created weapon objects into the default position
 
@@ -131,7 +131,7 @@ public class Weapon : MonoBehaviour
         gameObject.AddComponent<Rigidbody>();
     }
 
-    public void PlaySound(WeaponSound weaponSound, Character character=null)
+    public void PlaySound(WeaponSound weaponSound, Unit character=null)
     {
         // Plays sound from selected weapon sound choice
         // Optionally can play sound from Character's audio source instead of weapon
