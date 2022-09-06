@@ -19,7 +19,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     [HideInInspector]
     public Vector3 standPoint;
     InCombatPlayerAction playerAction;
-    public AudioManager.FootstepType footstepType;
+    public AudioManager.FootstepMaterial footstepMaterial;
     Grid grid;
     
     // Use this for initialization

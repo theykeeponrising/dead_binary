@@ -45,7 +45,7 @@ AudioSource:
   m_GameObject: {fileID: 2006476113689740478}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: -4200897470393299365, guid: 9bdf92d4bdd4c0e43bf3b9327857da03, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 0.5
@@ -198,6 +198,7 @@ MonoBehaviour:
   weaponHeld: 0
   weaponLayer: 0
   weaponFamily: 0
+  weaponImpact: 0
   fireSound: []
   reloadSound: []
   swapSound:
@@ -206,6 +207,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: e4c8745ff880cec44a167323b3bcaace, type: 3}
   - {fileID: 8300000, guid: a8a448ce98f99374286c2a145c80ffce, type: 3}
   offset: {x: 0, y: 0, z: 0}
+  attributes:
+    animSpeed: 1
   stats:
     damage: 0
     minRange: 0

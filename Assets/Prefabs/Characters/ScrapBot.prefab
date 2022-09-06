@@ -254,7 +254,7 @@ AudioSource:
   m_GameObject: {fileID: 618769049335627071}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 235998193486780706, guid: 9bdf92d4bdd4c0e43bf3b9327857da03, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 0.1
@@ -1942,7 +1942,7 @@ AudioSource:
   m_GameObject: {fileID: 3936384552286493365}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 235998193486780706, guid: 9bdf92d4bdd4c0e43bf3b9327857da03, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 0.1
@@ -2285,9 +2285,9 @@ AudioSource:
   m_GameObject: {fileID: 4043852725619244410}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 8184136527535081744, guid: 9bdf92d4bdd4c0e43bf3b9327857da03, type: 2}
   m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 0.5
   m_Pitch: 1
   Loop: 0
@@ -2386,8 +2386,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectTiles: []
   isTraversable: 0
-  impactType: 0
+  impactType: 1
   grid: {fileID: 0}
+  flags: []
   inventory: {fileID: 0}
   currentTile: {fileID: 0}
   currentCover: {fileID: 0}
@@ -2404,12 +2405,14 @@ MonoBehaviour:
   attributes:
     name: Scrapbot
     faction: 2
+    footstepSource: 1
   velocityX: 0
   velocityZ: 0
   unitStrategy: 0
   DamageWeight: 0
   KillWeight: 0
   CoverWeight: 0
+  isActing: 0
 --- !u!114 &3809991894843442051
 MonoBehaviour:
   m_ObjectHideFlags: 0

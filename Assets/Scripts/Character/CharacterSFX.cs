@@ -32,7 +32,7 @@ public class CharacterSFX
     {
         // Plays a random footstep sound based on tile data
 
-        AudioClip footstep = AudioManager.Instance.GetRandomFootstepSound(unit.currentTile.footstepType);
+        AudioClip footstep = AudioManager.Instance.GetRandomFootstepSound(unit.currentTile.footstepMaterial, unit.attributes.footstepSource);
         AudioSource footAudioSource;
 
         // Determine which foot to play the sound at

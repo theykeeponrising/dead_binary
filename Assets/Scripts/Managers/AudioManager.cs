@@ -34,11 +34,12 @@ public class AudioManager : MonoBehaviour
         return ImpactSounds[impactType][Random.Range(0, range)];
     }
 
-    public enum ImpactType { FLESH, ROBOT, CONCRETE };
+    public enum ImpactType { FLESH, ROBOT, CONCRETE, METAL };
 
     [SerializeField] AudioClip[] impactFlesh;
     [SerializeField] AudioClip[] impactRobot;
     [SerializeField] AudioClip[] impactConcrete;
+    [SerializeField] AudioClip[] impactMetal;
 
     [SerializeField] Dictionary<ImpactType, AudioClip[]> ImpactSounds;
 
@@ -46,29 +47,31 @@ public class AudioManager : MonoBehaviour
     // Footstep sounds //
     /////////////////////
 
-    public AudioClip GetFootstepSound(FootstepType footstepType, int index)
+    public AudioClip GetFootstepSound(FootstepMaterial footstepMaterial, FootstepSource footstepSource, int index)
     {
         // Used to get a specific footstep sound
 
-        return FootstepSounds[footstepType][index];
+        return FootstepSounds[footstepMaterial][footstepSource][index];
     }
 
-    public AudioClip GetRandomFootstepSound(FootstepType footstepType)
+    public AudioClip GetRandomFootstepSound(FootstepMaterial footstepMaterial, FootstepSource footstepSource)
     {
         // Returns a random footstep sound for footstep type
 
-        int range = Instance.FootstepSounds[footstepType].Length;
-        return FootstepSounds[footstepType][Random.Range(0, range)];
+        int range = Instance.FootstepSounds[footstepMaterial][footstepSource].Length;
+        return FootstepSounds[footstepMaterial][footstepSource][Random.Range(0, range)];
     }
 
-    public enum FootstepType { CONCRETE }; // METAL, DIRT, WATER
+    public enum FootstepSource { HUMAN, SCRAPBOT }
+    public enum FootstepMaterial { CONCRETE }; // METAL, DIRT, WATER
 
     [SerializeField] AudioClip[] footstepConcrete;
     // public AudioClip[] footstepMetal;
     // public AudioClip[] footstepDirt;
     // public AudioClip[] footstepWater;
+    [SerializeField] AudioClip[] footstepScrapBot;
 
-    [SerializeField] Dictionary<FootstepType, AudioClip[]> FootstepSounds;
+    [SerializeField] Dictionary<FootstepMaterial, Dictionary<FootstepSource, AudioClip[]>> FootstepSounds;
 
     //////////////////////
     // Interface sounds //
@@ -130,9 +133,16 @@ public class AudioManager : MonoBehaviour
             {ImpactType.FLESH, Instance.impactFlesh },
             {ImpactType.ROBOT, Instance.impactRobot },
             {ImpactType.CONCRETE, Instance.impactConcrete },
+            {ImpactType.METAL, Instance.impactMetal },
         };
-        FootstepSounds = new Dictionary<FootstepType, AudioClip[]> {
-            {FootstepType.CONCRETE, Instance.footstepConcrete },
+
+        Dictionary<FootstepSource, AudioClip[]> footstepsType = new Dictionary<FootstepSource, AudioClip[]> {
+            {FootstepSource.HUMAN, Instance.footstepConcrete },
+            {FootstepSource.SCRAPBOT, Instance.footstepScrapBot },
+        };
+        FootstepSounds = new Dictionary<FootstepMaterial, Dictionary<FootstepSource, AudioClip[]>> {
+            {FootstepMaterial.CONCRETE, footstepsType },
+
         };
         InterfaceSounds = new Dictionary<InterfaceSFX, AudioClip[]> {
             {InterfaceSFX.MOUSE_CLICK, Instance.interfaceMouseClick },
