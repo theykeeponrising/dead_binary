@@ -182,7 +182,7 @@ public class CharacterAnimator
                 break;
             
             case (AnimationEventContext.RELOAD):
-                unit.AddFlag("reload");
+                unit.AddFlag("reloading");
                 animator.Play("Reload");
                 break;
             
@@ -250,7 +250,7 @@ public class CharacterAnimator
             
             case (AnimationEventContext.RELOAD):
                 // Reload weapon animation is completed
-                unit.RemoveFlag("reload");
+                unit.RemoveFlag("reloading");
                 unit.inventory.equippedWeapon.stats.ammoCurrent = unit.inventory.equippedWeapon.stats.ammoMax;
                 break;
             

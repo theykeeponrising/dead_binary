@@ -10,7 +10,7 @@ public class CharacterSFX
 {
     Unit unit;
     AudioSource audioSource;
-    public enum AnimationEventSound { NONE, IMPACT, FOOTSTEP_LEFT, FOOTSTEP_RIGHT };
+    public enum AnimationEventSound { NONE, IMPACT, FOOTSTEP_LEFT, FOOTSTEP_RIGHT, SHOOT };
 
     public CharacterSFX(Unit unit)
     {
@@ -65,6 +65,9 @@ public class CharacterSFX
                 break;
             case (AnimationEventSound.FOOTSTEP_RIGHT):
                 Footsteps(AnimationEventSound.FOOTSTEP_RIGHT);
+                break;
+            case (AnimationEventSound.SHOOT):
+                unit.inventory.equippedWeapon.Shoot();
                 break;
         }
         return;
