@@ -291,6 +291,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         // If attacked missed, do not take damage
         if (!RollForHit(attacker, distanceToTarget))
         {
+            if (currentCover) currentCover.Impact();
             Debug.Log(string.Format("{0} missed target {1}!", attacker.attributes.name, attributes.name));
             GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.DODGE, true);
             return;

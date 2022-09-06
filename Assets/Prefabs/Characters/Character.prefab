@@ -2063,7 +2063,7 @@ GameObject:
   - component: {fileID: 7324549121527466971}
   - component: {fileID: 1573632515060724147}
   - component: {fileID: 6291031834349497891}
-  - component: {fileID: 7324549121527466970}
+  - component: {fileID: 7167511141153434010}
   - component: {fileID: 3296876834387543054}
   m_Layer: 0
   m_Name: Character
@@ -2252,7 +2252,7 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &7324549121527466970
+--- !u!114 &7167511141153434010
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2261,34 +2261,32 @@ MonoBehaviour:
   m_GameObject: {fileID: 7323552420328571708}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a32bbe332c45aee41aa6226d2d2fe659, type: 3}
+  m_Script: {fileID: 11500000, guid: d38e621cc6af20644a82ca57d4ae6608, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   objectTiles: []
   isTraversable: 0
   impactType: 0
+  grid: {fileID: 0}
   flags: []
-  currentTile: {fileID: 0}
-  movePath: []
-  currentCover: {fileID: 0}
-  targetCharacter: {fileID: 0}
   inventory: {fileID: 0}
-  useTorsoTwist: 1
+  currentTile: {fileID: 0}
+  currentCover: {fileID: 0}
+  availableActions: 0000000001000000020000000300000005000000
   stats:
     healthCurrent: 10
     healthMax: 10
     movement: 5
-    aim: 5
-    armor: 0
-    dodge: 10
-    actionPointsCurrent: 0
+    aim: 6
+    armor: 4
+    dodge: 3
+    actionPointsCurrent: 2
     actionPointsMax: 2
   attributes:
-    name: 
-    faction: 0
-    footstep: 0
-  availableActions: 00000000010000000200000003000000
-  potentialTargets: []
+    name: Dummy
+    faction: 1
+  velocityX: 0
+  velocityZ: 0
 --- !u!114 &3296876834387543054
 MonoBehaviour:
   m_ObjectHideFlags: 0
