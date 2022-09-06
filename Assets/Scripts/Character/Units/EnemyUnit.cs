@@ -67,7 +67,6 @@ public class EnemyUnit : Unit
             stats.actionPointsCurrent--;
         }
 
-        Debug.Log(tilesInRange.Count);
         //If there's no tiles we can move to, or no enemies, do nothing
         if (tilesInRange.Count == 0 || oppFactionUnits.Count == 0) {
             enemyActions.Add(Actions.action_none);
@@ -152,8 +151,6 @@ public class EnemyUnit : Unit
         float highestExpectedDamage = 0.0f;
         bool wouldKill = false;
 
-        Debug.Log("Unit position:");
-        Debug.Log(transform.position);
         foreach (Tile tile in tilesInRange)
         {
             foreach (Unit other in oppFactionUnits)
