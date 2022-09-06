@@ -2386,7 +2386,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectTiles: []
   isTraversable: 0
-  impactType: 0
+  impactType: 1
   grid: {fileID: 0}
   flags: []
   inventory: {fileID: 0}
@@ -2405,6 +2405,7 @@ MonoBehaviour:
   attributes:
     name: Scrapbot
     faction: 2
+    footstepSource: 1
   velocityX: 0
   velocityZ: 0
   unitStrategy: 0

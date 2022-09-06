@@ -35,6 +35,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
     {
         public string name;
         public Faction faction;
+        public AudioManager.FootstepSource footstepSource;
     }
 
     // Stats are values that will be referenced and changed frequently during combat
