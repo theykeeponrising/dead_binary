@@ -26,6 +26,8 @@ public class InCombatPlayerAction
     private PlayerTurnState playerTurnState; 
     InCombatPlayerActionUI playerActionUI;
 
+    public Faction playerFaction = Faction.Good;
+
     private TextMeshProUGUI stateDebugText;
 
     public void Init(PlayerTurnState playerTurnState) 
@@ -148,6 +150,9 @@ public class InCombatPlayerAction
     {
         // Select action, character selected, previous selection
         // Change character selection
+
+        //Can't select enemy units or dead units.
+        if (targetCharacter && (targetCharacter.GetFlag("dead") || targetCharacter.attributes.faction != playerFaction)) return;
 
         // Clears current action bar
         actionPanelScript.gameObject.SetActive(false);
