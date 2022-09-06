@@ -12,18 +12,20 @@ public class EnemyTurnState : GameState
     {
         base.Init(parentState, stateHandler);
         this.stateEnum = StateHandler.State.EnemyTurnState;
-        this.enemyTurnProcess = new EnemyTurnProcess();
+        this.enemyTurnProcess = new EnemyTurnProcess(this);
     }
 
     public override void SetStateActive()
     {
-        enemyTurnProcess.ProcessTurn();
-
-        //TEMP: Add AI handling and etc.
-        this.ChangeState(StateHandler.State.PlayerTurnState);
+        enemyTurnProcess.ProcessTurn();   
     }
 
     public override void SetStateInactive()
     {
+    }
+
+    public void EndTurn()
+    {
+        this.ChangeState(StateHandler.State.PlayerTurnState);
     }
 }

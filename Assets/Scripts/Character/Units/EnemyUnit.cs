@@ -16,6 +16,11 @@ public class EnemyUnit : Unit
     public float KillWeight;
     public float CoverWeight;
 
+    public bool isActing = false;
+
+    //TODO: Maybe create a struct for an Enemyaction, with ActionsList, Tile, etc.
+    //And then process the actions in order? 
+    //Currently the actions happen at the same time so the robots shoot while moving and etc.
     public void ProcessUnitTurn()
     {
         OnTurnStart();
@@ -26,35 +31,49 @@ public class EnemyUnit : Unit
         List<Tile> tilesInRange = GetTilesInMoveRange();
 
         //Perform actions, and store actions taken in list
-        List<Actions.ActionsList> enemyActions = EnemyTurnActions(tilesInRange, oppFactionUnits);        
+        List<Actions.Action> enemyActions = EnemyTurnActions(tilesInRange, oppFactionUnits);        
+    }
+
+    public override void OnTurnStart()
+    {
+        base.OnTurnStart();
+        isActing = true;
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+        if (isActing)
+        {  
+            //TODO: Also check animations, and whether other actions are in progress
+            //Probably should have some combined method for units/characters in general that checks this
+            if (!GetActor().IsMoving()) isActing = false;
+        }
     }
 
     //Decide what to do with action points
-    public List<Actions.ActionsList> EnemyTurnActions(List<Tile> tilesInRange, List<Unit> oppFactionUnits)
+    public List<Actions.Action> EnemyTurnActions(List<Tile> tilesInRange, List<Unit> oppFactionUnits)
     {
-        List<Actions.ActionsList> enemyActions = new List<Actions.ActionsList>();
+        List<Actions.Action> enemyActions = new List<Actions.Action>();
 
         //If no ammo, either reload or switch weapon
         if (inventory.equippedWeapon.stats.ammoCurrent == 0)
         {
             GetActor().ReloadAction();
-            enemyActions.Add(Actions.ActionsList.RELOAD);
+            enemyActions.Add(Actions.action_reload);
             stats.actionPointsCurrent--;
         }
 
-        Debug.Log(oppFactionUnits.Count);
         Debug.Log(tilesInRange.Count);
         //If there's no tiles we can move to, or no enemies, do nothing
         if (tilesInRange.Count == 0 || oppFactionUnits.Count == 0) {
-            enemyActions.Add(Actions.ActionsList.NONE);
+            enemyActions.Add(Actions.action_none);
             return enemyActions;
         } 
 
-        
-
         //Use the rest of the units action points
         while (stats.actionPointsCurrent >= 2) {
-            List<Actions.ActionsList> moveAndShootActions = MoveAndShoot(tilesInRange);
+            List<Actions.Action> moveAndShootActions = MoveAndShoot(tilesInRange);
             enemyActions.AddRange(moveAndShootActions);
             stats.actionPointsCurrent -= 2;
         }
@@ -62,10 +81,10 @@ public class EnemyUnit : Unit
         while (stats.actionPointsCurrent > 0)
         {
             //Find cover if possible
-            Actions.ActionsList findCoverResult = FindCover(tilesInRange);
+            Actions.Action findCoverResult = FindCover(tilesInRange);
             
             //If no cover, just shoot at something
-            if (findCoverResult == Actions.ActionsList.NONE)
+            if (findCoverResult == Actions.action_none)
             {
                 //TODO: Uses same logic as MoveAndShoot, should probably consolidate
                 float highestExpectedDamage = 0.0f;
@@ -92,8 +111,8 @@ public class EnemyUnit : Unit
                         currentTarget = other;
                     }
                 }
-                Shoot(currentTarget);
-                enemyActions.Add(Actions.ActionsList.SHOOT);
+                GetActor().ProcessAction(Actions.action_shoot, null, null, currentTarget);
+                enemyActions.Add(Actions.action_shoot);
             } 
 
             stats.actionPointsCurrent--;
@@ -101,7 +120,7 @@ public class EnemyUnit : Unit
         return enemyActions;
     }
 
-    Actions.ActionsList FindCover(List<Tile> tilesInRange)
+    Actions.Action FindCover(List<Tile> tilesInRange)
     {
         //Just find any cover
         //TODO: Make this better
@@ -109,14 +128,14 @@ public class EnemyUnit : Unit
         {
             if (tile.IsCover()) {
                 GetActor().MoveAction(tile, null);
-                return Actions.ActionsList.MOVE;
+                return Actions.action_move;
             }
         }
 
-        return Actions.ActionsList.NONE;
+        return Actions.action_none;
     }
 
-    List<Actions.ActionsList> MoveAndShoot(List<Tile> tilesInRange)
+    List<Actions.Action> MoveAndShoot(List<Tile> tilesInRange)
     {
         //TODO: Find optimal position for each attackable unit, weight by cover, etc.
         //For each tile, calculate highest expected damage from attacking
@@ -130,6 +149,8 @@ public class EnemyUnit : Unit
         float highestExpectedDamage = 0.0f;
         bool wouldKill = false;
 
+        Debug.Log("Unit position:");
+        Debug.Log(transform.position);
         foreach (Tile tile in tilesInRange)
         {
             foreach (Unit other in oppFactionUnits)
@@ -158,12 +179,12 @@ public class EnemyUnit : Unit
         }
 
         //Perform actions
-        GetActor().MoveAction(bestTile, null);
-        GetActor().ShootAction(currentTarget, "attack");
+        GetActor().ProcessAction(Actions.action_move, bestTile, null, null);
+        GetActor().ProcessAction(Actions.action_shoot, null, null, currentTarget);
 
-        List<Actions.ActionsList> enemyActions = new List<Actions.ActionsList>();
-        enemyActions.Add(Actions.ActionsList.MOVE);
-        enemyActions.Add(Actions.ActionsList.SHOOT);
+        List<Actions.Action> enemyActions = new List<Actions.Action>();
+        enemyActions.Add(Actions.action_move);
+        enemyActions.Add(Actions.action_shoot);
         return enemyActions;
     }
 }

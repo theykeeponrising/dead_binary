@@ -394,7 +394,7 @@ public class SelectedStates
 
         public override void Enter(InCombatPlayerAction t)
         {
-            t.selectedCharacter.GetActor().ProcessAction(Actions.action_shoot, contextCharacter: Target, contextString: "attack");
+            t.selectedCharacter.GetActor().ProcessAction(Actions.action_shoot, contextCharacter: Target);
 
             timer = Time.time + 1;
         }

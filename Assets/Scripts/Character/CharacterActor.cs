@@ -46,6 +46,11 @@ public class CharacterActor
         Movement();
     }
 
+    public bool IsMoving()
+    {
+        return (moveTargetDestination != null);
+    }
+
     public void SetPlayerAction(InCombatPlayerAction playerAction)
     {
         this.playerAction = playerAction;
@@ -115,7 +120,7 @@ public class CharacterActor
         }
     }
 
-    public void ProcessAction(Actions.Action actionToPerform, Tile contextTile=null, List<Tile> contextPath=null, Unit contextCharacter=null, string contextString=null)
+    public void ProcessAction(Actions.Action actionToPerform, Tile contextTile=null, List<Tile> contextPath=null, Unit contextCharacter=null)
     {
         // Determine if action can be performed, and perform action if so
 
@@ -140,7 +145,7 @@ public class CharacterActor
                     MoveAction(contextTile, contextPath);
                     break;
                 case "shoot":
-                    ShootAction(contextCharacter, contextString);
+                    ShootAction(contextCharacter);
                     break;
                 case "reload":
                     ReloadAction();
@@ -483,22 +488,14 @@ public class CharacterActor
 
         // Dice roll performed
         int randomChance = Random.Range(1, 100);
-        float weaponAccuracyModifier = attacker.inventory.equippedWeapon.stats.baseAccuracyModifier;
+        float hitChance = unit.CalculateHitChance(attacker, unit);
+        float baseChance = hitChance * 100.0f;
 
-        float weaponAccuracyPenalty = attacker.inventory.equippedWeapon.GetAccuracyPenalty(distanceToTarget);
-
-        // Calculate chance to be hit
-        float hitModifier = GlobalManager.globalHit - unit.stats.dodge - weaponAccuracyPenalty;
-
-        // Add cover bonus if not being flanked
-        if (unit.currentCover && unit.CheckIfCovered(attacker)) hitModifier -= unit.currentCover.CoverBonus();
-        
-        float baseChance = (20 * attacker.stats.aim * weaponAccuracyModifier * hitModifier) / 100;
         // FOR TESTING PURPOSES ONLY -- REMOVE WHEN FINISHED
         Debug.Log(string.Format("Distance: {0}, Base chance to hit: {1}%, Dice roll: {2}", distanceToTarget, baseChance, randomChance));
 
         // Return true/false if hit connected
-        return (baseChance >= randomChance);
+        return (baseChance  >= randomChance);
     }
 
     void TakeDamage(Unit attacker, int damage, int distanceToTarget)
@@ -561,34 +558,33 @@ public class CharacterActor
             unit.inventory.equippedWeapon.DropGun();
     }
 
-    public void ShootAction(Unit selectedTarget=null, string action="")
+    public void ShootAction(Unit selectedTarget=null)
     {
         // Sets the character's target and performs action on them
         // Called by InCombatPlayerAction
 
         if (selectedTarget)
-            if (action == "attack")
-            {
-                int minWeaponRange = unit.inventory.equippedWeapon.GetMinimumRange();
-                int distanceToTarget = unit.currentTile.FindCost(selectedTarget.currentTile, 15).Count;
+        {
+            int minWeaponRange = unit.inventory.equippedWeapon.GetMinimumRange();
+            int distanceToTarget = unit.currentTile.FindCost(selectedTarget.currentTile, 15).Count;
 
-                //Check if target within weapon range
-                if (distanceToTarget >= minWeaponRange)
-                    {
-                    if (unit.inventory.equippedWeapon.stats.ammoCurrent > 0)
-                    {
-                        targetCharacter = selectedTarget;
-                        unit.stats.actionPointsCurrent -= currentAction.cost;
-                        unit.StartCoroutine(ShootWeapon(distanceToTarget, targetCharacter));
-                        // RemoveFlag("targeting");
-                    }
-                    else
-                    {
-                        Debug.Log("Out of Ammo! Reload weapon"); // This will eventually be shown in UI
-                    }
-                } 
-                else Debug.Log(string.Format("Target is too close! \nDistance: {0}, Weapon Range: {1}", distanceToTarget, minWeaponRange)); // This will eventually be shown visually instead of told
-            }
+            //Check if target within weapon range
+            if (distanceToTarget >= minWeaponRange)
+                {
+                if (unit.inventory.equippedWeapon.stats.ammoCurrent > 0)
+                {
+                    targetCharacter = selectedTarget;
+                    unit.stats.actionPointsCurrent -= currentAction.cost;
+                    unit.StartCoroutine(ShootWeapon(distanceToTarget, targetCharacter));
+                    // RemoveFlag("targeting");
+                }
+                else
+                {
+                    Debug.Log("Out of Ammo! Reload weapon"); // This will eventually be shown in UI
+                }
+            } 
+            else Debug.Log(string.Format("Target is too close! \nDistance: {0}, Weapon Range: {1}", distanceToTarget, minWeaponRange)); // This will eventually be shown visually instead of told       
+        }
     }
 
     public void GetTarget()

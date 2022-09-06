@@ -6,8 +6,10 @@ using UnityEngine;
 public class EnemyTurnProcess
 {
     List<EnemyUnit> enemyUnits;
-    public EnemyTurnProcess()
+    EnemyTurnState enemyTurnState;
+    public EnemyTurnProcess(EnemyTurnState enemyTurnState)
     {
+        this.enemyTurnState = enemyTurnState;
         enemyUnits = new List<EnemyUnit>();
         GameObject[] gameObjects = GameObject.FindGameObjectsWithTag("Character");
         foreach (GameObject go in gameObjects)
@@ -19,10 +21,23 @@ public class EnemyTurnProcess
 
     public void ProcessTurn()
     {
-        //TODO: Get enemy units
+        GlobalManager.Instance.StartCoroutine(ProcessEnemyUnits());
+    }
+
+    public IEnumerator ProcessEnemyUnits()
+    {
+        //TODO: Get enemy units here and pass these along
         foreach (EnemyUnit enemyUnit in enemyUnits)
         {
             enemyUnit.ProcessUnitTurn();
+            while (enemyUnit.isActing) yield return new WaitForSeconds(0.1f);
         }
+
+        EnemyUnitsProcessedCallback();
+    }
+
+    public void EnemyUnitsProcessedCallback()
+    {
+        enemyTurnState.EndTurn();
     }
 }

@@ -228,7 +228,7 @@ MonoBehaviour:
   stats:
     damage: 7
     minRange: 3
-    maxRange: 9
+    maxRangeNoPenalty: 4
     ammoMax: 2
     ammoCurrent: 0
     reloadSpeed: 0

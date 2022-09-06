@@ -88,7 +88,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
     }
 
     // Update is called once per frame
-    void Update()
+    protected virtual void Update()
     {
         charAnim.Update();
         charActor.Update();
@@ -114,7 +114,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         this.gameState = gameState;
     }
 
-    public void OnTurnStart()
+    public virtual void OnTurnStart()
     {
         oppFactionUnits = new List<Unit>();
         RefreshActionPoints();
@@ -218,20 +218,20 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
     }
 
     
-    public bool Shoot(Unit otherUnit)
-    {
-        // Calculate whether target hit
-        // Dice roll performed
-        int randomChance = Random.Range(1, 100);
-        float hitChance = CalculateHitChance(this, otherUnit);
-        int distance = grid.GetTileDistance(currentTile, otherUnit.currentTile);
+    // public bool Shoot(Unit otherUnit)
+    // {
+    //     // Calculate whether target hit
+    //     // Dice roll performed
+    //     int randomChance = Random.Range(1, 100);
+    //     float hitChance = CalculateHitChance(this, otherUnit);
+    //     int distance = grid.GetTileDistance(currentTile, otherUnit.currentTile);
 
-        // FOR TESTING PURPOSES ONLY -- REMOVE WHEN FINISHED
-        Debug.Log(string.Format("Distance: {0}, Base chance to hit: {1}%, Dice roll: {2}", distance, hitChance, randomChance));
+    //     // FOR TESTING PURPOSES ONLY -- REMOVE WHEN FINISHED
+    //     Debug.Log(string.Format("Distance: {0}, Base chance to hit: {1}%, Dice roll: {2}", distance, hitChance, randomChance));
 
-        // Return true/false if hit connected
-        return (hitChance >= randomChance);
-    }
+    //     // Return true/false if hit connected
+    //     return (hitChance >= randomChance);
+    // }
 
     protected float CalculateExpectedDamage(Unit attacker, Unit defender, Tile attackerTile)
     {
@@ -241,13 +241,13 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
     }
 
     //Overload for simplicity
-    protected float CalculateHitChance(Unit attacker, Unit defender)
+    public float CalculateHitChance(Unit attacker, Unit defender)
     {
-        return CalculateExpectedDamage(attacker, defender, attacker.currentTile);
+        return CalculateHitChance(attacker, defender, attacker.currentTile);
     }
 
     //Calculate Hit Chance
-    protected float CalculateHitChance(Unit attacker, Unit defender, Tile attackerTile)
+    public float CalculateHitChance(Unit attacker, Unit defender, Tile attackerTile)
     {
         int distance = grid.GetTileDistance(attackerTile, defender.currentTile);
         float weaponAccuracyModifier = attacker.inventory.equippedWeapon.stats.baseAccuracyModifier;
@@ -255,13 +255,12 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         float weaponAccuracyPenalty = attacker.inventory.equippedWeapon.GetAccuracyPenalty(distance);
 
         // Calculate chance to be hit
-        float hitModifier = GlobalManager.globalHit - stats.dodge - weaponAccuracyPenalty;
-
+        float hitModifier = GlobalManager.globalHit + attacker.stats.aim - stats.dodge - weaponAccuracyPenalty;
         // Add cover bonus if not being flanked
         if (currentCover && CheckIfCovered(attacker)) hitModifier -= currentCover.CoverBonus();
         
-        float hitChance = (20 * attacker.stats.aim * weaponAccuracyModifier * hitModifier) / 100;
-        return hitChance;
+        float hitChance = weaponAccuracyModifier * hitModifier;
+        return hitChance / 100.0f;
     }
 
     public bool CheckIfCovered(Unit attacker)

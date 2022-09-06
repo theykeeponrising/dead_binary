@@ -76,9 +76,10 @@ public class Grid : MonoBehaviour
     {
         int zLoc = Mathf.RoundToInt(pos.z - gridOffsetZ);
         int xLoc = Mathf.RoundToInt(pos.x - gridOffsetX);
-
+        
         //Bounds check
         if (xLoc < 0 || xLoc >= width || zLoc < 0 || zLoc >= height) return -1;
+        
         return zLoc * width + xLoc;
     }
 
@@ -99,12 +100,15 @@ public class Grid : MonoBehaviour
     {
         List<Tile> tilesInRange = new List<Tile>();
         startPos = NormalizePositionToGrid(startPos);
-        for (int i = 0; i < tileDist; i++)
+        for (int i = -tileDist; i <= tileDist; i++)
         {
-            for (int j = i; j < tileDist; j++)
+            for (int j = -tileDist; j <= tileDist; j++)
             {
+                
+                if (Mathf.Abs(i) + Math.Abs(j) > tileDist) continue;
                 Vector3 nextPos = startPos + new Vector3((float) i, 0.0f, (float) j);
                 int flattened_index = GetFlattenedIndex(nextPos);
+                
 
                 //Ignore any indices that would be out of bounds
                 if (flattened_index >= 0)
@@ -125,7 +129,7 @@ public class Grid : MonoBehaviour
         Vector3 diff = pos_a - pos_b;
 
         //Note: Not straight line distance
-        float dist = diff.x + diff.z;
+        float dist = Mathf.Abs(diff.x) + Mathf.Abs(diff.z);
         return Mathf.RoundToInt(dist / tileSpacing);
     }
 }

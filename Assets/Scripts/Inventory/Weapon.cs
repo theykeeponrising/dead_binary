@@ -40,7 +40,7 @@ public class Weapon : MonoBehaviour
     {
         public int damage;
         public int minRange;
-        public int maxRange;
+        public int maxRangeNoPenalty;
         public int ammoMax;
         public int ammoCurrent;
         public float reloadSpeed;
@@ -93,7 +93,7 @@ public class Weapon : MonoBehaviour
 
     public int GetMaximumRange()
     {
-        return stats.maxRange;
+        return stats.maxRangeNoPenalty;
     }
 
     public float GetAccuracyPenalty(int range)

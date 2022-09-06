@@ -110,7 +110,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         return null;
     }
 
-    //TODO: Simplify this to just calculate distance using Grid.tileSpacing and the transform.positions of the tiles
+    //TODO: Move this to grid.cs, and simplify
     public List<Tile> FindCost(Tile findTile, int maxDist = 10)
     {
         // Finds the nearest path to the destination tile

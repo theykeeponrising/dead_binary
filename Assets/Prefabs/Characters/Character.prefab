@@ -2276,9 +2276,9 @@ MonoBehaviour:
     healthCurrent: 10
     healthMax: 10
     movement: 5
-    aim: 10
+    aim: 6
     armor: 4
-    dodge: 2
+    dodge: 3
     actionPointsCurrent: 2
     actionPointsMax: 2
   attributes:

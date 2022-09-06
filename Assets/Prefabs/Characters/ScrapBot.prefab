@@ -2188,7 +2188,7 @@ GameObject:
   - component: {fileID: 3809991894843442051}
   m_Layer: 0
   m_Name: ScrapBot
-  m_TagString: Untagged
+  m_TagString: Character
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2396,7 +2396,7 @@ MonoBehaviour:
     healthCurrent: 10
     healthMax: 10
     movement: 5
-    aim: 10
+    aim: 6
     armor: 3
     dodge: 3
     actionPointsCurrent: 2
