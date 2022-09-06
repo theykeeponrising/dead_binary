@@ -11,6 +11,7 @@ public class CharacterSFX
     Unit unit;
     AudioSource audioSource;
     public enum AnimationEventSound { NONE, IMPACT, FOOTSTEP_LEFT, FOOTSTEP_RIGHT, SHOOT };
+    public AudioManager.FootstepSource footstepSource;
 
     public CharacterSFX(Unit unit)
     {
@@ -32,7 +33,7 @@ public class CharacterSFX
     {
         // Plays a random footstep sound based on tile data
 
-        AudioClip footstep = AudioManager.Instance.GetRandomFootstepSound(unit.currentTile.footstepType);
+        AudioClip footstep = AudioManager.Instance.GetRandomFootstepSound(unit.currentTile.footstepMaterial, footstepSource);
         AudioSource footAudioSource;
 
         // Determine which foot to play the sound at
