@@ -24,8 +24,10 @@ public class EnemyUnit : Unit
     //Currently the actions happen at the same time so the robots shoot while moving and etc.
     public void ProcessUnitTurn()
     {
+        if (GetFlag("dead")) return;
         OnTurnStart();
         //Find all units this one can attack
+        //TODO: maybe handle this in EnemyTurnProcess so it doesn't get processed for every unit for performance reasons, and skip processing dead units or remove them from this list?
         List<Unit> oppFactionUnits = GetOppFactionUnits();
 
         //Get all tiles within range
@@ -48,7 +50,7 @@ public class EnemyUnit : Unit
         {  
             //TODO: Also check animations, and whether other actions are in progress
             //Probably should have some combined method for units/characters in general that checks this
-            if (!GetActor().IsMoving()) isActing = false;
+            if (!IsActing()) isActing = false;
         }
     }
 

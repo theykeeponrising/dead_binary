@@ -13,9 +13,6 @@ public class CharacterAnimator
     Transform[] boneTransforms;
     Unit unit;
 
-    //TODO: Maybe handle these in unit class
-    public List<string> flags = new List<string>();
-
     [HideInInspector] Quaternion aimTowards = Quaternion.identity;
 
     class HumanBone
@@ -94,7 +91,7 @@ public class CharacterAnimator
     {
         // Changes movement animation based on flags
 
-        if (flags.Contains("moving"))
+        if (unit.GetFlag("moving"))
         {
             animator.SetFloat("velocityX", unit.velocityX / GlobalManager.gameSpeed);
             animator.SetFloat("velocityZ", unit.velocityZ / GlobalManager.gameSpeed);
@@ -173,19 +170,19 @@ public class CharacterAnimator
         {
             //TODO: Vault sound in middle of animation?
             case (AnimationEventContext.VAULT):
-                AddFlag("vaulting");
+                unit.AddFlag("vaulting");
                 animator.Play("Default");
                 animator.SetTrigger("vaulting");
                 break;
 
             // Fire weapon effect
             case (AnimationEventContext.SHOOT):
-                AddFlag("shooting");
+                unit.AddFlag("shooting");
                 animator.Play("Shoot");
                 break;
             
             case (AnimationEventContext.RELOAD):
-                AddFlag("reload");
+                unit.AddFlag("reload");
                 animator.Play("Reload");
                 break;
             
@@ -198,30 +195,30 @@ public class CharacterAnimator
                 break;
             
             case (AnimationEventContext.DODGE):
-                AddFlag("dodging");
+                unit.AddFlag("dodging");
                 break;
 
             // Stow weapon animation is completed
             case (AnimationEventContext.STOW):
-                AddFlag("stowing");
+                unit.AddFlag("stowing");
                 animator.Play("Stow");
                 break;
 
             // Draw weapon animation is completed
             case (AnimationEventContext.DRAW):
-                AddFlag("drawing");
+                unit.AddFlag("drawing");
                 //animator.Play("Draw", inventory.equippedWeapon.weaponLayer);
                 animator.Play("Draw");
                 break;
 
             // Crouch-down
             case (AnimationEventContext.CROUCH_DOWN):
-                AddFlag("crouching");
+                unit.AddFlag("crouching");
                 break;
 
             //Move
             case (AnimationEventContext.MOVE):
-                AddFlag("moving");
+                unit.AddFlag("moving");
                 SetBool("moving", true);
                 break;
 
@@ -243,50 +240,50 @@ public class CharacterAnimator
         switch (context)
         {
             case (AnimationEventContext.VAULT):
-                RemoveFlag("vaulting");
+                unit.RemoveFlag("vaulting");
                 break;
 
             // Fire weapon effect
             case (AnimationEventContext.SHOOT):
-                RemoveFlag("shooting");
+                unit.RemoveFlag("shooting");
                 break;
             
             case (AnimationEventContext.RELOAD):
                 // Reload weapon animation is completed
-                RemoveFlag("reload");
+                unit.RemoveFlag("reload");
                 unit.inventory.equippedWeapon.stats.ammoCurrent = unit.inventory.equippedWeapon.stats.ammoMax;
                 break;
             
             case (AnimationEventContext.AIMING):
                 animator.SetBool("aiming", false);
                 animator.updateMode = AnimatorUpdateMode.Normal;
-                RemoveFlag("aiming");
+                unit.RemoveFlag("aiming");
                 break;
             
             case (AnimationEventContext.DODGE):
-                RemoveFlag("dodging");
+                unit.RemoveFlag("dodging");
                 break;
 
             // Stow weapon animation is completed
             case (AnimationEventContext.STOW):
-                RemoveFlag("stowing");
+                unit.RemoveFlag("stowing");
                 unit.inventory.equippedWeapon.gameObject.SetActive(false);
                 animator.SetLayerWeight(unit.inventory.equippedWeapon.weaponLayer, 0);
                 break;
 
             // Draw weapon animation is completed
             case (AnimationEventContext.DRAW):
-                RemoveFlag("drawing");
+                unit.RemoveFlag("drawing");
                 break;
 
             // Crouch-down
             case (AnimationEventContext.CROUCH_DOWN):
-                RemoveFlag("crouching");
+                unit.RemoveFlag("crouching");
                 break;
 
             //Move
             case (AnimationEventContext.MOVE):
-                RemoveFlag("moving");
+                unit.RemoveFlag("moving");
                 SetBool("moving", false);
                 break;
 
@@ -311,36 +308,13 @@ public class CharacterAnimator
         animator.SetBool(flag, state);
     }
 
-    public void AddFlag(string flag)
-    {
-        // Handler for adding new flags
-        // Used to prevent duplicate flags
-
-        if (!flags.Contains(flag))
-            flags.Add(flag);
-    }
-
-    public void RemoveFlag(string flag)
-    {
-        // Handler for adding new flags
-        // Used for consistency with AddFlag function
-
-        if (flags.Contains(flag))
-            flags.Remove(flag);
-    }
-
     IEnumerator WaitForAiming()
     {
         // Small buffer to prevent janky torso twist
 
-        while (flags.Contains("crouching")) yield return new WaitForSeconds(0.01f);
+        while (unit.GetFlag("crouching")) yield return new WaitForSeconds(0.01f);
         yield return new WaitForSeconds(0.25f);
-        AddFlag("aiming");
-    }
-
-    public bool GetFlag(string flag)
-    {
-        return flags.Contains(flag);
+        unit.AddFlag("aiming");
     }
 
     public void ToggleCrouch(bool crouching, bool instant)
@@ -348,12 +322,12 @@ public class CharacterAnimator
         if (!crouching)
         {
             animator.SetBool("crouching", false);
-            if (instant) RemoveFlag("crouching");
+            if (instant) unit.RemoveFlag("crouching");
         }
         else
         {
             animator.SetBool("crouching", true);
-            if (instant) AddFlag("crouching");
+            if (instant) unit.AddFlag("crouching");
         }
     }
 
@@ -363,7 +337,7 @@ public class CharacterAnimator
         animator.updateMode = AnimatorUpdateMode.AnimatePhysics;
 
         yield return new WaitForSeconds(0.5f);
-        AddFlag("aiming");
+        unit.AddFlag("aiming");
         yield return new WaitForSeconds(0.25f);
     }
 
@@ -371,7 +345,7 @@ public class CharacterAnimator
     {
         // Twists characters torso to aim gun at target
 
-        if (!GetFlag("aiming") || !useTorsoTwist)
+        if (!unit.GetFlag("aiming") || !useTorsoTwist)
             return;
         
         // Iterations improve accuracy of aim position
@@ -391,7 +365,7 @@ public class CharacterAnimator
                 
 
                 // Updates rotation up until the actual shoot animation happens
-                if (GetFlag("aiming"))
+                if (unit.GetFlag("aiming"))
                     aimTowards = Quaternion.FromToRotation(aimDirection, targetDirection);
 
                 // Gets absolute angle
@@ -417,7 +391,7 @@ public class CharacterAnimator
         // Animation that plays when character is taking damage
         // Damage is not actually applied in this function
 
-        if (GetFlag("dodging"))
+        if (unit.GetFlag("dodging"))
         {
             // TO DO -- Play dodging animation instead
             return;

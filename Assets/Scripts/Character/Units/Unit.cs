@@ -18,6 +18,8 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
     protected CharacterActor charActor;
     protected CharacterAnimator charAnim;
     protected CharacterSFX charSFX;
+
+    public List<string> flags = new List<string>();
     
     [HideInInspector] public Inventory inventory;
     public IFaction ifaction;
@@ -265,6 +267,83 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         return hitChance / 100.0f;
     }
 
+    bool RollForHit(Unit attacker, int distanceToTarget)
+    {
+        // Dodge change for character vs. attacker's aim
+
+        // Dice roll performed
+        int randomChance = Random.Range(1, 100);
+        float hitChance = CalculateHitChance(attacker, this);
+        float baseChance = hitChance * 100.0f;
+
+        // FOR TESTING PURPOSES ONLY -- REMOVE WHEN FINISHED
+        Debug.Log(string.Format("Distance: {0}, Base chance to hit: {1}%, Dice roll: {2}", distanceToTarget, baseChance, randomChance));
+
+        // Return true/false if hit connected
+        return (baseChance  >= randomChance);
+    }
+
+    public void TakeDamage(Unit attacker, int damage, int distanceToTarget)
+    {
+        // Called by an attacking source when taking damage
+        // TO DO: More complex damage reduction will be added here
+
+        // If attacked missed, do not take damage
+        if (!RollForHit(attacker, distanceToTarget))
+        {
+            Debug.Log(string.Format("{0} missed target {1}!", attacker.attributes.name, attributes.name));
+            GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.DODGE, true);
+            return;
+        }
+
+        // Inflict damage on character
+        Debug.Log(string.Format("{0} has attacked {1} for {2} damage!", attacker.attributes.name, attributes.name, damage)); // This will eventually be shown visually instead of told
+
+        Vector3 direction =  (transform.position - attacker.transform.position);
+        stats.healthCurrent -= damage;
+
+        // Character death
+        if (stats.healthCurrent <= 0)
+        {
+            StartCoroutine(Death(attacker, direction));
+            Debug.DrawRay(transform.position, direction, Color.red, 20, true); // For debug purposes
+        }
+    }
+
+    IEnumerator Death(Unit attacker, Vector3 attackDirection, float impactForce = 2f)
+    {
+        AddFlag("dead");
+        // Disables animator, turns on ragdoll effect, and applies a small force to push the character over
+
+        // Wait for attacker animation to complete
+        while (attacker.GetAnimator().AnimatorIsPlaying())
+            yield return new WaitForSeconds(0.01f);
+
+        // Disable top collider
+        GetComponent<CapsuleCollider>().enabled = false;
+
+        // Disable animator and top rigidbody
+        GetAnimator().OnDeath(attackDirection * impactForce, ForceMode.Impulse);
+
+        gameObject.layer = LayerMask.NameToLayer("Ignore Raycast"); // TO DO -- Layer specifically for dead characters??
+
+        // Remove player selection
+        if (GetActor().playerAction.selectedCharacter == this)
+            GetActor().playerAction.selectedCharacter = null;
+        GetActor().SelectUnit(false);
+
+        // Disable any character lights
+        foreach (Light light in GetComponentsInChildren<Light>())
+            light.enabled = false;
+
+        // Remove character as a obstacle on the map
+        currentTile.occupant = null;
+        enabled = false;
+
+        if (inventory.equippedWeapon)
+            inventory.equippedWeapon.DropGun();
+    }
+
     public bool CheckIfCovered(Unit attacker)
     {
         // Checks if any cover objects are between character and attacker
@@ -291,5 +370,34 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
                 return true;
         }
         return false;
+    }
+
+    public void AddFlag(string flag)
+    {
+        // Handler for adding new flags
+        // Used to prevent duplicate flags
+
+        if (!flags.Contains(flag))
+            flags.Add(flag);
+    }
+
+    public void RemoveFlag(string flag)
+    {
+        // Handler for adding new flags
+        // Used for consistency with AddFlag function
+
+        if (flags.Contains(flag))
+            flags.Remove(flag);
+    }
+
+    public bool GetFlag(string flag)
+    {
+        return flags.Contains(flag);
+    }
+
+    //Used by EnemyUnit to determine when to move on to the next unit
+    public bool IsActing()
+    {
+        return GetFlag("moving")|| GetFlag("attacking") || GetFlag("stowing") || GetFlag("reloading") || GetFlag("aiming") || GetFlag("crouching") || GetFlag("dodging");
     }
 }

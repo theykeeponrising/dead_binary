@@ -46,11 +46,6 @@ public class CharacterActor
         Movement();
     }
 
-    public bool IsMoving()
-    {
-        return (moveTargetDestination != null);
-    }
-
     public void SetPlayerAction(InCombatPlayerAction playerAction)
     {
         this.playerAction = playerAction;
@@ -174,7 +169,7 @@ public class CharacterActor
             unit.velocityZ = distance / 2;
 
             // Slow down movement speed if character is vaulting
-            float distanceDelta = (unit.GetAnimator().GetFlag("vaulting")) ? 0.01f : 0.03f;
+            float distanceDelta = (unit.GetFlag("vaulting")) ? 0.01f : 0.03f;
 
             // If the final move target is also the most immediate one, slow down move speed as we approach
             if (moveTargetDestination == moveTargetImmediate)
@@ -214,7 +209,7 @@ public class CharacterActor
             unit.transform.rotation = Quaternion.Slerp(unit.transform.rotation, Quaternion.LookRotation(lookDirection - unit.transform.position), 3 * Time.deltaTime);
 
             // Crouch down if its a half-sized cover
-            if (unit.currentCover.coverSize == CoverObject.CoverSize.half && !unit.GetAnimator().GetFlag("crouching"))
+            if (unit.currentCover.coverSize == CoverObject.CoverSize.half && !unit.GetFlag("crouching"))
                 ToggleCrouch(true, false);
         }
     }
@@ -231,7 +226,7 @@ public class CharacterActor
             foreach (Tile tile in previewPath)
                 tile.Highlighted(false);
 
-        if (!unit.GetAnimator().GetFlag("moving"))
+        if (!unit.GetFlag("moving"))
         {
             if (CheckTileMove(newTile))
             {
@@ -259,7 +254,7 @@ public class CharacterActor
         unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.MOVE, true);
 
         // Stand up if crouched
-        if (unit.GetAnimator().GetFlag("crouching"))
+        if (unit.GetFlag("crouching"))
             ToggleCrouch(false, true);
 
         moveTargetDestination = movePath[movePath.Count - 1];
@@ -301,7 +296,7 @@ public class CharacterActor
         {
             unit.currentCover = unit.currentTile.cover;
             //Crouch, should maybe set a bool outside of the animator
-            if (unit.currentTile.cover.coverSize == CoverObject.CoverSize.half && !unit.GetAnimator().GetFlag("crouching"))
+            if (unit.currentTile.cover.coverSize == CoverObject.CoverSize.half && !unit.GetFlag("crouching"))
                 // unit.GetAnimator().AnimationTransition(CharacterAnimator.AnimationEventContext.CROUCH_DOWN);
                 ToggleCrouch(true, false);
         }
@@ -334,7 +329,7 @@ public class CharacterActor
     bool CheckForObstacle()
     {
         // Checks a short distance in front of character for objects in the "VaultOver" layer
-        if (unit.GetAnimator().GetFlag("vaulting"))
+        if (unit.GetFlag("vaulting"))
             return false;
 
         Vector3 direction = (moveTargetImmediate.transform.position - unit.transform.position);
@@ -366,10 +361,10 @@ public class CharacterActor
         {
             // If crouching, do not play stow animation
             // This is until we can get a proper crouch-stow animation
-            if (!unit.GetAnimator().GetFlag("crouching"))
+            if (!unit.GetFlag("crouching"))
             {
                 unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.STOW, true);
-                while (unit.GetAnimator().GetFlag("stowing"))
+                while (unit.GetFlag("stowing"))
                     yield return new WaitForSeconds(0.01f);
             }
             else
@@ -392,12 +387,12 @@ public class CharacterActor
 
             // If crouching, do not play draw animation
             // This is until we can get a proper crouch-draw animation
-            if (!unit.GetAnimator().GetFlag("crouching"))
+            if (!unit.GetFlag("crouching"))
             {
                 unit.inventory.equippedWeapon.PlaySound(Weapon.WeaponSound.SWAP, unit);
                 unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.DRAW, true);
 
-                while (unit.GetAnimator().GetFlag("drawing"))
+                while (unit.GetFlag("drawing"))
                     yield return new WaitForSeconds(0.01f);
             }
             else
@@ -452,12 +447,12 @@ public class CharacterActor
         // animator.updateMode = AnimatorUpdateMode.AnimatePhysics;
 
         yield return new WaitForSeconds(0.5f);
-        unit.GetAnimator().AddFlag("aiming");
+        unit.AddFlag("aiming");
         yield return new WaitForSeconds(0.25f);
 
         // Inflict damage on target character
         if (shootTarget)
-            shootTarget.GetActor().TakeDamage(unit, unit.inventory.equippedWeapon.stats.damage, distanceToTarget);
+            shootTarget.TakeDamage(unit, unit.inventory.equippedWeapon.stats.damage, distanceToTarget);
 
         unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.SHOOT, true);
         unit.inventory.equippedWeapon.stats.ammoCurrent -= 1;
@@ -466,7 +461,7 @@ public class CharacterActor
         while (playerAction.stateMachine.GetCurrentState().GetType() == typeof(SelectedStates.ShootTarget)) yield return new WaitForSeconds(0.01f);
 
         // If target is dodging, remove flag        
-        if (shootTarget && shootTarget.GetAnimator().GetFlag("dodging")) shootTarget.GetAnimator().RemoveFlag("dodging");
+        if (shootTarget && shootTarget.GetFlag("dodging")) shootTarget.RemoveFlag("dodging");
 
         // Shooting animation completed (should maybe just implement this with a callback function, honestly)
         unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.SHOOT, false);
@@ -480,82 +475,6 @@ public class CharacterActor
         // Test crouch animation when button pressed
         // Just call char animation for now. Left in character.cs in case of more crouching logic
         unit.GetAnimator().ToggleCrouch(crouching, instant);
-    }
-
-    bool RollForHit(Unit attacker, int distanceToTarget)
-    {
-        // Dodge change for character vs. attacker's aim
-
-        // Dice roll performed
-        int randomChance = Random.Range(1, 100);
-        float hitChance = unit.CalculateHitChance(attacker, unit);
-        float baseChance = hitChance * 100.0f;
-
-        // FOR TESTING PURPOSES ONLY -- REMOVE WHEN FINISHED
-        Debug.Log(string.Format("Distance: {0}, Base chance to hit: {1}%, Dice roll: {2}", distanceToTarget, baseChance, randomChance));
-
-        // Return true/false if hit connected
-        return (baseChance  >= randomChance);
-    }
-
-    void TakeDamage(Unit attacker, int damage, int distanceToTarget)
-    {
-        // Called by an attacking source when taking damage
-        // TO DO: More complex damage reduction will be added here
-
-        // If attacked missed, do not take damage
-        if (!RollForHit(attacker, distanceToTarget))
-        {
-            Debug.Log(string.Format("{0} missed target {1}!", attacker.attributes.name, unit.attributes.name));
-            unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.DODGE, true);
-            return;
-        }
-
-        // Inflict damage on character
-        Debug.Log(string.Format("{0} has attacked {1} for {2} damage!", attacker.attributes.name, unit.attributes.name, damage)); // This will eventually be shown visually instead of told
-
-        Vector3 direction =  (unit.transform.position - attacker.transform.position);
-        unit.stats.healthCurrent -= damage;
-
-        // Character death
-        if (unit.stats.healthCurrent <= 0)
-        {
-            unit.StartCoroutine(Death(attacker, direction));
-            Debug.DrawRay(unit.transform.position, direction, Color.red, 20, true); // For debug purposes
-        }
-    }
-
-    IEnumerator Death(Unit attacker, Vector3 attackDirection, float impactForce = 2f)
-    {
-        // Disables animator, turns on ragdoll effect, and applies a small force to push the character over
-
-        // Wait for attacker animation to complete
-        while (attacker.GetAnimator().AnimatorIsPlaying())
-            yield return new WaitForSeconds(0.01f);
-
-        // Disable top collider
-        unit.GetComponent<CapsuleCollider>().enabled = false;
-
-        // Disable animator and top rigidbody
-        unit.GetAnimator().OnDeath(attackDirection * impactForce, ForceMode.Impulse);
-
-        unit.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast"); // TO DO -- Layer specifically for dead characters??
-
-        // Remove player selection
-        if (playerAction.selectedCharacter == unit)
-            playerAction.selectedCharacter = null;
-        SelectUnit(false);
-
-        // Disable any character lights
-        foreach (Light light in unit.GetComponentsInChildren<Light>())
-            light.enabled = false;
-
-        // Remove character as a obstacle on the map
-        unit.currentTile.occupant = null;
-        unit.enabled = false;
-
-        if (unit.inventory.equippedWeapon)
-            unit.inventory.equippedWeapon.DropGun();
     }
 
     public void ShootAction(Unit selectedTarget=null)
