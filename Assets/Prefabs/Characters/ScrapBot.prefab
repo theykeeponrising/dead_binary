@@ -254,7 +254,7 @@ AudioSource:
   m_GameObject: {fileID: 618769049335627071}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 235998193486780706, guid: 9bdf92d4bdd4c0e43bf3b9327857da03, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 0.1
@@ -1942,7 +1942,7 @@ AudioSource:
   m_GameObject: {fileID: 3936384552286493365}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 235998193486780706, guid: 9bdf92d4bdd4c0e43bf3b9327857da03, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 0.1
@@ -2285,7 +2285,7 @@ AudioSource:
   m_GameObject: {fileID: 4043852725619244410}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 8184136527535081744, guid: 9bdf92d4bdd4c0e43bf3b9327857da03, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 0.5
@@ -2406,6 +2406,7 @@ MonoBehaviour:
   attributes:
     name: Scrap Bot
     faction: 2
+    footstep: 1
   availableActions: 0000000001000000020000000300000005000000
   potentialTargets: []
 --- !u!114 &3809991894843442051

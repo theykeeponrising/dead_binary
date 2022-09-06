@@ -79,6 +79,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
     {
         public string name;
         public Faction faction;
+        public AudioManager.FootstepSource footstep;
     }
 
     // Stats are values that will be referenced and changed frequently during combat
@@ -775,9 +776,9 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
 
     void Footsteps(AnimationEventContext whichFoot)
     {
-        // Plays a random footstep sound based on tile data
+        // Plays a random footstep sound based on tile data and character's footstep type
 
-        AudioClip footstep = AudioManager.Instance.GetRandomFootstepSound(currentTile.footstepType);
+        AudioClip footstep = AudioManager.Instance.GetRandomFootstepSound(currentTile.footstepMaterial, attributes.footstep);
         AudioSource footAudioSource;
 
         // Determine which foot to play the sound at
@@ -860,6 +861,7 @@ public class Character : GridObject, IPointerEnterHandler, IPointerExitHandler, 
         if (flags.Contains("dodging"))
         {
             // TO DO -- Play dodging animation instead
+            if (currentCover) currentCover.Impact();
             return;
         }
 
