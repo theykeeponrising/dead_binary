@@ -4,7 +4,7 @@ using UnityEngine;
 public class Actions : MonoBehaviour
 {
     // All possible actions in enum form
-    public enum ActionsList { MOVE, SHOOT, RELOAD, SWAP, REFRESH, CHOOSEITEM, USEITEM }
+    public enum ActionsList { MOVE, SHOOT, RELOAD, SWAP, REFRESH, CHOOSEITEM, USEITEM, NONE }
 
     public class Action
     {
@@ -48,6 +48,7 @@ public class Actions : MonoBehaviour
     public static Action action_chooseItem = new Action("Choose Item", ActionsList.CHOOSEITEM, "chooseItem", 0, 0, ActionButtons.btn_action_chooseItem);
 
     public static Action action_useItem = new Action("Use Item", ActionsList.USEITEM, "useItem", 1, 0, ActionButtons.btn_action_useItem);
+    public static Action action_none = new Action("Do nothing.", ActionsList.NONE, "none", 1, 0, null);
 
     // Dictionary used to match enum to actual action class object
     public static Dictionary<ActionsList, Action> ActionsDict = new Dictionary<ActionsList, Action>() {
@@ -58,5 +59,6 @@ public class Actions : MonoBehaviour
         { ActionsList.REFRESH, action_refresh },
         { ActionsList.CHOOSEITEM, action_chooseItem },
         { ActionsList.USEITEM, action_useItem },
+        { ActionsList.NONE, action_none}
     };
 }

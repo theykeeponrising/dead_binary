@@ -58804,14 +58804,14 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_Events:
   - time: 0.033333335
-    functionName: AnimationEvent
+    functionName: Event_PlaySound
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
-    intParameter: 0
+    intParameter: 4
     messageOptions: 0
   - time: 0.13333334
-    functionName: AnimationEvent
+    functionName: Event_PlayAnimation
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

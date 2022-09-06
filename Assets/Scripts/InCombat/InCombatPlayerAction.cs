@@ -12,8 +12,8 @@ public class InCombatPlayerAction
 {
     // Used to manage user inputs
     public PlayerInput playerInput;
-    public Character selectedCharacter;
-    public List<Character> allCharacters; // TO DO -- Characters should be dynamically added to this list
+    public Unit selectedCharacter;
+    public List<Unit> allCharacters; // TO DO -- Characters should be dynamically added to this list
     public List<Tile> previewPath = new List<Tile>();
     public Tile targetTile;
     public enum ClickAction { select, target }
@@ -25,6 +25,8 @@ public class InCombatPlayerAction
     public LayerMask uiLayermask;
     private PlayerTurnState playerTurnState; 
     InCombatPlayerActionUI playerActionUI;
+
+    public Faction playerFaction = Faction.Good;
 
     private TextMeshProUGUI stateDebugText;
 
@@ -47,9 +49,9 @@ public class InCombatPlayerAction
         }
 
         // Add characters to allCharacters list
-        allCharacters = new List<Character>();
+        allCharacters = new List<Unit>();
         GameObject[] characterGOs = GameObject.FindGameObjectsWithTag("Character");
-        foreach (GameObject go in characterGOs) allCharacters.Add(go.GetComponent<Character>());
+        foreach (GameObject go in characterGOs) allCharacters.Add(go.GetComponent<Unit>());
 
         stateDebugText = GameObject.Find("StateDebugText").GetComponent<TextMeshProUGUI>();
     }
@@ -89,13 +91,13 @@ public class InCombatPlayerAction
         RaycastHit hit;
         Ray ray;
         ray = Camera.main.ScreenPointToRay(playerInput.Controls.InputPosition.ReadValue<Vector2>());
-        Character targetCharacter = null;
+        Unit targetCharacter = null;
         int layerMask = (1 << LayerMask.NameToLayer("TileMap"));
 
         if (Physics.Raycast(ray, out hit, Mathf.Infinity, ~layerMask))
         {
-            if (hit.collider.GetComponent<Character>())
-                targetCharacter = hit.collider.GetComponent<Character>();
+            if (hit.collider.GetComponent<Unit>())
+                targetCharacter = hit.collider.GetComponent<Unit>();
         }
 
         SelectAction(targetCharacter);        
@@ -108,10 +110,13 @@ public class InCombatPlayerAction
             return 0;
 
         List<Actions.ActionsList> actionsList = new List<Actions.ActionsList>();
-        foreach (Actions.ActionsList characterAction in selectedCharacter.availableActions)
+        foreach (Actions.ActionsList characterAction in selectedCharacter.GetAvailableActions())
+        {
+            if (!Actions.ActionsDict.ContainsKey(characterAction)) continue;
             if (Actions.ActionsDict[characterAction].buttonPath != null)
                 actionsList.Add(characterAction);
-
+        }
+        
         if (index > actionsList.Count)
             return 0;
         return actionsList[index-1];
@@ -134,17 +139,20 @@ public class InCombatPlayerAction
                 {
                     if (hit.collider.GetComponent<Tile>())
                     {
-                        selectedCharacter.ProcessAction(Actions.action_move, contextTile: hit.collider.GetComponent<Tile>(), contextPath: previewPath);
+                        selectedCharacter.GetActor().ProcessAction(Actions.action_move, contextTile: hit.collider.GetComponent<Tile>(), contextPath: previewPath);
                     }
                 }
             }
         }
     }
 
-    void SelectAction(Character targetCharacter)
+    void SelectAction(Unit targetCharacter)
     {
         // Select action, character selected, previous selection
         // Change character selection
+
+        //Can't select enemy units or dead units.
+        if (targetCharacter && (targetCharacter.GetFlag("dead") || targetCharacter.attributes.faction != playerFaction)) return;
 
         // Clears current action bar
         actionPanelScript.gameObject.SetActive(false);
@@ -153,10 +161,10 @@ public class InCombatPlayerAction
         if (targetCharacter)
         {
             if (selectedCharacter)
-                selectedCharacter.SelectUnit(false);
+                selectedCharacter.GetActor().SelectUnit(false);
 
             selectedCharacter = targetCharacter;
-            selectedCharacter.SelectUnit(true);
+            selectedCharacter.GetActor().SelectUnit(true);
         }
 
         // Select action, character selected, no previous selection
@@ -165,7 +173,7 @@ public class InCombatPlayerAction
         {
             if (selectedCharacter)
             {
-                selectedCharacter.SelectUnit(false);
+                selectedCharacter.GetActor().SelectUnit(false);
                 selectedCharacter = null;
                 PathPreviewClear();
             }
@@ -228,7 +236,7 @@ public class InCombatPlayerAction
 
         Debug.Log("Starting player turn");
 
-        foreach (Character character in allCharacters)
+        foreach (Unit character in allCharacters)
         {
             character.RefreshActionPoints();
         }

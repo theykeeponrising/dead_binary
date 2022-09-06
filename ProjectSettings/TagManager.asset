@@ -11,6 +11,7 @@ TagManager:
   - Character
   - UseItemPanel
   - InCombatPlayerActionUI
+  - Tile
   layers:
   - Default
   - TransparentFX

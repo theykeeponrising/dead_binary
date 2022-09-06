@@ -93,7 +93,7 @@ public class PlayerTurnState : GameState
 
         if (playerActionStateMachine.GetCurrentState().GetType() == typeof(SelectedStates.ChoosingShootTarget))
         {
-            playerAction.selectedCharacter.ClearTarget();
+            playerAction.selectedCharacter.GetActor().ClearTarget();
             playerActionStateMachine.ChangeState(new SelectedStates.Idle(playerActionStateMachine));
         }
         else

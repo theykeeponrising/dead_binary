@@ -14,13 +14,13 @@ public partial class Medkit : Item
 
     // Tell the item to be used.
     protected override void UseItem
-        (Character owner, Character charTarget = null, CoverObject covTarg = null)
+        (Unit owner, Unit charTarget = null, CoverObject covTarg = null)
     {
         RestoreHealth(charTarget);
     }
 
     // The medkit heals
-    public void RestoreHealth(Character target)
+    public void RestoreHealth(Unit target)
     {
         switch (_restoreType)
         {

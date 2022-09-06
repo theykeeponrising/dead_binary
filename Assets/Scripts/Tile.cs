@@ -19,9 +19,9 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     [HideInInspector]
     public Vector3 standPoint;
     InCombatPlayerAction playerAction;
-
     public AudioManager.FootstepType footstepType;
-
+    Grid grid;
+    
     // Use this for initialization
     void Start()
     {
@@ -50,6 +50,16 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         if (playerAction.targetTile == this)
             playerAction.targetTile = null;
         Highlighted(false, "preview");
+    }
+
+    public Grid GetGrid()
+    {
+        return grid;
+    }
+
+    public void SetGrid(Grid grid)
+    {
+        this.grid = grid;
     }
 
     public void Highlighted(bool highlighted = true, string highlightType = "error", string eval = "movement")
@@ -84,7 +94,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             if (tile.gameObject.GetInstanceID() != gameObject.GetInstanceID())
             {
                 float distance = Vector3.Distance(this.gameObject.transform.position, tile.gameObject.transform.position);
-                if (distance <= GlobalManager.tileSpacing) neighbours.Add(tile);
+                if (distance <= Grid.tileSpacing) neighbours.Add(tile);
             }
     }
 
@@ -100,7 +110,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         return null;
     }
 
-    //TODO: Simplify this to just calculate distance using GlobalManager.tileSpacing and the transform.positions of the tiles
+    //TODO: Move this to grid.cs, and simplify
     public List<Tile> FindCost(Tile findTile, int maxDist = 10)
     {
         // Finds the nearest path to the destination tile
@@ -244,7 +254,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             if (coverObj.gameObject.GetInstanceID() != gameObject.GetInstanceID())
             {
                 float distance = Vector3.Distance(this.gameObject.transform.position, coverObj.gameObject.transform.position);
-                if (distance <= GlobalManager.tileSpacing)
+                if (distance <= Grid.tileSpacing) 
                 {
                     cover = coverObj;
                     break;
@@ -266,5 +276,10 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         }
         else
             standPoint = transform.position;
+    }
+
+    public bool IsCover()
+    {
+        return this.cover != null;
     }
 }

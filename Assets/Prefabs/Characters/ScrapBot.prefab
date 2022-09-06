@@ -2184,11 +2184,11 @@ GameObject:
   - component: {fileID: 7422183697972878214}
   - component: {fileID: 7019620656351241454}
   - component: {fileID: 190433427531185719}
-  - component: {fileID: 3809991894843442048}
+  - component: {fileID: 5511761140728847718}
   - component: {fileID: 3809991894843442051}
   m_Layer: 0
   m_Name: ScrapBot
-  m_TagString: Untagged
+  m_TagString: Character
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2372,7 +2372,7 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &3809991894843442048
+--- !u!114 &5511761140728847718
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2381,33 +2381,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 4043852725619244410}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a32bbe332c45aee41aa6226d2d2fe659, type: 3}
+  m_Script: {fileID: 11500000, guid: 6f6af3d4ee4145a4795d11fd1590d564, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   objectTiles: []
   isTraversable: 0
-  impactType: 1
-  flags: []
-  currentTile: {fileID: 0}
-  movePath: []
-  currentCover: {fileID: 0}
-  targetCharacter: {fileID: 0}
+  impactType: 0
+  grid: {fileID: 0}
   inventory: {fileID: 0}
-  useTorsoTwist: 1
+  currentTile: {fileID: 0}
+  currentCover: {fileID: 0}
+  availableActions: 0000000001000000020000000300000004000000050000000600000007000000
   stats:
     healthCurrent: 10
     healthMax: 10
     movement: 5
-    aim: 4
-    armor: 0
-    dodge: 10
-    actionPointsCurrent: 0
+    aim: 6
+    armor: 3
+    dodge: 3
+    actionPointsCurrent: 2
     actionPointsMax: 2
   attributes:
-    name: Scrap Bot
+    name: Scrapbot
     faction: 2
-  availableActions: 0000000001000000020000000300000005000000
-  potentialTargets: []
+  velocityX: 0
+  velocityZ: 0
+  unitStrategy: 0
+  DamageWeight: 0
+  KillWeight: 0
+  CoverWeight: 0
 --- !u!114 &3809991894843442051
 MonoBehaviour:
   m_ObjectHideFlags: 0
