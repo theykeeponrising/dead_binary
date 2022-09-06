@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
+//Handles all the SFX for a particular character, e.g. footsteps
 public class CharacterSFX
 {
     Unit unit;

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//Process for handling enemy turns. Will basically iterate through each unit one at a time and have them act.
 public class EnemyTurnProcess
 {
     List<EnemyUnit> enemyUnits;
@@ -30,9 +31,11 @@ public class EnemyTurnProcess
         foreach (EnemyUnit enemyUnit in enemyUnits)
         {
             enemyUnit.ProcessUnitTurn();
+            //Ensure units act one at a time
             while (enemyUnit.isActing) yield return new WaitForSeconds(0.1f);
         }
 
+        //End turn when we're done processing the units
         EnemyUnitsProcessedCallback();
     }
 

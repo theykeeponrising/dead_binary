@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
+//Handles all the animations+animation logic for a particular character
+//Currently includes flags, though maybe that should be moved elsewhere
 public class CharacterAnimator
 {
     [Header("--Animation")]

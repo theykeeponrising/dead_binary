@@ -3,7 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
+//This class will automatically determine what tiles exist on the board (NOTE: Assumes rectangular map!)
+//All cross-tile functions should go here
 public class Grid : MonoBehaviour
 {
     //Grid is a 2d array indexed to the tiles, flattened to 1d, assumes square map

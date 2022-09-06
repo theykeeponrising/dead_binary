@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//Handles all unit logic that is enemy-specific
 public class EnemyUnit : Unit
 {
     public enum Strategy {

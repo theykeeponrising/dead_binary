@@ -7,6 +7,8 @@ using UnityEngine.InputSystem;
 
 //This class is a high-level handler for a character/unit, intended to deal with e.g. stats/attributes/faction/inventory/etc.
 //Implementation of character/unit actions should be done in CharacterActor.cs
+//Implementation of character/unit animation logic should be done in CharacterAnimator.cs
+//Implementation of character/unit SFX logic should be in CharacterSFX.cs
 public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHandler
 {
     //List of units on opposing faction that are alive

@@ -5,11 +5,11 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
+//Class if focused on implementing the characters actions
+//I.e. the logic for moving, shooting, jumping, etc.
+//May be worth splitting up further
 public class CharacterActor
-
 {
-    // Main script for Player-Controlled characters
-
     [Header("-Character Attributes")]
     //[HideInInspector]
     GameObject selectionCircle;
