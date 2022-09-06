@@ -46,7 +46,8 @@ AudioSource:
   m_GameObject: {fileID: 171350893874193181}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: -4200897470393299365, guid: 9bdf92d4bdd4c0e43bf3b9327857da03, type: 2}
+  OutputAudioMixerGroup: {fileID: -4200897470393299365, guid: 9bdf92d4bdd4c0e43bf3b9327857da03,
+    type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 0.5
@@ -228,7 +229,7 @@ MonoBehaviour:
   stats:
     damage: 5
     minRange: 1
-    maxRange: 7
+    maxRangeNoPenalty: 3
     ammoMax: 4
     ammoCurrent: 0
     reloadSpeed: 0

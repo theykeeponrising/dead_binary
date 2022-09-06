@@ -40,7 +40,7 @@ public class Weapon : MonoBehaviour
     {
         public int damage;
         public int minRange;
-        public int maxRange;
+        public int maxRangeNoPenalty;
         public int ammoMax;
         public int ammoCurrent;
         public float reloadSpeed;
@@ -62,11 +62,11 @@ public class Weapon : MonoBehaviour
         gunLight = GetComponentInChildren<Light>();
     }
 
-    public void DefaultPosition(Character parent)
+    public void DefaultPosition(Unit parent)
     {
         // Used to place newly-created weapon objects into the default position
 
-        transform.parent = parent.body.handRight.Find("AttachPoint");
+        transform.parent = parent.GetAnimator().GetWeaponDefaultPosition();
         transform.position = transform.parent.position;
         transform.localPosition = transform.localPosition + offset;
 
@@ -81,6 +81,11 @@ public class Weapon : MonoBehaviour
         StartCoroutine(ShootEffect());
     }
 
+    public int GetDamage()
+    {
+        return stats.damage;
+    }
+
     public int GetMinimumRange()
     {
         return stats.minRange;
@@ -88,14 +93,13 @@ public class Weapon : MonoBehaviour
 
     public int GetMaximumRange()
     {
-        return stats.maxRange;
+        return stats.maxRangeNoPenalty;
     }
 
     public float GetAccuracyPenalty(int range)
     {
         int rangeDiff = range - GetMaximumRange();
         float penalty = rangeDiff > 0 ? rangeDiff * stats.overRangeAccuracyPenalty : 0.0f;
-        Debug.Log(string.Format("Penalty: {0}, RangePenalty: {1}", penalty, stats.overRangeAccuracyPenalty));
         return penalty;
     }
 
@@ -127,7 +131,7 @@ public class Weapon : MonoBehaviour
         gameObject.AddComponent<Rigidbody>();
     }
 
-    public void PlaySound(WeaponSound weaponSound, Character character=null)
+    public void PlaySound(WeaponSound weaponSound, Unit character=null)
     {
         // Plays sound from selected weapon sound choice
         // Optionally can play sound from Character's audio source instead of weapon

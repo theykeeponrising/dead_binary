@@ -63,14 +63,14 @@ public abstract class Item : MonoBehaviour
         return b;
     }
 
-    public void TryUseItem(Character owner, GameObject go, out bool success)
+    public void TryUseItem(Unit owner, GameObject go, out bool success)
     {
         bool b = false;
         if (ItemType == ItemType.CONSUMABLE)
         {
             if (TargetType == TargetType.Character)
             {
-                if (go.TryGetComponent(out Character c))
+                if (go.TryGetComponent(out Unit c))
                 {
                     if (CheckAffinity(owner.attributes.faction, c.attributes.faction))
                     {
@@ -98,11 +98,11 @@ public abstract class Item : MonoBehaviour
 
         success = b;
     }
-    public void UseTheUseItem(Character owner, Character charTarget = null, CoverObject covTarg = null)
+    public void UseTheUseItem(Unit owner, Unit charTarget = null, CoverObject covTarg = null)
     {
         UseItem(owner, charTarget, covTarg);
     }
-    protected abstract void UseItem(Character owner, Character charTarget = null, CoverObject covTarg = null);
+    protected abstract void UseItem(Unit owner, Unit charTarget = null, CoverObject covTarg = null);
 }
 
 [Flags]

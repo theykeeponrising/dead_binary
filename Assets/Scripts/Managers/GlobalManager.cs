@@ -14,7 +14,7 @@ public class GlobalManager : MonoBehaviour
     public static float tileSpacing = 2.0f;
 
     // Combat related
-    public static float globalHit = 85f;
+    public static float globalHit = 100.0f;
 
     private void Awake() 
     {
