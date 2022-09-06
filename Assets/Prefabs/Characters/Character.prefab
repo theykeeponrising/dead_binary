@@ -2268,10 +2268,11 @@ MonoBehaviour:
   isTraversable: 0
   impactType: 0
   grid: {fileID: 0}
+  flags: []
   inventory: {fileID: 0}
   currentTile: {fileID: 0}
   currentCover: {fileID: 0}
-  availableActions: 0000000001000000020000000300000004000000050000000600000007000000
+  availableActions: 0000000001000000020000000300000005000000
   stats:
     healthCurrent: 10
     healthMax: 10
