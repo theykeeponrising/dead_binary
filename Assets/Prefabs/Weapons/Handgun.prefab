@@ -46,8 +46,7 @@ AudioSource:
   m_GameObject: {fileID: 2006476113689740478}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: -4200897470393299365, guid: 9bdf92d4bdd4c0e43bf3b9327857da03,
-    type: 2}
+  OutputAudioMixerGroup: {fileID: -4200897470393299365, guid: 9bdf92d4bdd4c0e43bf3b9327857da03, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 0.5
@@ -211,7 +210,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponType: 0
   weaponHeld: 0
-  weaponLayer: 2
+  weaponLayer: 1
   weaponFamily: 1
   weaponImpact: 0
   fireSound:

@@ -293,6 +293,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         if (!RollForHit(attacker, distanceToTarget))
         {
             if (currentCover) currentCover.Impact();
+            AddFlag("dodging");
             Debug.Log(string.Format("{0} missed target {1}!", attacker.attributes.name, attributes.name));
             GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.DODGE, true);
             return;
@@ -400,6 +401,6 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
     //Used by EnemyUnit to determine when to move on to the next unit
     public bool IsActing()
     {
-        return GetFlag("moving")|| GetFlag("attacking") || GetFlag("stowing") || GetFlag("reloading") || GetFlag("aiming") || GetFlag("crouching") || GetFlag("dodging");
+        return GetFlag("moving")|| GetFlag("attacking") || GetFlag("stowing") || GetFlag("reloading") || GetFlag("aiming") || GetFlag("dodging");
     }
 }

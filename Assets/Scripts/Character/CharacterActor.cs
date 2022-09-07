@@ -207,10 +207,6 @@ public class CharacterActor
 
             // Character look at position
             unit.transform.rotation = Quaternion.Slerp(unit.transform.rotation, Quaternion.LookRotation(lookDirection - unit.transform.position), 3 * Time.deltaTime);
-
-            // Crouch down if its a half-sized cover
-            if (unit.currentCover.coverSize == CoverObject.CoverSize.half && !unit.GetFlag("crouching"))
-                ToggleCrouch(true, false);
         }
     }
 
@@ -254,8 +250,8 @@ public class CharacterActor
         unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.MOVE, true);
 
         // Stand up if crouched
-        if (unit.GetFlag("crouching"))
-            ToggleCrouch(false, true);
+        if (IsCrouching())
+            ToggleCrouch(true);
 
         moveTargetDestination = movePath[movePath.Count - 1];
         unit.currentTile.ChangeTileOccupant();
@@ -296,9 +292,8 @@ public class CharacterActor
         {
             unit.currentCover = unit.currentTile.cover;
             //Crouch, should maybe set a bool outside of the animator
-            if (unit.currentTile.cover.coverSize == CoverObject.CoverSize.half && !unit.GetFlag("crouching"))
-                // unit.GetAnimator().AnimationTransition(CharacterAnimator.AnimationEventContext.CROUCH_DOWN);
-                ToggleCrouch(true, false);
+            if (unit.currentTile.cover.coverSize == CoverObject.CoverSize.half && !IsCrouching())
+                ToggleCrouch();
         }
         moveTargetImmediate = null;
         moveTargetDestination = null;
@@ -361,7 +356,7 @@ public class CharacterActor
         {
             // If crouching, do not play stow animation
             // This is until we can get a proper crouch-stow animation
-            if (!unit.GetFlag("crouching"))
+            if (!IsCrouching())
             {
                 unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.STOW, true);
                 while (unit.GetFlag("stowing"))
@@ -387,7 +382,7 @@ public class CharacterActor
 
             // If crouching, do not play draw animation
             // This is until we can get a proper crouch-draw animation
-            if (!unit.GetFlag("crouching"))
+            if (!IsCrouching())
             {
                 unit.inventory.equippedWeapon.PlaySound(Weapon.WeaponSound.SWAP, unit);
                 unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.DRAW, true);
@@ -460,21 +455,34 @@ public class CharacterActor
         // Wait until shoot state completes
         while (playerAction.stateMachine.GetCurrentState().GetType() == typeof(SelectedStates.ShootTarget)) yield return new WaitForSeconds(0.01f);
 
-        // If target is dodging, remove flag        
-        if (shootTarget && shootTarget.GetFlag("dodging")) shootTarget.RemoveFlag("dodging");
+        // Crouch down if expected
+        CoverCrouch();
 
         // Shooting animation completed (should maybe just implement this with a callback function, honestly)
-        unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.SHOOT, false);
+        //unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.SHOOT, false);
         unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.AIMING, false);
         unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.IDLE, true);
     }
 
-    void ToggleCrouch(bool crouching=false, bool instant=false)
+    void ToggleCrouch(bool instant=false)
     {
-        // Placeholder function
-        // Test crouch animation when button pressed
-        // Just call char animation for now. Left in character.cs in case of more crouching logic
-        unit.GetAnimator().ToggleCrouch(crouching, instant);
+        // Activates crouch trigger, which will toggle crouching state
+
+        unit.GetAnimator().ToggleCrouch(instant);
+    }
+
+    bool IsCrouching()
+    {
+        // Returns true if any crouch animation is playing
+
+        return unit.GetAnimator().IsCrouching();
+    }
+
+    void CoverCrouch()
+    {
+        // Makes character crouch if they should be crouching behind cover
+
+        unit.GetAnimator().CoverCrouch();
     }
 
     public void ShootAction(Unit selectedTarget=null)
@@ -513,7 +521,7 @@ public class CharacterActor
 
         unit.GetComponentInChildren<CharacterCamera>().enabled = true;
         unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.AIMING, true);
-        ToggleCrouch(false);
+        if (IsCrouching()) ToggleCrouch();
     }
 
 
@@ -524,5 +532,6 @@ public class CharacterActor
         unit.GetComponentInChildren<CharacterCamera>().enabled = false;
         unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.AIMING, false);
         targetCharacter = null;
+        CoverCrouch();
     }
 }

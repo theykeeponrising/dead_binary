@@ -411,19 +411,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3384483706206358001, guid: 5f72648e613943041b7136ef05944bc9, type: 3}
       propertyPath: m_Size.x
-      value: 0.045
+      value: 0.85
       objectReference: {fileID: 0}
     - target: {fileID: 3384483706206358001, guid: 5f72648e613943041b7136ef05944bc9, type: 3}
       propertyPath: m_Size.y
-      value: 0.025
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 3384483706206358001, guid: 5f72648e613943041b7136ef05944bc9, type: 3}
       propertyPath: m_Size.z
-      value: 0.045
+      value: 0.85
       objectReference: {fileID: 0}
     - target: {fileID: 3384483706206358001, guid: 5f72648e613943041b7136ef05944bc9, type: 3}
       propertyPath: m_Center.y
-      value: 0.012
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 3384483706206358004, guid: 5f72648e613943041b7136ef05944bc9, type: 3}
       propertyPath: impactType
@@ -454,10 +454,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.005
-  m_Height: 0.25
+  m_Radius: 0.1
+  m_Height: 4.5
   m_Direction: 1
-  m_Center: {x: 0, y: 0.15, z: 0}
+  m_Center: {x: 0, y: 2.75, z: 0}
 --- !u!4 &6416031016520120334 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3384483706206358000, guid: 5f72648e613943041b7136ef05944bc9, type: 3}

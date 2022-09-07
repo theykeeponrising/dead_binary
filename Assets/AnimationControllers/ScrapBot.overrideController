@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: ScrapBot
+  m_Controller: {fileID: 9100000, guid: 347ec8c34e26d9146b434b8d63ef1192, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: 3996f1e83705ac64fbe391478a19a64e, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 602ef09fc4235e9489eb69947839febf, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: ce5355f68b5ad004fb0ca10008a61258, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 9f05d4c730ba50c4fab925d58b6b7230, type: 2}
+  - m_OriginalClip: {fileID: -8271052594384253526, guid: b5b067632c960da438fff054bfaa7ec4, type: 3}
+    m_OverrideClip: {fileID: 1834057908420941102, guid: 25b97dd1d9098894c86199ebdddf8fde, type: 3}
+  - m_OriginalClip: {fileID: -6853424935650347958, guid: b5b067632c960da438fff054bfaa7ec4, type: 3}
+    m_OverrideClip: {fileID: -1901407625200392923, guid: 25b97dd1d9098894c86199ebdddf8fde, type: 3}
+  - m_OriginalClip: {fileID: -7364066166988281948, guid: b5b067632c960da438fff054bfaa7ec4, type: 3}
+    m_OverrideClip: {fileID: -7137622659337699559, guid: 25b97dd1d9098894c86199ebdddf8fde, type: 3}
+  - m_OriginalClip: {fileID: 1027856509321030916, guid: b5b067632c960da438fff054bfaa7ec4, type: 3}
+    m_OverrideClip: {fileID: -7137622659337699559, guid: 25b97dd1d9098894c86199ebdddf8fde, type: 3}
+  - m_OriginalClip: {fileID: 5094069149841363842, guid: b5b067632c960da438fff054bfaa7ec4, type: 3}
+    m_OverrideClip: {fileID: -7137622659337699559, guid: 25b97dd1d9098894c86199ebdddf8fde, type: 3}
+  - m_OriginalClip: {fileID: -5237519179292723533, guid: b5b067632c960da438fff054bfaa7ec4, type: 3}
+    m_OverrideClip: {fileID: -5244464674000223137, guid: 25b97dd1d9098894c86199ebdddf8fde, type: 3}
+  - m_OriginalClip: {fileID: 7718310822457716232, guid: b5b067632c960da438fff054bfaa7ec4, type: 3}
+    m_OverrideClip: {fileID: -5244464674000223137, guid: 25b97dd1d9098894c86199ebdddf8fde, type: 3}
+  - m_OriginalClip: {fileID: -8536829094809276464, guid: b5b067632c960da438fff054bfaa7ec4, type: 3}
+    m_OverrideClip: {fileID: -5244464674000223137, guid: 25b97dd1d9098894c86199ebdddf8fde, type: 3}
+  - m_OriginalClip: {fileID: -5263021125928571337, guid: b5b067632c960da438fff054bfaa7ec4, type: 3}
+    m_OverrideClip: {fileID: -5244464674000223137, guid: 25b97dd1d9098894c86199ebdddf8fde, type: 3}
