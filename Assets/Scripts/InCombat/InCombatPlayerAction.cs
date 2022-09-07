@@ -247,6 +247,7 @@ public class InCombatPlayerAction
         // Ends player's current turn
 
         // TO DO -- Any end of turn effects, and transfer to AI
+        SelectAction(null);
         this.playerTurnState.EndTurn();
     }
 }

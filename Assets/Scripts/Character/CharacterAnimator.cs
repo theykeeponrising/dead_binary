@@ -188,6 +188,7 @@ public class CharacterAnimator
                 break;
             
             case (AnimationEventContext.AIMING):
+                unit.AddFlag("aiming");
                 animator.SetBool("aiming", true);
                 animator.updateMode = AnimatorUpdateMode.AnimatePhysics;
 
@@ -350,7 +351,17 @@ public class CharacterAnimator
     {
         // Twists characters torso to aim gun at target
 
-        if (!unit.GetFlag("aiming") || !useTorsoTwist)
+        // Only continue if we have a valid target
+        if (!unit.GetActor().targetCharacter)
+            return;
+
+        // Initial camera position should snap immediately
+        Vector3 targetPosition = unit.GetActor().GetTargetPosition(true);
+        Vector3 targetDirection = targetPosition - unit.inventory.equippedWeapon.transform.position;
+        unit.GetComponentInChildren<CharacterCamera>().AdjustAngle(targetDirection.x, targetPosition);
+
+        // If we are crouching or not using torso twist, then skip the bone rotations
+        if (IsCrouching() || !useTorsoTwist)
             return;
         
         // Iterations improve accuracy of aim position
@@ -358,8 +369,8 @@ public class CharacterAnimator
 
         for (int i = 0; i < iterations; i++)
         {
-            Vector3 targetPosition = unit.GetActor().GetTargetPosition();
-            Vector3 targetDirection = targetPosition - unit.inventory.equippedWeapon.transform.position;
+            targetPosition = unit.GetActor().GetTargetPosition();
+            targetDirection = targetPosition - unit.inventory.equippedWeapon.transform.position;
             unit.GetComponentInChildren<CharacterCamera>().AdjustAngle(targetDirection.x, targetPosition);
 
             for (int b = 0; b < boneTransforms.Length; b++)
@@ -368,7 +379,6 @@ public class CharacterAnimator
                 Transform bone = boneTransforms[b];
                 Vector3 aimDirection = unit.inventory.equippedWeapon.transform.forward;
                 
-
                 // Updates rotation up until the actual shoot animation happens
                 if (unit.GetFlag("aiming"))
                     aimTowards = Quaternion.FromToRotation(aimDirection, targetDirection);

@@ -411,7 +411,7 @@ public class CharacterActor
         unit.inventory.equippedWeapon.Reload();
     }
 
-    public Vector3 GetTargetPosition()
+    public Vector3 GetTargetPosition(bool snap=false)
     {
         // Gets target's position relative to the tip of the gun
 
@@ -427,6 +427,7 @@ public class CharacterActor
         }
 
         Vector3 direction = Vector3.Slerp(targetDirection, aimDirection, blendOut);
+        if (snap) direction = targetDirection;
         return unit.inventory.equippedWeapon.transform.position + direction;
     }
 
@@ -459,7 +460,6 @@ public class CharacterActor
         CoverCrouch();
 
         // Shooting animation completed (should maybe just implement this with a callback function, honestly)
-        //unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.SHOOT, false);
         unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.AIMING, false);
         unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.IDLE, true);
     }

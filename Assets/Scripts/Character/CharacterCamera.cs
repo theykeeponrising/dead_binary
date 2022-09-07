@@ -8,7 +8,6 @@ public class CharacterCamera : MonoBehaviour
     Unit unit;
     Camera characterCamera;
     PhysicsRaycaster raycaster;
-    AudioListener audioListener;
 
     // Start is called before the first frame update
     void Awake()
@@ -16,7 +15,6 @@ public class CharacterCamera : MonoBehaviour
         unit = GetComponentInParent<Unit>();
         characterCamera = GetComponent<Camera>();
         raycaster = GetComponent<PhysicsRaycaster>();
-        audioListener = GetComponent<AudioListener>();
 
         name = string.Format("{0} (Camera)", unit.attributes.name);
 
@@ -25,14 +23,14 @@ public class CharacterCamera : MonoBehaviour
 
     private void OnEnable()
     {
-        (audioListener.enabled, Camera.main.GetComponent<AudioListener>().enabled) = (true, false);
+        (GetComponent<AudioListener>().enabled, Camera.main.GetComponent<AudioListener>().enabled) = (true, false);
         characterCamera.enabled = true;
         raycaster.enabled = true;
     }
 
     private void OnDisable()
     {
-        (audioListener.enabled, Camera.main.GetComponent<AudioListener>().enabled) = (false, true);
+        (GetComponent<AudioListener>().enabled, Camera.main.GetComponent<AudioListener>().enabled) = (false, true);
         characterCamera.enabled = false;
         raycaster.enabled = false;
     }
@@ -41,33 +39,6 @@ public class CharacterCamera : MonoBehaviour
     void Update()
     {
         //EnableCamera();
-    }
-
-    void EnableCamera()
-    {
-        // If this character isn't selected, disalbe the character camera
-        if (unit.GetActor().GetPlayerAction().selectedCharacter != unit)
-        {
-            characterCamera.enabled = false;
-            return;
-        }
-
-        // State machine is "Choosing Target"
-        bool targeting = (unit.GetActor().GetPlayerAction().stateMachine.GetCurrentState().GetType() == typeof(SelectedStates.ChoosingShootTarget));
-
-        // State machine is "Shooting Target"
-        bool shooting = (unit.GetActor().GetPlayerAction().stateMachine.GetCurrentState().GetType() == typeof(SelectedStates.ShootTarget));
-
-        // There is a target character
-        bool target = unit.GetActor().targetCharacter != null;
-
-        // If we are in "choosing" or "shooting" target states, and there is a valid target, we use the character camera
-        bool useCharacterCam = ((targeting || shooting) && target) ? true : false;
-
-        if (useCharacterCam) 
-        characterCamera.enabled = useCharacterCam;
-        raycaster.enabled = useCharacterCam;
-        audioListener.enabled = useCharacterCam;
     }
 
     public void AdjustAngle(float angle, Vector3 targetPosition)
