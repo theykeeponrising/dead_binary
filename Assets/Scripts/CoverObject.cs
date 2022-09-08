@@ -31,9 +31,9 @@ public class CoverObject : MonoBehaviour
         // Returns dodge chance percent bonus provided by cover
 
         if (coverSize == CoverSize.half)
-            return 15;
-        else if (coverSize == CoverSize.full)
             return 30;
+        else if (coverSize == CoverSize.full)
+            return 60;
         return 0;
     }
 }
