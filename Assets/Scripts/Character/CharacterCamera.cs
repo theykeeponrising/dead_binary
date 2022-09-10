@@ -30,15 +30,10 @@ public class CharacterCamera : MonoBehaviour
 
     private void OnDisable()
     {
-        (GetComponent<AudioListener>().enabled, Camera.main.GetComponent<AudioListener>().enabled) = (false, true);
+        if (Camera.main) Camera.main.GetComponent<AudioListener>().enabled = true;
+        GetComponent<AudioListener>().enabled = false;
         characterCamera.enabled = false;
         raycaster.enabled = false;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        //EnableCamera();
     }
 
     public void AdjustAngle(float angle, Vector3 targetPosition)

@@ -86,10 +86,10 @@ public class SelectedStates
         }
         public override void InputActionBtn(InCombatPlayerAction t, int index)
         {
-            Actions.ActionsList action = t.GetBindings(index);
+            Actions.ActionList action = t.GetBindings(index);
 
             // If requirements aren't met, ignore button press
-            bool requirementsMet = t.selectedCharacter.stats.actionPointsCurrent >= Actions.ActionsDict[action].cost;
+            bool requirementsMet = Actions.ActionsDict[action].CheckRequirements(t.selectedCharacter);
             if (!requirementsMet) return;
 
             // Button press sfx
@@ -97,22 +97,22 @@ public class SelectedStates
 
             switch (action)
             {
-                case (Actions.ActionsList.RELOAD):
+                case (Actions.ActionList.RELOAD):
                     {
                         ChangeState(new Reloading(Machine));
                         break;
                     }
-                case (Actions.ActionsList.SWAP):
+                case (Actions.ActionList.SWAP):
                     {
                         ChangeState(new SwapGun(Machine));
                         break;
                     }
-                case (Actions.ActionsList.REFRESH):
+                case (Actions.ActionList.REFRESH):
                     {
                         ChangeState(new RefreshingAP(Machine));
                         break;
                     }
-                case (Actions.ActionsList.CHOOSEITEM):
+                case (Actions.ActionList.CHOOSEITEM):
                     {
                         //if (t.selectedCharacter.inventory.GetItem(0))
                             ChangeState
@@ -121,7 +121,7 @@ public class SelectedStates
                         
                         break;
                     }
-                case (Actions.ActionsList.SHOOT):
+                case (Actions.ActionList.SHOOT):
                     {
                         ChangeState(new ChoosingShootTarget(Machine));
                         break;
@@ -179,31 +179,31 @@ public class SelectedStates
 
         public override void InputActionBtn(InCombatPlayerAction t, int index)
         {
-            Actions.ActionsList action = t.GetBindings(index);
+            Actions.ActionList action = t.GetBindings(index);
 
             switch (action)
             {
-                case (Actions.ActionsList.SHOOT):
+                case (Actions.ActionList.SHOOT):
                     {
                         ChangeState(new ChoosingShootTarget(Machine));
                         break;
                     }
-                case (Actions.ActionsList.RELOAD):
+                case (Actions.ActionList.RELOAD):
                     {
                         ChangeState(new Reloading(Machine));
                         break;
                     }
-                case (Actions.ActionsList.SWAP):
+                case (Actions.ActionList.SWAP):
                     {
                         ChangeState(new SwapGun(Machine));
                         break;
                     }
-                case (Actions.ActionsList.REFRESH):
+                case (Actions.ActionList.REFRESH):
                     {
                         ChangeState(new RefreshingAP(Machine));
                         break;
                     }
-                case (Actions.ActionsList.CHOOSEITEM):
+                case (Actions.ActionList.CHOOSEITEM):
                     {
                         ChangeState (new ChooseItem
                             (Machine, t.selectedCharacter.inventory.items.ToArray()));
@@ -354,19 +354,25 @@ public class SelectedStates
         {
             // Spacebar and shoot action will execute shoot while in targeting
 
-            Actions.ActionsList action = t.GetBindings(index);
+            Actions.ActionList action = t.GetBindings(index);
 
             // Button press sfx
             InputPress(t);
 
             switch (action)
             {
-                case (Actions.ActionsList.SHOOT):
+                case (Actions.ActionList.SHOOT):
                     {
                         if (t.selectedCharacter.GetActor().targetCharacter)
                             ChangeState(new ShootTarget(Machine, t.selectedCharacter.GetActor().targetCharacter));
                         else
                             Debug.Log("No Target -- But how? Ensure that both characters are set to different factions. (spacebar)");
+                        break;
+                    }
+                case (Actions.ActionList.SWAP):
+                    {
+                        ChangeState(new SwapGun(Machine));
+                        ChangeState(new ChoosingShootTarget(Machine));
                         break;
                     }
             }
@@ -648,9 +654,9 @@ public class SelectedStates
         }
         public override void InputActionBtn(InCombatPlayerAction t, int index)
         {
-            Actions.ActionsList action = t.GetBindings(index);
+            Actions.ActionList action = t.GetBindings(index);
 
-            if (action == Actions.ActionsList.CHOOSEITEM)
+            if (action == Actions.ActionList.CHOOSEITEM)
             {
                 ChangeState(new Idle(Machine));
             }

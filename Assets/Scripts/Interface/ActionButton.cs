@@ -11,32 +11,48 @@ public class ActionButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 
     AudioSource audioSource;
     Button button;
-
-    Sprite icon_active;
-    Sprite background_active;
-    Sprite background_inactive;
     string spritePath;
 
     [SerializeField] private InCombatPlayerAction playerAction;
     PlayerTurnState playerTurnState;
     int buttonIndex;
     FiniteState<InCombatPlayerAction> state;
-    public bool requirementsMet;
-    public int apRequirement = 0;
+
+    Actions.ActionList boundAction;
+    bool requirementsMet;
+
+    Sprite icon;
+    Image btnBackground;
+    Image btnFrame;
+    Image btnIcon;
 
     enum ButtonState { ACTIVE, PASSIVE, DISABLED };
     ButtonState currentButtonState = ButtonState.PASSIVE;
 
-    Dictionary<ButtonState, Color32> ButtonColors = new Dictionary<ButtonState, Color32>() { 
+    // Colors for the icon and frame
+    Dictionary<ButtonState, Color32> IconColors = new Dictionary<ButtonState, Color32>() {
         { ButtonState.ACTIVE, new Color32(37, 232, 232, 255) },
         { ButtonState.PASSIVE, new Color32(0, 0, 0, 255) },
         { ButtonState.DISABLED, new Color32(100, 100, 100, 255) },
+    };
+
+    // Colors for the background
+    Dictionary<ButtonState, Color32> BackgroundColors = new Dictionary<ButtonState, Color32>() { 
+        { ButtonState.ACTIVE, new Color32(0, 0, 0, 255) },
+        { ButtonState.PASSIVE, new Color32(37, 232, 232, 255) },
+        { ButtonState.DISABLED, new Color32(0, 0, 0, 255) },
     };
 
     void Start()
     {
         playerTurnState = (PlayerTurnState)StateHandler.Instance.GetStateObject(StateHandler.State.PlayerTurnState);
         playerAction = playerTurnState.GetPlayerAction();
+
+        btnBackground = GetComponentsInChildren<Image>()[0];
+        btnFrame = GetComponentsInChildren<Image>()[1];
+        btnIcon = GetComponentsInChildren<Image>()[2];
+
+        btnIcon.sprite = icon;
     }
 
     void OnEnable()
@@ -53,11 +69,7 @@ public class ActionButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     public void LoadResources(string newSpritePath)
     {
         spritePath = newSpritePath;
-        icon_active = Resources.Load<Sprite>(spritePath);
-        //icon_inactive = Resources.Load<Sprite>(spritePath + "_1");
-        background_inactive = Resources.Load<Sprite>(ActionButtons.btn_background);
-        background_active = Resources.Load<Sprite>(ActionButtons.btn_background + "_1");
-        GetComponentsInChildren<Image>()[1].sprite = icon_active;
+        icon = Resources.Load<Sprite>(spritePath);
     }
 
     public string GetSpritePath()
@@ -67,10 +79,13 @@ public class ActionButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 
     void CheckRequirements()
     {
-        requirementsMet = playerAction.selectedCharacter.stats.actionPointsCurrent >= apRequirement;
+        requirementsMet = Actions.ActionsDict[boundAction].CheckRequirements(playerAction.selectedCharacter);
         if (!requirementsMet) currentButtonState = ButtonState.DISABLED;
         else if (requirementsMet && currentButtonState == ButtonState.DISABLED) currentButtonState = ButtonState.PASSIVE;
-        GetComponentsInChildren<Image>()[1].color = ButtonColors[currentButtonState];
+
+        btnIcon.color = IconColors[currentButtonState];
+        btnFrame.color = IconColors[currentButtonState];
+        btnBackground.color = BackgroundColors[currentButtonState];
     }
 
     void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
@@ -78,7 +93,6 @@ public class ActionButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         // Highlights icon on mouse over
 
         if (requirementsMet) currentButtonState = ButtonState.ACTIVE;
-        GetComponentsInChildren<Image>()[0].sprite = background_inactive;
 
         AudioClip audioClip = AudioManager.Instance.GetInterfaceSound(AudioManager.InterfaceSFX.MOUSE_OVER, 0);
         audioSource.PlayOneShot(audioClip);
@@ -89,7 +103,13 @@ public class ActionButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         // Clears unit highlight on mouse leave
 
         if (requirementsMet) currentButtonState = ButtonState.PASSIVE;
-        GetComponentsInChildren<Image>()[0].sprite = background_active;
+    }
+
+    public void BindAction(Actions.ActionList action)
+    {
+        // Stores action for checking requirements
+
+        boundAction = action;
     }
 
     public void BindButton(int index)

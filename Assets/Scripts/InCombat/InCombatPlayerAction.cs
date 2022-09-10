@@ -103,14 +103,14 @@ public class InCombatPlayerAction
         SelectAction(targetCharacter);        
     }
 
-    public Actions.ActionsList GetBindings(int index)
+    public Actions.ActionList GetBindings(int index)
     {
         // Returns which action should be bound to which action button index
         if (!selectedCharacter)
             return 0;
 
-        List<Actions.ActionsList> actionsList = new List<Actions.ActionsList>();
-        foreach (Actions.ActionsList characterAction in selectedCharacter.GetAvailableActions())
+        List<Actions.ActionList> actionsList = new List<Actions.ActionList>();
+        foreach (Actions.ActionList characterAction in selectedCharacter.GetAvailableActions())
         {
             if (!Actions.ActionsDict.ContainsKey(characterAction)) continue;
             if (Actions.ActionsDict[characterAction].buttonPath != null)

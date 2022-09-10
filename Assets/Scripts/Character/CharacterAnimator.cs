@@ -363,6 +363,11 @@ public class CharacterAnimator
         // If we are crouching or not using torso twist, then skip the bone rotations
         if (IsCrouching() || !useTorsoTwist)
             return;
+
+        // If we are not aiming or shooting, then skip the bone rotations
+        if (!animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Aiming") 
+            && !animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Shoot"))
+            return;
         
         // Iterations improve accuracy of aim position
         int iterations = 10;
@@ -389,6 +394,7 @@ public class CharacterAnimator
 
                 // Rotates the character to face the target
                 if (Mathf.Abs(angle) > 70f) unit.transform.LookAt(new Vector3(targetPosition.x, 0f, targetPosition.z));
+                Debug.Log(angle);
                 bone.rotation = (aimTowards * bone.rotation).normalized;
 
                 // TO DO -- Fix weirdness during shoot animation

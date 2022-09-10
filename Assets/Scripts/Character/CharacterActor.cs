@@ -215,7 +215,7 @@ public class CharacterActor
         // Sets the target destination tile
         // Once a path is found, begin movement routine
 
-        if (!unit.GetAvailableActions().Contains(Actions.ActionsList.MOVE))
+        if (!unit.GetAvailableActions().Contains(Actions.ActionList.MOVE))
             return;
 
         if (previewPath != null)

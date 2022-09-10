@@ -45,8 +45,8 @@ public class ActionPanelScript : MonoBehaviour
         {
             panel.SetActive(true);
 
-            List<Actions.ActionsList> actionsList = new List<Actions.ActionsList>();
-            foreach (Actions.ActionsList characterAction in playerAction.selectedCharacter.GetAvailableActions())
+            List<Actions.ActionList> actionsList = new List<Actions.ActionList>();
+            foreach (Actions.ActionList characterAction in playerAction.selectedCharacter.GetAvailableActions())
             {
                 if (!Actions.ActionsDict.ContainsKey(characterAction)) continue;
                 if (Actions.ActionsDict[characterAction].buttonPath != null)
@@ -57,7 +57,7 @@ public class ActionPanelScript : MonoBehaviour
                     string spritePath = Actions.ActionsDict[actionsList[index]].buttonPath;
 
                     buttons[index].GetComponent<ActionButton>().LoadResources(spritePath);
-                    buttons[index].GetComponent<ActionButton>().apRequirement = Actions.ActionsDict[characterAction].cost;
+                    buttons[index].GetComponent<ActionButton>().BindAction(characterAction);
                     buttons[index].GetComponentInChildren<TextMeshProUGUI>().text = (index + 1).ToString();
                     buttons[index].gameObject.SetActive(true);
 

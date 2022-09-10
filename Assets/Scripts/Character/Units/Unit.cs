@@ -28,7 +28,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
     GameState gameState;
 
     [HideInInspector] public CoverObject currentCover;
-    public List<Actions.ActionsList> availableActions;
+    public List<Actions.ActionList> availableActions;
 
     // Attributes are mosty permanent descriptors about the character
     [System.Serializable] public class Attributes
@@ -140,7 +140,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         return charSFX;
     }
 
-    public List<Actions.ActionsList> GetAvailableActions()
+    public List<Actions.ActionList> GetAvailableActions()
     {
         return availableActions;
     }
