@@ -57,6 +57,7 @@ public class ActionPanelScript : MonoBehaviour
                     string spritePath = Actions.ActionsDict[actionsList[index]].buttonPath;
 
                     buttons[index].GetComponent<ActionButton>().LoadResources(spritePath);
+                    buttons[index].GetComponent<ActionButton>().apRequirement = Actions.ActionsDict[characterAction].cost;
                     buttons[index].GetComponentInChildren<TextMeshProUGUI>().text = (index + 1).ToString();
                     buttons[index].gameObject.SetActive(true);
 

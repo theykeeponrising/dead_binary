@@ -88,6 +88,13 @@ public class SelectedStates
         {
             Actions.ActionsList action = t.GetBindings(index);
 
+            // If requirements aren't met, ignore button press
+            bool requirementsMet = t.selectedCharacter.stats.actionPointsCurrent >= Actions.ActionsDict[action].cost;
+            if (!requirementsMet) return;
+
+            // Button press sfx
+            InputPress(t);
+
             switch (action)
             {
                 case (Actions.ActionsList.RELOAD):
@@ -348,6 +355,9 @@ public class SelectedStates
             // Spacebar and shoot action will execute shoot while in targeting
 
             Actions.ActionsList action = t.GetBindings(index);
+
+            // Button press sfx
+            InputPress(t);
 
             switch (action)
             {

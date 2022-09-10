@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Actions : MonoBehaviour
+public class Actions
 {
     // All possible actions in enum form
     public enum ActionsList { MOVE, SHOOT, RELOAD, SWAP, REFRESH, CHOOSEITEM, USEITEM, NONE }
@@ -19,8 +19,8 @@ public class Actions : MonoBehaviour
         // FUTURE ATTR
         // Type - Action type (ability, item, etc)
 
-        public string name;
-        public ActionsList tag;
+        public string aname;
+        public ActionsList atag;
         public string context;
         public int cost;
         public int cooldown;
@@ -28,12 +28,17 @@ public class Actions : MonoBehaviour
 
         public Action(string aName, ActionsList aTag, string aContext, int aCost, int aCooldown, string aButtonPath)
         {
-            name = aName;
-            tag = aTag;
+            aname = aName;
+            atag = aTag;
             context = aContext;
             cost = aCost;
             cooldown = aCooldown;
             buttonPath = aButtonPath;
+        }
+
+        public bool RequirementsAP(Unit unit)
+        {
+            return (unit.stats.actionPointsCurrent >= cost);
         }
     }   
 
