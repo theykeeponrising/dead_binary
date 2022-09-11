@@ -394,7 +394,6 @@ public class CharacterAnimator
 
                 // Rotates the character to face the target
                 if (Mathf.Abs(angle) > 70f) unit.transform.LookAt(new Vector3(targetPosition.x, 0f, targetPosition.z));
-                Debug.Log(angle);
                 bone.rotation = (aimTowards * bone.rotation).normalized;
 
                 // TO DO -- Fix weirdness during shoot animation
