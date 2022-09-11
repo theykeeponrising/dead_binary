@@ -363,6 +363,11 @@ public class CharacterAnimator
         // If we are crouching or not using torso twist, then skip the bone rotations
         if (IsCrouching() || !useTorsoTwist)
             return;
+
+        // If we are not aiming or shooting, then skip the bone rotations
+        if (!animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Aiming") 
+            && !animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Shoot"))
+            return;
         
         // Iterations improve accuracy of aim position
         int iterations = 10;

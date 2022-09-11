@@ -120,9 +120,9 @@ public class CharacterActor
         // Determine if action can be performed, and perform action if so
 
         // Check if action is in allowed list of actions for character
-        if (!unit.GetAvailableActions().Contains(actionToPerform.tag))
+        if (!unit.GetAvailableActions().Contains(actionToPerform.atag))
         {
-            Debug.Log(string.Format("{0} does not contain action {1}", unit.attributes.name, actionToPerform.name));
+            Debug.Log(string.Format("{0} does not contain action {1}", unit.attributes.name, actionToPerform.aname));
             return;
         }    
 
@@ -215,7 +215,7 @@ public class CharacterActor
         // Sets the target destination tile
         // Once a path is found, begin movement routine
 
-        if (!unit.GetAvailableActions().Contains(Actions.ActionsList.MOVE))
+        if (!unit.GetAvailableActions().Contains(Actions.ActionList.MOVE))
             return;
 
         if (previewPath != null)
