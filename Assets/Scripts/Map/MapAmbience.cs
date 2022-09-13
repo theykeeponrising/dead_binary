@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Ambience : MonoBehaviour
+public class MapAmbience : MonoBehaviour
 {
     AudioSource audioSource;
     [SerializeField] AudioManager.AmbienceSFX ambienceSFX;

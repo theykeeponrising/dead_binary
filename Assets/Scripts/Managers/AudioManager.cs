@@ -124,6 +124,28 @@ public class AudioManager : MonoBehaviour
         return AmbienceSounds[ambienceSFX][Random.Range(0, range)];
     }
 
+    ///////////////////
+    // Weapon sounds //
+    ///////////////////
+
+    [SerializeField] AudioClip[] shellSmall;
+
+    public AudioClip GetShellSound(int index)
+    {
+        // Used to get a specific footstep sound
+
+        return shellSmall[index];
+    }
+
+    public AudioClip GetRandomShellSound()
+    {
+        // Returns a random footstep sound for footstep type
+
+        int range = Instance.shellSmall.Length;
+        return shellSmall[Random.Range(0, range)];
+    }
+
+
     void Start()
     {
         Instance = this;

@@ -5,6 +5,8 @@ using UnityEngine;
 public class Weapon : MonoBehaviour
 {
     // Main class used for weapon objects
+    [SerializeField] GameObject shellPrefab;
+    Transform shellEject;
 
     public enum WeaponType { Gun, Melee, Shield }
     public WeaponType weaponType;
@@ -19,7 +21,7 @@ public class Weapon : MonoBehaviour
     public WeaponImpact weaponImpact;
     public enum WeaponSound { FIRE, RELOAD, SWAP };
 
-    [SerializeField]  AudioClip[] fireSound;
+    [SerializeField] AudioClip[] fireSound;
     [SerializeField] AudioClip[] reloadSound;
     [SerializeField] AudioClip[] swapSound;
 
@@ -60,6 +62,7 @@ public class Weapon : MonoBehaviour
     {
         gunParticles = GetComponentInChildren<ParticleSystem>();
         gunLight = GetComponentInChildren<Light>();
+        shellEject = transform.Find("ShellEject");
     }
 
     public void DefaultPosition(Unit parent)
@@ -112,6 +115,9 @@ public class Weapon : MonoBehaviour
         gunParticles.Stop();
         gunParticles.Play();
         PlaySound(WeaponSound.FIRE);
+
+        if (shellEject) EjectShell();
+
         yield return new WaitForSecondsRealtime(gunParticles.main.duration);
         gunLight.enabled = false;
     }
@@ -158,5 +164,16 @@ public class Weapon : MonoBehaviour
 
         // Play the sound at the desired audio source
         audioSource.PlayOneShot(audioClip);
+    }
+
+    void EjectShell()
+    {
+        // Generate a shell as an effect and eject it with force
+
+        float randomForce = (Random.Range(3, 5));
+        GameObject shell = GlobalManager.Instance.activeMap.CreateEffect(shellPrefab, shellEject.position, Quaternion.Euler(Random.Range(5, 15), 0, Random.Range(-10, -15)));
+        shell.GetComponent<Rigidbody>().AddForce(shellEject.forward * randomForce, ForceMode.VelocityChange);
+        shell.GetComponent<Rigidbody>().AddForce(-shellEject.right * randomForce/2, ForceMode.VelocityChange);
+
     }
 }
