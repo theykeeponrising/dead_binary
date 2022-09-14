@@ -222,21 +222,6 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         return grid.GetTilesInRange(pos, stats.movement);
     }
 
-    
-    // public bool Shoot(Unit otherUnit)
-    // {
-    //     // Calculate whether target hit
-    //     // Dice roll performed
-    //     int randomChance = Random.Range(1, 100);
-    //     float hitChance = CalculateHitChance(this, otherUnit);
-    //     int distance = grid.GetTileDistance(currentTile, otherUnit.currentTile);
-
-    //     // FOR TESTING PURPOSES ONLY -- REMOVE WHEN FINISHED
-    //     Debug.Log(string.Format("Distance: {0}, Base chance to hit: {1}%, Dice roll: {2}", distance, hitChance, randomChance));
-
-    //     // Return true/false if hit connected
-    //     return (hitChance >= randomChance);
-    // }
 
     protected float CalculateExpectedDamage(Unit attacker, Unit defender, Tile attackerTile)
     {
@@ -266,6 +251,12 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         
         float hitChance = weaponAccuracyModifier * hitModifier;
         return hitChance / 100.0f;
+    }
+
+    // Returns calculated hit chance for a given target
+    public float GetCurrentHitChance()
+    {
+        return CalculateHitChance(this, charActor.targetCharacter);
     }
 
     bool RollForHit(Unit attacker, int distanceToTarget)

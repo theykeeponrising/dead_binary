@@ -241,7 +241,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shellPrefab: {fileID: 1288402221867282, guid: dbd52bdcc0a4cea47919205e4d0d6c9d, type: 3}
-  shellEject: {fileID: 0}
   weaponType: 0
   weaponHeld: 0
   weaponLayer: 1
@@ -266,9 +265,9 @@ MonoBehaviour:
     minRange: 1
     maxRangeNoPenalty: 3
     ammoMax: 3
-    ammoCurrent: 0
+    ammoCurrent: 2
     reloadSpeed: 0
-    baseAccuracyModifier: 1.1
+    baseAccuracyModifier: 0.8
     overRangeAccuracyPenalty: 7
 --- !u!1 &6729600718463147584
 GameObject:

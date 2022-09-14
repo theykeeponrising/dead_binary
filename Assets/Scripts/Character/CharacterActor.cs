@@ -10,22 +10,13 @@ using UnityEngine.InputSystem;
 //May be worth splitting up further
 public class CharacterActor
 {
-    [Header("-Character Attributes")]
-    //[HideInInspector]
+    InfoPanelScript infoPanel;
     GameObject selectionCircle;
 
-    [Header("--Pathfinding")]
     [HideInInspector] public List<Tile> movePath;
     Tile moveTargetImmediate;
     Tile moveTargetDestination;
-    [HideInInspector] public bool isAtDestination => IsAtDestination();
 
-    private bool IsAtDestination()
-    {
-        bool b = moveTargetDestination == null ? true : false;
-        return b;
-    }
-    // Transform lookTarget; -- NOT IMPLEMENTED
     [HideInInspector] public Unit targetCharacter;
     [HideInInspector] public InCombatPlayerAction playerAction;
     
@@ -36,6 +27,7 @@ public class CharacterActor
 
     public CharacterActor(Unit unit)
     {
+        infoPanel = UIManager.Instance.infoPanel;
         selectionCircle = unit.transform.Find("SelectionCircle").gameObject;
         this.unit = unit;
         potentialTargets = null;
@@ -394,6 +386,12 @@ public class CharacterActor
             {
                 unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.DRAW, false);
             }
+
+            if (infoPanel.gameObject.activeSelf)
+            {
+                infoPanel.UpdateHit(unit.GetCurrentHitChance());
+                infoPanel.UpdateDamage(unit.inventory.equippedWeapon.GetDamage());
+            }
         }
     }
 
@@ -522,6 +520,10 @@ public class CharacterActor
         unit.GetComponentInChildren<CharacterCamera>().enabled = true;
         unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.AIMING, true);
         if (IsCrouching()) ToggleCrouch();
+
+        infoPanel.gameObject.SetActive(true);
+        infoPanel.UpdateHit(unit.GetCurrentHitChance());
+        infoPanel.UpdateDamage(unit.inventory.equippedWeapon.GetDamage());
     }
 
 
@@ -533,5 +535,7 @@ public class CharacterActor
         unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.AIMING, false);
         targetCharacter = null;
         CoverCrouch();
+
+        infoPanel.gameObject.SetActive(false);
     }
 }
