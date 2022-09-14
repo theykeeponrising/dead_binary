@@ -198,6 +198,7 @@ public class CharacterAnimator
             
             case (AnimationEventContext.DODGE):
                 unit.AddFlag("dodging");
+                animator.SetTrigger("dodge");
                 break;
 
             // Stow weapon animation is completed
@@ -209,8 +210,6 @@ public class CharacterAnimator
             // Draw weapon animation is completed
             case (AnimationEventContext.DRAW):
                 unit.AddFlag("drawing");
-                //animator.Play("Draw", inventory.equippedWeapon.weaponLayer);
-                animator.Play("Draw");
                 break;
 
             //Move
@@ -325,7 +324,9 @@ public class CharacterAnimator
         bool[] crouchingAnims = {
             animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Crouch-Down"),
             animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Crouch-Up"),
-            animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Crouch")};
+            animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Crouch"),
+            animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Crouch-Dodge"),
+            animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Crouch-Damage")};
         return crouchingAnims.Any(x => x == true);
     }
 
@@ -335,16 +336,6 @@ public class CharacterAnimator
 
         if (unit.currentCover && unit.currentCover.coverSize == CoverObject.CoverSize.half)
             if (!IsCrouching()) ToggleCrouch();
-    }
-
-    IEnumerator SetAiming()
-    {
-        animator.SetBool("aiming", true);
-        animator.updateMode = AnimatorUpdateMode.AnimatePhysics;
-
-        yield return new WaitForSeconds(0.5f);
-        unit.AddFlag("aiming");
-        yield return new WaitForSeconds(0.25f);
     }
 
     void AimGetTarget()
@@ -421,17 +412,18 @@ public class CharacterAnimator
         // Animation that plays when character is taking damage
         // Damage is not actually applied in this function
 
-        if (unit.GetFlag("dodging"))
-        {
-            // TO DO -- Play dodging animation instead
-            return;
-        }
+        // If unit is dodging, skip damage effect
+        if (unit.GetFlag("dodging")) return;
 
         // Play impact sound
         unit.GetSFX().PlayRandomImpactSound();
 
         // Effect shown when character is hit
-        if (animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Damage2"))
+        if (animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Crouch"))
+            animator.Play("Crouch-Damage");
+        else if (animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Crouch-Damage"))
+            animator.Play("Crouch-Damage", 0, normalizedTime: .1f);
+        else if (animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Damage2"))
             animator.Play("Damage3", 0, normalizedTime: .1f);
         else if (weapon.weaponImpact == Weapon.WeaponImpact.HEAVY)
             animator.Play("Damage1");
