@@ -16,6 +16,10 @@ public class GlobalManager : MonoBehaviour
     // Combat related
     public static float globalHit = 100.0f;
 
+    [Range(10f, 100f)] public static float maxEffects = 20f;
+
+    public Map activeMap;
+
     private void Awake() 
     {
         Instance = this;
