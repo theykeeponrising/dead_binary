@@ -15,9 +15,8 @@ public class Healthbar : MonoBehaviour
     public GameObject healthPointPrefab;
 
     enum HealthState { HEALTHY, INJURED };
-    //ButtonState currentButtonState = ButtonState.PASSIVE;
 
-    // Colors for the background
+    // Colors for the health bar sprites
     Dictionary<Faction, Dictionary<HealthState, Color32>> HealthPointColors = new Dictionary<Faction, Dictionary<HealthState, Color32>>() {
         { Faction.Good, new Dictionary<HealthState, Color32>() {
         { HealthState.HEALTHY, new Color32(37, 232, 232, 255) },
