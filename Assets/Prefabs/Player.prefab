@@ -211,12 +211,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41a4ab23a0f69b84db184e4b916fb0fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sceneCameras: []
   parent: {fileID: 0}
   maxSpeed: 15
   acceleration: 10
   stepSize: 2
   zoomDampening: 7.5
-  minHeight: 7
+  minHeight: 3
   maxHeight: 13
   zoomSpeed: 2
   maxRotationSpeed: 0.15
@@ -229,6 +230,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8240788655257104905}
+  - component: {fileID: 849153507}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -253,3 +255,15 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &849153507
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4146606119251336789}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7667898bb8369de409cd73a45ec787e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
