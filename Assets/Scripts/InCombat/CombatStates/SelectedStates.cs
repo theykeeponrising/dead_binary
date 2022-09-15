@@ -245,12 +245,14 @@ public class SelectedStates
         public ChoosingShootTarget(StateMachine<InCombatPlayerAction> machine) : base(machine) { Machine = machine; }
 
         List<Unit> enemyList = new List<Unit>();
+        InfoPanelScript infoPanel = UIManager.Instance.infoPanel;
 
         public override void Enter(InCombatPlayerAction t)
         {
             base.Enter(t);
 
             t.PathPreviewClear();
+            infoPanel.UpdateAction(Actions.ActionList.SHOOT);
 
             //Make a list of Enemies
             Unit[] gos = GameObject.FindObjectsOfType<Unit>();
@@ -490,7 +492,7 @@ public class SelectedStates
             base.Enter(t);
             t.PathPreviewClear();
             // The item panel
-            var iPanel = GameObject.FindGameObjectWithTag("UseItemPanel").GetComponent<UseItemPanelScript>();
+            var iPanel = UIManager.Instance.useItemPanel;
             iPanel.SetPanel(true, Item);
 
             // Show UI
@@ -564,7 +566,7 @@ public class SelectedStates
         public override void Exit(InCombatPlayerAction t)
         {
             // Disable UI
-            var iPanel = GameObject.FindGameObjectWithTag("UseItemPanel").GetComponent<UseItemPanelScript>();
+            var iPanel = UIManager.Instance.useItemPanel;
 
             iPanel.SetPanel(false);
 

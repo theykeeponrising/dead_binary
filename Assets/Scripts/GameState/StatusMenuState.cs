@@ -14,15 +14,8 @@ public class StatusMenuState : GameState
     {
         base.Init(parentState, stateHandler);
         this.stateEnum = StateHandler.State.StatusMenuState;
-        GameObject[] gameObjects = GameObject.FindGameObjectsWithTag("UI");
-        foreach (GameObject go in gameObjects)
-        {
-            StatusMenuUI ui = go.GetComponent<StatusMenuUI>();
-            if (ui) {
-                statusMenuUI = ui;
-                statusMenuUI.SetStatusMenuState(this);
-            }
-        }
+        statusMenuUI = UIManager.Instance.statusMenuUI;
+        statusMenuUI.SetStatusMenuState(this);
     }
 
     public override void Update()

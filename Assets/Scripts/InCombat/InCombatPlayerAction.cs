@@ -21,6 +21,7 @@ public class InCombatPlayerAction
     public string clickContext;
     
     private ActionPanelScript actionPanelScript;
+    private InfoPanelScript infoPanelScript;
     public StateMachine<InCombatPlayerAction> stateMachine;
     public LayerMask uiLayermask;
     private PlayerTurnState playerTurnState; 
@@ -38,15 +39,11 @@ public class InCombatPlayerAction
 
     public void Start()
     {
-        actionPanelScript = GameObject.FindGameObjectWithTag("ActionPanel").GetComponent<ActionPanelScript>();
+        actionPanelScript = UIManager.Instance.actionPanel;
         actionPanelScript.gameObject.SetActive(false);
-
-        GameObject[] gameObjects = GameObject.FindGameObjectsWithTag("UI");
-        foreach (GameObject go in gameObjects)
-        {
-            InCombatPlayerActionUI ui = go.GetComponent<InCombatPlayerActionUI>();
-            if (ui) playerActionUI = ui;
-        }
+        infoPanelScript = UIManager.Instance.infoPanel;
+        infoPanelScript.gameObject.SetActive(false);
+        playerActionUI = UIManager.Instance.inCombatPlayerActionUI;
 
         // Add characters to allCharacters list
         allCharacters = new List<Unit>();

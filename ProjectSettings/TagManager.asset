@@ -6,11 +6,7 @@ TagManager:
   tags:
   - GlobalManager
   - VaultObject
-  - ActionPanel
-  - UI
   - Character
-  - UseItemPanel
-  - InCombatPlayerActionUI
   - Tile
   layers:
   - Default

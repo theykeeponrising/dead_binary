@@ -24,27 +24,30 @@ public class Actions
         public string aname;
         public ActionList atag;
         public string context;
+        public string description;
         public int cost;
         public int cooldown;
         public string buttonPath;
         public ActionRequirement[] requirements;
 
-        public Action(string aName, ActionList aTag, string aContext, int aCost, int aCooldown, string aButtonPath, ActionRequirement[] aRequirements)
+        public Action(string aName, ActionList aTag, string aContext, string aDescription,  int aCost, int aCooldown, string aButtonPath, ActionRequirement[] aRequirements)
         {
             aname = aName;
             atag = aTag;
             context = aContext;
+            description = aDescription;
             cost = aCost;
             cooldown = aCooldown;
             buttonPath = aButtonPath;
             requirements = aRequirements;
         }
 
-        public Action(string aName, ActionList aTag, string aContext, int aCost, int aCooldown, string aButtonPath, ActionRequirement aRequirements)
+        public Action(string aName, ActionList aTag, string aContext, string aDescription, int aCost, int aCooldown, string aButtonPath, ActionRequirement aRequirements)
         {
             aname = aName;
             atag = aTag;
             context = aContext;
+            description = aDescription;
             cost = aCost;
             cooldown = aCooldown;
             buttonPath = aButtonPath;
@@ -80,13 +83,13 @@ public class Actions
     }
 
     // All possible character actions with values
-    public static Action action_move = new Action("Move", ActionList.MOVE, "move", 1, 0, null, ActionRequirement.NONE);
-    public static Action action_shoot = new Action("Shoot", ActionList.SHOOT, "shoot", 1, 0, ActionButtons.btn_action_shoot, new ActionRequirement[]{ ActionRequirement.AP, ActionRequirement.AMMO});
-    public static Action action_reload = new Action("Reload", ActionList.RELOAD, "reload", 1, 0, ActionButtons.btn_action_reload, new ActionRequirement[] { ActionRequirement.AP, ActionRequirement.RELOAD });
-    public static Action action_swap = new Action("Swap Guns", ActionList.SWAP, "swap", 0, 0, ActionButtons.btn_action_swap, ActionRequirement.NONE);
-    public static Action action_chooseItem = new Action("Choose Item", ActionList.CHOOSEITEM, "chooseItem", 0, 0, ActionButtons.btn_action_chooseItem, ActionRequirement.NONE);
-    public static Action action_useItem = new Action("Use Item", ActionList.USEITEM, "useItem", 1, 0, ActionButtons.btn_action_useItem, ActionRequirement.NONE);
-    public static Action action_none = new Action("Do nothing.", ActionList.NONE, "none", 1, 0, null, ActionRequirement.NONE);
+    public static Action action_move = new Action("Move", ActionList.MOVE, "move", null, 1, 0, null, ActionRequirement.NONE);
+    public static Action action_shoot = new Action("Shoot", ActionList.SHOOT, "shoot", "Shoot at the selected target", 1, 0, ActionButtons.btn_action_shoot, new ActionRequirement[]{ ActionRequirement.AP, ActionRequirement.AMMO});
+    public static Action action_reload = new Action("Reload", ActionList.RELOAD, "reload", "Reloads currently equipped weapon", 1, 0, ActionButtons.btn_action_reload, new ActionRequirement[] { ActionRequirement.AP, ActionRequirement.RELOAD });
+    public static Action action_swap = new Action("Swap Guns", ActionList.SWAP, "swap", "Swap to next weapon", 0, 0, ActionButtons.btn_action_swap, ActionRequirement.NONE);
+    public static Action action_chooseItem = new Action("Choose Item", ActionList.CHOOSEITEM, "chooseItem", null, 0, 0, ActionButtons.btn_action_chooseItem, ActionRequirement.NONE);
+    public static Action action_useItem = new Action("Use Item", ActionList.USEITEM, "useItem", null, 1, 0, ActionButtons.btn_action_useItem, ActionRequirement.NONE);
+    public static Action action_none = new Action("Do nothing.", ActionList.NONE, "none", null, 1, 0, null, ActionRequirement.NONE);
 
     // Dictionary used to match enum to actual action class object
     public static Dictionary<ActionList, Action> ActionsDict = new Dictionary<ActionList, Action>() {
