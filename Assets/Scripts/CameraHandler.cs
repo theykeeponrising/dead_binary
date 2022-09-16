@@ -222,6 +222,16 @@ public class CameraHandler : MonoBehaviour
         }
     }
 
+    public float GetCameraZoomHeight()
+    {
+        return zoomHeight;
+    }   
+
+    public float GetCameraZoomDampening()
+    {
+        return zoomDampening;
+    }
+
     void UpdateCameraPosition()
     {
         // Pulls camera backwards, giving a "zooming out" feel

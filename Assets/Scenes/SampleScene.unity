@@ -2966,10 +2966,26 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 606893674762229697, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3296876834387543054, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
       propertyPath: weapons.Array.data[0]
       value: 
       objectReference: {fileID: -4286811643612619385, guid: 20fac855fc6f6184a93851ff222fc0c7, type: 3}
+    - target: {fileID: 4129411967720868935, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7167511141153434010, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
+      propertyPath: stats.healthMax
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 7167511141153434010, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
+      propertyPath: stats.healthCurrent
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 7323552420328571708, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
       propertyPath: m_Name
       value: Character
@@ -7011,6 +7027,14 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 4300002, guid: 0ddafde2003ca4d4196523175ecec146, type: 3}
+    - target: {fileID: 7167511141153434010, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
+      propertyPath: stats.healthMax
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 7167511141153434010, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
+      propertyPath: stats.healthCurrent
+      value: 11
+      objectReference: {fileID: 0}
     - target: {fileID: 7323552420328571708, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
       propertyPath: m_Name
       value: Character (1)
