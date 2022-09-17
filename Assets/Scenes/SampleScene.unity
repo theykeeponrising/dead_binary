@@ -2966,69 +2966,29 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 3296876834387543054, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
-      propertyPath: items.Array.size
-      value: 1
+    - target: {fileID: 606893674762229697, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3296876834387543054, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
-      propertyPath: items.Array.data[0]
-      value: 
-      objectReference: {fileID: 8313984141035103840, guid: 21b55e2e7961f7d41a4db3f7a56e83b6, type: 3}
-    - target: {fileID: 3296876834387543054, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
-      propertyPath: items.Array.data[1]
-      value: 
-      objectReference: {fileID: 8313984141035103840, guid: 21b55e2e7961f7d41a4db3f7a56e83b6, type: 3}
     - target: {fileID: 3296876834387543054, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
       propertyPath: weapons.Array.data[0]
       value: 
       objectReference: {fileID: -4286811643612619385, guid: 20fac855fc6f6184a93851ff222fc0c7, type: 3}
-    - target: {fileID: 6379414259080875437, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 4300002, guid: 0ddafde2003ca4d4196523175ecec146, type: 3}
-    - target: {fileID: 7040024009383911731, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
+    - target: {fileID: 4129411967720868935, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7167511141153434010, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
+      propertyPath: stats.healthMax
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 7167511141153434010, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
+      propertyPath: stats.healthCurrent
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 7323552420328571708, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
       propertyPath: m_Name
       value: Character
-      objectReference: {fileID: 0}
-    - target: {fileID: 7324549121527466970, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
-      propertyPath: name
-      value: Bob
-      objectReference: {fileID: 0}
-    - target: {fileID: 7324549121527466970, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
-      propertyPath: faction
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7324549121527466970, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
-      propertyPath: storedWeapon
-      value: 
-      objectReference: {fileID: 877797045781911332, guid: 074955a812631f44b88f9cb1f37ff1be, type: 3}
-    - target: {fileID: 7324549121527466970, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
-      propertyPath: equippedWeapon
-      value: 
-      objectReference: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
-    - target: {fileID: 7324549121527466970, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
-      propertyPath: attributes.name
-      value: Bob
-      objectReference: {fileID: 0}
-    - target: {fileID: 7324549121527466970, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
-      propertyPath: attributes.faction
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7324549121527466970, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
-      propertyPath: availableActions.Array.size
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 7324549121527466970, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
-      propertyPath: availableActions.Array.data[4]
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 7324549121527466971, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
-      propertyPath: m_Enabled
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7329307604263240806, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
       propertyPath: m_RootOrder
@@ -4257,17 +4217,6 @@ Transform:
   m_Father: {fileID: 119467108}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &888779301 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2918468626395054387, guid: 3b0dcb06d7729234c850f8280ff35856, type: 3}
-  m_PrefabInstance: {fileID: 3699802337232222760}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &899439072
 GameObject:
   m_ObjectHideFlags: 0
@@ -7078,6 +7027,14 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 4300002, guid: 0ddafde2003ca4d4196523175ecec146, type: 3}
+    - target: {fileID: 7167511141153434010, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
+      propertyPath: stats.healthMax
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 7167511141153434010, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
+      propertyPath: stats.healthCurrent
+      value: 11
+      objectReference: {fileID: 0}
     - target: {fileID: 7323552420328571708, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
       propertyPath: m_Name
       value: Character (1)
@@ -8656,22 +8613,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 963194230, guid: 7402976767481b549a03648bc5aa79ce, type: 3}
-      propertyPath: minHeight
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 549040073027086333, guid: 7402976767481b549a03648bc5aa79ce, type: 3}
-      propertyPath: stateText
-      value: 
-      objectReference: {fileID: 888779301}
-    - target: {fileID: 549040073027086333, guid: 7402976767481b549a03648bc5aa79ce, type: 3}
-      propertyPath: allCharacters.Array.data[0]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 549040073027086333, guid: 7402976767481b549a03648bc5aa79ce, type: 3}
-      propertyPath: allCharacters.Array.data[1]
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 4146606119251336789, guid: 7402976767481b549a03648bc5aa79ce, type: 3}
       propertyPath: m_Name
       value: Player
@@ -8720,8 +8661,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 549040073027086333, guid: 7402976767481b549a03648bc5aa79ce, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7402976767481b549a03648bc5aa79ce, type: 3}
 --- !u!1001 &3699802337232222760
 PrefabInstance:
