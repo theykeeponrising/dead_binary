@@ -420,6 +420,12 @@ public class SelectedStates
 
             t.selectedCharacter.GetActor().targetCharacter = enemyList[n];
         }
+
+        public override void InputCancel(InCombatPlayerAction t)
+        {
+            t.selectedCharacter.GetActor().ClearTarget();
+            ChangeState(new Idle(Machine));
+        }
     }
     public class ShootTarget : FiniteState<InCombatPlayerAction>
     {
@@ -527,8 +533,6 @@ public class SelectedStates
                 var itemType = (DamageItem)item;
                 infoPanel.UpdateDamage(itemType.hpAmount);
             }
-
-            Debug.Log(item.GetType().BaseType);
 
             //Find Targets
             Targets = new List<GameObject>();
@@ -655,25 +659,32 @@ public class SelectedStates
             ChangeState(new Idle(Machine));
         }
 
-        //public override void InputTab(InCombatPlayerAction t, bool shift)
-        //{
-        //    int index = Targets.IndexOf(Target);
-        //    int n = shift ? index - 1 : index + 1;
+        public override void InputTab(InCombatPlayerAction t, bool shift)
+        {
+            int index = Targets.IndexOf(Target);
+            int n = shift ? index - 1 : index + 1;
 
-        //    if (n < 0) n = Targets.Count - 1;
-        //    if (n > Targets.Count - 1) n = 0;
+            if (n < 0) n = Targets.Count - 1;
+            if (n > Targets.Count - 1) n = 0;
 
-        //    Target = Targets[n];
-        //}
-        //public override void InputActionBtn(InCombatPlayerAction t, int index)
-        //{
-        //    ActionList action = t.GetBindings(index);
+            Target = Targets[n];
+        }
 
-        //    if (action == ActionList.CHOOSEITEM)
-        //    {
-        //        ChangeState(new Idle(Machine));
-        //    }
-        //}
+        public override void InputActionBtn(InCombatPlayerAction t, int index)
+        {
+            ActionList action = t.GetBindings(index);
+
+            if (action == ActionList.CHOOSEITEM)
+            {
+                ChangeState(new Idle(Machine));
+            }
+        }
+
+        public override void InputCancel(InCombatPlayerAction t)
+        {
+            t.selectedCharacter.GetActor().ClearTarget();
+            ChangeState(new Idle(Machine));
+        }
     }
     public class ChooseItem : FiniteState<InCombatPlayerAction>
     {
@@ -725,6 +736,12 @@ public class SelectedStates
                 else
                     Debug.Log("There is no useable item in this slot.");
             }
+        }
+
+        public override void InputCancel(InCombatPlayerAction t)
+        {
+            t.selectedCharacter.GetActor().ClearTarget();
+            ChangeState(new Idle(Machine));
         }
     }
     #endregion

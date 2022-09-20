@@ -27,7 +27,7 @@ public class InfoPanelScript : MonoBehaviour
         string actionName = action.aname;
         string actionDesc = action.description;
 
-        textObjects[0].text = actionName;
+        textObjects[0].text = string.Format(">> {0} <<", actionName);
         textObjects[1].text = actionDesc;
     }
 

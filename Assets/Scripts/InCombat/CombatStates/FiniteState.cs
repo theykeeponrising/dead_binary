@@ -32,6 +32,7 @@ abstract public class FiniteState<T>
             v.playerInput.Controls.ActionButton_9.performed += _InputAction9;
             v.playerInput.Controls.InputSpacebar.performed += _InputSpacebar;
             v.playerInput.Controls.InputTab.performed += _InputTab;
+            v.playerInput.Controls.InputCancel.performed += _InputCancel;
         }
     }
 
@@ -55,6 +56,7 @@ abstract public class FiniteState<T>
             v.playerInput.Controls.ActionButton_9.performed -= _InputAction9;
             v.playerInput.Controls.InputSpacebar.performed -= _InputSpacebar;
             v.playerInput.Controls.InputTab.performed -= _InputTab;
+            v.playerInput.Controls.InputCancel.performed -= _InputCancel;
         }
     }
 
@@ -93,6 +95,8 @@ abstract public class FiniteState<T>
         var shift = Keyboard.current.shiftKey.isPressed;
         InputTab(Owner, shift);
     }
+    private void _InputCancel(InputAction.CallbackContext cxt)
+    { InputCancel(Owner); }
 
     // Do On Input
     public virtual void InputPrimary(T t) 
@@ -105,6 +109,10 @@ abstract public class FiniteState<T>
     { Debug.Log("Spacebar has no function in this State. (" + StateName + ")"); }
     public virtual void InputTab(T t, bool shift)
     { Debug.Log("Tab has no function in this State. (" + StateName + ")"); }
+    public virtual void InputCancel(T t)
+    {
+        StateHandler.Instance.GetStateObject(StateHandler.State.CombatState).ChangeState(StateHandler.State.StatusMenuState);
+    }
     // Helper Functions
 
     //Returns 'true' if we touched or hovering on Unity UI element.
