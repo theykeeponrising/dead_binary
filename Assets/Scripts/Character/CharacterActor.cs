@@ -104,6 +104,7 @@ public class CharacterActor
         {
             selectionCircle.SetActive(false);
             selectionCircle.GetComponent<Renderer>().material.color = Color.white;
+            if (playerAction.selectedCharacter == unit) SelectUnit(true);
         }
     }
 

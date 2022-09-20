@@ -2,31 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InventoryPanelScript : MonoBehaviour
+public class InventoryPanelScript : ActionPanelScript
 {
-    InCombatPlayerAction playerAction;
-    GameObject panel;
-    List<ActionButton> buttons = new List<ActionButton>();
-    PlayerTurnState playerTurnState;
-    ActionButton buttonPrefab; // TO DO -- Alternative to using inspector prefab
+    ActionPanelScript actionPanel;
+    int offset => actionPanel.GetButtons().Count;
 
     private void Start()
     {
         playerTurnState = (PlayerTurnState)StateHandler.Instance.GetStateObject(StateHandler.State.PlayerTurnState);
         playerAction = playerTurnState.GetPlayerAction();
+        actionPanel = UIManager.Instance.actionPanel;
         panel = transform.Find("Background").gameObject;
         buttonPrefab = UIManager.Instance.actionButtonPrefab;
-    }
-
-    private void OnDisable()
-    {
-        // When action panel is disabled, destroy all buttons
-
-        foreach (ActionButton button in buttons)
-        {
-            Destroy(button.gameObject);
-        }
-        buttons = new List<ActionButton>();
     }
 
     void BuildActions()
@@ -55,7 +42,7 @@ public class InventoryPanelScript : MonoBehaviour
 
                     buttons[index].LoadResources(spritePath);
                     buttons[index].BindAction(characterItem.itemAction);
-                    buttons[index].SetLabel((index + 1).ToString());
+                    buttons[index].SetLabel((index + 1 + actionPanel.GetButtons().Count).ToString());
                     buttons[index].gameObject.SetActive(true);
 
                     if (index > 0)
@@ -73,7 +60,7 @@ public class InventoryPanelScript : MonoBehaviour
         }
     }
 
-    public void BindButtons()
+    public override void BindButtons()
     {
         // Binds actions to buttons
 
@@ -84,6 +71,6 @@ public class InventoryPanelScript : MonoBehaviour
         foreach (ActionButton button in buttons) button.UnbindButton();
 
         // Bind buttons to inputs
-        foreach (ActionButton button in buttons) button.BindButton(buttons.IndexOf(button));
+        foreach (ActionButton button in buttons) button.BindButton(buttons.IndexOf(button) + offset);
     }
 }

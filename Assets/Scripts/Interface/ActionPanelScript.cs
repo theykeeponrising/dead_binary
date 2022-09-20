@@ -5,12 +5,12 @@ using TMPro;
 
 public class ActionPanelScript : MonoBehaviour
 {
-    InCombatPlayerAction playerAction;
-    GameObject panel;
-    List<ActionButton> buttons = new List<ActionButton>();
-    PlayerTurnState playerTurnState;
-    ActionButton buttonPrefab;
-    TextMeshProUGUI[] textObjects;
+    public InCombatPlayerAction playerAction;
+    public GameObject panel;
+    public List<ActionButton> buttons = new List<ActionButton>();
+    public  PlayerTurnState playerTurnState;
+    public ActionButton buttonPrefab;
+    public TextMeshProUGUI[] textObjects;
 
     // ELEMENT LIST
     // 0 - AP Label
@@ -86,14 +86,14 @@ public class ActionPanelScript : MonoBehaviour
     {
         // Update ammo and ap
 
-        if (playerAction.selectedCharacter != null)
+        if (playerAction.selectedCharacter != null && textObjects.Length > 0)
         {
             textObjects[1].text = playerAction.selectedCharacter.stats.actionPointsCurrent.ToString();
             textObjects[3].text = playerAction.selectedCharacter.inventory.equippedWeapon.stats.ammoCurrent.ToString();
         }
     }
 
-    public void BindButtons()
+    public virtual void BindButtons()
     {
         // Binds actions to buttons
 

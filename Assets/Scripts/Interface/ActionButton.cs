@@ -145,9 +145,6 @@ public class ActionButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         playerTurnState = (PlayerTurnState)StateHandler.Instance.GetStateObject(StateHandler.State.PlayerTurnState);
         playerAction = playerTurnState.GetPlayerAction();
         state = playerAction.stateMachine.GetCurrentState();
-
-        //AudioClip audioClip = AudioManager.Instance.GetInterfaceSound(AudioManager.InterfaceSFX.MOUSE_CLICK, 0);
-        //audioSource.PlayOneShot(audioClip);
         state.InputActionBtn(playerAction, buttonIndex + 1);
     }
 

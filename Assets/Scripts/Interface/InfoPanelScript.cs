@@ -1,11 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class InfoPanelScript : MonoBehaviour
 {
+    AudioSource audioSource;
     TextMeshProUGUI[] textObjects;
+    Button button;
 
     // ELEMENT LIST
     // 0 - Action name
@@ -18,7 +21,10 @@ public class InfoPanelScript : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
+        audioSource = GetComponentInParent<AudioSource>();
         textObjects = GetComponentsInChildren<TextMeshProUGUI>();
+        button = GetComponentInChildren<Button>();
+        button.onClick.AddListener(ButtonPress);
     }
 
     public void UpdateAction(ActionList actionEnum)
@@ -69,5 +75,38 @@ public class InfoPanelScript : MonoBehaviour
         string displayText = string.Format("{0}%", (hitChance * 100).ToString("0"));
         textObjects[2].text = "to Hit";
         textObjects[2].text = displayText;
+    }
+
+    public void ButtonPress()
+    {
+        // On button press, play sound and execute indexed action from the state
+
+        //if (!requirementsMet)
+        //return;
+
+        PlayerTurnState playerTurnState = (PlayerTurnState)StateHandler.Instance.GetStateObject(StateHandler.State.PlayerTurnState);
+        InCombatPlayerAction playerAction = playerTurnState.GetPlayerAction();
+        FiniteState<InCombatPlayerAction> state = playerAction.stateMachine.GetCurrentState();
+        state.InputSpacebar(playerAction);
+    }
+
+    public void ButtonTrigger()
+    {
+        // Handle to kick off button trigger effect
+
+        StartCoroutine(ButtonTriggerEffect());
+    }
+
+    IEnumerator ButtonTriggerEffect()
+    {
+        // Simulates the visual look of the action button being clicked
+        // For use when action button is triggered via another input
+
+        AudioClip audioClip = AudioManager.Instance.GetInterfaceSound(AudioManager.InterfaceSFX.MOUSE_CLICK, 0);
+        audioSource.PlayOneShot(audioClip);
+
+        //currentButtonState = ButtonState.ACTIVE;
+        yield return new WaitForSeconds(0.2f);
+        //currentButtonState = ButtonState.PASSIVE;
     }
 }

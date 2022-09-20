@@ -940,7 +940,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 350, y: 150}
+  m_AnchoredPosition: {x: 350, y: 155}
   m_SizeDelta: {x: 300, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1132160158952327280
@@ -955,6 +955,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b896c25f926f0d940b59ab19bef7ab67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  panel: {fileID: 0}
+  buttons: []
+  buttonPrefab: {fileID: 0}
+  textObjects: []
 --- !u!1 &1132160160296047317
 GameObject:
   m_ObjectHideFlags: 0
@@ -967,7 +971,7 @@ GameObject:
   - component: {fileID: 1132160160296047318}
   - component: {fileID: 1132160160296047319}
   m_Layer: 5
-  m_Name: BackgroundActions
+  m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1014,7 +1018,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.78431374}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1117,6 +1121,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1572270046820559401}
   - component: {fileID: 3137856632826115280}
+  - component: {fileID: 1796669534}
+  - component: {fileID: 1796669533}
   m_Layer: 5
   m_Name: ActionButton
   m_TagString: Untagged
@@ -1190,6 +1196,44 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!223 &1796669534
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3130008378054780832}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_AdditionalShaderChannelsFlag: 25
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
+--- !u!114 &1796669533
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3130008378054780832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1 &3699802337164290402
 GameObject:
   m_ObjectHideFlags: 0
@@ -2019,7 +2063,7 @@ MonoBehaviour:
   inCombatPlayerActionUI: {fileID: 0}
   inventoryPanel: {fileID: 0}
   infoPanel: {fileID: 0}
-  actionButtonPrefab: {fileID: 0}
+  actionButtonPrefab: {fileID: 2731226593703120154, guid: 5591a73ec7672bc4481c2702fa644e76, type: 3}
 --- !u!1 &3699802338488816934
 GameObject:
   m_ObjectHideFlags: 0
@@ -2248,7 +2292,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3543044273131046915, guid: 6fd322eb2a4161745a15042b6f090516, type: 3}
       propertyPath: m_Name
-      value: BackgroundActions
+      value: Background
       objectReference: {fileID: 0}
     - target: {fileID: 3543044273929376440, guid: 6fd322eb2a4161745a15042b6f090516, type: 3}
       propertyPath: m_Pivot.x
@@ -2336,7 +2380,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3543044273929376441, guid: 6fd322eb2a4161745a15042b6f090516, type: 3}
       propertyPath: m_Name
-      value: ActionPanel(v50,a75)
+      value: ActionPanel
       objectReference: {fileID: 0}
     - target: {fileID: 3543044273929376441, guid: 6fd322eb2a4161745a15042b6f090516, type: 3}
       propertyPath: m_TagString

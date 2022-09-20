@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
@@ -110,9 +111,8 @@ abstract public class FiniteState<T>
     public virtual void InputTab(T t, bool shift)
     { Debug.Log("Tab has no function in this State. (" + StateName + ")"); }
     public virtual void InputCancel(T t)
-    {
-        StateHandler.Instance.GetStateObject(StateHandler.State.CombatState).ChangeState(StateHandler.State.StatusMenuState);
-    }
+    { StateHandler.Instance.GetStateObject(StateHandler.State.CombatState).ChangeState(StateHandler.State.StatusMenuState); }
+
     // Helper Functions
 
     //Returns 'true' if we touched or hovering on Unity UI element.
@@ -142,5 +142,15 @@ abstract public class FiniteState<T>
         List<RaycastResult> raysastResults = new List<RaycastResult>();
         EventSystem.current.RaycastAll(eventData, raysastResults);
         return raysastResults;
+    }
+
+    public void ButtonPress(int index)
+    {
+        // Button press effect
+        List<ActionButton> actionPanel = UIManager.Instance.actionPanel.GetButtons();
+        List<ActionButton> inventoryPanel = UIManager.Instance.inventoryPanel.GetButtons();
+        List<ActionButton> buttons = actionPanel.Concat(inventoryPanel).ToList();
+
+        buttons[index-1].ButtonTrigger();
     }
 }
