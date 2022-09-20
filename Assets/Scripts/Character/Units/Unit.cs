@@ -195,6 +195,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         // Heals character by the indicated amount
 
         stats.healthCurrent += amount;
+        if (stats.healthCurrent > stats.healthMax) stats.healthCurrent = stats.healthMax;
         healthbar.UpdateHealthPoints();
     }
 

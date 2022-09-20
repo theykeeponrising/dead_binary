@@ -49,7 +49,7 @@ public class Action
         requirements = new ActionRequirement[] { aRequirements };
     }
 
-    public bool CheckRequirements(Unit unit)
+    public bool CheckRequirements(Unit unit=null, Item item=null)
     {
         // Checks each requirement item in list
         // If any requirement fails, returns false, otherwise return true
@@ -71,6 +71,10 @@ public class Action
                 if (requirement == ActionRequirement.RELOAD)
                     if (unit.inventory.equippedWeapon.stats.ammoCurrent >= unit.inventory.equippedWeapon.stats.ammoMax)
                         return false;
+
+                if (requirement == ActionRequirement.QUANTITY)
+                    if (item.itemUsesCurrent <= 0)
+                        return false;
             }
 
         return true;
@@ -84,7 +88,7 @@ public class Action
     public static Action action_chooseItem = new Action("Choose Item", ActionList.CHOOSEITEM, "chooseItem", null, 0, 0, ActionButtons.btn_action_chooseItem, ActionRequirement.NONE);
     public static Action action_useItem = new Action("Use Item", ActionList.USEITEM, "useItem", null, 1, 0, ActionButtons.btn_action_useItem, ActionRequirement.NONE);
     public static Action action_none = new Action("Do nothing.", ActionList.NONE, "none", null, 1, 0, null, ActionRequirement.NONE);
-    public static Action action_item_medkit = new Action("Medkit", ActionList.MEDKIT, "useItem", "Heals a target friendly character", 1, 0, ActionButtons.btn_action_medkit, ActionRequirement.NONE);
+    public static Action action_item_medkit = new Action("Medkit", ActionList.MEDKIT, "useItem", "Heals a target friendly character", 1, 0, ActionButtons.btn_action_medkit, ActionRequirement.QUANTITY);
 
     // Dictionary used to match enum to actual action class object
     public static Dictionary<ActionList, Action> ActionsDict = new Dictionary<ActionList, Action>() {
@@ -100,4 +104,4 @@ public class Action
 }
 
 public enum ActionList { MOVE, SHOOT, RELOAD, SWAP, REFRESH, CHOOSEITEM, USEITEM, NONE, MEDKIT }
-public enum ActionRequirement { NONE, AP, AMMO, RELOAD };
+public enum ActionRequirement { NONE, AP, AMMO, RELOAD, QUANTITY };

@@ -5,12 +5,12 @@ using TMPro;
 
 public class ActionPanelScript : MonoBehaviour
 {
-    public InCombatPlayerAction playerAction;
-    public GameObject panel;
-    public List<ActionButton> buttons = new List<ActionButton>();
-    public  PlayerTurnState playerTurnState;
-    public ActionButton buttonPrefab;
-    public TextMeshProUGUI[] textObjects;
+    [HideInInspector] public InCombatPlayerAction playerAction;
+    [HideInInspector] public GameObject panel;
+    [HideInInspector] public List<ActionButton> buttons = new List<ActionButton>();
+    [HideInInspector] public PlayerTurnState playerTurnState;
+    [HideInInspector] public ActionButton buttonPrefab;
+    [HideInInspector] public TextMeshProUGUI[] textObjects;
 
     // ELEMENT LIST
     // 0 - AP Label

@@ -21,6 +21,7 @@ public class ActionButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 
     ActionList boundAction;
     bool requirementsMet;
+    Item boundItem;
 
     Sprite icon;
     Image btnBackground;
@@ -80,7 +81,7 @@ public class ActionButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 
     void CheckRequirements()
     {
-        requirementsMet = Action.ActionsDict[boundAction].CheckRequirements(playerAction.selectedCharacter);
+        requirementsMet = Action.ActionsDict[boundAction].CheckRequirements(playerAction.selectedCharacter, boundItem);
         if (!requirementsMet) currentButtonState = ButtonState.DISABLED;
         else if (requirementsMet && currentButtonState == ButtonState.DISABLED) currentButtonState = ButtonState.PASSIVE;
 
@@ -173,6 +174,13 @@ public class ActionButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         // Changes text label to new value
 
         GetComponentInChildren<TextMeshProUGUI>().text = newLabel;
+    }
+
+    public void BindItem(Item item)
+    {
+        // Binds item for requirement checking
+
+        boundItem = item;
     }
 }
 

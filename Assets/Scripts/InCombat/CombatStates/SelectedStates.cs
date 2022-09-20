@@ -291,8 +291,6 @@ public class SelectedStates
     {
         public ChoosingShootTarget(StateMachine<InCombatPlayerAction> machine) : base(machine) { Machine = machine; }
 
-        InfoPanelScript infoPanel = UIManager.Instance.infoPanel;
-
         public override void Enter(InCombatPlayerAction t)
         {
             base.Enter(t);
@@ -629,7 +627,7 @@ public class SelectedStates
             }
 
             // Valid item was selected, proceed to Use Item
-            else if (Items.Length >= index - offset)
+            else if (Items.Length >= index - offset && Items[index - 1 - offset].itemUsesCurrent > 0)
             {
                 ButtonPress(index);
                 ChangeState(new UseItem(Machine, Items[index - 1 - offset]));

@@ -9,6 +9,8 @@ public abstract class Item : MonoBehaviour
 
     public string itemName;
     public ActionList itemAction;
+    public int itemUsesCurrent;
+    public int itemUsesMax;
 
     public bool CheckAffinity(Faction ownFac, Faction oppFac)
     {

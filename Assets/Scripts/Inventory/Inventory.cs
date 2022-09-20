@@ -62,24 +62,11 @@ public class Inventory : MonoBehaviour
         equippedWeapon.gameObject.SetActive(true);
         unit.GetComponent<Animator>().SetLayerWeight(equippedWeapon.weaponLayer, 1);
         unit.GetComponent<Animator>().SetFloat("animSpeed", equippedWeapon.attributes.animSpeed);
-    }
 
-    public Item GetItem(int index)
-    {
-        if (itemStats.Count > 0)
+        // Init starting items from inspector
+        for (int index = 0; index < items.Count; index++)
         {
-            if(items[index])
-            return items[index];
-            else
-            {
-                Debug.Log("No item in that slot! (Is this an error?)");
-                return null;
-            }    
-        }
-        else
-        {
-            Debug.Log("No items in inventory!");
-            return null;
+            items[index] = Instantiate(items[index]);
         }
     }
 

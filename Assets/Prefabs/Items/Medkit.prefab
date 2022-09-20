@@ -49,4 +49,6 @@ MonoBehaviour:
   targetFaction: 0
   itemName: Medkit
   itemAction: 8
+  itemUsesCurrent: 1
+  itemUsesMax: 1
   hpAmount: -5

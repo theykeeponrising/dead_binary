@@ -42,6 +42,7 @@ public class InventoryPanelScript : ActionPanelScript
 
                     buttons[index].LoadResources(spritePath);
                     buttons[index].BindAction(characterItem.itemAction);
+                    buttons[index].BindItem(characterItem);
                     buttons[index].SetLabel((index + 1 + actionPanel.GetButtons().Count).ToString());
                     buttons[index].gameObject.SetActive(true);
 
