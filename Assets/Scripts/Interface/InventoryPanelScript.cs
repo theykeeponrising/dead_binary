@@ -1,22 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
 
-public class ActionPanelScript : MonoBehaviour
+public class InventoryPanelScript : MonoBehaviour
 {
     InCombatPlayerAction playerAction;
     GameObject panel;
     List<ActionButton> buttons = new List<ActionButton>();
     PlayerTurnState playerTurnState;
-    ActionButton buttonPrefab;
-    TextMeshProUGUI[] textObjects;
-
-    // ELEMENT LIST
-    // 0 - AP Label
-    // 1 - AP Value
-    // 2 - Ammo Label
-    // 3 - Ammo Value
+    ActionButton buttonPrefab; // TO DO -- Alternative to using inspector prefab
 
     private void Start()
     {
@@ -24,7 +16,6 @@ public class ActionPanelScript : MonoBehaviour
         playerAction = playerTurnState.GetPlayerAction();
         panel = transform.Find("Background").gameObject;
         buttonPrefab = UIManager.Instance.actionButtonPrefab;
-        textObjects = GetComponentsInChildren<TextMeshProUGUI>();
     }
 
     private void OnDisable()
@@ -40,8 +31,8 @@ public class ActionPanelScript : MonoBehaviour
 
     void BuildActions()
     {
-        // Dynamically creates buttons based on what actions the Character can perform
-        // Will skip creating buttons for actions that do not use buttons (such as moving)
+        // Dynamically creates buttons based on what items the Character has
+        // Will skip creating buttons for items that do not use buttons (such as moving)
 
         Start();
 
@@ -52,18 +43,18 @@ public class ActionPanelScript : MonoBehaviour
             panel.SetActive(true);
 
             List<ActionList> actionsList = new List<ActionList>();
-            foreach (ActionList characterAction in playerAction.selectedCharacter.GetAvailableActions())
+            foreach (Item characterItem in playerAction.selectedCharacter.GetItems())
             {
-                if (!Action.ActionsDict.ContainsKey(characterAction)) continue;
-                if (Action.ActionsDict[characterAction].buttonPath != null)
+                if (!Action.ActionsDict.ContainsKey(characterItem.itemAction)) continue;
+                if (Action.ActionsDict[characterItem.itemAction].buttonPath != null)
                 {
-                    actionsList.Add(characterAction);
+                    actionsList.Add(characterItem.itemAction);
                     buttons.Add(Instantiate(buttonPrefab, panel.transform));
                     int index = buttons.Count - 1;
                     string spritePath = Action.ActionsDict[actionsList[index]].buttonPath;
 
                     buttons[index].LoadResources(spritePath);
-                    buttons[index].BindAction(characterAction);
+                    buttons[index].BindAction(characterItem.itemAction);
                     buttons[index].SetLabel((index + 1).ToString());
                     buttons[index].gameObject.SetActive(true);
 
@@ -82,17 +73,6 @@ public class ActionPanelScript : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        // Update ammo and ap
-
-        if (playerAction.selectedCharacter != null)
-        {
-            textObjects[1].text = playerAction.selectedCharacter.stats.actionPointsCurrent.ToString();
-            textObjects[3].text = playerAction.selectedCharacter.inventory.equippedWeapon.stats.ammoCurrent.ToString();
-        }
-    }
-
     public void BindButtons()
     {
         // Binds actions to buttons
@@ -105,12 +85,5 @@ public class ActionPanelScript : MonoBehaviour
 
         // Bind buttons to inputs
         foreach (ActionButton button in buttons) button.BindButton(buttons.IndexOf(button));
-    }
-
-    public List<ActionButton> GetButtons()
-    {
-        // Returns all currently-active buttons
-
-        return buttons;
     }
 }

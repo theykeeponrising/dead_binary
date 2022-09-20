@@ -21,6 +21,7 @@ public class InCombatPlayerAction
     public string clickContext;
     
     private ActionPanelScript actionPanelScript;
+    private InventoryPanelScript inventoryPanelScript;
     private InfoPanelScript infoPanelScript;
     public StateMachine<InCombatPlayerAction> stateMachine;
     public LayerMask uiLayermask;
@@ -41,6 +42,8 @@ public class InCombatPlayerAction
     {
         actionPanelScript = UIManager.Instance.actionPanel;
         actionPanelScript.gameObject.SetActive(false);
+        inventoryPanelScript = UIManager.Instance.inventoryPanel;
+        inventoryPanelScript.gameObject.SetActive(false);
         infoPanelScript = UIManager.Instance.infoPanel;
         infoPanelScript.gameObject.SetActive(false);
         playerActionUI = UIManager.Instance.inCombatPlayerActionUI;
@@ -100,17 +103,17 @@ public class InCombatPlayerAction
         SelectAction(targetCharacter);        
     }
 
-    public Actions.ActionList GetBindings(int index)
+    public ActionList GetBindings(int index)
     {
         // Returns which action should be bound to which action button index
         if (!selectedCharacter)
             return 0;
 
-        List<Actions.ActionList> actionsList = new List<Actions.ActionList>();
-        foreach (Actions.ActionList characterAction in selectedCharacter.GetAvailableActions())
+        List<ActionList> actionsList = new List<ActionList>();
+        foreach (ActionList characterAction in selectedCharacter.GetAvailableActions())
         {
-            if (!Actions.ActionsDict.ContainsKey(characterAction)) continue;
-            if (Actions.ActionsDict[characterAction].buttonPath != null)
+            if (!Action.ActionsDict.ContainsKey(characterAction)) continue;
+            if (Action.ActionsDict[characterAction].buttonPath != null)
                 actionsList.Add(characterAction);
         }
         
@@ -136,7 +139,7 @@ public class InCombatPlayerAction
                 {
                     if (hit.collider.GetComponent<Tile>())
                     {
-                        selectedCharacter.GetActor().ProcessAction(Actions.action_move, contextTile: hit.collider.GetComponent<Tile>(), contextPath: previewPath);
+                        selectedCharacter.GetActor().ProcessAction(Action.action_move, contextTile: hit.collider.GetComponent<Tile>(), contextPath: previewPath);
                     }
                 }
             }
@@ -153,6 +156,7 @@ public class InCombatPlayerAction
 
         // Clears current action bar
         actionPanelScript.gameObject.SetActive(false);
+        inventoryPanelScript.gameObject.SetActive(false);
 
         // Deselects existing character if any
         if (targetCharacter)

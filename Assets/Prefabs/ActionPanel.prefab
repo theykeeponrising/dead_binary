@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 177625885}
   - component: {fileID: 177625884}
   m_Layer: 5
-  m_Name: Ammo Text
+  m_Name: Ammo Value
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -147,7 +147,7 @@ GameObject:
   - component: {fileID: 1175106628}
   - component: {fileID: 1175106627}
   m_Layer: 5
-  m_Name: '"Ammo: "'
+  m_Name: Ammo Label
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -282,7 +282,7 @@ GameObject:
   - component: {fileID: 2050137525614065945}
   - component: {fileID: 599174815102858107}
   m_Layer: 5
-  m_Name: AP Text
+  m_Name: AP Value
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -496,7 +496,7 @@ GameObject:
   - component: {fileID: 3543044273929376440}
   - component: {fileID: -2293466620417547113}
   m_Layer: 5
-  m_Name: ActionPanel(v50,a75)
+  m_Name: ActionPanel
   m_TagString: ActionPanel
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -535,12 +535,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45107537ed359b44fbdf5ede789e10f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
-  panel: {fileID: 3543044273131046915}
-  apTextBox: {fileID: 599174815102858107}
-  ammoTextBox: {fileID: 177625884}
-  buttons: []
-  buttonPrefab: {fileID: 6769374170054772967, guid: 5591a73ec7672bc4481c2702fa644e76, type: 3}
 --- !u!1 &3543044274753271225
 GameObject:
   m_ObjectHideFlags: 0
@@ -553,7 +547,7 @@ GameObject:
   - component: {fileID: 3543044274753271230}
   - component: {fileID: 3543044274753271231}
   m_Layer: 5
-  m_Name: '"AP: "'
+  m_Name: AP Label
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

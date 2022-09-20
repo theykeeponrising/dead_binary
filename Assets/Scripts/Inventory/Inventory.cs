@@ -30,8 +30,6 @@ public class Inventory : MonoBehaviour
         [ReadOnly] public bool isReusable;
         [Tooltip("How many turns to wait before being available again.")]
         [ReadOnly] public int cooldownMax;
-        [Tooltip("Does the item target allies, enemies, or combination?")]
-        [ReadOnly] public Affinity affinity;
     }
     
     public Weapon equippedWeapon;
@@ -64,16 +62,6 @@ public class Inventory : MonoBehaviour
         equippedWeapon.gameObject.SetActive(true);
         unit.GetComponent<Animator>().SetLayerWeight(equippedWeapon.weaponLayer, 1);
         unit.GetComponent<Animator>().SetFloat("animSpeed", equippedWeapon.attributes.animSpeed);
-
-        InitializeItems();
-    }
-
-    private void Update()
-    {
-        for (int i = 0; i < itemStats.Count; i++)
-        {
-            itemStats[i].currentCooldown = items[0].CurrentCooldown;
-        }
     }
 
     public Item GetItem(int index)
@@ -92,25 +80,6 @@ public class Inventory : MonoBehaviour
         {
             Debug.Log("No items in inventory!");
             return null;
-        }
-    }
-
-    private void InitializeItems()
-    {
-        for (int i = 0; i < items.Count; i++)
-        {
-            ItemStats s = new ItemStats();
-            s.itemName = items[i].Name;
-            s.itemType = items[i].ItemType;
-            s.itemCost = items[i].ItemCost;
-            s.itemCharges = items[i].Charges;
-            s.targetType = items[i].TargetType;
-            s.icon = items[i].Icon;
-            s.isReusable = items[i].IsReusable;
-            s.cooldownMax = items[i].CooldownMax;
-            s.affinity = items[i].Affinity;
-            s.currentCooldown = items[i].CurrentCooldown;
-            itemStats.Add(s);
         }
     }
 

@@ -21,9 +21,9 @@ public class InfoPanelScript : MonoBehaviour
         textObjects = GetComponentsInChildren<TextMeshProUGUI>();
     }
 
-    public void UpdateAction(Actions.ActionList actionEnum)
+    public void UpdateAction(ActionList actionEnum)
     {
-        Actions.Action action = Actions.ActionsDict[actionEnum];
+        Action action = Action.ActionsDict[actionEnum];
         string actionName = action.aname;
         string actionDesc = action.description;
 
@@ -35,14 +35,39 @@ public class InfoPanelScript : MonoBehaviour
     {
         // Updates damage value displayed
 
-        textObjects[4].text = weaponDamage.ToString();
+        // If we are not doing damage, set the damage value and label to blank
+        if (weaponDamage == 0)
+        {
+            textObjects[4].text = "";
+            textObjects[5].text = "";
+            return;
+        }
+        
+        // If damage value is negative, we are healing
+        if (weaponDamage > 0)
+            textObjects[5].text = "Damage";
+        else if (weaponDamage < 0)
+            textObjects[5].text = "Healed";
+
+
+        // Show damage or heal value without negative
+        textObjects[4].text = Mathf.Abs(weaponDamage).ToString();
     }
 
     public void UpdateHit(float hitChance)
     {
         // Updates hit chance value displayed
 
+        // If hit chance is less than zero, set the hit value and label to blank
+        if (hitChance < 0)
+        {
+            textObjects[2].text = "";
+            textObjects[3].text = "";
+            return;
+        }
+
         string displayText = string.Format("{0}%", (hitChance * 100).ToString("0"));
+        textObjects[2].text = "to Hit";
         textObjects[2].text = displayText;
     }
 }

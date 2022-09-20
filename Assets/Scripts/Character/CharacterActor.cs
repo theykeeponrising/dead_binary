@@ -22,7 +22,7 @@ public class CharacterActor
     
     Unit unit;
 
-    public Actions.Action currentAction;
+    public Action currentAction;
     public List<Unit> potentialTargets;
 
     public CharacterActor(Unit unit)
@@ -107,16 +107,16 @@ public class CharacterActor
         }
     }
 
-    public void ProcessAction(Actions.Action actionToPerform, Tile contextTile=null, List<Tile> contextPath=null, Unit contextCharacter=null)
+    public void ProcessAction(Action actionToPerform, Tile contextTile=null, List<Tile> contextPath=null, Unit contextCharacter=null, Item contextItem=null)
     {
-        // Determine if action can be performed, and perform action if so
+        // Determine if action can be performed, and perform action
 
         // Check if action is in allowed list of actions for character
-        if (!unit.GetAvailableActions().Contains(actionToPerform.atag))
+        if (!unit.GetAvailableActions().Contains(actionToPerform.atag) && (contextItem && Action.ActionsDict[contextItem.itemAction] != actionToPerform))
         {
             Debug.Log(string.Format("{0} does not contain action {1}", unit.attributes.name, actionToPerform.aname));
             return;
-        }    
+        }
 
         int actionCost = actionToPerform.cost;
         if (actionCost > unit.stats.actionPointsCurrent)
@@ -141,7 +141,7 @@ public class CharacterActor
                     unit.StartCoroutine(EquipWeapon(unit.inventory.CycleWeapon()));
                     break;
                 case "useItem":
-                    //The item is used in the State Machine. WOrk on bringing it over here.
+                    ItemAction(contextItem, contextCharacter);
                     break;
             }
         }
@@ -207,7 +207,7 @@ public class CharacterActor
         // Sets the target destination tile
         // Once a path is found, begin movement routine
 
-        if (!unit.GetAvailableActions().Contains(Actions.ActionList.MOVE))
+        if (!unit.GetAvailableActions().Contains(ActionList.MOVE))
             return;
 
         if (previewPath != null)
@@ -537,5 +537,11 @@ public class CharacterActor
         CoverCrouch();
 
         infoPanel.gameObject.SetActive(false);
+    }
+
+    void ItemAction(Item item, Unit target)
+    {
+        unit.stats.actionPointsCurrent -= currentAction.cost;
+        item.UseItem(target);
     }
 }

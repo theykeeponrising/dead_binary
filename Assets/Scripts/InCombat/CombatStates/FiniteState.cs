@@ -135,13 +135,4 @@ abstract public class FiniteState<T>
         EventSystem.current.RaycastAll(eventData, raysastResults);
         return raysastResults;
     }
-
-    public virtual void InputPress(InCombatPlayerAction t)
-    {
-        // Plays a sound effect when an input is pressed
-
-        AudioSource audioSource = t.GetPlayerActionUI().GetComponentInParent<AudioSource>();
-        AudioClip audioClip = AudioManager.Instance.GetInterfaceSound(AudioManager.InterfaceSFX.MOUSE_CLICK, 0);
-        audioSource.PlayOneShot(audioClip);
-    }
 }
