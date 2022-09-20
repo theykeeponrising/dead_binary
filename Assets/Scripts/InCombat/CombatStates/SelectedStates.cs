@@ -116,13 +116,9 @@ public class SelectedStates
     {
         public Idle(StateMachine<InCombatPlayerAction> machine) : base(machine) { Machine = machine; }
 
-        List<Unit> _allies;
-
         public override void Enter(InCombatPlayerAction t)
         {
             base.Enter(t);
-
-           // ChangeState(new ChooseItem(Machine, t.selectedCharacter.inventory.items.ToArray()));
 
             if (t.selectedCharacter)
             {
@@ -134,7 +130,6 @@ public class SelectedStates
 
                 if (t.selectedCharacter.GetActor().targetCharacter != null && t.selectedCharacter.GetActor().targetCharacter.stats.healthCurrent <= 0)
                     t.selectedCharacter.GetActor().targetCharacter = null;
-                // t.selectedCharacter.targetCharacter = null; // Commented out because this breaks dodging
             }
         }
 
@@ -441,6 +436,7 @@ public class SelectedStates
             }
         }
     }
+
     public class PostShootTarget : FiniteState<InCombatPlayerAction>
     {
         public PostShootTarget(StateMachine<InCombatPlayerAction> machine) : base(machine) { Machine = machine; }
