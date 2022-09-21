@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7682195409518073306}
   - component: {fileID: -8518260373924283274}
   m_Layer: 0
-  m_Name: Medkit
+  m_Name: itmMedkit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -52,3 +52,5 @@ MonoBehaviour:
   itemUsesCurrent: 1
   itemUsesMax: 1
   hpAmount: -5
+  areaOfEffect: 1
+  range: 1

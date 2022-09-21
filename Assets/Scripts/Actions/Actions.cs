@@ -89,6 +89,7 @@ public class Action
     public static Action action_useItem = new Action("Use Item", ActionList.USEITEM, "useItem", null, 1, 0, ActionButtons.btn_action_useItem, ActionRequirement.NONE);
     public static Action action_none = new Action("Do nothing.", ActionList.NONE, "none", null, 1, 0, null, ActionRequirement.NONE);
     public static Action action_item_medkit = new Action("Medkit", ActionList.MEDKIT, "useItem", "Heals a target friendly character", 1, 0, ActionButtons.btn_action_medkit, ActionRequirement.QUANTITY);
+    public static Action action_item_grenade = new Action("Grenade", ActionList.GRENADE, "useItem", "Damages a target enemy unit", 1, 0, ActionButtons.btn_action_grenade, ActionRequirement.QUANTITY);
 
     // Dictionary used to match enum to actual action class object
     public static Dictionary<ActionList, Action> ActionsDict = new Dictionary<ActionList, Action>() {
@@ -100,8 +101,9 @@ public class Action
         { ActionList.USEITEM, action_useItem },
         { ActionList.NONE, action_none},
         { ActionList.MEDKIT, action_item_medkit},
+        { ActionList.GRENADE, action_item_grenade},
     };
 }
 
-public enum ActionList { MOVE, SHOOT, RELOAD, SWAP, REFRESH, CHOOSEITEM, USEITEM, NONE, MEDKIT }
+public enum ActionList { MOVE, SHOOT, RELOAD, SWAP, REFRESH, CHOOSEITEM, USEITEM, NONE, MEDKIT, GRENADE }
 public enum ActionRequirement { NONE, AP, AMMO, RELOAD, QUANTITY };

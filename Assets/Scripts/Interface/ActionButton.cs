@@ -196,4 +196,5 @@ public static class ActionButtons
     public static string btn_action_chooseItem = "Buttons/btn_chooseItem";
     public static string btn_action_useItem = "Buttons/btn_useItem";
     public static string btn_action_medkit = "Buttons/btn_medkit";
+    public static string btn_action_grenade = "Buttons/btn_grenade";
 }

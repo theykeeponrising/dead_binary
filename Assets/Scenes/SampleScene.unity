@@ -1972,6 +1972,9 @@ MonoBehaviour:
     volt: {fileID: 0}
     riotShield: {fileID: 0}
     grenadeLauncher: {fileID: 0}
+  items:
+    medkit: {fileID: -8518260373924283274, guid: 98946c2f933e53443a14dc6914f5c469, type: 3}
+    grenade: {fileID: 7653284390000000886, guid: 642999ad8b784e7439debfdb1c72d0ac, type: 3}
   cover:
     halfWall: {fileID: 6416031016520120330, guid: 963d5ff61498f5049929a8627f325698, type: 3}
     fullWall: {fileID: 6416031016520120330, guid: eca687868e3f8d640bcc4917acfb6889, type: 3}
@@ -7025,16 +7028,16 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3296876834387543054, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
       propertyPath: items.Array.size
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3296876834387543054, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
       propertyPath: items.Array.data[0]
       value: 
-      objectReference: {fileID: -8518260373924283274, guid: 98946c2f933e53443a14dc6914f5c469, type: 3}
+      objectReference: {fileID: 7653284390000000886, guid: 642999ad8b784e7439debfdb1c72d0ac, type: 3}
     - target: {fileID: 3296876834387543054, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
       propertyPath: items.Array.data[1]
       value: 
-      objectReference: {fileID: 8313984141035103840, guid: 2c0f439b194dffb4b888bf216dc42257, type: 3}
+      objectReference: {fileID: -8518260373924283274, guid: 98946c2f933e53443a14dc6914f5c469, type: 3}
     - target: {fileID: 6379414259080875437, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
       propertyPath: m_Mesh
       value: 

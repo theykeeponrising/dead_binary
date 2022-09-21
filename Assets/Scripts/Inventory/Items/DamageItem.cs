@@ -9,5 +9,9 @@ public abstract class DamageItem : Item
 
     [Tooltip("HP amount change from use. Negative amounts will heal.")]
     public int hpAmount;
+    [Tooltip("Circular effect area in tiles.")]
+    public int areaOfEffect;
+    [Tooltip("Usable tile range for the item.")]
+    public int range;
 
 }
