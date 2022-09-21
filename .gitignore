@@ -55,3 +55,6 @@ crashlytics-build.properties
 Assets/EckTechGames.meta
 Assets/EckTechGames/*
 UpgradeLog.htm
+
+# Jetbrains
+.idea/*
