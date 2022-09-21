@@ -4,309 +4,53 @@ using System.Linq;
 
 public class SelectedStates
 {
-    #region Basics
-    public class Idle : FiniteState<InCombatPlayerAction>
+    #region Generic States
+    public class CancelState : FiniteState<InCombatPlayerAction>
     {
-        public Idle(StateMachine<InCombatPlayerAction> machine) : base(machine) { Machine = machine; }
+        public CancelState(StateMachine<InCombatPlayerAction> machine) : base(machine) { Machine = machine; }
 
-        List<Unit> _allies;
-
-        public override void Enter(InCombatPlayerAction t)
-        {
-            base.Enter(t);
-
-           // ChangeState(new ChooseItem(Machine, t.selectedCharacter.inventory.items.ToArray()));
-
-            if (t.selectedCharacter)
-            {
-                if(t.selectedCharacter.GetActor().potentialTargets != null)
-                    foreach (var v in t.selectedCharacter.GetActor().potentialTargets)
-                    v.GetActor().IsTargetUX(false, false);
-
-                t.selectedCharacter.GetActor().potentialTargets = null;
-
-                if (t.selectedCharacter.GetActor().targetCharacter != null && t.selectedCharacter.GetActor().targetCharacter.stats.healthCurrent <= 0)
-                    t.selectedCharacter.GetActor().targetCharacter = null;
-                // t.selectedCharacter.targetCharacter = null; // Commented out because this breaks dodging
-            }
-        }
-        public override void Execute(InCombatPlayerAction t)
-        {
-            if (t.selectedCharacter == null)
-                ChangeState(new NoTargetSelected(Machine));
-        }
-
-        public override void InputPrimary(InCombatPlayerAction t)
-        {
-            Unit c = t.selectedCharacter;
-
-            if (!IsPointerOverUIElement(t))
-                t.SelectUnit();
-
-            if (t.selectedCharacter == null) ChangeState(new NoTargetSelected(Machine));
-            if (t.selectedCharacter != c) ChangeState(new Idle(Machine));
-        }
-        public override void InputSecndry(InCombatPlayerAction t)
-        {
-            // Orders selected character to move to target tile
-
-            // Check that we have a selected character and they meet the AP cost
-            if (t.selectedCharacter && t.selectedCharacter.stats.actionPointsCurrent >= Actions.action_move.cost)
-            {
-                RaycastHit hit;
-                Ray ray;
-                ray = Camera.main.ScreenPointToRay(t.playerInput.Controls.InputPosition.ReadValue<Vector2>());
-                int layerMask = (1 << LayerMask.NameToLayer("TileMap"));
-
-                // Find tile from right-click action
-                if (Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask))
-                {
-                    if (hit.collider.GetComponent<Tile>())
-                    {
-                        var tile = hit.collider.GetComponent<Tile>();
-
-                        t.selectedCharacter.GetActor().ProcessAction(Actions.action_move, contextTile: tile, contextPath: t.previewPath);
-
-                        //TODO: Clean this up. Need to check that this is a valid move before sending to state machine.
-                        if (t.selectedCharacter.GetActor().CheckTileMove(tile) == true)
-                            ChangeState(new Moving(Machine, tile));
-                    }
-                }
-            }
-
-            // If we can't perform move, inform player
-            else if (t.selectedCharacter && t.selectedCharacter.stats.actionPointsCurrent < Actions.action_move.cost)
-            {
-                Debug.Log("Out of AP, cannot move!"); // TODO: Display this to player in UI
-            }
-
-            // Something went wrong
-            else
-                Debug.Log("WARNING - Invalid move order detected");
-        }
-        public override void InputActionBtn(InCombatPlayerAction t, int index)
-        {
-            Actions.ActionList action = t.GetBindings(index);
-
-            // If requirements aren't met, ignore button press
-            bool requirementsMet = Actions.ActionsDict[action].CheckRequirements(t.selectedCharacter);
-            if (!requirementsMet) return;
-
-            // Button press sfx
-            InputPress(t);
-
-            switch (action)
-            {
-                case (Actions.ActionList.RELOAD):
-                    {
-                        ChangeState(new Reloading(Machine));
-                        break;
-                    }
-                case (Actions.ActionList.SWAP):
-                    {
-                        ChangeState(new SwapGun(Machine));
-                        break;
-                    }
-                case (Actions.ActionList.REFRESH):
-                    {
-                        ChangeState(new RefreshingAP(Machine));
-                        break;
-                    }
-                case (Actions.ActionList.CHOOSEITEM):
-                    {
-                        //if (t.selectedCharacter.inventory.GetItem(0))
-                            ChangeState
-                                //(new UseItem(Machine, t.selectedCharacter.inventory.GetItem(0)));
-                                (new ChooseItem(Machine, t.selectedCharacter.inventory.items.ToArray()));
-                        
-                        break;
-                    }
-                case (Actions.ActionList.SHOOT):
-                    {
-                        ChangeState(new ChoosingShootTarget(Machine));
-                        break;
-                    }
-            }
-        }
-        public override void InputTab(InCombatPlayerAction t, bool shift)
-        {
-            
-        }
-    }
-    public class NoTargetSelected : FiniteState<InCombatPlayerAction>
-    {
-        public NoTargetSelected(StateMachine<InCombatPlayerAction> machine) : base(machine) { Machine = machine; }
-
-        /*
-        public override void Enter(InCombatPlayerAction t)
-        {
-            base.Enter(t);
-        }
-        */
-        public override void Execute(InCombatPlayerAction t)
-        {
-            if (t.selectedCharacter)
-                ChangeState(new Idle(Machine));
-        }
-        public override void InputPrimary(InCombatPlayerAction t)
-        {
-            if (!IsPointerOverUIElement(t))
-                t.SelectUnit();
-        }
-    }
-    #endregion
-
-    #region Movement
-    public class ChoosingMoveDestination : FiniteState<InCombatPlayerAction>
-    {
-        public ChoosingMoveDestination(StateMachine<InCombatPlayerAction> machine) : base(machine) { Machine = machine; }
-
-        public override void Enter(InCombatPlayerAction t)
-        {
-            base.Enter(t);
-        }
+        public InfoPanelScript infoPanel = UIManager.Instance.infoPanel;
+        public InventoryPanelScript inventoryPanel = UIManager.Instance.inventoryPanel;
 
         public override void InputSecndry(InCombatPlayerAction t)
         {
-            if (t.selectedCharacter.stats.actionPointsCurrent > 0)
-            {
-                t.MoveCharacter();
-                // ChangeState(new Moving(Machine));
-            }
-            else
-                ChangeState(new Idle(Machine));
+            // Right mouse button will exit targeting
+
+            t.selectedCharacter.GetActor().ClearTarget();
+            ChangeState(new Idle(Machine));
         }
 
-        public override void InputActionBtn(InCombatPlayerAction t, int index)
+        public override void InputCancel(InCombatPlayerAction t)
         {
-            Actions.ActionList action = t.GetBindings(index);
-
-            switch (action)
-            {
-                case (Actions.ActionList.SHOOT):
-                    {
-                        ChangeState(new ChoosingShootTarget(Machine));
-                        break;
-                    }
-                case (Actions.ActionList.RELOAD):
-                    {
-                        ChangeState(new Reloading(Machine));
-                        break;
-                    }
-                case (Actions.ActionList.SWAP):
-                    {
-                        ChangeState(new SwapGun(Machine));
-                        break;
-                    }
-                case (Actions.ActionList.REFRESH):
-                    {
-                        ChangeState(new RefreshingAP(Machine));
-                        break;
-                    }
-                case (Actions.ActionList.CHOOSEITEM):
-                    {
-                        ChangeState (new ChooseItem
-                            (Machine, t.selectedCharacter.inventory.items.ToArray()));
-                        break;
-                    }
-            }
+            t.selectedCharacter.GetActor().ClearTarget();
+            ChangeState(new Idle(Machine));
         }
     }
 
-    public class Moving : FiniteState<InCombatPlayerAction>
+    public class TargetState : CancelState
     {
-        public Moving(StateMachine<InCombatPlayerAction> machine, Tile destination) : base(machine) { Machine = machine; _destination = destination; }
+        public TargetState(StateMachine<InCombatPlayerAction> machine) : base(machine) { Machine = machine; }
 
-        Tile _destination;
-        float timer = 5; //Failsafe
+        public List<Unit> targets = new List<Unit>();
+        public Unit target;
 
-        public override void Enter(InCombatPlayerAction t)
-        {
-            timer += Time.time;
-        }
-        public override void Execute(InCombatPlayerAction t)
-        {
-            if (t.selectedCharacter)
-                if (t.selectedCharacter.currentTile == _destination)
-                    ChangeState(new Idle(Machine));
-
-            if (Time.time > timer)
-            {
-                Debug.LogWarning("Character timed out of Moving. Reverting to Idle state.");
-                ChangeState(new Idle(Machine));
-            }
-        }
-    }
-    #endregion
-
-    #region Combat
-    public class ChoosingShootTarget : FiniteState<InCombatPlayerAction>
-    {
-        public ChoosingShootTarget(StateMachine<InCombatPlayerAction> machine) : base(machine) { Machine = machine; }
-
-        List<Unit> enemyList = new List<Unit>();
-        InfoPanelScript infoPanel = UIManager.Instance.infoPanel;
-
-        public override void Enter(InCombatPlayerAction t)
-        {
-            base.Enter(t);
-
-            t.PathPreviewClear();
-            infoPanel.UpdateAction(Actions.ActionList.SHOOT);
-
-            //Make a list of Enemies
-            Unit[] gos = GameObject.FindObjectsOfType<Unit>();
-            foreach (var v in gos)
-            {
-                if (v.GetComponent<IFaction>() != null)
-                    if (t.selectedCharacter.attributes.faction != v.attributes.faction)
-                        if (v.stats.healthCurrent > 0)
-                            enemyList.Add(v);
-            }
-
-            //Find closest target
-            if(enemyList.Count > 0)
-            {
-                enemyList.Sort(delegate (Unit a, Unit b)
-                {
-                    return Vector2.Distance(t.selectedCharacter.transform.position, a.transform.position).CompareTo(Vector2.Distance(t.selectedCharacter.transform.position, b.transform.position));
-                });
-
-                t.selectedCharacter.GetActor().potentialTargets = enemyList;
-                t.selectedCharacter.GetActor().targetCharacter = t.selectedCharacter.GetActor().targetCharacter != null ? t.selectedCharacter.GetActor().targetCharacter : enemyList[0];
-                t.selectedCharacter.GetActor().GetTarget();
-            }
-            else
-            {
-                Debug.LogWarning("There are no nearby enemies. If there should be, check to see that their Faction is not the same as the Selected Character. Reverting to Idle");
-                ChangeState(new Idle(Machine));
-            }
-        }
-        public override void Execute(InCombatPlayerAction t)
-        {
-            if (t.selectedCharacter == null) ChangeState(new NoTargetSelected(Machine));
-
-            foreach(var v in enemyList)
-            {
-                if (v == t.selectedCharacter.GetActor().targetCharacter)
-                    v.GetActor().IsTargetUX(true, true);
-                else
-                    v.GetActor().IsTargetUX(false, true);
-            }
-        }
         public override void Exit(InCombatPlayerAction t)
         {
-            base.Exit(t);
-            foreach (var v in enemyList)
+            // Disable UI
+            inventoryPanel.gameObject.SetActive(false);
+            infoPanel.gameObject.SetActive(false);
+
+            foreach (var v in targets)
             {
-                v.GetActor().IsTargetUX(false, false);
+                v.TryGetComponent(out Unit c);
+                c.GetActor().IsTargetUX(false, false);
             }
+
+            base.Exit(t);
         }
+
         public override void InputPrimary(InCombatPlayerAction t)
         {
-            //if (!IsPointerOverUIElement(t))
-                //t.SelectUnit();
-                
             // If valid target, make Target
             if (!IsPointerOverUIElement(t))
             {
@@ -327,56 +71,331 @@ public class SelectedStates
                     {
                         var c = hit.collider.GetComponent<Unit>();
 
-                        if (enemyList.Contains(c))
+                        if (targets.Contains(c))
                             t.selectedCharacter.GetActor().targetCharacter = c;
-                        //else if (c.attributes.faction == t.selectedCharacter.attributes.faction)
-                        //{ 
-                        //    t.SelectUnit();
-                        //    ChangeState(new Idle(Machine));
-                        //}
-                        //else
-                        //{
-                        //    Debug.Log("Clicked character but unable to process. Possibly not Ally or Enemy.");
-                        //}
-                    } 
+                    }
                 }
-                //else
-                //    ChangeState(new NoTargetSelected(Machine));
             }
         }
+
+        public override void InputTab(InCombatPlayerAction t, bool shift)
+        {
+            int index = targets.IndexOf(target);
+            int n = shift ? index - 1 : index + 1;
+
+            if (n < 0) n = targets.Count - 1;
+            if (n > targets.Count - 1) n = 0;
+
+            target = targets[n];
+            t.selectedCharacter.GetActor().targetCharacter = target;
+        }
+    }
+
+    public class TimedActionState : FiniteState<InCombatPlayerAction>
+    {
+        Action action;
+        public TimedActionState(StateMachine<InCombatPlayerAction> machine, Action performAction) : base(machine) { Machine = machine; action = performAction; }
+
+        float timer = 0.25f;
+        public override void Enter(InCombatPlayerAction t)
+        {
+            t.selectedCharacter.GetActor().ProcessAction(action);
+            timer += Time.time;
+        }
+
+        public override void Execute(InCombatPlayerAction t)
+        {
+            if (timer < Time.time)
+                ChangeState(new Idle(Machine));
+        }
+    }
+    #endregion
+
+    #region Basics
+    public class Idle : FiniteState<InCombatPlayerAction>
+    {
+        public Idle(StateMachine<InCombatPlayerAction> machine) : base(machine) { Machine = machine; }
+
+        public override void Enter(InCombatPlayerAction t)
+        {
+            base.Enter(t);
+
+            if (t.selectedCharacter)
+            {
+                if(t.selectedCharacter.GetActor().potentialTargets != null)
+                    foreach (var v in t.selectedCharacter.GetActor().potentialTargets)
+                    v.GetActor().IsTargetUX(false, false);
+
+                t.selectedCharacter.GetActor().potentialTargets = null;
+
+                if (t.selectedCharacter.GetActor().targetCharacter != null && t.selectedCharacter.GetActor().targetCharacter.stats.healthCurrent <= 0)
+                    t.selectedCharacter.GetActor().targetCharacter = null;
+            }
+        }
+
+        public override void Execute(InCombatPlayerAction t)
+        {
+            if (t.selectedCharacter == null)
+                ChangeState(new NoTargetSelected(Machine));
+        }
+
+        public override void InputPrimary(InCombatPlayerAction t)
+        {
+            Unit c = t.selectedCharacter;
+
+            if (!IsPointerOverUIElement(t))
+                t.SelectUnit();
+
+            if (t.selectedCharacter == null) ChangeState(new NoTargetSelected(Machine));
+            if (t.selectedCharacter != c) ChangeState(new Idle(Machine));
+        }
+
         public override void InputSecndry(InCombatPlayerAction t)
         {
-            // Right mouse button will exit targeting
+            // Orders selected character to move to target tile
 
-            ChangeState(new Idle(Machine));
-            t.selectedCharacter.GetActor().ClearTarget();
+            // Check that we have a selected character and they meet the AP cost
+            if (t.selectedCharacter && t.selectedCharacter.stats.actionPointsCurrent >= Action.action_move.cost)
+            {
+                RaycastHit hit;
+                Ray ray;
+                ray = Camera.main.ScreenPointToRay(t.playerInput.Controls.InputPosition.ReadValue<Vector2>());
+                int layerMask = (1 << LayerMask.NameToLayer("TileMap"));
+
+                // Find tile from right-click action
+                if (Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask))
+                {
+                    if (hit.collider.GetComponent<Tile>())
+                    {
+                        var tile = hit.collider.GetComponent<Tile>();
+
+                        t.selectedCharacter.GetActor().ProcessAction(Action.action_move, contextTile: tile, contextPath: t.previewPath);
+
+                        //TODO: Clean this up. Need to check that this is a valid move before sending to state machine.
+                        if (t.selectedCharacter.GetActor().CheckTileMove(tile) == true)
+                            ChangeState(new Moving(Machine, tile));
+                    }
+                }
+            }
+
+            // If we can't perform move, inform player
+            else if (t.selectedCharacter && t.selectedCharacter.stats.actionPointsCurrent < Action.action_move.cost)
+            {
+                Debug.Log("Out of AP, cannot move!"); // TODO: Display this to player in UI
+            }
+
+            // Something went wrong
+            else
+                Debug.Log("WARNING - Invalid move order detected");
         }
 
         public override void InputActionBtn(InCombatPlayerAction t, int index)
         {
-            // Spacebar and shoot action will execute shoot while in targeting
+            ActionList action = t.GetBindings(index);
 
-            Actions.ActionList action = t.GetBindings(index);
+            // If requirements aren't met, ignore button press
+            bool requirementsMet = Action.ActionsDict[action].CheckRequirements(t.selectedCharacter);
+            if (!requirementsMet) return;
 
-            // Button press sfx
-            InputPress(t);
+            ButtonPress(index);
 
             switch (action)
             {
-                case (Actions.ActionList.SHOOT):
+                case (ActionList.RELOAD):
                     {
-                        if (t.selectedCharacter.GetActor().targetCharacter)
-                            ChangeState(new ShootTarget(Machine, t.selectedCharacter.GetActor().targetCharacter));
-                        else
-                            Debug.Log("No Target -- But how? Ensure that both characters are set to different factions. (spacebar)");
+                        ChangeState(new TimedActionState(Machine, Action.action_reload));
                         break;
                     }
-                case (Actions.ActionList.SWAP):
+                case (ActionList.SWAP):
                     {
-                        ChangeState(new SwapGun(Machine));
+                        ChangeState(new TimedActionState(Machine, Action.action_swap));
+                        break;
+                    }
+                case (ActionList.CHOOSEITEM):
+                    {
+                        //if (t.selectedCharacter.inventory.GetItem(0))
+                            ChangeState
+                                //(new UseItem(Machine, t.selectedCharacter.inventory.GetItem(0)));
+                                (new ChooseItem(Machine, t.selectedCharacter.inventory.items.ToArray()));
+                        
+                        break;
+                    }
+                case (ActionList.SHOOT):
+                    {
                         ChangeState(new ChoosingShootTarget(Machine));
                         break;
                     }
+            }
+        }
+
+        public override void InputTab(InCombatPlayerAction t, bool shift)
+        {
+            // Iterate through player characters
+        }
+    }
+
+    public class NoTargetSelected : FiniteState<InCombatPlayerAction>
+    {
+        public NoTargetSelected(StateMachine<InCombatPlayerAction> machine) : base(machine) { Machine = machine; }
+
+        /*
+        public override void Enter(InCombatPlayerAction t)
+        {
+            base.Enter(t);
+        }
+        */
+        public override void Execute(InCombatPlayerAction t)
+        {
+            if (t.selectedCharacter)
+                ChangeState(new Idle(Machine));
+        }
+
+        public override void InputPrimary(InCombatPlayerAction t)
+        {
+            if (!IsPointerOverUIElement(t))
+                t.SelectUnit();
+        }
+    }
+    #endregion
+
+    #region Movement
+    public class Moving : FiniteState<InCombatPlayerAction>
+    {
+        public Moving(StateMachine<InCombatPlayerAction> machine, Tile destination) : base(machine) { Machine = machine; _destination = destination; }
+
+        Tile _destination;
+        float timer = 5; //Failsafe
+
+        public override void Enter(InCombatPlayerAction t)
+        {
+            timer += Time.time;
+        }
+
+        public override void Execute(InCombatPlayerAction t)
+        {
+            if (t.selectedCharacter)
+                if (t.selectedCharacter.currentTile == _destination)
+                    ChangeState(new Idle(Machine));
+
+            if (Time.time > timer)
+            {
+                Debug.LogWarning("Character timed out of Moving. Reverting to Idle state.");
+                ChangeState(new Idle(Machine));
+            }
+        }
+    }
+    #endregion
+
+    #region Combat
+    public class ChoosingShootTarget : TargetState
+    {
+        public ChoosingShootTarget(StateMachine<InCombatPlayerAction> machine) : base(machine) { Machine = machine; }
+
+        public override void Enter(InCombatPlayerAction t)
+        {
+            base.Enter(t);
+
+            t.PathPreviewClear();
+            infoPanel.UpdateAction(ActionList.SHOOT);
+
+            //Make a list of Enemies
+            Unit[] gos = GameObject.FindObjectsOfType<Unit>();
+            foreach (var v in gos)
+            {
+                if (v.GetComponent<IFaction>() != null)
+                    if (t.selectedCharacter.attributes.faction != v.attributes.faction)
+                        if (v.stats.healthCurrent > 0)
+                            targets.Add(v);
+            }
+
+            //Find closest target
+            if(targets.Count > 0)
+            {
+                targets.Sort(delegate (Unit a, Unit b)
+                {
+                    return Vector2.Distance(t.selectedCharacter.transform.position, a.transform.position).CompareTo(Vector2.Distance(t.selectedCharacter.transform.position, b.transform.position));
+                });
+
+                t.selectedCharacter.GetActor().potentialTargets = targets;
+                t.selectedCharacter.GetActor().targetCharacter = t.selectedCharacter.GetActor().targetCharacter != null ? t.selectedCharacter.GetActor().targetCharacter : targets[0];
+                t.selectedCharacter.GetActor().GetTarget();
+                target = targets[0];
+            }
+            else
+            {
+                Debug.LogWarning("There are no nearby enemies. If there should be, check to see that their Faction is not the same as the Selected Character. Reverting to Idle");
+                ChangeState(new Idle(Machine));
+            }
+        }
+
+        public override void Execute(InCombatPlayerAction t)
+        {
+            if (t.selectedCharacter == null) ChangeState(new NoTargetSelected(Machine));
+
+            foreach(var v in targets)
+            {
+                if (v == t.selectedCharacter.GetActor().targetCharacter)
+                    v.GetActor().IsTargetUX(true, true);
+                else
+                    v.GetActor().IsTargetUX(false, true);
+            }
+        }
+
+        public override void InputPrimary(InCombatPlayerAction t)
+        {             
+            // If valid target, make Target
+            if (!IsPointerOverUIElement(t))
+            {
+                Camera raycastCamera = Camera.main;
+                RaycastHit hit;
+                Ray ray;
+
+                if (t.selectedCharacter.GetComponentInChildren<Camera>())
+                    raycastCamera = t.selectedCharacter.GetComponentInChildren<Camera>();
+
+                ray = raycastCamera.ScreenPointToRay(t.playerInput.Controls.InputPosition.ReadValue<Vector2>());
+
+                int layerMask = (1 << LayerMask.NameToLayer("TileMap"));
+
+                if (Physics.Raycast(ray, out hit, Mathf.Infinity, ~layerMask))
+                {
+                    if (hit.collider.GetComponent<Unit>())
+                    {
+                        var c = hit.collider.GetComponent<Unit>();
+
+                        if (targets.Contains(c))
+                            t.selectedCharacter.GetActor().targetCharacter = c;
+                    } 
+                }
+            }
+        }
+
+        public override void InputActionBtn(InCombatPlayerAction t, int index)
+        {
+            // Perform action based on which button was selected
+
+            ActionList action = t.GetBindings(index);
+
+            // Button press effect
+            ButtonPress(index);
+
+            switch (action)
+            {
+                case (ActionList.SHOOT):
+                    InputSpacebar(t);
+                    break;
+                case (ActionList.RELOAD):
+                    t.selectedCharacter.GetActor().ClearTarget();
+                    ChangeState(new TimedActionState(Machine, Action.action_reload));
+                    break;
+                case (ActionList.SWAP):
+                    ChangeState(new TimedActionState(Machine, Action.action_swap));
+                    ChangeState(new ChoosingShootTarget(Machine));
+                    break;
+                case (ActionList.CHOOSEITEM):
+                    t.selectedCharacter.GetActor().ClearTarget();
+                    ChangeState(new ChooseItem(Machine, t.selectedCharacter.inventory.items.ToArray()));
+                    break;
             }
         }
 
@@ -384,25 +403,14 @@ public class SelectedStates
         {
             // Spacebar and shoot action will execute shoot while in targeting
 
+            infoPanel.gameObject.SetActive(false);
             if (t.selectedCharacter.GetActor().targetCharacter)
                 ChangeState(new ShootTarget(Machine, t.selectedCharacter.GetActor().targetCharacter));
             else
                 Debug.Log("No Target -- But how? Ensure that both characters are set to different factions. (spacebar)");
         }
-
-        public override void InputTab(InCombatPlayerAction t, bool shift)
-        {
-            // Cylces between available targets
-
-            int index = enemyList.IndexOf(t.selectedCharacter.GetActor().targetCharacter);
-            int n = shift ? index - 1 : index + 1;
-
-            if (n < 0) n = enemyList.Count - 1;
-            if (n > enemyList.Count - 1) n = 0;
-
-            t.selectedCharacter.GetActor().targetCharacter = enemyList[n];
-        }
     }
+
     public class ShootTarget : FiniteState<InCombatPlayerAction>
     {
         Unit Target;
@@ -412,10 +420,11 @@ public class SelectedStates
 
         public override void Enter(InCombatPlayerAction t)
         {
-            t.selectedCharacter.GetActor().ProcessAction(Actions.action_shoot, contextCharacter: Target);
+            t.selectedCharacter.GetActor().ProcessAction(Action.action_shoot, contextCharacter: Target);
 
             timer = Time.time + 1;
         }
+
         public override void Execute(InCombatPlayerAction t)
         {
             if (timer < Time.time - 1.5f)
@@ -425,6 +434,7 @@ public class SelectedStates
             }
         }
     }
+
     public class PostShootTarget : FiniteState<InCombatPlayerAction>
     {
         public PostShootTarget(StateMachine<InCombatPlayerAction> machine) : base(machine) { Machine = machine; }
@@ -432,76 +442,32 @@ public class SelectedStates
     #endregion
 
     #region Actions
-    public class Reloading : FiniteState<InCombatPlayerAction>
+    public class UseItem : TargetState
     {
-        public Reloading(StateMachine<InCombatPlayerAction> machine) : base(machine) { Machine = machine; }
+        Item item;
 
-        float timer = 0.25f;
-        public override void Enter(InCombatPlayerAction t)
-        {
-            timer += Time.time;
-            t.selectedCharacter.GetActor().ProcessAction(Actions.action_reload);
-        }
-        public override void Execute(InCombatPlayerAction t)
-        {
-            if (Time.time > timer)
-            {
-                ChangeState(new Idle(Machine));
-            }
-        }
-    }
-    public class RefreshingAP : FiniteState<InCombatPlayerAction>
-    {
-        public RefreshingAP(StateMachine<InCombatPlayerAction> machine) : base(machine) { Machine = machine; }
-        float timer = 0.25f;
-        public override void Enter(InCombatPlayerAction t)
-        {
-            t.selectedCharacter.RefreshActionPoints();
-            timer += Time.time;
-        }
-
-        public override void Execute(InCombatPlayerAction t)
-        {
-            if (timer < Time.time)
-                ChangeState(new Idle(Machine));
-        }
-    }
-    public class SwapGun : FiniteState<InCombatPlayerAction>
-    {
-        public SwapGun(StateMachine<InCombatPlayerAction> machine) : base(machine) { Machine = machine; }
-        float timer = 0.25f;
-        public override void Enter(InCombatPlayerAction t)
-        {
-            t.selectedCharacter.GetActor().ProcessAction(Actions.action_swap);
-            timer += Time.time;
-        }
-
-        public override void Execute(InCombatPlayerAction t)
-        {
-            if (timer < Time.time)
-                ChangeState(new Idle(Machine));
-        }
-    }
-    public class UseItem : FiniteState<InCombatPlayerAction>
-    {
-        Item Item; List<GameObject> Targets; GameObject Target;
-        public UseItem(StateMachine<InCombatPlayerAction> machine, Item item) : base(machine) { Machine = machine; Item = item; }
+        public UseItem(StateMachine<InCombatPlayerAction> machine, Item useItem) : base(machine) { Machine = machine; item = useItem; }
 
         public override void Enter(InCombatPlayerAction t)
         {
             base.Enter(t);
             t.PathPreviewClear();
-            // The item panel
-            var iPanel = UIManager.Instance.useItemPanel;
-            iPanel.SetPanel(true, Item);
 
-            // Show UI
+            // Display info panel
+            infoPanel.gameObject.SetActive(true);
+            infoPanel.UpdateAction(item.itemAction);
+            infoPanel.UpdateHit(-1);
+
+            if (item.GetType().BaseType == typeof(DamageItem))
+            {
+                var itemType = (DamageItem)item;
+                infoPanel.UpdateDamage(itemType.hpAmount);
+            }
 
             //Find Targets
-            Targets = new List<GameObject>();
-            switch (Item.TargetType)
+            switch (item.targetType)
             {
-                case TargetType.Character:
+                case TargetType.CHARACTER:
                     FindTargets<Unit>(t);
                     break;
                 default:
@@ -509,7 +475,7 @@ public class SelectedStates
                     break;
             }
         }
-        
+
         public void FindTargets<T>(InCombatPlayerAction t)
         {
             var x = typeof(T);
@@ -519,64 +485,44 @@ public class SelectedStates
                 Unit[] chars = GameObject.FindObjectsOfType<Unit>();
                 foreach (var v in chars)
                 {
-                    if(v.GetComponent<IFaction>() != null)
+                    if (v.GetComponent<IFaction>() != null && v.stats.healthCurrent > 0)
                     {
-                        if( Item.CheckAffinity
-                            (t.selectedCharacter.attributes.faction, v.attributes.faction) 
-                            == true)
+                        if (item.CheckAffinity (t.selectedCharacter.attributes.faction, v.attributes.faction) == true)
                         {
-                            Targets.Add(v.gameObject);
+                            targets.Add(v);
                         }
                     }
                 }
             }
 
-
             //Find closest Target
-            if(Targets.Count > 0)
+            if (targets.Count > 0)
             {
-                Targets.Sort(delegate (GameObject a, GameObject b)
+                targets.Sort(delegate (Unit a, Unit b)
                 {
                     return Vector2.Distance(t.selectedCharacter.transform.position, a.transform.position).CompareTo(Vector2.Distance(t.selectedCharacter.transform.position, b.transform.position));
                 });
 
-                Target = Targets[0];
+                target = targets[0];
             }
         }
 
         public override void Execute(InCombatPlayerAction t)
         {
-            Debug.Log("Target: " + Target.name);
             if (t.selectedCharacter == null) ChangeState(new NoTargetSelected(Machine));
 
-            foreach (var v in Targets)
+            foreach (var v in targets)
             {
                 if (v.GetComponent<Unit>() == true)
                 {
                     Unit c = v.GetComponent<Unit>();
 
-                    if (v == Target)
+                    if (v == target)
                         c.GetActor().IsTargetUX(true, true);
                     else
-                       c.GetActor().IsTargetUX(false, true);
+                        c.GetActor().IsTargetUX(false, true);
                 }
             }
-        }
-
-        public override void Exit(InCombatPlayerAction t)
-        {
-            // Disable UI
-            var iPanel = UIManager.Instance.useItemPanel;
-
-            iPanel.SetPanel(false);
-
-            foreach (var v in Targets)
-            {
-                v.TryGetComponent(out Unit c);
-                c.GetActor().IsTargetUX(false, false);
-            }
-
-            base.Exit(t);
         }
 
         public override void InputPrimary(InCombatPlayerAction t)
@@ -589,11 +535,11 @@ public class SelectedStates
 
                 if (Physics.Raycast(ray, out hit, Mathf.Infinity))
                 {
-                    if (Targets.Contains(hit.collider.gameObject))
+                    if (targets.Contains(hit.collider.GetComponent<Unit>()))
                     {
-                        if (Target != hit.collider.gameObject)
+                        if (target != hit.collider.GetComponent<Unit>())
                         {
-                            Target = hit.collider.gameObject;
+                            target = hit.collider.GetComponent<Unit>();
                         }
                     }
                     else if (hit.collider.gameObject.GetComponent<Unit>())
@@ -608,79 +554,69 @@ public class SelectedStates
 
         public override void InputSpacebar(InCombatPlayerAction t)
         {
-            if(Target)
+            if (target)
             {
-                Item.TryUseItem(t.selectedCharacter, Target, out bool success);
-
-                if(success)
-                {
-                    Item.UseTheUseItem(t.selectedCharacter, Target.GetComponent<Unit>());
-                    t.selectedCharacter.stats.actionPointsCurrent -= Item.statics.itemCost;
-
-                    if (t.selectedCharacter.inventory.items.Find(x => Item) == true)
-                    {
-                        var i = t.selectedCharacter.inventory.items.IndexOf(Item);
-                        t.selectedCharacter.inventory.RemoveChargeFromItem(i, 1);
-                    }
-                    else
-                    {
-                        Debug.Log("Item not found.");
-                    }
-
-                    //Insert Animation + Feedback
-
-                    ChangeState(new Idle(Machine));
-                }
-                else
-                {
-                    Debug.Log("Unable to use Item. But how? Reverting to idle.");
-                    ChangeState(new Idle(Machine));
-                } 
+                t.selectedCharacter.GetActor().ProcessAction(Action.ActionsDict[item.itemAction], contextCharacter: target, contextItem: item);
             }
             else
-            {
                 Debug.Log("No Target to Use Item. But how. Reverting to idle.");
-                ChangeState(new Idle(Machine));
-            }
+            ChangeState(new Idle(Machine));
         }
 
-        public override void InputTab(InCombatPlayerAction t, bool shift)
-        {
-            int index = Targets.IndexOf(Target);
-            int n = shift ? index - 1 : index + 1;
-
-            if (n < 0) n = Targets.Count - 1;
-            if (n > Targets.Count - 1) n = 0;
-
-            Target = Targets[n];
-        }
         public override void InputActionBtn(InCombatPlayerAction t, int index)
         {
-            Actions.ActionList action = t.GetBindings(index);
+            ActionList action = t.GetBindings(index);
 
-            if (action == Actions.ActionList.CHOOSEITEM)
+            if (action == ActionList.CHOOSEITEM)
             {
                 ChangeState(new Idle(Machine));
+            }
+            {
+
+            // If requirements aren't met, ignore button press
+            bool requirementsMet = Action.ActionsDict[action].CheckRequirements(t.selectedCharacter);
+            if (!requirementsMet) return;
+
+            ButtonPress(index);
+
+            switch (action)
+            {
+                case (ActionList.RELOAD):
+                    {
+                        ChangeState(new TimedActionState(Machine, Action.action_reload));
+                        break;
+                    }
+                case (ActionList.SWAP):
+                    {
+                        ChangeState(new TimedActionState(Machine, Action.action_swap));
+                        break;
+                    }
+                case (ActionList.SHOOT):
+                    {
+                        ChangeState(new ChoosingShootTarget(Machine));
+                        break;
+                    }
+                }
             }
         }
     }
-    public class ChooseItem : FiniteState<InCombatPlayerAction>
+
+    public class ChooseItem : CancelState
     {
         Item[] Items;
-        InventoryPanelScript iPanel;
+
         public ChooseItem(StateMachine<InCombatPlayerAction> machine, Item[] items) : base(machine) { Machine = machine; Items = items; }
 
         public override void Enter(InCombatPlayerAction t)
         {
             base.Enter(t);
-
-            iPanel = GameObject.Find("InventoryPanel").GetComponent<InventoryPanelScript>();
-            iPanel.SetPanel(true, t.selectedCharacter.inventory.items.ToArray());
+            inventoryPanel.gameObject.SetActive(true);
+            inventoryPanel.GetComponent<InventoryPanelScript>().BindButtons();
         }
         public override void Exit(InCombatPlayerAction t)
         {
             base.Exit(t);
-            iPanel.SetPanel(false);
+            inventoryPanel.gameObject.SetActive(false);
         }
 
         public override void InputPrimary(InCombatPlayerAction t)
@@ -693,17 +629,37 @@ public class SelectedStates
             if (t.selectedCharacter == null) ChangeState(new NoTargetSelected(Machine));
             if (t.selectedCharacter != c) ChangeState(new Idle(Machine));
         }
+
         public override void InputActionBtn(InCombatPlayerAction t, int index)
         {
-            if(index < 1 || index > 4)
-                base.InputActionBtn(t, index);
-            else
+            ActionPanelScript actionPanel = UIManager.Instance.actionPanel;
+            int offset = actionPanel.GetButtons().Count;
+            ActionList action = t.GetBindings(index);
+
+            // If the Choose Item button was selected again, close the panel and return to Idle
+            if (action == ActionList.CHOOSEITEM)
             {
-                if (Items.Length >= index)
-                    ChangeState(new UseItem(Machine, Items[index-1]));
-                else
-                    Debug.Log("There is no useable item in this slot.");
+                ButtonPress(index);
+                InputCancel(t);
+                return;
             }
+
+            // If a normal action button was selected, perform that action
+            else if (index <= offset)
+            {
+                new Idle(Machine).InputActionBtn(t, index);
+                return;
+            }
+
+            // Valid item was selected, proceed to Use Item
+            else if (Items.Length >= index - offset && Items[index - 1 - offset].itemUsesCurrent > 0)
+            {
+                ButtonPress(index);
+                ChangeState(new UseItem(Machine, Items[index - 1 - offset]));
+            }
+
+            else
+                Debug.Log("Invalid item selection.");
         }
     }
     #endregion

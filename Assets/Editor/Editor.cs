@@ -88,12 +88,3 @@ public class TileCustom : Editor
         base.OnInspectorGUI();
     }
 }
-
-[CustomEditor(typeof(Medkit), true)]
-public class MedkitEditor : Editor
-{
-    public override void OnInspectorGUI()
-    {
-        base.OnInspectorGUI();
-    }
-}

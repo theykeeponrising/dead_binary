@@ -5,9 +5,8 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
 
-public class EndTurnPanelScript : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class InfoPanelButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    InCombatPlayerAction playerAction;
     Button button;
     AudioSource audioSource;
 
@@ -87,7 +86,7 @@ public class EndTurnPanelScript : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         // Clears unit highlight on mouse leave
 
-        if (!requirementsMet) return; 
+        if (!requirementsMet) return;
         currentButtonState = ButtonState.PASSIVE;
     }
 
@@ -97,9 +96,6 @@ public class EndTurnPanelScript : MonoBehaviour, IPointerEnterHandler, IPointerE
 
         AudioClip audioClip = AudioManager.Instance.GetInterfaceSound(AudioManager.InterfaceSFX.MOUSE_CLICK, 0);
         audioSource.PlayOneShot(audioClip);
-
-        PlayerTurnState playerTurnState = (PlayerTurnState)StateHandler.Instance.GetStateObject(StateHandler.State.PlayerTurnState);
-        playerAction = playerTurnState.GetPlayerAction();
-        playerAction.EndTurn();
+        currentButtonState = ButtonState.PASSIVE;
     }
 }

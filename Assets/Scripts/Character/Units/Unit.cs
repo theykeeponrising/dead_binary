@@ -29,7 +29,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
     GameState gameState;
 
     [HideInInspector] public CoverObject currentCover;
-    public List<Actions.ActionList> availableActions;
+    public List<ActionList> availableActions;
 
     // Attributes are mosty permanent descriptors about the character
     [System.Serializable] public class Attributes
@@ -144,9 +144,14 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         return charSFX;
     }
 
-    public List<Actions.ActionList> GetAvailableActions()
+    public List<ActionList> GetAvailableActions()
     {
         return availableActions;
+    }
+
+    public List<Item> GetItems()
+    {
+        return inventory.items;
     }
 
     public void SetupUnit()
@@ -190,6 +195,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         // Heals character by the indicated amount
 
         stats.healthCurrent += amount;
+        if (stats.healthCurrent > stats.healthMax) stats.healthCurrent = stats.healthMax;
         healthbar.UpdateHealthPoints();
     }
 
