@@ -485,11 +485,9 @@ public class SelectedStates
                 Unit[] chars = GameObject.FindObjectsOfType<Unit>();
                 foreach (var v in chars)
                 {
-                    if (v.GetComponent<IFaction>() != null)
+                    if (v.GetComponent<IFaction>() != null && v.stats.healthCurrent > 0)
                     {
-                        if (item.CheckAffinity
-                            (t.selectedCharacter.attributes.faction, v.attributes.faction)
-                            == true)
+                        if (item.CheckAffinity (t.selectedCharacter.attributes.faction, v.attributes.faction) == true)
                         {
                             targets.Add(v);
                         }
@@ -572,6 +570,33 @@ public class SelectedStates
             if (action == ActionList.CHOOSEITEM)
             {
                 ChangeState(new Idle(Machine));
+            }
+            {
+
+            // If requirements aren't met, ignore button press
+            bool requirementsMet = Action.ActionsDict[action].CheckRequirements(t.selectedCharacter);
+            if (!requirementsMet) return;
+
+            ButtonPress(index);
+
+            switch (action)
+            {
+                case (ActionList.RELOAD):
+                    {
+                        ChangeState(new TimedActionState(Machine, Action.action_reload));
+                        break;
+                    }
+                case (ActionList.SWAP):
+                    {
+                        ChangeState(new TimedActionState(Machine, Action.action_swap));
+                        break;
+                    }
+                case (ActionList.SHOOT):
+                    {
+                        ChangeState(new ChoosingShootTarget(Machine));
+                        break;
+                    }
+                }
             }
         }
     }
