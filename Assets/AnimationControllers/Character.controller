@@ -1451,7 +1451,7 @@ AnimatorController:
       m_Motion: {fileID: 3776444317559643109, guid: b5b067632c960da438fff054bfaa7ec4, type: 3}
     - serializedVersion: 2
       m_State: {fileID: 76915776733311580}
-      m_Motion: {fileID: -1777936316237152652, guid: b5b067632c960da438fff054bfaa7ec4, type: 3}
+      m_Motion: {fileID: 7400000, guid: 7516f98b850c4d24bac1cf75b603a63c, type: 2}
     m_Behaviours: []
     m_BlendingMode: 0
     m_SyncedLayerIndex: 0
@@ -1517,7 +1517,7 @@ AnimatorController:
       m_Motion: {fileID: 1583074945006862030, guid: 25b97dd1d9098894c86199ebdddf8fde, type: 3}
     - serializedVersion: 2
       m_State: {fileID: 76915776733311580}
-      m_Motion: {fileID: 1887789382272608626, guid: b5b067632c960da438fff054bfaa7ec4, type: 3}
+      m_Motion: {fileID: 7400000, guid: 66689f7aaf536264880f69062a5632cd, type: 2}
     m_Behaviours: []
     m_BlendingMode: 0
     m_SyncedLayerIndex: 0
@@ -1574,7 +1574,7 @@ AnimatorController:
       m_Motion: {fileID: -1900506530309999512}
     - serializedVersion: 2
       m_State: {fileID: 76915776733311580}
-      m_Motion: {fileID: -6467597288182625226, guid: b5b067632c960da438fff054bfaa7ec4, type: 3}
+      m_Motion: {fileID: 7400000, guid: 90894f97029138b4b87f6c309e7d0249, type: 2}
     m_Behaviours: []
     m_BlendingMode: 0
     m_SyncedLayerIndex: 0
@@ -1589,7 +1589,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Grenade
+  m_Name: Throw
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:

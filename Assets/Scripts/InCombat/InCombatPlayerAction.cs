@@ -106,6 +106,7 @@ public class InCombatPlayerAction
     public ActionList GetBindings(int index)
     {
         // Returns which action should be bound to which action button index
+
         if (!selectedCharacter)
             return 0;
 
@@ -116,7 +117,17 @@ public class InCombatPlayerAction
             if (Action.ActionsDict[characterAction].buttonPath != null)
                 actionsList.Add(characterAction);
         }
-        
+
+        if (UIManager.Instance.inventoryPanel.gameObject.activeSelf)
+        {
+            foreach (Item item in selectedCharacter.GetItems())
+            {
+                if (!Action.ActionsDict.ContainsKey(item.itemAction)) continue;
+                if (Action.ActionsDict[item.itemAction].buttonPath != null)
+                    actionsList.Add(item.itemAction);
+            }
+        }
+
         if (index > actionsList.Count)
             return 0;
         return actionsList[index-1];
@@ -146,7 +157,7 @@ public class InCombatPlayerAction
         }
     }
 
-    void SelectAction(Unit targetCharacter)
+    public void SelectAction(Unit targetCharacter = null)
     {
         // Select action, character selected, previous selection
         // Change character selection

@@ -18,4 +18,25 @@ public class Map : MonoBehaviour
 
         return mapEffects.CreateEffect(efxPrefab, efxPosition, efxRotation);
     }
+
+    public void AddEffect(GameObject efxPrefab)
+    {
+        // Add an existing effect to the effects list
+
+        mapEffects.AddEffect(efxPrefab.transform);
+    }
+
+    public void AddEffect(Transform efxPrefab)
+    {
+        // Add an existing effect to the effects list
+
+        mapEffects.AddEffect(efxPrefab.transform);
+    }
+
+    public void AddEffect(ItemProp efxPrefab)
+    {
+        // Add an existing effect to the effects list
+
+        mapEffects.AddEffect(efxPrefab.transform);
+    }
 }

@@ -81,7 +81,7 @@ public class ActionButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 
     void CheckRequirements()
     {
-        requirementsMet = Action.ActionsDict[boundAction].CheckRequirements(playerAction.selectedCharacter, boundItem);
+        requirementsMet = Action.CheckRequirements(boundAction, playerAction.selectedCharacter, boundItem);
         if (!requirementsMet) currentButtonState = ButtonState.DISABLED;
         else if (requirementsMet && currentButtonState == ButtonState.DISABLED) currentButtonState = ButtonState.PASSIVE;
 

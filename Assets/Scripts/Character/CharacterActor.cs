@@ -112,13 +112,6 @@ public class CharacterActor
     {
         // Determine if action can be performed, and perform action
 
-        // Check if action is in allowed list of actions for character
-        if (!unit.GetAvailableActions().Contains(actionToPerform.atag) && (contextItem && Action.ActionsDict[contextItem.itemAction] != actionToPerform))
-        {
-            Debug.Log(string.Format("{0} does not contain action {1}", unit.attributes.name, actionToPerform.aname));
-            return;
-        }
-
         int actionCost = actionToPerform.cost;
         if (actionCost > unit.stats.actionPointsCurrent)
         {
@@ -543,6 +536,7 @@ public class CharacterActor
     void ItemAction(Item item, Unit target)
     {
         unit.stats.actionPointsCurrent -= currentAction.cost;
-        item.UseItem(target);
+        item.UseItem(unit, target);
+        unit.transform.LookAt(target.transform);
     }
 }

@@ -66,7 +66,7 @@ public class Inventory : MonoBehaviour
         // Init starting items from inspector
         for (int index = 0; index < items.Count; index++)
         {
-            items[index] = Instantiate(items[index]);
+            items[index] = Instantiate(items[index], transform);
         }
     }
 

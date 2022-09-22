@@ -151,6 +151,7 @@ abstract public class FiniteState<T>
         List<ActionButton> inventoryPanel = UIManager.Instance.inventoryPanel.GetButtons();
         List<ActionButton> buttons = actionPanel.Concat(inventoryPanel).ToList();
 
+        if (buttons.Count <= index - 1) return;
         buttons[index-1].ButtonTrigger();
     }
 }

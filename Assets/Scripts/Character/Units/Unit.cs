@@ -1,9 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
 
 //This class is a high-level handler for a character/unit, intended to deal with e.g. stats/attributes/faction/inventory/etc.
 //Implementation of character/unit actions should be done in CharacterActor.cs
@@ -301,28 +299,40 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
             return;
         }
 
+        Vector3 direction =  (transform.position - attacker.transform.position);
+        float distance = (transform.position - attacker.transform.position).magnitude;
+        CheckDeath(attacker, direction, distance, damage);
+    }
+
+    public void TakeDamage(Unit attacker, int damage, Vector3 attackPoint)
+    {
+        // Called by an attacking item when taking damage
+        // TO DO: More complex damage reduction will be added here
+
+        Vector3 direction = (transform.position - attackPoint);
+        float distance = (transform.position - attackPoint).magnitude;
+        CheckDeath(attacker, direction, distance, damage, 50f);
+    }
+
+    void CheckDeath(Unit attacker, Vector3 direction, float distance, int damage, float impactForce = 2f)
+    {
         // Inflict damage on character
         Debug.Log(string.Format("{0} has attacked {1} for {2} damage!", attacker.attributes.name, attributes.name, damage)); // This will eventually be shown visually instead of told
-
-        Vector3 direction =  (transform.position - attacker.transform.position);
         stats.healthCurrent -= damage;
         GetComponentInChildren<Healthbar>().UpdateHealthPoints();
 
         // Character death
-        if (stats.healthCurrent <= 0)
-        {
-            StartCoroutine(Death(attacker, direction));
-            Debug.DrawRay(transform.position, direction, Color.red, 20, true); // For debug purposes
-        }
+        if (stats.healthCurrent <= 0) StartCoroutine(Death(attacker, direction, distance, impactForce));
     }
 
-    IEnumerator Death(Unit attacker, Vector3 attackDirection, float impactForce = 2f)
+    IEnumerator Death(Unit attacker, Vector3 attackDirection, float distance, float impactForce)
     {
         AddFlag("dead");
         // Disables animator, turns on ragdoll effect, and applies a small force to push the character over
 
         // Wait for attacker animation to complete
-        while (attacker.GetAnimator().AnimatorIsPlaying())
+       // while (attacker.GetAnimator().AnimatorIsPlaying())
+       while (attacker.GetFlag("shooting"))
             yield return new WaitForSeconds(0.01f);
 
         // Disable top collider
@@ -330,14 +340,13 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         healthbar.gameObject.SetActive(false);
 
         // Disable animator and top rigidbody
-        GetAnimator().OnDeath(attackDirection * impactForce, ForceMode.Impulse);
+        GetAnimator().OnDeath(attackDirection * impactForce/distance, ForceMode.Impulse);
 
         gameObject.layer = LayerMask.NameToLayer("Ignore Raycast"); // TO DO -- Layer specifically for dead characters??
 
         // Remove player selection
         if (GetActor().playerAction.selectedCharacter == this)
-            GetActor().playerAction.selectedCharacter = null;
-        GetActor().SelectUnit(false);
+            GetActor().playerAction.SelectAction();
 
         // Disable any character lights
         foreach (Light light in GetComponentsInChildren<Light>())

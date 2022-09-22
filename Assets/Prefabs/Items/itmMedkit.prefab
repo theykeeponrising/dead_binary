@@ -51,6 +51,6 @@ MonoBehaviour:
   itemAction: 8
   itemUsesCurrent: 1
   itemUsesMax: 1
-  hpAmount: -5
+  hpAmount: 5
   areaOfEffect: 1
   range: 1

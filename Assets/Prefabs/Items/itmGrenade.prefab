@@ -51,6 +51,10 @@ MonoBehaviour:
   itemAction: 9
   itemUsesCurrent: 1
   itemUsesMax: 1
-  hpAmount: 5
-  areaOfEffect: 2
+  hpAmount: -5
+  areaOfEffect: 3
   range: 7
+  itemImpact: 2
+  itemProp: {fileID: -1962813526457966920, guid: e55834e73ebdfa24c99779a557416511, type: 3}
+  sourceUnit: {fileID: 0}
+  targetedUnit: {fileID: 0}

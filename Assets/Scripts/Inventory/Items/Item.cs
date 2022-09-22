@@ -12,20 +12,23 @@ public abstract class Item : MonoBehaviour
     public int itemUsesCurrent;
     public int itemUsesMax;
 
-    public bool CheckAffinity(Faction ownFac, Faction oppFac)
+    public bool CheckAffinity(Unit sourceUnit, Unit targetedUnit)
     {
         // Compares target factions to expected targets
 
+        Faction sourceFaction = sourceUnit.attributes.faction;
+        Faction targetedFaction = targetedUnit.attributes.faction;
+
         switch (targetFaction) {
             case TargetFaction.FRIENDLY:
-                if (oppFac == ownFac) return true;
+                if (sourceFaction == targetedFaction) return true;
                 break;
             case TargetFaction.ENEMY:
-                if (ownFac == Faction.Good && oppFac == Faction.Bad) return true;
-                if (ownFac == Faction.Bad && oppFac == Faction.Good) return true;
+                if (sourceFaction == Faction.Good && targetedFaction == Faction.Bad) return true;
+                if (sourceFaction == Faction.Bad && targetedFaction == Faction.Good) return true;
                 break;
             case TargetFaction.NEUTRAL:
-                if (oppFac == Faction.Neutral) return true;
+                if (targetedFaction == Faction.Neutral) return true;
                 break;
         }
         return false;
@@ -33,12 +36,37 @@ public abstract class Item : MonoBehaviour
 
     public virtual void UseItem()
     {
-        Debug.Log("No item use found for item!");
+        Debug.Log("No item use found for item! (No parameters)");
     }
 
     public virtual void UseItem(Unit target)
     {
-        Debug.Log("No item use found for item!");
+        Debug.Log("No item use found for item! (Target parameter)");
+    }
+
+    public virtual void UseItem(Unit sourceUnit, Unit targetedUnit)
+    {
+        Debug.Log("No item use found for item! (Source and target parameters)");
+    }
+
+    public virtual void TriggerItem()
+    {
+        Debug.Log("No item trigger found for item!");
+    }
+
+    public virtual void TriggerItem(Vector3 triggerPosition)
+    {
+        Debug.Log("No item trigger found for item! (Trigger position parameter)");
+    }
+
+    public virtual void ItemEffect()
+    {
+        Debug.Log("No item effect found for item!");
+    }
+
+    public virtual void ItemEffect(Unit sourceUnit, Unit targetedUnit)
+    {
+        Debug.Log("No item effect found for item! (Source and target parameters)");
     }
 }
 

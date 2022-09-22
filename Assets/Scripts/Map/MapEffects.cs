@@ -32,4 +32,10 @@ public class MapEffects : MonoBehaviour
         // Return effect object to initial request
         return effect;
     }
+
+    public void AddEffect(Transform efxPrefab)
+    {
+        efxPrefab.parent = effectsContainer;
+    }
+
 }
