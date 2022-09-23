@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using TMPro;
 
 public class ActionButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
@@ -18,8 +19,9 @@ public class ActionButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     int buttonIndex;
     FiniteState<InCombatPlayerAction> state;
 
-    Actions.ActionList boundAction;
+    ActionList boundAction;
     bool requirementsMet;
+    Item boundItem;
 
     Sprite icon;
     Image btnBackground;
@@ -79,7 +81,7 @@ public class ActionButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 
     void CheckRequirements()
     {
-        requirementsMet = Actions.ActionsDict[boundAction].CheckRequirements(playerAction.selectedCharacter);
+        requirementsMet = Action.ActionsDict[boundAction].CheckRequirements(playerAction.selectedCharacter, boundItem);
         if (!requirementsMet) currentButtonState = ButtonState.DISABLED;
         else if (requirementsMet && currentButtonState == ButtonState.DISABLED) currentButtonState = ButtonState.PASSIVE;
 
@@ -105,11 +107,18 @@ public class ActionButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         if (requirementsMet) currentButtonState = ButtonState.PASSIVE;
     }
 
-    public void BindAction(Actions.ActionList action)
+    public void BindAction(ActionList action)
     {
         // Stores action for checking requirements
 
         boundAction = action;
+    }
+
+    public ActionList GetAction()
+    {
+        // Returns bound action
+
+        return boundAction;
     }
 
     public void BindButton(int index)
@@ -137,10 +146,41 @@ public class ActionButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         playerTurnState = (PlayerTurnState)StateHandler.Instance.GetStateObject(StateHandler.State.PlayerTurnState);
         playerAction = playerTurnState.GetPlayerAction();
         state = playerAction.stateMachine.GetCurrentState();
-
-        //AudioClip audioClip = AudioManager.Instance.GetInterfaceSound(AudioManager.InterfaceSFX.MOUSE_CLICK, 0);
-        //audioSource.PlayOneShot(audioClip);
         state.InputActionBtn(playerAction, buttonIndex + 1);
+    }
+
+    public void ButtonTrigger()
+    {
+        // Handle to kick off button trigger effect
+
+        StartCoroutine(ButtonTriggerEffect());
+    }
+
+    IEnumerator ButtonTriggerEffect()
+    {
+        // Simulates the visual look of the action button being clicked
+        // For use when action button is triggered via another input
+
+        AudioClip audioClip = AudioManager.Instance.GetInterfaceSound(AudioManager.InterfaceSFX.MOUSE_CLICK, 0);
+        audioSource.PlayOneShot(audioClip);
+
+        currentButtonState = ButtonState.ACTIVE;
+        yield return new WaitForSeconds(0.2f);
+        currentButtonState = ButtonState.PASSIVE;
+    }
+
+    public void SetLabel(string newLabel)
+    {
+        // Changes text label to new value
+
+        GetComponentInChildren<TextMeshProUGUI>().text = newLabel;
+    }
+
+    public void BindItem(Item item)
+    {
+        // Binds item for requirement checking
+
+        boundItem = item;
     }
 }
 
@@ -155,4 +195,5 @@ public static class ActionButtons
     public static string btn_action_swap = "Buttons/btn_swap";
     public static string btn_action_chooseItem = "Buttons/btn_chooseItem";
     public static string btn_action_useItem = "Buttons/btn_useItem";
+    public static string btn_action_medkit = "Buttons/btn_medkit";
 }

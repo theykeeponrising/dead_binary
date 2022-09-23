@@ -1,34 +1,41 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 
 public class ActionPanelScript : MonoBehaviour
 {
-    [SerializeField] private InCombatPlayerAction playerAction;
-    [SerializeField] private GameObject panel;
-    [SerializeField] private TextMeshProUGUI apTextBox;
-    [SerializeField] private TextMeshProUGUI ammoTextBox;
-    [SerializeField] private List<Button> buttons;
-    PlayerTurnState playerTurnState;
-    public Button buttonPrefab; // TO DO -- Alternative to using inspector prefab
+    [HideInInspector] public InCombatPlayerAction playerAction;
+    [HideInInspector] public GameObject panel;
+    [HideInInspector] public List<ActionButton> buttons = new List<ActionButton>();
+    [HideInInspector] public PlayerTurnState playerTurnState;
+    [HideInInspector] public ActionButton buttonPrefab;
+    [HideInInspector] public TextMeshProUGUI[] textObjects;
+
+    // ELEMENT LIST
+    // 0 - AP Label
+    // 1 - AP Value
+    // 2 - Ammo Label
+    // 3 - Ammo Value
 
     private void Start()
     {
         playerTurnState = (PlayerTurnState)StateHandler.Instance.GetStateObject(StateHandler.State.PlayerTurnState);
         playerAction = playerTurnState.GetPlayerAction();
+        panel = transform.Find("Background").gameObject;
+        buttonPrefab = UIManager.Instance.actionButtonPrefab;
+        textObjects = GetComponentsInChildren<TextMeshProUGUI>();
     }
 
     private void OnDisable()
     {
         // When action panel is disabled, destroy all buttons
 
-        foreach (Button button in buttons)
+        foreach (ActionButton button in buttons)
         {
             Destroy(button.gameObject);
         }
-        buttons = new List<Button>();
+        buttons = new List<ActionButton>();
     }
 
     void BuildActions()
@@ -36,8 +43,7 @@ public class ActionPanelScript : MonoBehaviour
         // Dynamically creates buttons based on what actions the Character can perform
         // Will skip creating buttons for actions that do not use buttons (such as moving)
 
-        playerTurnState = (PlayerTurnState)StateHandler.Instance.GetStateObject(StateHandler.State.PlayerTurnState);
-        playerAction = playerTurnState.GetPlayerAction();
+        Start();
 
         if (playerTurnState == null || playerAction == null) return;
 
@@ -45,20 +51,20 @@ public class ActionPanelScript : MonoBehaviour
         {
             panel.SetActive(true);
 
-            List<Actions.ActionList> actionsList = new List<Actions.ActionList>();
-            foreach (Actions.ActionList characterAction in playerAction.selectedCharacter.GetAvailableActions())
+            List<ActionList> actionsList = new List<ActionList>();
+            foreach (ActionList characterAction in playerAction.selectedCharacter.GetAvailableActions())
             {
-                if (!Actions.ActionsDict.ContainsKey(characterAction)) continue;
-                if (Actions.ActionsDict[characterAction].buttonPath != null)
+                if (!Action.ActionsDict.ContainsKey(characterAction)) continue;
+                if (Action.ActionsDict[characterAction].buttonPath != null)
                 {
                     actionsList.Add(characterAction);
                     buttons.Add(Instantiate(buttonPrefab, panel.transform));
                     int index = buttons.Count - 1;
-                    string spritePath = Actions.ActionsDict[actionsList[index]].buttonPath;
+                    string spritePath = Action.ActionsDict[actionsList[index]].buttonPath;
 
-                    buttons[index].GetComponent<ActionButton>().LoadResources(spritePath);
-                    buttons[index].GetComponent<ActionButton>().BindAction(characterAction);
-                    buttons[index].GetComponentInChildren<TextMeshProUGUI>().text = (index + 1).ToString();
+                    buttons[index].LoadResources(spritePath);
+                    buttons[index].BindAction(characterAction);
+                    buttons[index].SetLabel((index + 1).ToString());
                     buttons[index].gameObject.SetActive(true);
 
                     if (index > 0)
@@ -80,14 +86,14 @@ public class ActionPanelScript : MonoBehaviour
     {
         // Update ammo and ap
 
-        if (playerAction.selectedCharacter != null)
+        if (playerAction.selectedCharacter != null && textObjects.Length > 0)
         {
-            apTextBox.text = playerAction.selectedCharacter.stats.actionPointsCurrent.ToString();
-            ammoTextBox.text = playerAction.selectedCharacter.inventory.equippedWeapon.stats.ammoCurrent.ToString();
+            textObjects[1].text = playerAction.selectedCharacter.stats.actionPointsCurrent.ToString();
+            textObjects[3].text = playerAction.selectedCharacter.inventory.equippedWeapon.stats.ammoCurrent.ToString();
         }
     }
 
-    public void BindButtons()
+    public virtual void BindButtons()
     {
         // Binds actions to buttons
 
@@ -95,9 +101,16 @@ public class ActionPanelScript : MonoBehaviour
         BuildActions();
 
         // Remove existing bindings if any
-        foreach (Button button in buttons) button.GetComponent<ActionButton>().UnbindButton();
+        foreach (ActionButton button in buttons) button.UnbindButton();
 
         // Bind buttons to inputs
-        foreach (Button button in buttons) button.GetComponent<ActionButton>().BindButton(buttons.IndexOf(button));
+        foreach (ActionButton button in buttons) button.BindButton(buttons.IndexOf(button));
+    }
+
+    public List<ActionButton> GetButtons()
+    {
+        // Returns all currently-active buttons
+
+        return buttons;
     }
 }

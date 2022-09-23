@@ -34,7 +34,7 @@ public class EnemyUnit : Unit
         List<Tile> tilesInRange = GetTilesInMoveRange();
 
         //Perform actions, and store actions taken in list
-        List<Actions.Action> enemyActions = EnemyTurnActions(tilesInRange, oppFactionUnits);        
+        List<Action> enemyActions = EnemyTurnActions(tilesInRange, oppFactionUnits);        
     }
 
     public override void OnTurnStart()
@@ -55,27 +55,27 @@ public class EnemyUnit : Unit
     }
 
     //Decide what to do with action points
-    public List<Actions.Action> EnemyTurnActions(List<Tile> tilesInRange, List<Unit> oppFactionUnits)
+    public List<Action> EnemyTurnActions(List<Tile> tilesInRange, List<Unit> oppFactionUnits)
     {
-        List<Actions.Action> enemyActions = new List<Actions.Action>();
+        List<Action> enemyActions = new List<Action>();
 
         //If no ammo, either reload or switch weapon
         if (inventory.equippedWeapon.stats.ammoCurrent == 0)
         {
             GetActor().ReloadAction();
-            enemyActions.Add(Actions.action_reload);
+            enemyActions.Add(Action.action_reload);
             stats.actionPointsCurrent--;
         }
 
         //If there's no tiles we can move to, or no enemies, do nothing
         if (tilesInRange.Count == 0 || oppFactionUnits.Count == 0) {
-            enemyActions.Add(Actions.action_none);
+            enemyActions.Add(Action.action_none);
             return enemyActions;
         } 
 
         //Use the rest of the units action points
         while (stats.actionPointsCurrent >= 2) {
-            List<Actions.Action> moveAndShootActions = MoveAndShoot(tilesInRange);
+            List<Action> moveAndShootActions = MoveAndShoot(tilesInRange);
             enemyActions.AddRange(moveAndShootActions);
             stats.actionPointsCurrent -= 2;
         }
@@ -83,10 +83,10 @@ public class EnemyUnit : Unit
         while (stats.actionPointsCurrent > 0)
         {
             //Find cover if possible
-            Actions.Action findCoverResult = FindCover(tilesInRange);
+            Action findCoverResult = FindCover(tilesInRange);
             
             //If no cover, just shoot at something
-            if (findCoverResult == Actions.action_none)
+            if (findCoverResult == Action.action_none)
             {
                 //TODO: Uses same logic as MoveAndShoot, should probably consolidate
                 float highestExpectedDamage = 0.0f;
@@ -113,8 +113,8 @@ public class EnemyUnit : Unit
                         currentTarget = other;
                     }
                 }
-                GetActor().ProcessAction(Actions.action_shoot, null, null, currentTarget);
-                enemyActions.Add(Actions.action_shoot);
+                GetActor().ProcessAction(Action.action_shoot, null, null, currentTarget);
+                enemyActions.Add(Action.action_shoot);
             } 
 
             stats.actionPointsCurrent--;
@@ -122,7 +122,7 @@ public class EnemyUnit : Unit
         return enemyActions;
     }
 
-    Actions.Action FindCover(List<Tile> tilesInRange)
+    Action FindCover(List<Tile> tilesInRange)
     {
         //Just find any cover
         //TODO: Make this better
@@ -130,14 +130,14 @@ public class EnemyUnit : Unit
         {
             if (tile.IsCover()) {
                 GetActor().MoveAction(tile, null);
-                return Actions.action_move;
+                return Action.action_move;
             }
         }
 
-        return Actions.action_none;
+        return Action.action_none;
     }
 
-    List<Actions.Action> MoveAndShoot(List<Tile> tilesInRange)
+    List<Action> MoveAndShoot(List<Tile> tilesInRange)
     {
         //TODO: Find optimal position for each attackable unit, weight by cover, etc.
         //For each tile, calculate highest expected damage from attacking
@@ -179,12 +179,12 @@ public class EnemyUnit : Unit
         }
 
         //Perform actions
-        GetActor().ProcessAction(Actions.action_move, bestTile, null, null);
-        GetActor().ProcessAction(Actions.action_shoot, null, null, currentTarget);
+        GetActor().ProcessAction(Action.action_move, bestTile, null, null);
+        GetActor().ProcessAction(Action.action_shoot, null, null, currentTarget);
 
-        List<Actions.Action> enemyActions = new List<Actions.Action>();
-        enemyActions.Add(Actions.action_move);
-        enemyActions.Add(Actions.action_shoot);
+        List<Action> enemyActions = new List<Action>();
+        enemyActions.Add(Action.action_move);
+        enemyActions.Add(Action.action_shoot);
         return enemyActions;
     }
 }

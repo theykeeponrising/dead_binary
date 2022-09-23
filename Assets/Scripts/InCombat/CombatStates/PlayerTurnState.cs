@@ -77,7 +77,6 @@ public class PlayerTurnState : GameState
     {
         base.SetStateActive();
         playerAction.EnablePlayerInput();
-        playerAction.playerInput.Controls.InputMenu.performed += _ => InputCancel();
         playerAction.StartTurn();
     }
 
@@ -87,16 +86,4 @@ public class PlayerTurnState : GameState
         playerAction.DisablePlayerInput();
     }
 
-    void InputCancel()
-    {
-        // Redirects input to first cancel current action if any are pending, or switch to menu if no actions
-
-        if (playerActionStateMachine.GetCurrentState().GetType() == typeof(SelectedStates.ChoosingShootTarget))
-        {
-            playerAction.selectedCharacter.GetActor().ClearTarget();
-            playerActionStateMachine.ChangeState(new SelectedStates.Idle(playerActionStateMachine));
-        }
-        else
-            parentState.ChangeState(StateHandler.State.StatusMenuState);
-    }
 }

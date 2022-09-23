@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
@@ -10,8 +11,9 @@ public class UIManager : MonoBehaviour
     public ActionPanelScript actionPanel;
     public EndTurnPanelScript endTurnPanel;
     public InCombatPlayerActionUI inCombatPlayerActionUI;
-    public UseItemPanelScript useItemPanel;
+    public InventoryPanelScript inventoryPanel;
     public InfoPanelScript infoPanel;
+    public ActionButton actionButtonPrefab;
 
     private void Awake()
     {
@@ -21,7 +23,7 @@ public class UIManager : MonoBehaviour
         actionPanel = GetComponentInChildren<ActionPanelScript>();
         endTurnPanel = GetComponentInChildren<EndTurnPanelScript>();
         inCombatPlayerActionUI = GetComponentInChildren<InCombatPlayerActionUI>();
-        useItemPanel = GetComponentInChildren<UseItemPanelScript>();
+        inventoryPanel = GetComponentInChildren<InventoryPanelScript>();
         infoPanel = GetComponentInChildren<InfoPanelScript>();
     }
 

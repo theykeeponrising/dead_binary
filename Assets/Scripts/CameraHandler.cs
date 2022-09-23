@@ -10,7 +10,6 @@ public class CameraHandler : MonoBehaviour
 {
     // Used for Camera controls
 
-    Camera thisCamera;
     [SerializeField] List<Camera> sceneCameras = new List<Camera>();
     CameraInput cameraInput;
     PhysicsRaycaster raycaster;
@@ -66,7 +65,6 @@ public class CameraHandler : MonoBehaviour
 
     void Awake()
     {
-        thisCamera = GetComponent<Camera>();
         cameraInput = new CameraInput();
         raycaster = GetComponent<PhysicsRaycaster>();
         audioListener = GetComponent<AudioListener>();
@@ -129,6 +127,17 @@ public class CameraHandler : MonoBehaviour
             raycaster.enabled = true;
             audioListener.enabled = true;
         }
+    }
+
+    public Camera GetActiveCamera()
+    {
+        // Returns currently active camera
+
+        foreach (Camera camera in sceneCameras)
+            if (camera.enabled)
+                return camera;
+
+        return Camera.main;
     }
 
 
@@ -211,6 +220,16 @@ public class CameraHandler : MonoBehaviour
             else if (zoomHeight > maxHeight)
                 zoomHeight = maxHeight;
         }
+    }
+
+    public float GetCameraZoomHeight()
+    {
+        return zoomHeight;
+    }   
+
+    public float GetCameraZoomDampening()
+    {
+        return zoomDampening;
     }
 
     void UpdateCameraPosition()

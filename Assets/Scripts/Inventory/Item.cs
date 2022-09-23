@@ -1,119 +1,50 @@
 using UnityEngine;
 using System;
 
-/*
- * USES CUSTOM EDITOR
- */
-
-[Serializable]
 public abstract class Item : MonoBehaviour
 {
-    // [Header("Item")]
-    
-    public Statics statics;
-    [Serializable]
-    public class Statics
-    {
-        [Tooltip("The name of the item.")]
-        [SerializeField] public string itemName;
-        [Tooltip("The type of item. This is derived from the Class itself.")]
-        [SerializeField] public ItemType itemType;
-        [Tooltip("The AP required to use this item.")]
-        [SerializeField] public int itemCost;
-        [Tooltip("The amount of times this item can be used before depletion.")]
-        [SerializeField] public int itemCharges = 1;
-        [Tooltip("Does the item target Characters, or something else?")]
-        [SerializeField] public TargetType targetType;
-        [Tooltip("The icon associated with this item.")]
-        [SerializeField] public Sprite icon;
-        [Tooltip("Is the item able to be used more than once per match?")]
-        [SerializeField] public bool isReusable;
-        [Tooltip("How many turns to wait before being available again.")]
-        [SerializeField] public int cooldownMax;
-        [Tooltip("Does the item target allies, enemies, or combination?")]
-        [SerializeField] public Affinity affinity;
-    }
+    public ItemType itemType;
+    public TargetType targetType;
+    public TargetFaction targetFaction;
 
-    public string Name => statics.itemName;
-    public ItemType ItemType => statics.itemType;
-    public int ItemCost => statics.itemCost;
-    public TargetType TargetType => statics.targetType;
-    public Sprite Icon => statics.icon;
-    public bool IsReusable => statics.isReusable;
-    public int CooldownMax => statics.cooldownMax;
-    public Affinity Affinity => statics.affinity;
-    public int Charges => statics.itemCharges;
-
-    public int CurrentCooldown;
+    public string itemName;
+    public ActionList itemAction;
+    public int itemUsesCurrent;
+    public int itemUsesMax;
 
     public bool CheckAffinity(Faction ownFac, Faction oppFac)
     {
-        bool b = false;
+        // Compares target factions to expected targets
 
-        if (Affinity.HasFlag(Affinity.Ally))
-            if (oppFac == ownFac) b = true;
-        if (Affinity.HasFlag(Affinity.Enemy))
-        {
-            if (ownFac == Faction.Good && oppFac == Faction.Bad) b = true;
-            if (ownFac == Faction.Bad && oppFac == Faction.Good) b = true;
+        switch (targetFaction) {
+            case TargetFaction.FRIENDLY:
+                if (oppFac == ownFac) return true;
+                break;
+            case TargetFaction.ENEMY:
+                if (ownFac == Faction.Good && oppFac == Faction.Bad) return true;
+                if (ownFac == Faction.Bad && oppFac == Faction.Good) return true;
+                break;
+            case TargetFaction.NEUTRAL:
+                if (oppFac == Faction.Neutral) return true;
+                break;
         }
-        if(Affinity == Affinity.Neutral)
-            if (oppFac == Faction.Neutral) b = true;
-
-        return b;
+        return false;
     }
 
-    public void TryUseItem(Unit owner, GameObject go, out bool success)
+    public virtual void UseItem()
     {
-        bool b = false;
-        if (ItemType == ItemType.CONSUMABLE)
-        {
-            if (TargetType == TargetType.Character)
-            {
-                if (go.TryGetComponent(out Unit c))
-                {
-                    if (CheckAffinity(owner.attributes.faction, c.attributes.faction))
-                    {
-                        //UseItem(owner, c);
-                        b = true;
-                    }
-                    else
-                        Debug.Log("Cannot use " + Name + " on '" + go.name + "'. \n" +
-                            Name + " can only be used on " + Affinity);
-                }
-                else
-                {
-                    Debug.Log("Must target a character!");
-                }
-            }
-            else
-            {
-                Debug.Log("Can only use Character-Targeted items for now. Change TargetType to Character.");
-            }
-        }
-        else
-        {
-            Debug.Log("Invalid Item Type. Can only use CONSUMABLE.");
-        }
+        Debug.Log("No item use found for item!");
+    }
 
-        success = b;
-    }
-    public void UseTheUseItem(Unit owner, Unit charTarget = null, CoverObject covTarg = null)
+    public virtual void UseItem(Unit target)
     {
-        UseItem(owner, charTarget, covTarg);
+        Debug.Log("No item use found for item!");
     }
-    protected abstract void UseItem(Unit owner, Unit charTarget = null, CoverObject covTarg = null);
 }
 
-[Flags]
-public enum Affinity
-{
-    Ally = 1 << 0,
-    Enemy = 1 << 1,
-    Neutral = 1 << 2
-}
 public enum ItemType { ATTACHMENT, EQUIPMENT, CONSUMABLE, QUEST }
-public enum TargetType { Character, Cover, Weapon }
+public enum TargetType { CHARACTER, COVER, WEAPON }
+public enum TargetFaction { FRIENDLY, ENEMY, NEUTRAL, ANY, NONE }
 // ATTACHMENT - Not usable item, passive effect ... ex scopes, grips, implants
 // EQUIPMENT - Usable unlimited item, immediate effect ... ex jammer, taser, radio
 // CONSUMABLE - Usable limited item, immediate effect ... ex grenades, medkits, stimpacks

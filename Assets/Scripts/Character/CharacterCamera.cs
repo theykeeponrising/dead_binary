@@ -26,6 +26,7 @@ public class CharacterCamera : MonoBehaviour
         (GetComponent<AudioListener>().enabled, Camera.main.GetComponent<AudioListener>().enabled) = (true, false);
         characterCamera.enabled = true;
         raycaster.enabled = true;
+        unit.healthbar.Hide();
     }
 
     private void OnDisable()
@@ -34,6 +35,7 @@ public class CharacterCamera : MonoBehaviour
         GetComponent<AudioListener>().enabled = false;
         characterCamera.enabled = false;
         raycaster.enabled = false;
+        unit.healthbar.Show();
     }
 
     public void AdjustAngle(float angle, Vector3 targetPosition)

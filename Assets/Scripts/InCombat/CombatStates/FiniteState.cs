@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
@@ -32,6 +33,7 @@ abstract public class FiniteState<T>
             v.playerInput.Controls.ActionButton_9.performed += _InputAction9;
             v.playerInput.Controls.InputSpacebar.performed += _InputSpacebar;
             v.playerInput.Controls.InputTab.performed += _InputTab;
+            v.playerInput.Controls.InputCancel.performed += _InputCancel;
         }
     }
 
@@ -55,6 +57,7 @@ abstract public class FiniteState<T>
             v.playerInput.Controls.ActionButton_9.performed -= _InputAction9;
             v.playerInput.Controls.InputSpacebar.performed -= _InputSpacebar;
             v.playerInput.Controls.InputTab.performed -= _InputTab;
+            v.playerInput.Controls.InputCancel.performed -= _InputCancel;
         }
     }
 
@@ -93,6 +96,8 @@ abstract public class FiniteState<T>
         var shift = Keyboard.current.shiftKey.isPressed;
         InputTab(Owner, shift);
     }
+    private void _InputCancel(InputAction.CallbackContext cxt)
+    { InputCancel(Owner); }
 
     // Do On Input
     public virtual void InputPrimary(T t) 
@@ -105,6 +110,9 @@ abstract public class FiniteState<T>
     { Debug.Log("Spacebar has no function in this State. (" + StateName + ")"); }
     public virtual void InputTab(T t, bool shift)
     { Debug.Log("Tab has no function in this State. (" + StateName + ")"); }
+    public virtual void InputCancel(T t)
+    { StateHandler.Instance.GetStateObject(StateHandler.State.CombatState).ChangeState(StateHandler.State.StatusMenuState); }
+
     // Helper Functions
 
     //Returns 'true' if we touched or hovering on Unity UI element.
@@ -136,12 +144,13 @@ abstract public class FiniteState<T>
         return raysastResults;
     }
 
-    public virtual void InputPress(InCombatPlayerAction t)
+    public void ButtonPress(int index)
     {
-        // Plays a sound effect when an input is pressed
+        // Button press effect
+        List<ActionButton> actionPanel = UIManager.Instance.actionPanel.GetButtons();
+        List<ActionButton> inventoryPanel = UIManager.Instance.inventoryPanel.GetButtons();
+        List<ActionButton> buttons = actionPanel.Concat(inventoryPanel).ToList();
 
-        AudioSource audioSource = t.GetPlayerActionUI().GetComponentInParent<AudioSource>();
-        AudioClip audioClip = AudioManager.Instance.GetInterfaceSound(AudioManager.InterfaceSFX.MOUSE_CLICK, 0);
-        audioSource.PlayOneShot(audioClip);
+        buttons[index-1].ButtonTrigger();
     }
 }

@@ -22,13 +22,14 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
     public List<string> flags = new List<string>();
     
     [HideInInspector] public Inventory inventory;
+    [HideInInspector] public Healthbar healthbar;
     public IFaction ifaction;
     Faction IFaction.faction { get { return attributes.faction; } set { attributes.faction = value; } }
     [HideInInspector] public Tile currentTile;
     GameState gameState;
 
     [HideInInspector] public CoverObject currentCover;
-    public List<Actions.ActionList> availableActions;
+    public List<ActionList> availableActions;
 
     // Attributes are mosty permanent descriptors about the character
     [System.Serializable] public class Attributes
@@ -80,16 +81,19 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         
         if (objectTiles.Count > 0) currentTile = objectTiles[0];
         
-        //Initialize the character actor
+        // Initialize the character actor
         charActor = new CharacterActor(this);
 
-        //Init character animator
+        // Init character animator
         charAnim = new CharacterAnimator(this);
         charAnim.SetRagdoll(GetComponentsInChildren<Rigidbody>());
         
-        //Init character SFX
+        // Init character SFX
         charSFX = new CharacterSFX(this);
-        charSFX.SetAudioSource(GetComponent<AudioSource>());        
+        charSFX.SetAudioSource(GetComponent<AudioSource>());
+
+        // Init health bar
+        healthbar = transform.Find("Healthbar").GetComponent<Healthbar>();
     }
 
     // Update is called once per frame
@@ -140,9 +144,14 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         return charSFX;
     }
 
-    public List<Actions.ActionList> GetAvailableActions()
+    public List<ActionList> GetAvailableActions()
     {
         return availableActions;
+    }
+
+    public List<Item> GetItems()
+    {
+        return inventory.items;
     }
 
     public void SetupUnit()
@@ -186,6 +195,8 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         // Heals character by the indicated amount
 
         stats.healthCurrent += amount;
+        if (stats.healthCurrent > stats.healthMax) stats.healthCurrent = stats.healthMax;
+        healthbar.UpdateHealthPoints();
     }
 
     //Construct oppFactionUnits List
@@ -295,6 +306,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
 
         Vector3 direction =  (transform.position - attacker.transform.position);
         stats.healthCurrent -= damage;
+        GetComponentInChildren<Healthbar>().UpdateHealthPoints();
 
         // Character death
         if (stats.healthCurrent <= 0)
@@ -315,6 +327,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
 
         // Disable top collider
         GetComponent<CapsuleCollider>().enabled = false;
+        healthbar.gameObject.SetActive(false);
 
         // Disable animator and top rigidbody
         GetAnimator().OnDeath(attackDirection * impactForce, ForceMode.Impulse);
