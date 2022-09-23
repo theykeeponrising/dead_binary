@@ -204,11 +204,6 @@ public class CharacterAnimator
                 SetBool("moving", true);
                 break;
 
-            // Throw
-            case (AnimationEventContext.THROW):
-                animator.Play("Throw");
-                break;
-
             // Idle
             case (AnimationEventContext.IDLE):
                 animator.updateMode = AnimatorUpdateMode.Normal;

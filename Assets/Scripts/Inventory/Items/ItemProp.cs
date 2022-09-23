@@ -5,15 +5,20 @@ using UnityEngine;
 public class ItemProp : MonoBehaviour
 {
     public enum TriggerType { DESTINATION, TIMED, SET }
+    [Tooltip("How and when the prop will trigger the item effect.")]
     public TriggerType triggerType;
-    DamageItem itemEffect;
+    [Tooltip("Slows the prop's trajectory if thrown. Higher values will slow the prop more.")]
+    [SerializeField] [Range(100f, 200f)] float dampening = 150f;
+    [Tooltip("Whether or not the prop should rotate while in motion.")]
+    public bool propRotates;
 
+    DamageItem itemEffect;
     Vector3 arcHeight;
     Vector3 destination;
     float distance;
     bool allowMovement = false;
 
-    private void Update()
+    private void LateUpdate()
     {
         MoveItem();
         CheckDestination();
@@ -21,7 +26,7 @@ public class ItemProp : MonoBehaviour
 
     public void SetItemEffect(DamageItem setItem)
     {
-        // Callback for when item triggers
+        // Callback for when prop triggers
 
         itemEffect = setItem;
     }
@@ -36,7 +41,7 @@ public class ItemProp : MonoBehaviour
 
     public void SetItemMovement(bool canMove)
     {
-        // Allow item to begin movement
+        // Allow prop to begin movement
 
         allowMovement = canMove;
         arcHeight = (Vector3.up * distance / 3);
@@ -52,7 +57,7 @@ public class ItemProp : MonoBehaviour
 
     void MoveItem()
     {
-        // Item moves towards target
+        // Prop moves towards target
 
         if (!allowMovement || destination == null)
             return;
@@ -61,22 +66,26 @@ public class ItemProp : MonoBehaviour
         Vector3 destinationArc = destination + arcHeight;
 
         // Degrade arc height to create arcing effect
-        arcHeight = arcHeight - (Vector3.up * 0.03f);
+        arcHeight = arcHeight - (Vector3.up * 0.3f) * (distance / dampening);
 
         // Perform move over time
-        transform.position = Vector3.MoveTowards(transform.position, destinationArc, 0.1f);
+        transform.position = Vector3.MoveTowards(transform.position, destinationArc, distance / dampening);
         RotateItem();
 
     }
 
     void RotateItem()
     {
-        transform.Rotate(new Vector3(-5f, -5f, -5f));
+        // Basic rotation for a mid-air prop
+
+        if (!propRotates) return;
+
+        transform.Rotate(new Vector3(-50f, -50f, -50f) * (distance / dampening));
     }
 
     void CheckDestination()
     {
-        // Check if item has reached destination, and trigger if so
+        // Check if prop has reached destination, and trigger if so
 
         if (triggerType != TriggerType.DESTINATION)
                 return;

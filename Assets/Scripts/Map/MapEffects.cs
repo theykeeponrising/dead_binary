@@ -33,6 +33,19 @@ public class MapEffects : MonoBehaviour
         return effect;
     }
 
+    public GameObject CreateTimedEffect(GameObject efxPrefab, Vector3 efxPosition, Quaternion efxRotation, float timer)
+    {
+        // Used to track effects and remove oldest effects if we are above effects limit
+
+        // Instantiate effect and add it to the list
+        GameObject effect = Instantiate(efxPrefab, efxPosition, efxRotation, effectsContainer);
+        effect.GetComponent<ParticleSystem>().Play(true);
+        Destroy(effect, timer);
+
+        // Return effect object to initial request
+        return effect;
+    }
+
     public void AddEffect(Transform efxPrefab)
     {
         efxPrefab.parent = effectsContainer;

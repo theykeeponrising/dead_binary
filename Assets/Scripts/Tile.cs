@@ -282,4 +282,41 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         return this.cover != null;
     }
+
+
+    public static List<Tile> AreaOfEffect(GridObject target, float areaOfEffect)
+    {
+        // Gets affected tiles from target position based on "areaOfEffect" stat
+        // Every odd number of range adds horizontal and vertical neighbor tiles
+        // Every even number of range adds diagonal neighbor tiles
+
+        Tile[] tiles = GameObject.FindObjectsOfType<Tile>();
+        List<Tile> impactedTiles = new List<Tile>();
+
+        impactedTiles.Add(target.currentTile);
+
+        foreach (Tile tile in tiles)
+        {
+            float distance = Vector3.Distance(target.transform.position, tile.gameObject.transform.position);
+            if (distance <= areaOfEffect && !impactedTiles.Contains(tile)) impactedTiles.Add(tile);
+        }
+
+        return impactedTiles;
+    }
+
+    public static List<Unit> GetTileOccupants(List<Tile> areaOfEffect)
+    {
+        // Gets all valid occupants of a tile list
+
+        List<Unit> impactedUnits = new List<Unit>();
+
+        foreach (Tile tile in areaOfEffect)
+        {
+            if (!tile.occupant) continue;
+            if (!tile.occupant.GetComponent<Unit>()) continue;
+            impactedUnits.Add(tile.occupant.GetComponent<Unit>());
+        }
+
+        return impactedUnits;
+    }
 }

@@ -23,7 +23,6 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
     [HideInInspector] public Healthbar healthbar;
     public IFaction ifaction;
     Faction IFaction.faction { get { return attributes.faction; } set { attributes.faction = value; } }
-    [HideInInspector] public Tile currentTile;
     GameState gameState;
 
     [HideInInspector] public CoverObject currentCover;

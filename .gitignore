@@ -5,6 +5,7 @@
 [Bb]uilds/
 [Ll]ogs/
 [Uu]serSettings/
+[Aa]ssets/[Aa]nimationImports/
 
 LocalScene*.unity
 LocalScene*.unity.meta
@@ -55,3 +56,4 @@ crashlytics-build.properties
 Assets/EckTechGames.meta
 Assets/EckTechGames/*
 UpgradeLog.htm
+Assets/AnimationImports.meta

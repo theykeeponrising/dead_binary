@@ -19,6 +19,13 @@ public class Map : MonoBehaviour
         return mapEffects.CreateEffect(efxPrefab, efxPosition, efxRotation);
     }
 
+    public GameObject CreateTimedEffect(GameObject efxPrefab, Vector3 efxPosition, Quaternion efxRotation, float timer)
+    {
+        // Used to track effects and remove oldest effects if we are above effects limit
+
+        return mapEffects.CreateTimedEffect(efxPrefab, efxPosition, efxRotation, timer);
+    }
+
     public void AddEffect(GameObject efxPrefab)
     {
         // Add an existing effect to the effects list

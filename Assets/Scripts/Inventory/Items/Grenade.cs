@@ -6,10 +6,18 @@ public class Grenade : DamageItem
 {
     public override void UseItem(Unit setSourceUnit, Unit setTargetedUnit)
     {
+        // Gets unit information, creates grenade prop, and plays throwing animation
+
         sourceUnit = setSourceUnit;
         targetedUnit = setTargetedUnit;
 
-        sourceUnit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.THROW, true);
+        float distance = (sourceUnit.transform.position - targetedUnit.transform.position).magnitude;
+
+        if (distance > Grid.tileSpacing * 3)
+            sourceUnit.GetComponent<Animator>().Play("Throw-Long");
+        else
+            sourceUnit.GetComponent<Animator>().Play("Throw-Short");
+
         ItemProp grenade = Instantiate(itemProp, sourceUnit.GetAnimator().body.handLeft);
         grenade.SetItemEffect(this);
         grenade.SetItemDestination(targetedUnit.transform.position);
@@ -17,12 +25,15 @@ public class Grenade : DamageItem
 
     public override void TriggerItem()
     {
-        base.UseItem(sourceUnit, targetedUnit);
+        // Callback function for props, initiates the item effect
+
+        base.TriggerItem();
     }
 
     public override void TriggerItem(Vector3 setTriggerPosition)
     {
-        triggerPosition = setTriggerPosition;
-        base.UseItem(sourceUnit, targetedUnit);
+        // Callback function for props, initiates the item effect
+
+        base.TriggerItem(setTriggerPosition);
     }
 }
