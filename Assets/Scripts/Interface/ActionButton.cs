@@ -27,6 +27,7 @@ public class ActionButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     Image btnBackground;
     Image btnFrame;
     Image btnIcon;
+    TextMeshProUGUI btnQuantity;
 
     enum ButtonState { ACTIVE, PASSIVE, DISABLED };
     ButtonState currentButtonState = ButtonState.PASSIVE;
@@ -53,6 +54,7 @@ public class ActionButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         btnBackground = GetComponentsInChildren<Image>()[0];
         btnFrame = GetComponentsInChildren<Image>()[1];
         btnIcon = GetComponentsInChildren<Image>()[2];
+        btnQuantity = GetComponentsInChildren<TextMeshProUGUI>()[1];
 
         btnIcon.sprite = icon;
     }
@@ -66,6 +68,7 @@ public class ActionButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     void Update()
     {
         CheckRequirements();
+        CheckQuantity();
     }
 
     public void LoadResources(string newSpritePath)
@@ -88,6 +91,13 @@ public class ActionButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         btnIcon.color = IconColors[currentButtonState];
         btnFrame.color = IconColors[currentButtonState];
         btnBackground.color = BackgroundColors[currentButtonState];
+        btnQuantity.color = IconColors[currentButtonState];
+    }
+
+    void CheckQuantity()
+    {
+        if (boundItem)
+            btnQuantity.text = boundItem.itemUsesCurrent.ToString();
     }
 
     void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)

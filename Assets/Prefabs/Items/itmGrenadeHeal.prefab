@@ -56,6 +56,7 @@ MonoBehaviour:
   range: 7
   itemImpact: 2
   itemProp: {fileID: -1962813526457966920, guid: e55834e73ebdfa24c99779a557416511, type: 3}
+  itemEffect: {fileID: 7049021522817580541, guid: 772f0322f9a4a9947a4b9a5f69e5002e, type: 3}
   sourceUnit: {fileID: 0}
   targetedUnit: {fileID: 0}
   triggerPosition: {x: 2.179435, y: 1.1159633, z: -1.8748484}
