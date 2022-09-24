@@ -25,6 +25,23 @@ public abstract class DamageItem : Item
     [HideInInspector] public Unit targetedUnit;
     [HideInInspector] public Vector3 triggerPosition;
 
+    public override void TriggerItem()
+    {
+        // Callback function for props, initiates the item effect
+
+        triggerPosition = transform.position;
+        if (itemType == ItemType.CONSUMABLE) itemUsesCurrent -= 1;
+
+        if (itemEffect)
+        {
+            GameObject spawnEffect = GlobalManager.Instance.activeMap.CreateTimedEffect(itemEffect.gameObject, triggerPosition, itemEffect.transform.rotation, 3f);
+            spawnEffect.transform.localScale = Vector3.one * (areaOfEffect / 2);
+        }
+
+        foreach (Unit unit in Tile.GetTileOccupants(Tile.AreaOfEffect(targetedUnit, areaOfEffect)))
+            ItemEffect(sourceUnit, unit);
+    }
+
     public override void TriggerItem(Vector3 setTriggerPosition)
     {
         // Callback function for props, initiates the item effect

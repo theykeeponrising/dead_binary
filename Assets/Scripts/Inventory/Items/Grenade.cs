@@ -21,6 +21,8 @@ public class Grenade : DamageItem
         ItemProp grenade = Instantiate(itemProp, sourceUnit.GetAnimator().body.handLeft);
         grenade.SetItemEffect(this);
         grenade.SetItemDestination(targetedUnit.transform.position);
+
+        sourceUnit.GetActor().ClearTarget();
     }
 
     public override void TriggerItem()
