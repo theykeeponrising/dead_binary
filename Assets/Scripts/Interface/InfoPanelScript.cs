@@ -37,12 +37,12 @@ public class InfoPanelScript : MonoBehaviour
         textObjects[1].text = actionDesc;
     }
 
-    public void UpdateDamage(int weaponDamage)
+    public void UpdateDamage(int hpAmount)
     {
         // Updates damage value displayed
 
         // If we are not doing damage, set the damage value and label to blank
-        if (weaponDamage == 0)
+        if (hpAmount == 0)
         {
             textObjects[4].text = "";
             textObjects[5].text = "";
@@ -50,14 +50,14 @@ public class InfoPanelScript : MonoBehaviour
         }
         
         // If damage value is negative, we are healing
-        if (weaponDamage > 0)
+        if (hpAmount < 0)
             textObjects[5].text = "Damage";
-        else if (weaponDamage < 0)
+        else if (hpAmount > 0)
             textObjects[5].text = "Healed";
 
 
         // Show damage or heal value without negative
-        textObjects[4].text = Mathf.Abs(weaponDamage).ToString();
+        textObjects[4].text = Mathf.Abs(hpAmount).ToString();
     }
 
     public void UpdateHit(float hitChance)

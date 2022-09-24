@@ -384,7 +384,7 @@ public class CharacterActor
             if (infoPanel.gameObject.activeSelf)
             {
                 infoPanel.UpdateHit(unit.GetCurrentHitChance());
-                infoPanel.UpdateDamage(unit.inventory.equippedWeapon.GetDamage());
+                infoPanel.UpdateDamage(-unit.inventory.equippedWeapon.GetDamage());
             }
         }
     }
@@ -517,7 +517,7 @@ public class CharacterActor
 
         infoPanel.gameObject.SetActive(true);
         infoPanel.UpdateHit(unit.GetCurrentHitChance());
-        infoPanel.UpdateDamage(unit.inventory.equippedWeapon.GetDamage());
+        infoPanel.UpdateDamage(-unit.inventory.equippedWeapon.GetDamage());
     }
 
 
