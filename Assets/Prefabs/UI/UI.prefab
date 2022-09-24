@@ -1222,14 +1222,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: InfoPanel
       objectReference: {fileID: 0}
-    - target: {fileID: 2874969788086939157, guid: 1eca270fad2c0884cbb18d58c1f92a1a, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -40
-      objectReference: {fileID: 0}
-    - target: {fileID: 3617554389267123318, guid: 1eca270fad2c0884cbb18d58c1f92a1a, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 55
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1eca270fad2c0884cbb18d58c1f92a1a, type: 3}
 --- !u!224 &199113892 stripped

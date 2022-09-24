@@ -43,7 +43,7 @@ public class CharacterAnimator
     Rigidbody[] ragdoll;
     [SerializeField] bool useTorsoTwist = true;
 
-    public enum AnimationEventContext { SHOOT, TAKE_DAMAGE, AIMING, RELOAD, STOW, DRAW, DODGE, VAULT, FOOTSTEP_LEFT, FOOTSTEP_RIGHT, IDLE, MOVE };
+    public enum AnimationEventContext { SHOOT, TAKE_DAMAGE, AIMING, RELOAD, STOW, DRAW, DODGE, VAULT, FOOTSTEP_LEFT, FOOTSTEP_RIGHT, IDLE, MOVE, THROW };
 
     public CharacterAnimator(Unit unit)
     {
@@ -52,6 +52,8 @@ public class CharacterAnimator
         // Animator, bones, and body transforms
         animator = unit.GetComponent<Animator>();
         ragdoll = unit.GetComponentsInChildren<Rigidbody>();
+
+        // These bones are used for torso rotation
         humanBones = new HumanBone[]
         {
             new HumanBone(HumanBodyBones.Chest),
@@ -62,9 +64,11 @@ public class CharacterAnimator
         for (int i = 0; i < humanBones.Length; i++)
             boneTransforms[i] = animator.GetBoneTransform(humanBones[i].bone);
 
+        // These are used for attach points
         body.chest = animator.GetBoneTransform(HumanBodyBones.Chest);
         body.head = animator.GetBoneTransform(HumanBodyBones.Head);
         body.handRight = animator.GetBoneTransform(HumanBodyBones.RightHand);
+        body.handLeft = animator.GetBoneTransform(HumanBodyBones.LeftHand);
     }
 
     public void Update()
@@ -87,7 +91,7 @@ public class CharacterAnimator
         return animator.enabled;
     }
 
-    public void SetAnimation()
+    void SetAnimation()
     {
         // Changes movement animation based on flags
 
@@ -126,24 +130,6 @@ public class CharacterAnimator
 
         return animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).length > animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).normalizedTime;
     }
-
-    // void AnimationTransition(AnimationEventContext context)
-    // {
-    //     // Used to better control when circumstantial animations are played
-
-    //     if (AnimationPause())
-    //         return;
-
-    //     switch (context)
-    //     {
-    //         case (AnimationEventContext.CROUCH_DOWN):
-    //             ToggleCrouch(true);
-    //             break;
-    //         case (AnimationEventContext.CROUCH_UP):
-    //             ToggleCrouch(false);
-    //             break;
-    //     }
-    // }
 
     public bool AnimationPause()
     {
@@ -212,7 +198,7 @@ public class CharacterAnimator
                 unit.AddFlag("drawing");
                 break;
 
-            //Move
+            // Move
             case (AnimationEventContext.MOVE):
                 unit.AddFlag("moving");
                 SetBool("moving", true);
@@ -273,10 +259,15 @@ public class CharacterAnimator
                 unit.RemoveFlag("drawing");
                 break;
 
-            //Move
+            // Move
             case (AnimationEventContext.MOVE):
                 unit.RemoveFlag("moving");
                 SetBool("moving", false);
+                break;
+
+            // Throw
+            case (AnimationEventContext.THROW):
+                ThrowItem();
                 break;
 
             default:
@@ -407,7 +398,17 @@ public class CharacterAnimator
         return animator.GetBoneTransform(bone);
     }
 
-    public void TakeDamageEffect(Weapon weapon=null)
+    void ThrowItem()
+    {
+        // Releases item from hand and starts item movement
+
+        ItemProp itemProp = body.handLeft.GetComponentInChildren<ItemProp>();
+        GlobalManager.Instance.activeMap.AddEffect(itemProp);
+        itemProp.SetItemMovement(true);
+        CoverCrouch();
+    }
+
+    public void TakeDamageEffect(Weapon weapon = null, DamageItem item = null)
     {
         // Animation that plays when character is taking damage
         // Damage is not actually applied in this function
@@ -425,7 +426,9 @@ public class CharacterAnimator
             animator.Play("Crouch-Damage", 0, normalizedTime: .1f);
         else if (animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Damage2"))
             animator.Play("Damage3", 0, normalizedTime: .1f);
-        else if (weapon.weaponImpact == Weapon.WeaponImpact.HEAVY)
+        else if (weapon && weapon.weaponImpact == Weapon.WeaponImpact.HEAVY)
+            animator.Play("Damage1");
+        else if (item && item.itemImpact == Weapon.WeaponImpact.HEAVY)
             animator.Play("Damage1");
         else
             animator.Play("Damage2");

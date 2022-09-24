@@ -194,7 +194,7 @@ public class SelectedStates
             ActionList action = t.GetBindings(index);
 
             // If requirements aren't met, ignore button press
-            bool requirementsMet = Action.ActionsDict[action].CheckRequirements(t.selectedCharacter);
+            bool requirementsMet = Action.CheckRequirements(action, t.selectedCharacter);
             if (!requirementsMet) return;
 
             ButtonPress(index);
@@ -487,7 +487,7 @@ public class SelectedStates
                 {
                     if (v.GetComponent<IFaction>() != null && v.stats.healthCurrent > 0)
                     {
-                        if (item.CheckAffinity (t.selectedCharacter.attributes.faction, v.attributes.faction) == true)
+                        if (item.CheckAffinity (t.selectedCharacter, v) == true)
                         {
                             targets.Add(v);
                         }
@@ -574,7 +574,7 @@ public class SelectedStates
             {
 
             // If requirements aren't met, ignore button press
-            bool requirementsMet = Action.ActionsDict[action].CheckRequirements(t.selectedCharacter);
+            bool requirementsMet = Action.CheckRequirements(action, t.selectedCharacter);
             if (!requirementsMet) return;
 
             ButtonPress(index);
@@ -651,8 +651,8 @@ public class SelectedStates
                 return;
             }
 
-            // Valid item was selected, proceed to Use Item
-            else if (Items.Length >= index - offset && Items[index - 1 - offset].itemUsesCurrent > 0)
+            // Valid item was selected, check requirements and then proceed to use
+            else if (Items.Length >= index - offset && Action.CheckRequirements(Items[index - 1 - offset].itemAction, t.selectedCharacter, Items[index - 1 - offset]))
             {
                 ButtonPress(index);
                 ChangeState(new UseItem(Machine, Items[index - 1 - offset]));

@@ -6,7 +6,6 @@ public class Action
 {
     // Container for various actions
     // aname - The action name displayed
-    // atag - Used to match enums, such as Character.availableActions
     // context - Used internally to provide context to action, such as action variations
     // cost - Action point cost to use action
     // cooldown - Number of turns until action is useable again
@@ -17,7 +16,6 @@ public class Action
     // Type - Action type (ability, item, etc)
 
     public string aname;
-    public ActionList atag;
     public string context;
     public string description;
     public int cost;
@@ -25,10 +23,9 @@ public class Action
     public string buttonPath;
     public ActionRequirement[] requirements;
 
-    public Action(string aName, ActionList aTag, string aContext, string aDescription, int aCost, int aCooldown, string aButtonPath, ActionRequirement[] aRequirements)
+    public Action(string aName, string aContext, string aDescription, int aCost, int aCooldown, string aButtonPath, ActionRequirement[] aRequirements)
     {
         aname = aName;
-        atag = aTag;
         context = aContext;
         description = aDescription;
         cost = aCost;
@@ -37,10 +34,9 @@ public class Action
         requirements = aRequirements;
     }
 
-    public Action(string aName, ActionList aTag, string aContext, string aDescription, int aCost, int aCooldown, string aButtonPath, ActionRequirement aRequirements)
+    public Action(string aName, string aContext, string aDescription, int aCost, int aCooldown, string aButtonPath, ActionRequirement aRequirements)
     {
         aname = aName;
-        atag = aTag;
         context = aContext;
         description = aDescription;
         cost = aCost;
@@ -49,27 +45,29 @@ public class Action
         requirements = new ActionRequirement[] { aRequirements };
     }
 
-    public bool CheckRequirements(Unit unit=null, Item item=null)
+    public static bool CheckRequirements(ActionList actionList, Unit unit = null, Item item = null)
     {
         // Checks each requirement item in list
         // If any requirement fails, returns false, otherwise return true
 
-        if (requirements[0] != ActionRequirement.NONE)
-            foreach (ActionRequirement requirement in requirements)
+        Action action = ActionsDict[actionList];
+
+        if (action.requirements[0] != ActionRequirement.NONE)
+            foreach (ActionRequirement requirement in action.requirements)
             {
                 // Check that unit meets AP cost
                 if (requirement == ActionRequirement.AP)
-                    if (unit.stats.actionPointsCurrent < cost)
+                    if (!unit || unit.stats.actionPointsCurrent < action.cost)
                         return false;
 
                 // Check that unit meets Ammo cost
                 if (requirement == ActionRequirement.AMMO)
-                    if (unit.inventory.equippedWeapon.stats.ammoCurrent <= 0)
+                    if (!unit || unit.inventory.equippedWeapon.stats.ammoCurrent <= 0)
                         return false;
 
                 // Check that unit's ammo isn't full
                 if (requirement == ActionRequirement.RELOAD)
-                    if (unit.inventory.equippedWeapon.stats.ammoCurrent >= unit.inventory.equippedWeapon.stats.ammoMax)
+                    if (!unit || unit.inventory.equippedWeapon.stats.ammoCurrent >= unit.inventory.equippedWeapon.stats.ammoMax)
                         return false;
 
                 if (requirement == ActionRequirement.QUANTITY)
@@ -81,14 +79,18 @@ public class Action
     }
 
     // All possible character actions with values
-    public static Action action_move = new Action("Move", ActionList.MOVE, "move", null, 1, 0, null, ActionRequirement.NONE);
-    public static Action action_shoot = new Action("Shoot", ActionList.SHOOT, "shoot", "Shoot at the selected target", 1, 0, ActionButtons.btn_action_shoot, new ActionRequirement[] { ActionRequirement.AP, ActionRequirement.AMMO });
-    public static Action action_reload = new Action("Reload", ActionList.RELOAD, "reload", "Reloads currently equipped weapon", 1, 0, ActionButtons.btn_action_reload, new ActionRequirement[] { ActionRequirement.AP, ActionRequirement.RELOAD });
-    public static Action action_swap = new Action("Swap Guns", ActionList.SWAP, "swap", "Swap to next weapon", 0, 0, ActionButtons.btn_action_swap, ActionRequirement.NONE);
-    public static Action action_chooseItem = new Action("Choose Item", ActionList.CHOOSEITEM, "chooseItem", null, 0, 0, ActionButtons.btn_action_chooseItem, ActionRequirement.NONE);
-    public static Action action_useItem = new Action("Use Item", ActionList.USEITEM, "useItem", null, 1, 0, ActionButtons.btn_action_useItem, ActionRequirement.NONE);
-    public static Action action_none = new Action("Do nothing.", ActionList.NONE, "none", null, 1, 0, null, ActionRequirement.NONE);
-    public static Action action_item_medkit = new Action("Medkit", ActionList.MEDKIT, "useItem", "Heals a target friendly character", 1, 0, ActionButtons.btn_action_medkit, ActionRequirement.QUANTITY);
+    public static Action action_move = new Action("Move", "move", null, 1, 0, null, ActionRequirement.NONE);
+    public static Action action_shoot = new Action("Shoot", "shoot", "Shoot at the selected target", 1, 0, ActionButtons.btn_action_shoot, new ActionRequirement[] { ActionRequirement.AP, ActionRequirement.AMMO });
+    public static Action action_reload = new Action("Reload", "reload", "Reloads currently equipped weapon", 1, 0, ActionButtons.btn_action_reload, new ActionRequirement[] { ActionRequirement.AP, ActionRequirement.RELOAD });
+    public static Action action_swap = new Action("Swap Guns", "swap", "Swap to next weapon", 0, 0, ActionButtons.btn_action_swap, ActionRequirement.NONE);
+    public static Action action_chooseItem = new Action("Choose Item", "chooseItem", null, 0, 0, ActionButtons.btn_action_chooseItem, ActionRequirement.NONE);
+    public static Action action_useItem = new Action("Use Item", "useItem", null, 1, 0, ActionButtons.btn_action_useItem, ActionRequirement.NONE);
+    public static Action action_none = new Action("Do nothing.", "none", null, 1, 0, null, ActionRequirement.NONE);
+    public static Action action_item_medkit = new Action("Medkit", "useItem", "Heals a target friendly unit", 1, 0, ActionButtons.btn_action_medkit, new ActionRequirement[] { ActionRequirement.AP, ActionRequirement.QUANTITY });
+    public static Action action_item_grenade = new Action("Grenade", "useItem", "Damages a target enemy unit", 1, 0, ActionButtons.btn_action_grenade, new ActionRequirement[] { ActionRequirement.AP, ActionRequirement.QUANTITY });
+    public static Action action_item_grenade_heal = new Action("Healnade", "useItem", "A grenade that heals friendly units", 1, 0, ActionButtons.btn_action_grenade, new ActionRequirement[] { ActionRequirement.AP, ActionRequirement.QUANTITY });
+    public static Action action_item_grenade_win = new Action("\"Win\" Grenade", "useItem", "For use when frustrated with the robots", 1, 0, ActionButtons.btn_action_grenade, new ActionRequirement[] { ActionRequirement.AP, ActionRequirement.QUANTITY });
+    public static Action action_item_grenade_dud = new Action("Dud Grenade", "useItem", "A dud grenade that can still be thrown to inflict concussive damage", 1, 0, ActionButtons.btn_action_grenade, new ActionRequirement[] { ActionRequirement.AP, ActionRequirement.QUANTITY });
 
     // Dictionary used to match enum to actual action class object
     public static Dictionary<ActionList, Action> ActionsDict = new Dictionary<ActionList, Action>() {
@@ -100,8 +102,13 @@ public class Action
         { ActionList.USEITEM, action_useItem },
         { ActionList.NONE, action_none},
         { ActionList.MEDKIT, action_item_medkit},
+        { ActionList.GRENADE, action_item_grenade},
+        { ActionList.GRENADE_HEAL, action_item_grenade_heal},
+        { ActionList.GRENADE_WIN, action_item_grenade_win},
+        { ActionList.GRENADE_DUD, action_item_grenade_dud},
     };
 }
 
-public enum ActionList { MOVE, SHOOT, RELOAD, SWAP, REFRESH, CHOOSEITEM, USEITEM, NONE, MEDKIT }
+// Actions enum used for lookup
+public enum ActionList { MOVE, SHOOT, RELOAD, SWAP, REFRESH, CHOOSEITEM, USEITEM, NONE, MEDKIT, GRENADE, GRENADE_HEAL, GRENADE_WIN, GRENADE_DUD }
 public enum ActionRequirement { NONE, AP, AMMO, RELOAD, QUANTITY };

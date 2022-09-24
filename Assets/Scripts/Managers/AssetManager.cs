@@ -40,6 +40,14 @@ public class AssetManager : MonoBehaviour
     public WeaponPrefabs weapon;
 
     [System.Serializable]
+    public class ItemPrefabs
+    {
+        public Item medkit;
+        public Item grenade;
+    }
+    public ItemPrefabs items;
+
+    [System.Serializable]
     public class CoverPrefabs
     {
         public CoverObject halfWall;

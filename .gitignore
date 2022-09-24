@@ -5,6 +5,7 @@
 [Bb]uilds/
 [Ll]ogs/
 [Uu]serSettings/
+[Aa]ssets/[Aa]nimationImports/*
 
 LocalScene*.unity
 LocalScene*.unity.meta
@@ -58,3 +59,4 @@ UpgradeLog.htm
 
 # Jetbrains
 .idea/*
+Assets/AnimationImports.meta

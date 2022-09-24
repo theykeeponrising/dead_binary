@@ -1,0 +1,62 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6029764409098146554
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7682195409518073306}
+  - component: {fileID: 7653284390000000886}
+  m_Layer: 0
+  m_Name: itmGrenade
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7682195409518073306
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6029764409098146554}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7653284390000000886
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6029764409098146554}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c9a5afeb64b41d4b8f6c40f38391533, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemType: 2
+  targetType: 0
+  targetFaction: 1
+  itemName: Grenade
+  itemAction: 9
+  itemUsesCurrent: 1
+  itemUsesMax: 1
+  hpAmount: -5
+  areaOfEffect: 3
+  range: 7
+  itemImpact: 2
+  itemProp: {fileID: -1962813526457966920, guid: e55834e73ebdfa24c99779a557416511, type: 3}
+  itemEffect: {fileID: 7049021522817580541, guid: 14ea1e2750cc18846b3450d4355e31fc, type: 3}
+  sourceUnit: {fileID: 0}
+  targetedUnit: {fileID: 0}
+  triggerPosition: {x: 0, y: 0, z: 0}

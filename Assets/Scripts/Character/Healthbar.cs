@@ -132,7 +132,10 @@ public class Healthbar : MonoBehaviour
             // If we need more rows, create the "Points" and "Background" objects
             if (pointsContainer.Count <= pointsRow)
             {
-                Transform newContainer = Instantiate(new GameObject("Points"), transform).transform;
+                Transform newContainer = new GameObject("Points").transform;
+                newContainer.parent = transform;
+                newContainer.rotation = transform.rotation;
+                newContainer.position = transform.position;
                 pointsContainer.Add(newContainer);
                 pointsBackground.Add(Instantiate(pointsBackground[0], newContainer).transform);
             }
