@@ -30,7 +30,6 @@ public class EnemyUnit : Unit
     //TODO: Maybe a small weight for moving towards the player?
 
     public bool isProcessingTurn = false;
-    public List<Unit> oppFactionUnits;
 
     public struct EnemyAction {
         private readonly Action actionType;
