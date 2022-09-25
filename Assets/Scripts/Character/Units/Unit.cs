@@ -400,6 +400,51 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         return false;
     }
 
+    public bool CheckIfCovered(Unit attacker, Tile defenderTile)
+    {
+        // Checks if any cover objects are between character and attacker
+        // Does raycast from character to attacker in order to find closest potential cover object
+
+        // NOTE -- We use the tiles for raycast, not the characters or weapons
+        // This is to prevent animations or standpoints from impacting the calculation
+
+        //TODO: Rework this to iterate through tiles, similar to weapon line of sight logic
+
+        Vector3 defenderPosition = defenderTile.transform.position;
+        Vector3 attackerPosition = attacker.currentTile.transform.position;
+
+        Vector3 direction = (attackerPosition - defenderPosition);
+        RaycastHit hit;
+        Ray ray = new Ray(defenderPosition, direction);
+        Debug.DrawRay(defenderPosition, direction, Color.red, 20, true); // For debug purposes
+        int layerMask = (1 << LayerMask.NameToLayer("CoverObject"));
+
+        // If cover object detected, and is the target character's current cover, return true
+        if (Physics.Raycast(ray, out hit, direction.magnitude * Mathf.Infinity, layerMask))
+        {
+            if (hit.collider.GetComponent<CoverObject>() && hit.collider.GetComponent<CoverObject>() == defenderTile.cover)
+                return true;
+        }
+        return false;
+    }
+
+    public Unit GetNearestTarget(Tile unitTile, List<Unit> targets)
+    {
+        if (targets.Count == 0) return null;
+        float minDistance = float.MaxValue;
+        Unit closestUnit = targets[0];
+        foreach (Unit target in targets)
+        {
+            float tileDist = grid.GetTileDistance(unitTile, target.currentTile);
+            if (tileDist < minDistance)
+            {
+                minDistance = tileDist;
+                closestUnit = target;
+            }
+        }
+        return closestUnit;
+    }
+
     public void AddFlag(string flag)
     {
         // Handler for adding new flags

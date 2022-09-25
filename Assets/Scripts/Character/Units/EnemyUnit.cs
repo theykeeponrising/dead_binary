@@ -30,6 +30,7 @@ public class EnemyUnit : Unit
     //TODO: Maybe a small weight for moving towards the player?
 
     public bool isProcessingTurn = false;
+    public List<Unit> oppFactionUnits;
 
     public struct EnemyAction {
         private readonly Action actionType;
@@ -66,14 +67,14 @@ public class EnemyUnit : Unit
             case Strategy.Aggressive:
                 KillWeight = 10.0f;
                 DamageWeight = 1.2f;
-                CoverWeight = 2.0f;
+                CoverWeight = 1.0f;
                 ConserveAmmoWeight = 0.5f;
                 ApproachWeight = 0.3f;
                 break;
             case Strategy.Defensive:
                 KillWeight = 5.0f;
                 DamageWeight = 1.0f;
-                CoverWeight = 4.0f;
+                CoverWeight = 3.0f;
                 ConserveAmmoWeight = 1.0f;
                 ApproachWeight = 0.2f;
                 break;
@@ -114,13 +115,18 @@ public class EnemyUnit : Unit
         }
         else if (actionsQueue.Count > 0)
         {
+            Debug.Log("Ran222");
+            Debug.Log(stats.actionPointsCurrent);
+
             //Process queued actions
             EnemyAction nextAction = actionsQueue.Dequeue();
             PerformAction(nextAction);
         } else
         {
+            Debug.Log("Ran");
             //If no actions queued up, get more
             List<EnemyAction> enemyActions = GetNextEnemyActions();
+            Debug.Log(enemyActions.Count);
             foreach (EnemyAction action in enemyActions) actionsQueue.Enqueue(action);
         }
     }
@@ -133,7 +139,7 @@ public class EnemyUnit : Unit
         List<Tile> tilesInRange = GetTilesInMoveRange();
 
         //TODO: maybe handle this in EnemyTurnProcess so it doesn't get processed for every unit for performance reasons, and skip processing dead units or remove them from this list?
-        List<Unit> oppFactionUnits = GetOppFactionUnits();
+        oppFactionUnits = GetOppFactionUnits();
 
         List<EnemyAction> enemyActions = new List<EnemyAction>();
 
@@ -233,14 +239,15 @@ public class EnemyUnit : Unit
     //Maybe do some sort of deferred reward calculation?
     private float CalculateActionsValue(List<EnemyAction> actions)
     {
-        float isCover = 0.0f;
         float numKill = 0.0f;
         float totalExpectedDamage = 0.0f;
         int numShots = 0;
         int numTilesCloserToBestShootTarget = 0;
-        
+
         //If current tile is cover, don't add additional bonus
-        float prevCover = System.Convert.ToSingle(currentTile.IsCover());
+        bool prevCover = CheckIfCovered(GetNearestTarget(currentTile, oppFactionUnits));
+        bool isCover = false;
+
         Tile unitTile = currentTile;
         // Tile unitTile = currentTile;
         foreach (EnemyAction enemyAction in actions)
@@ -248,8 +255,7 @@ public class EnemyUnit : Unit
             //The last tile we move to will determine the cover value
             if (enemyAction.ActionType == Action.action_move)
             {                
-                
-                isCover = System.Convert.ToSingle(enemyAction.Tile.IsCover());
+                isCover = CheckIfCovered(GetNearestTarget(enemyAction.Tile, oppFactionUnits), enemyAction.Tile);
                 
                 //Update the tile we do calculations with
                 unitTile = enemyAction.Tile;
@@ -279,8 +285,9 @@ public class EnemyUnit : Unit
         if (actions.Count > 0) 
         {
             float shootActionValue = (totalExpectedDamage * DamageWeight) + numKill * KillWeight - numShots * ConserveAmmoWeight;
-            float moveActionValue = (isCover - prevCover) * CoverWeight + numTilesCloserToBestShootTarget * ApproachWeight;
-            actionValue = (shootActionValue + moveActionValue) / actions.Count;
+            float coverActionValue = (System.Convert.ToSingle(isCover) - System.Convert.ToSingle(prevCover)) * CoverWeight;
+            float moveActionValue = numTilesCloserToBestShootTarget * ApproachWeight;
+            actionValue = Mathf.Max((shootActionValue + coverActionValue + moveActionValue) / actions.Count, 0.1f);
         }
         return actionValue;
     }
