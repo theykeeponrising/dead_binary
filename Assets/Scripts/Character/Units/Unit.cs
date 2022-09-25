@@ -187,6 +187,16 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         stats.actionPointsCurrent = stats.actionPointsMax;
     }
 
+    public int GetHealth()
+    {
+        return stats.healthCurrent;
+    }
+
+    public bool WouldKill(float damage)
+    {
+        return damage >= stats.healthCurrent;
+    }
+
     public void RestoreHealth(int amount)
     {
         // Heals character by the indicated amount
@@ -231,10 +241,12 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
     }
 
 
-    protected float CalculateExpectedDamage(Unit attacker, Unit defender, Tile attackerTile)
+    protected float CalculateExpectedDamage(Unit attacker, Unit defender, Tile attackerTile, bool debug=false)
     {
         float weaponDamange = attacker.inventory.equippedWeapon.GetDamage();
         float hitChance = CalculateHitChance(attacker, defender, attackerTile);
+        if (debug) Debug.Log(string.Format("Wep Damage {0}, Hit Chance: {1}", weaponDamange, hitChance));
+
         return weaponDamange * hitChance;
     }
 
@@ -317,7 +329,8 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
     {
         // Inflict damage on character
         Debug.Log(string.Format("{0} has attacked {1} for {2} damage!", attacker.attributes.name, attributes.name, damage)); // This will eventually be shown visually instead of told
-        stats.healthCurrent -= damage;
+
+        stats.healthCurrent -= Mathf.Min(damage, stats.healthCurrent);
         GetComponentInChildren<Healthbar>().UpdateHealthPoints();
 
         // Character death

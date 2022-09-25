@@ -32,7 +32,7 @@ public class EnemyTurnProcess
         {
             enemyUnit.ProcessUnitTurn();
             //Ensure units act one at a time
-            while (enemyUnit.isActing) yield return new WaitForSeconds(0.1f);
+            while (enemyUnit.IsProcessingTurn()) yield return new WaitForSeconds(0.1f);
         }
 
         //End turn when we're done processing the units

@@ -115,7 +115,7 @@ public class MapGrid : MonoBehaviour
                 if (flattened_index >= 0)
                 {
                     Tile nextTile = grid[flattened_index];
-                    tilesInRange.Add(nextTile);
+                    if (nextTile.isTileTraversable()) tilesInRange.Add(nextTile);
                 }
             }
         }
@@ -132,5 +132,15 @@ public class MapGrid : MonoBehaviour
         //Note: Not straight line distance
         float dist = Mathf.Abs(diff.x) + Mathf.Abs(diff.z);
         return Mathf.RoundToInt(dist / tileSpacing);
+    }
+
+    public Vector3 GetAverageTileLocation(List<Tile> tiles)
+    {
+        Vector3 pos = new Vector3(0.0f, 0.0f, 0.0f);
+        foreach (Tile tile in tiles)
+        {
+            pos += tile.gameObject.transform.position / tiles.Count;
+        }
+        return pos;
     }
 }
