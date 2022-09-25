@@ -233,11 +233,14 @@ public class EnemyUnit : Unit
     //Maybe do some sort of deferred reward calculation?
     private float CalculateActionsValue(List<EnemyAction> actions)
     {
-        bool isCover = false;
+        float isCover = 0.0f;
         float numKill = 0.0f;
         float totalExpectedDamage = 0.0f;
         int numShots = 0;
         int numTilesCloserToBestShootTarget = 0;
+        
+        //If current tile is cover, don't add additional bonus
+        float prevCover = System.Convert.ToSingle(currentTile.IsCover());
         Tile unitTile = currentTile;
         // Tile unitTile = currentTile;
         foreach (EnemyAction enemyAction in actions)
@@ -245,8 +248,9 @@ public class EnemyUnit : Unit
             //The last tile we move to will determine the cover value
             if (enemyAction.ActionType == Action.action_move)
             {                
-                //If current tile is cover, don't add additional bonus
-                isCover = enemyAction.Tile.IsCover() && !currentTile.IsCover();
+                
+                isCover = System.Convert.ToSingle(enemyAction.Tile.IsCover());
+                
                 //Update the tile we do calculations with
                 unitTile = enemyAction.Tile;
             } else if (enemyAction.ActionType == Action.action_shoot)
@@ -275,7 +279,7 @@ public class EnemyUnit : Unit
         if (actions.Count > 0) 
         {
             float shootActionValue = (totalExpectedDamage * DamageWeight) + numKill * KillWeight - numShots * ConserveAmmoWeight;
-            float moveActionValue = System.Convert.ToSingle(isCover) * CoverWeight + numTilesCloserToBestShootTarget * ApproachWeight;
+            float moveActionValue = (isCover - prevCover) * CoverWeight + numTilesCloserToBestShootTarget * ApproachWeight;
             actionValue = (shootActionValue + moveActionValue) / actions.Count;
         }
         return actionValue;
