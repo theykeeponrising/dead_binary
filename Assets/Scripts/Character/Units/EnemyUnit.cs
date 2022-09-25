@@ -115,18 +115,13 @@ public class EnemyUnit : Unit
         }
         else if (actionsQueue.Count > 0)
         {
-            Debug.Log("Ran222");
-            Debug.Log(stats.actionPointsCurrent);
-
             //Process queued actions
             EnemyAction nextAction = actionsQueue.Dequeue();
             PerformAction(nextAction);
         } else
         {
-            Debug.Log("Ran");
             //If no actions queued up, get more
             List<EnemyAction> enemyActions = GetNextEnemyActions();
-            Debug.Log(enemyActions.Count);
             foreach (EnemyAction action in enemyActions) actionsQueue.Enqueue(action);
         }
     }
