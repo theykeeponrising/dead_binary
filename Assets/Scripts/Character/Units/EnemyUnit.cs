@@ -25,6 +25,8 @@ public class EnemyUnit : Unit
     public float ConserveAmmoWeight;
     //Prefer approaching player units
     public float ApproachWeight;
+    //Penalize leaving current cover
+    public float LeaveCoverPenalty;
 
     Queue<EnemyAction> actionsQueue;
     //TODO: Maybe a small weight for moving towards the player?
@@ -68,27 +70,31 @@ public class EnemyUnit : Unit
                 DamageWeight = 1.2f;
                 CoverWeight = 1.0f;
                 ConserveAmmoWeight = 0.5f;
-                ApproachWeight = 0.3f;
+                ApproachWeight = 0.6f;
+                LeaveCoverPenalty = 0.5f;
                 break;
             case Strategy.Defensive:
                 KillWeight = 5.0f;
                 DamageWeight = 1.0f;
-                CoverWeight = 3.0f;
+                CoverWeight = 2.0f;
                 ConserveAmmoWeight = 1.0f;
-                ApproachWeight = 0.2f;
+                ApproachWeight = 0.4f;
+                LeaveCoverPenalty = 0.5f;
                 break;
             case Strategy.Default:
                 KillWeight = 7.0f;
                 DamageWeight = 1.0f;
                 CoverWeight = 2.0f;
                 ConserveAmmoWeight = 0.5f;
-                ApproachWeight = 0.3f;
+                ApproachWeight = 0.5f;
+                LeaveCoverPenalty = 0.5f;
                 break;
         }
     }
 
     public void ProcessUnitTurn()
     {
+        Debug.Log(string.Format("Beginning Unit turn: {0}", gameObject.name));
         if (GetFlag("dead")) return;
         OnTurnStart();  
     }
@@ -158,8 +164,10 @@ public class EnemyUnit : Unit
         //Get best 1AP Shoot Action
         bestActions = ShootActionStrategy();
 
+        Debug.Log(string.Format("Shoot AV: {0}", CalculateActionsValue(bestActions)));
         //Get Best 1AP Movement Action
         List<EnemyAction> moveActions = MoveActionStrategy(tilesInRange);
+        Debug.Log(string.Format("Move AV: {0}", CalculateActionsValue(moveActions)));
         if (CalculateActionsValue(moveActions) > CalculateActionsValue(bestActions))
         {
             bestActions = moveActions;
@@ -170,6 +178,7 @@ public class EnemyUnit : Unit
         if (stats.actionPointsCurrent >= 2) {
             List<EnemyAction> moveAndShootActions = MoveAndShoot(tilesInRange);
             float moveAndShootValue = CalculateActionsValue(moveAndShootActions);
+            Debug.Log(string.Format("Shoot+Move AV: {0}", moveAndShootValue));
             if (moveAndShootValue > CalculateActionsValue(bestActions)) 
             {
                 bestActions = moveAndShootActions;
@@ -231,7 +240,7 @@ public class EnemyUnit : Unit
 
     //Determines the total expected benefit of proposed action plan
     //Maybe do some sort of deferred reward calculation?
-    private float CalculateActionsValue(List<EnemyAction> actions)
+    private float CalculateActionsValue(List<EnemyAction> actions, bool debug=false)
     {
         float numKill = 0.0f;
         float totalExpectedDamage = 0.0f;
@@ -279,7 +288,7 @@ public class EnemyUnit : Unit
         if (actions.Count > 0) 
         {
             float shootActionValue = (totalExpectedDamage * DamageWeight) + numKill * KillWeight - numShots * ConserveAmmoWeight;
-            float coverActionValue = (System.Convert.ToSingle(isCover) - System.Convert.ToSingle(prevCover)) * CoverWeight;
+            float coverActionValue = (System.Convert.ToSingle(isCover) * CoverWeight - System.Convert.ToSingle(prevCover)) * LeaveCoverPenalty;
             float moveActionValue = numTilesCloserToBestShootTarget * ApproachWeight;
             actionValue = Mathf.Max((shootActionValue + coverActionValue + moveActionValue) / actions.Count, 0.1f);
         }

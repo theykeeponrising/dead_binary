@@ -293,6 +293,7 @@ public class CharacterActor
         // Gets the shortest tile distance to target and compares to maximum allowed moves
         // If destination is too far, abort move action
 
+
         movePath = unit.currentTile.FindCost(newTile);
         if (movePath.Count == 0 || !newTile.isTileTraversable())
         {
@@ -302,6 +303,9 @@ public class CharacterActor
         if (movePath.Count > unit.stats.movement)
         {
             Debug.Log(string.Format("Destination Too Far! \nDistance: {0}, Max Moves: {1}", movePath.Count, unit.stats.movement)); // This will eventually be shown visually instead of told
+            Debug.Log(unit.currentTile.transform.position);
+            Debug.Log(newTile.transform.position);
+            // unit.currentTile.FindCost(newTile, 10, true);
             return false;
         }
         return true;
