@@ -303,8 +303,6 @@ public class CharacterActor
         if (movePath.Count > unit.stats.movement)
         {
             Debug.Log(string.Format("Destination Too Far! \nDistance: {0}, Max Moves: {1}", movePath.Count, unit.stats.movement)); // This will eventually be shown visually instead of told
-            Debug.Log(unit.currentTile.transform.position);
-            Debug.Log(newTile.transform.position);
             // unit.currentTile.FindCost(newTile, 10, true);
             return false;
         }
@@ -432,7 +430,6 @@ public class CharacterActor
         // Sets the characters aiming and physics flags
         // Performs the shoot animation and inflicts damage on the target
         // When done, returns flags and physics to default
-
         unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.AIMING, true);
 
         // animator.SetBool("aiming", true);

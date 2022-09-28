@@ -232,9 +232,9 @@ public class CharacterAnimator
             
             case (AnimationEventContext.RELOAD):
                 // Reload weapon animation is completed
-                unit.RemoveFlag("reloading");
                 unit.inventory.equippedWeapon.stats.ammoCurrent = unit.inventory.equippedWeapon.stats.ammoMax;
                 CoverCrouch();
+                unit.RemoveFlag("reloading");
                 break;
             
             case (AnimationEventContext.AIMING):
@@ -249,9 +249,9 @@ public class CharacterAnimator
 
             // Stow weapon animation is completed
             case (AnimationEventContext.STOW):
-                unit.RemoveFlag("stowing");
                 unit.inventory.equippedWeapon.gameObject.SetActive(false);
                 animator.SetLayerWeight(unit.inventory.equippedWeapon.weaponLayer, 0);
+                unit.RemoveFlag("stowing");
                 break;
 
             // Draw weapon animation is completed
@@ -261,8 +261,8 @@ public class CharacterAnimator
 
             // Move
             case (AnimationEventContext.MOVE):
-                unit.RemoveFlag("moving");
                 SetBool("moving", false);
+                unit.RemoveFlag("moving");
                 break;
 
             // Throw
@@ -386,11 +386,9 @@ public class CharacterAnimator
     void ClearShootingFlags()
     {
         // Removes flags after shoot animation completes
-
-        unit.RemoveFlag("shooting");
-
         if (unit.GetActor().targetCharacter)
             unit.GetActor().targetCharacter.RemoveFlag("dodging");
+        unit.RemoveFlag("shooting");
     }
 
     public Transform GetBoneTransform(HumanBodyBones bone) 

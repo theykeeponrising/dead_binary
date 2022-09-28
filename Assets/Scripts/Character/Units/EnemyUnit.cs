@@ -120,11 +120,13 @@ public class EnemyUnit : Unit
         }
         else if (actionsQueue.Count > 0)
         {
+            Debug.Log("Processing actions...");
             //Process queued actions
             EnemyAction nextAction = actionsQueue.Dequeue();
             PerformAction(nextAction);
         } else
         {
+            Debug.Log("Getting actions.");
             //If no actions queued up, get more
             List<EnemyAction> enemyActions = GetNextEnemyActions();
             foreach (EnemyAction action in enemyActions) actionsQueue.Enqueue(action);
@@ -139,7 +141,7 @@ public class EnemyUnit : Unit
         List<Tile> tilesInRange = GetTilesInMoveRange();
 
         //TODO: maybe handle this in EnemyTurnProcess so it doesn't get processed for every unit for performance reasons, and skip processing dead units or remove them from this list?
-        oppFactionUnits = GetOppFactionUnits();
+        List<Unit> oppFactionUnits = GetOppFactionUnits();
 
         List<EnemyAction> enemyActions = new List<EnemyAction>();
 
@@ -162,12 +164,12 @@ public class EnemyUnit : Unit
         List<EnemyAction> bestActions;
 
         //Get best 1AP Shoot Action
-        bestActions = ShootActionStrategy();
+        bestActions = ShootActionStrategy(oppFactionUnits);
 
-        Debug.Log(string.Format("Shoot AV: {0}", CalculateActionsValue(bestActions)));
+        //Debug.Log(string.Format("Shoot AV: {0}", CalculateActionsValue(bestActions)));
         //Get Best 1AP Movement Action
         List<EnemyAction> moveActions = MoveActionStrategy(tilesInRange);
-        Debug.Log(string.Format("Move AV: {0}", CalculateActionsValue(moveActions)));
+        //Debug.Log(string.Format("Move AV: {0}", CalculateActionsValue(moveActions)));
         if (CalculateActionsValue(moveActions) > CalculateActionsValue(bestActions))
         {
             bestActions = moveActions;
@@ -176,9 +178,9 @@ public class EnemyUnit : Unit
         //Get Best 2AP Move + Shoot actions
         //Note: Action values for 2AP actions are averaged
         if (stats.actionPointsCurrent >= 2) {
-            List<EnemyAction> moveAndShootActions = MoveAndShoot(tilesInRange);
+            List<EnemyAction> moveAndShootActions = MoveAndShoot(oppFactionUnits, tilesInRange);
             float moveAndShootValue = CalculateActionsValue(moveAndShootActions);
-            Debug.Log(string.Format("Shoot+Move AV: {0}", moveAndShootValue));
+            //Debug.Log(string.Format("Shoot+Move AV: {0}", moveAndShootValue));
             if (moveAndShootValue > CalculateActionsValue(bestActions)) 
             {
                 bestActions = moveAndShootActions;
@@ -210,12 +212,12 @@ public class EnemyUnit : Unit
     }
 
     //Calculate best target to shoot, using 1 AP
-    private List<EnemyAction> ShootActionStrategy()
+    private List<EnemyAction> ShootActionStrategy(List<Unit> oppFactionUnits)
     {
         //Get Shoot Action value
         Unit shootTarget; float expectedDamage;
         List<EnemyAction> actions = new List<EnemyAction>();
-        GetBestShootTarget(currentTile, out shootTarget, out expectedDamage);
+        GetBestShootTarget(oppFactionUnits, currentTile, out shootTarget, out expectedDamage);
         if (shootTarget != null)
         {
             EnemyAction shootAction = CreateShootAction(shootTarget, currentTile);
@@ -247,6 +249,8 @@ public class EnemyUnit : Unit
         int numShots = 0;
         int numTilesCloserToBestShootTarget = 0;
 
+        List<Unit> oppFactionUnits = GetOppFactionUnits();
+
         //If current tile is cover, don't add additional bonus
         bool prevCover = CheckIfCovered(GetNearestTarget(currentTile, oppFactionUnits));
         bool isCover = false;
@@ -277,7 +281,7 @@ public class EnemyUnit : Unit
 
         //Make the unit approach the player
         Unit shootTarget; float expectedDamage;
-        GetBestShootTarget(currentTile, out shootTarget, out expectedDamage);
+        GetBestShootTarget(oppFactionUnits, currentTile, out shootTarget, out expectedDamage);
         if (shootTarget) {
             int oldDist = grid.GetTileDistance(currentTile, shootTarget.currentTile);
             int newDist = grid.GetTileDistance(unitTile, shootTarget.currentTile);
@@ -320,10 +324,14 @@ public class EnemyUnit : Unit
 
     //Get the target that the unit would do the most damage to
     //If unit can kill multiple target(s), choose the one it would deal the most damage to
-    public void GetBestShootTarget(Tile tile, out Unit currentTarget, out float highestExpectedDamage)
+    public void GetBestShootTarget(List<Unit> oppFactionUnits, Tile tile, out Unit currentTarget, out float highestExpectedDamage)
     {
-        currentTarget = oppFactionUnits[0];
         highestExpectedDamage = 0.0f;
+        if (oppFactionUnits.Count == 0) {
+            currentTarget = null;
+            return;
+        };
+        currentTarget = oppFactionUnits[0];
         bool wouldKill = false;
         foreach (Unit other in oppFactionUnits)
         {
@@ -355,7 +363,7 @@ public class EnemyUnit : Unit
         return grid.GetTilesInRange(pos, stats.movement);
     }
 
-    List<EnemyAction> MoveAndShoot(List<Tile> tilesInRange)
+    List<EnemyAction> MoveAndShoot(List<Unit> oppFactionUnits, List<Tile> tilesInRange)
     {
         //TODO: Find optimal position for each attackable unit, weight by cover, etc.
         //For each tile, calculate highest expected damage from attacking
@@ -369,7 +377,7 @@ public class EnemyUnit : Unit
         {
             Unit bestTarget;
             float expectedDamage;
-            GetBestShootTarget(tile, out bestTarget, out expectedDamage);
+            GetBestShootTarget(oppFactionUnits, tile, out bestTarget, out expectedDamage);
 
             EnemyAction moveAction = CreateMoveAction(tile);
             EnemyAction shootAction = CreateShootAction(currentTarget, tile);

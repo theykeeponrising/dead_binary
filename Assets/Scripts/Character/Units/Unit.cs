@@ -122,7 +122,6 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
 
     public virtual void OnTurnStart()
     {
-        oppFactionUnits = new List<Unit>();
         RefreshActionPoints();
     }
 
@@ -210,7 +209,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
     //TODO: Should maybe put this in the PlayerTurn/EnemyTurnProcess so we don't duplicate work or something
     public List<Unit> GetOppFactionUnits()
     {
-        if (oppFactionUnits != null && oppFactionUnits.Count != 0) return oppFactionUnits;
+        List<Unit> oppFactionUnits = new List<Unit>();
         Unit[] gos = GameObject.FindObjectsOfType<Unit>();
 
         foreach (var v in gos)
@@ -334,12 +333,15 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         GetComponentInChildren<Healthbar>().UpdateHealthPoints();
 
         // Character death
-        if (stats.healthCurrent <= 0) StartCoroutine(Death(attacker, direction, distance, impactForce));
+        if (stats.healthCurrent <= 0) 
+        {
+            AddFlag("dead");
+            StartCoroutine(Death(attacker, direction, distance, impactForce));
+        }
     }
 
     IEnumerator Death(Unit attacker, Vector3 attackDirection, float distance, float impactForce)
     {
-        AddFlag("dead");
         // Disables animator, turns on ragdoll effect, and applies a small force to push the character over
 
         // Wait for attacker animation to complete
@@ -471,6 +473,6 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
     //Used by EnemyUnit to determine when to move on to the next unit
     public bool IsActing()
     {
-        return GetFlag("moving")|| GetFlag("attacking") || GetFlag("stowing") || GetFlag("reloading") || GetFlag("aiming") || GetFlag("dodging");
+        return GetFlag("moving")|| GetFlag("attacking") || GetFlag("stowing") || GetFlag("reloading") || GetFlag("aiming") || GetFlag("dodging") || GetFlag("shootprocess");
     }
 }
