@@ -147,8 +147,8 @@ abstract public class FiniteState<T>
     public void ButtonPress(int index)
     {
         // Button press effect
-        List<ActionButton> actionPanel = UIManager.Instance.actionPanel.GetButtons();
-        List<ActionButton> inventoryPanel = UIManager.Instance.inventoryPanel.GetButtons();
+        List<ActionButton> actionPanel = UIManager.GetActionPanel().GetButtons();
+        List<ActionButton> inventoryPanel = UIManager.GetInventoryPanel().GetButtons();
         List<ActionButton> buttons = actionPanel.Concat(inventoryPanel).ToList();
 
         if (buttons.Count <= index - 1) return;
