@@ -218,7 +218,10 @@ MonoBehaviour:
   fireSound:
   - {fileID: 8300000, guid: 4161c0cedab3a4f499dd169695ff8d8f, type: 3}
   reloadSound:
-  - {fileID: 8300000, guid: 559bbdd6c4c2a2740a922a6440e106f4, type: 3}
+  - {fileID: 8300000, guid: 4d53eba16aec35f4480621801d2d2397, type: 3}
+  - {fileID: 8300000, guid: b01b47d173d0c18468fbb0ecb159e5be, type: 3}
+  - {fileID: 8300000, guid: 56bfebf9a44c1bf4a8ee2de6de6fb0c6, type: 3}
+  - {fileID: 8300000, guid: 2d447e571f11ff0478ca0dbf02e94442, type: 3}
   swapSound:
   - {fileID: 8300000, guid: 218a2ce84cd24f247a491d6ad922bf57, type: 3}
   - {fileID: 8300000, guid: c5ffcbf33e8a97e41ac5ccdc6e6df1d9, type: 3}

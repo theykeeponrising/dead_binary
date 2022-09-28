@@ -14,7 +14,7 @@ public class StatusMenuState : GameState
     {
         base.Init(parentState, stateHandler);
         this.stateEnum = StateHandler.State.StatusMenuState;
-        statusMenuUI = UIManager.Instance.statusMenuUI;
+        statusMenuUI = UIManager.GetStatusMenu();
         statusMenuUI.SetStatusMenuState(this);
     }
 

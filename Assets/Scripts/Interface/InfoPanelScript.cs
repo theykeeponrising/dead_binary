@@ -32,7 +32,7 @@ public class InfoPanelScript : MonoBehaviour
         Action action = Action.ActionsDict[actionEnum];
         string actionName = action.aname;
         string actionDesc = action.description;
-
+        textObjects = GetComponentsInChildren<TextMeshProUGUI>();
         textObjects[0].text = string.Format(">> {0} <<", actionName);
         textObjects[1].text = actionDesc;
     }

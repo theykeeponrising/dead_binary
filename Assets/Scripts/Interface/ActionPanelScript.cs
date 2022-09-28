@@ -9,7 +9,7 @@ public class ActionPanelScript : MonoBehaviour
     [HideInInspector] public GameObject panel;
     [HideInInspector] public List<ActionButton> buttons = new List<ActionButton>();
     [HideInInspector] public PlayerTurnState playerTurnState;
-    [HideInInspector] public ActionButton buttonPrefab;
+    public ActionButton buttonPrefab;
     [HideInInspector] public TextMeshProUGUI[] textObjects;
 
     // ELEMENT LIST
@@ -23,7 +23,6 @@ public class ActionPanelScript : MonoBehaviour
         playerTurnState = (PlayerTurnState)StateHandler.Instance.GetStateObject(StateHandler.State.PlayerTurnState);
         playerAction = playerTurnState.GetPlayerAction();
         panel = transform.Find("Background").gameObject;
-        buttonPrefab = UIManager.Instance.actionButtonPrefab;
         textObjects = GetComponentsInChildren<TextMeshProUGUI>();
     }
 

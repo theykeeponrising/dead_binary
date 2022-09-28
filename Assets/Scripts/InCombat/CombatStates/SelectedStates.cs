@@ -9,8 +9,8 @@ public class SelectedStates
     {
         public CancelState(StateMachine<InCombatPlayerAction> machine) : base(machine) { Machine = machine; }
 
-        public InfoPanelScript infoPanel = UIManager.Instance.infoPanel;
-        public InventoryPanelScript inventoryPanel = UIManager.Instance.inventoryPanel;
+        public InfoPanelScript infoPanel = UIManager.GetInfoPanel();
+        public InventoryPanelScript inventoryPanel = UIManager.GetInventoryPanel();
 
         public override void InputSecndry(InCombatPlayerAction t)
         {
@@ -632,7 +632,7 @@ public class SelectedStates
 
         public override void InputActionBtn(InCombatPlayerAction t, int index)
         {
-            ActionPanelScript actionPanel = UIManager.Instance.actionPanel;
+            ActionPanelScript actionPanel = UIManager.GetActionPanel();
             int offset = actionPanel.GetButtons().Count;
             ActionList action = t.GetBindings(index);
 
