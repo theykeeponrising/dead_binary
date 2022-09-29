@@ -2316,7 +2316,7 @@ GameObject:
   - component: {fileID: 190433427531185719}
   - component: {fileID: 5511761140728847718}
   - component: {fileID: 3809991894843442051}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: ScrapBot
   m_TagString: Character
   m_Icon: {fileID: 0}
@@ -2518,11 +2518,11 @@ MonoBehaviour:
   objectTiles: []
   isTraversable: 0
   impactType: 1
+  currentTile: {fileID: 0}
   grid: {fileID: 0}
   flags: []
   inventory: {fileID: 0}
   healthbar: {fileID: 0}
-  currentTile: {fileID: 0}
   currentCover: {fileID: 0}
   availableActions: 000000000100000002000000030000000400000005000000
   stats:

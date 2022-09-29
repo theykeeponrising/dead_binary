@@ -20,7 +20,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public Vector3 standPoint;
     InCombatPlayerAction playerAction;
     public AudioManager.FootstepMaterial footstepMaterial;
-    Grid grid;
+    MapGrid grid;
     
     // Use this for initialization
     void Start()
@@ -52,12 +52,12 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         Highlighted(false, "preview");
     }
 
-    public Grid GetGrid()
+    public MapGrid GetGrid()
     {
         return grid;
     }
 
-    public void SetGrid(Grid grid)
+    public void SetGrid(MapGrid grid)
     {
         this.grid = grid;
     }
@@ -94,7 +94,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             if (tile.gameObject.GetInstanceID() != gameObject.GetInstanceID())
             {
                 float distance = Vector3.Distance(this.gameObject.transform.position, tile.gameObject.transform.position);
-                if (distance <= Grid.tileSpacing) neighbours.Add(tile);
+                if (distance <= MapGrid.tileSpacing) neighbours.Add(tile);
             }
     }
 
@@ -254,7 +254,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             if (coverObj.gameObject.GetInstanceID() != gameObject.GetInstanceID())
             {
                 float distance = Vector3.Distance(this.gameObject.transform.position, coverObj.gameObject.transform.position);
-                if (distance <= Grid.tileSpacing) 
+                if (distance <= MapGrid.tileSpacing) 
                 {
                     cover = coverObj;
                     break;
