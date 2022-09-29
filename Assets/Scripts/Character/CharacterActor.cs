@@ -27,7 +27,7 @@ public class CharacterActor
 
     public CharacterActor(Unit unit)
     {
-        infoPanel = UIManager.Instance.infoPanel;
+        infoPanel = UIManager.GetInfoPanel();
         selectionCircle = unit.transform.Find("SelectionCircle").gameObject;
         this.unit = unit;
         potentialTargets = null;

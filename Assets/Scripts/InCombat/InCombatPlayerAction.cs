@@ -40,13 +40,13 @@ public class InCombatPlayerAction
 
     public void Start()
     {
-        actionPanelScript = UIManager.Instance.actionPanel;
+        actionPanelScript = UIManager.GetActionPanel();
         actionPanelScript.gameObject.SetActive(false);
-        inventoryPanelScript = UIManager.Instance.inventoryPanel;
+        inventoryPanelScript = UIManager.GetInventoryPanel();
         inventoryPanelScript.gameObject.SetActive(false);
-        infoPanelScript = UIManager.Instance.infoPanel;
+        infoPanelScript = UIManager.GetInfoPanel();
         infoPanelScript.gameObject.SetActive(false);
-        playerActionUI = UIManager.Instance.inCombatPlayerActionUI;
+        playerActionUI = UIManager.GetPlayerAction();
 
         // Add characters to allCharacters list
         allCharacters = new List<Unit>();
@@ -118,7 +118,7 @@ public class InCombatPlayerAction
                 actionsList.Add(characterAction);
         }
 
-        if (UIManager.Instance.inventoryPanel.gameObject.activeSelf)
+        if (UIManager.GetInventoryPanel().gameObject.activeSelf)
         {
             foreach (Item item in selectedCharacter.GetItems())
             {

@@ -11,9 +11,9 @@ public class InventoryPanelScript : ActionPanelScript
     {
         playerTurnState = (PlayerTurnState)StateHandler.Instance.GetStateObject(StateHandler.State.PlayerTurnState);
         playerAction = playerTurnState.GetPlayerAction();
-        actionPanel = UIManager.Instance.actionPanel;
+        actionPanel = UIManager.GetActionPanel();
+        buttonPrefab = actionPanel.buttonPrefab;
         panel = transform.Find("Background").gameObject;
-        buttonPrefab = UIManager.Instance.actionButtonPrefab;
     }
 
     void BuildActions()
