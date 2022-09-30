@@ -179,6 +179,9 @@ public class MapGrid : MonoBehaviour
     {
         // Returns True/False if any obstructions are blocking the path
 
+        // Trivial check
+        if (tileStart == tileDest) return false;
+
         // First, check if both tiles have any cover object
         if (!tileStart.cover || !tileDest.cover)
             return false;

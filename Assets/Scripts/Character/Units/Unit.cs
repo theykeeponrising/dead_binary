@@ -7,6 +7,18 @@ using UnityEngine.EventSystems;
 //Implementation of character/unit actions should be done in CharacterActor.cs
 //Implementation of character/unit animation logic should be done in CharacterAnimator.cs
 //Implementation of character/unit SFX logic should be in CharacterSFX.cs
+public enum FlagType {
+    MOVE,
+    SHOOT,
+    RELOAD,
+    VAULT,
+    DODGE,
+    AIM,
+    STOW,
+    DRAW,
+    DEAD
+};
+
 public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHandler
 {
     //List of units on opposing faction that are alive
@@ -17,7 +29,9 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
     protected CharacterAnimator charAnim;
     protected CharacterSFX charSFX;
 
-    public List<string> flags = new List<string>();
+    public List<FlagType> flags = new List<FlagType>();
+    
+    public int numActionsInFlight = 0;
     
     [HideInInspector] public Inventory inventory;
     [HideInInspector] public Healthbar healthbar;
@@ -186,6 +200,64 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         stats.actionPointsCurrent = stats.actionPointsMax;
     }
 
+    //TODO: Move this to the individual action classes, and add delegates/inherited method
+    public void ActionStart(Action action)
+    {
+        switch (action.context)
+        {
+            case ActionList.MOVE:
+                numActionsInFlight++;
+                break;
+            case ActionList.SHOOT:
+                numActionsInFlight++;
+                break;
+            case ActionList.RELOAD:
+                numActionsInFlight++;
+                break;
+            case ActionList.SWAP:
+                numActionsInFlight++;
+                break;
+            case ActionList.USEITEM:
+                numActionsInFlight++;
+                break;
+            default:
+                break; 
+        }
+    }
+
+    //TODO: Move this to the individual action classes, and add delegates/inherited method
+    public void ActionComplete(Action action)
+    {
+        switch (action.context)
+        {
+            case ActionList.MOVE:
+                numActionsInFlight--;
+                break;
+            case ActionList.SHOOT:
+                numActionsInFlight--;
+                break;
+            case ActionList.RELOAD:
+                numActionsInFlight--;
+                break;
+            case ActionList.SWAP:
+                numActionsInFlight--;
+                break;
+            case ActionList.USEITEM:
+                numActionsInFlight--;
+                break;
+            default:
+                break; 
+        }
+        if (numActionsInFlight < 0) Debug.LogError(string.Format("Number of actions in flight: {0}", numActionsInFlight));
+    }
+
+    //Basic action callback
+    //TODO: Move this to action classes
+    public void ActionCompleteCallback()
+    {
+
+    }
+
     public int GetHealth()
     {
         return stats.healthCurrent;
@@ -303,7 +375,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         if (!RollForHit(attacker, distanceToTarget))
         {
             if (currentCover) currentCover.Impact();
-            AddFlag("dodging");
+            AddFlag(FlagType.DODGE);
             Debug.Log(string.Format("{0} missed target {1}!", attacker.attributes.name, attributes.name));
             GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.DODGE, true);
             return;
@@ -335,7 +407,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         // Character death
         if (stats.healthCurrent <= 0) 
         {
-            AddFlag("dead");
+            AddFlag(FlagType.DEAD);
             StartCoroutine(Death(attacker, direction, distance, impactForce));
         }
     }
@@ -346,7 +418,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
 
         // Wait for attacker animation to complete
        // while (attacker.GetAnimator().AnimatorIsPlaying())
-       while (attacker.GetFlag("shooting"))
+       while (attacker.GetFlag(FlagType.SHOOT))
             yield return new WaitForSeconds(0.01f);
 
         // Disable top collider
@@ -447,7 +519,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         return closestUnit;
     }
 
-    public void AddFlag(string flag)
+    public void AddFlag(FlagType flag)
     {
         // Handler for adding new flags
         // Used to prevent duplicate flags
@@ -456,7 +528,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
             flags.Add(flag);
     }
 
-    public void RemoveFlag(string flag)
+    public void RemoveFlag(FlagType flag)
     {
         // Handler for adding new flags
         // Used for consistency with AddFlag function
@@ -465,7 +537,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
             flags.Remove(flag);
     }
 
-    public bool GetFlag(string flag)
+    public bool GetFlag(FlagType flag)
     {
         return flags.Contains(flag);
     }
@@ -473,6 +545,6 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
     //Used by EnemyUnit to determine when to move on to the next unit
     public bool IsActing()
     {
-        return GetFlag("moving")|| GetFlag("attacking") || GetFlag("stowing") || GetFlag("reloading") || GetFlag("aiming") || GetFlag("dodging") || GetFlag("shootprocess");
+        return numActionsInFlight > 0;
     }
 }

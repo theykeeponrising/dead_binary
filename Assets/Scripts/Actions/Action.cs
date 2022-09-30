@@ -16,14 +16,16 @@ public class Action
     // Type - Action type (ability, item, etc)
 
     public string aname;
-    public string context;
+    public ActionList context;
     public string description;
     public int cost;
     public int cooldown;
     public string buttonPath;
     public ActionRequirement[] requirements;
 
-    public Action(string aName, string aContext, string aDescription, int aCost, int aCooldown, string aButtonPath, ActionRequirement[] aRequirements)
+    //TODO: Create classes for each action, and add a delegate as a callback OnActionComplete()
+
+    public Action(string aName, ActionList aContext, string aDescription, int aCost, int aCooldown, string aButtonPath, ActionRequirement[] aRequirements)
     {
         aname = aName;
         context = aContext;
@@ -34,7 +36,7 @@ public class Action
         requirements = aRequirements;
     }
 
-    public Action(string aName, string aContext, string aDescription, int aCost, int aCooldown, string aButtonPath, ActionRequirement aRequirements)
+    public Action(string aName, ActionList aContext, string aDescription, int aCost, int aCooldown, string aButtonPath, ActionRequirement aRequirements)
     {
         aname = aName;
         context = aContext;
@@ -79,18 +81,18 @@ public class Action
     }
 
     // All possible character actions with values
-    public static Action action_move = new Action("Move", "move", null, 1, 0, null, ActionRequirement.NONE);
-    public static Action action_shoot = new Action("Shoot", "shoot", "Shoot at the selected target", 1, 0, ActionButtons.btn_action_shoot, new ActionRequirement[] { ActionRequirement.AP, ActionRequirement.AMMO });
-    public static Action action_reload = new Action("Reload", "reload", "Reloads currently equipped weapon", 1, 0, ActionButtons.btn_action_reload, new ActionRequirement[] { ActionRequirement.AP, ActionRequirement.RELOAD });
-    public static Action action_swap = new Action("Swap Guns", "swap", "Swap to next weapon", 0, 0, ActionButtons.btn_action_swap, ActionRequirement.NONE);
-    public static Action action_chooseItem = new Action("Choose Item", "chooseItem", null, 0, 0, ActionButtons.btn_action_chooseItem, ActionRequirement.NONE);
-    public static Action action_useItem = new Action("Use Item", "useItem", null, 1, 0, ActionButtons.btn_action_useItem, ActionRequirement.NONE);
-    public static Action action_none = new Action("Do nothing.", "none", null, 1, 0, null, ActionRequirement.NONE);
-    public static Action action_item_medkit = new Action("Medkit", "useItem", "Heals a target friendly unit", 1, 0, ActionButtons.btn_action_medkit, new ActionRequirement[] { ActionRequirement.AP, ActionRequirement.QUANTITY });
-    public static Action action_item_grenade = new Action("Grenade", "useItem", "Damages a target enemy unit", 1, 0, ActionButtons.btn_action_grenade, new ActionRequirement[] { ActionRequirement.AP, ActionRequirement.QUANTITY });
-    public static Action action_item_grenade_heal = new Action("Healnade", "useItem", "A grenade that heals friendly units", 1, 0, ActionButtons.btn_action_grenade, new ActionRequirement[] { ActionRequirement.AP, ActionRequirement.QUANTITY });
-    public static Action action_item_grenade_win = new Action("\"Win\" Grenade", "useItem", "For use when frustrated with the robots", 1, 0, ActionButtons.btn_action_grenade, new ActionRequirement[] { ActionRequirement.AP, ActionRequirement.QUANTITY });
-    public static Action action_item_grenade_dud = new Action("Dud Grenade", "useItem", "A dud grenade that can still be thrown to inflict concussive damage", 1, 0, ActionButtons.btn_action_grenade, new ActionRequirement[] { ActionRequirement.AP, ActionRequirement.QUANTITY });
+    public static Action action_move = new Action("Move", ActionList.MOVE, null, 1, 0, null, ActionRequirement.NONE);
+    public static Action action_shoot = new Action("Shoot", ActionList.SHOOT, "Shoot at the selected target", 1, 0, ActionButtons.btn_action_shoot, new ActionRequirement[] { ActionRequirement.AP, ActionRequirement.AMMO });
+    public static Action action_reload = new Action("Reload", ActionList.RELOAD, "Reloads currently equipped weapon", 1, 0, ActionButtons.btn_action_reload, new ActionRequirement[] { ActionRequirement.AP, ActionRequirement.RELOAD });
+    public static Action action_swap = new Action("Swap Guns", ActionList.SWAP, "Swap to next weapon", 0, 0, ActionButtons.btn_action_swap, ActionRequirement.NONE);
+    public static Action action_chooseItem = new Action("Choose Item", ActionList.CHOOSEITEM, null, 0, 0, ActionButtons.btn_action_chooseItem, ActionRequirement.NONE);
+    public static Action action_useItem = new Action("Use Item", ActionList.USEITEM, null, 1, 0, ActionButtons.btn_action_useItem, ActionRequirement.NONE);
+    public static Action action_none = new Action("Do nothing.", ActionList.NONE, null, 1, 0, null, ActionRequirement.NONE);
+    public static Action action_item_medkit = new Action("Medkit", ActionList.MEDKIT, "Heals a target friendly unit", 1, 0, ActionButtons.btn_action_medkit, new ActionRequirement[] { ActionRequirement.AP, ActionRequirement.QUANTITY });
+    public static Action action_item_grenade = new Action("Grenade", ActionList.USEITEM, "Damages a target enemy unit", 1, 0, ActionButtons.btn_action_grenade, new ActionRequirement[] { ActionRequirement.AP, ActionRequirement.QUANTITY });
+    public static Action action_item_grenade_heal = new Action("Healnade", ActionList.USEITEM, "A grenade that heals friendly units", 1, 0, ActionButtons.btn_action_grenade, new ActionRequirement[] { ActionRequirement.AP, ActionRequirement.QUANTITY });
+    public static Action action_item_grenade_win = new Action("\"Win\" Grenade", ActionList.USEITEM, "For use when frustrated with the robots", 1, 0, ActionButtons.btn_action_grenade, new ActionRequirement[] { ActionRequirement.AP, ActionRequirement.QUANTITY });
+    public static Action action_item_grenade_dud = new Action("Dud Grenade", ActionList.USEITEM, "A dud grenade that can still be thrown to inflict concussive damage", 1, 0, ActionButtons.btn_action_grenade, new ActionRequirement[] { ActionRequirement.AP, ActionRequirement.QUANTITY });
 
     // Dictionary used to match enum to actual action class object
     public static Dictionary<ActionList, Action> ActionsDict = new Dictionary<ActionList, Action>() {

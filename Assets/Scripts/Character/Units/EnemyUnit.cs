@@ -95,7 +95,7 @@ public class EnemyUnit : Unit
     public void ProcessUnitTurn()
     {
         Debug.Log(string.Format("Beginning Unit turn: {0}", gameObject.name));
-        if (GetFlag("dead")) return;
+        if (GetFlag(FlagType.DEAD)) return;
         OnTurnStart();  
     }
 
@@ -120,13 +120,11 @@ public class EnemyUnit : Unit
         }
         else if (actionsQueue.Count > 0)
         {
-            Debug.Log("Processing actions...");
             //Process queued actions
             EnemyAction nextAction = actionsQueue.Dequeue();
             PerformAction(nextAction);
         } else
         {
-            Debug.Log("Getting actions.");
             //If no actions queued up, get more
             List<EnemyAction> enemyActions = GetNextEnemyActions();
             foreach (EnemyAction action in enemyActions) actionsQueue.Enqueue(action);
@@ -188,6 +186,8 @@ public class EnemyUnit : Unit
         }
 
         enemyActions.AddRange(bestActions);
+
+        if (enemyActions.Count == 0) enemyActions.Add(CreateNoneAction(currentTile));
         return enemyActions;
     }
 
@@ -395,10 +395,16 @@ public class EnemyUnit : Unit
         if (actionType == Action.action_move)
         {
             GetActor().ProcessAction(actionType, action.Tile, null, null);
-        } else if (actionType == Action.action_shoot)
+        }
+        else if (actionType == Action.action_shoot)
         {
             GetActor().ProcessAction(actionType, null, null, action.ContextChar);
-        } else if (actionType == Action.action_reload)
+        }
+        else if (actionType == Action.action_reload)
+        {
+            GetActor().ProcessAction(actionType, null, null, null);
+        }
+        else if (actionType == Action.action_none)
         {
             GetActor().ProcessAction(actionType, null, null, null);
         }

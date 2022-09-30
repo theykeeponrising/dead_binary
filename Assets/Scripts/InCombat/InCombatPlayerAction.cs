@@ -163,7 +163,7 @@ public class InCombatPlayerAction
         // Change character selection
 
         //Can't select enemy units or dead units.
-        if (targetCharacter && (targetCharacter.GetFlag("dead") || targetCharacter.attributes.faction != playerFaction)) return;
+        if (targetCharacter && (targetCharacter.GetFlag(FlagType.DEAD) || targetCharacter.attributes.faction != playerFaction)) return;
 
         // Clears current action bar
         actionPanelScript.gameObject.SetActive(false);

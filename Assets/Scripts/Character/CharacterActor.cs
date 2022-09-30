@@ -122,20 +122,28 @@ public class CharacterActor
             currentAction = actionToPerform;
             switch (actionToPerform.context)
             {
-                case "move":
+                case ActionList.MOVE:
+                    unit.ActionStart(actionToPerform);
                     MoveAction(contextTile, contextPath);
                     break;
-                case "shoot":
+                case ActionList.SHOOT:
+                    unit.ActionStart(actionToPerform);
                     ShootAction(contextCharacter);
                     break;
-                case "reload":
+                case ActionList.RELOAD:
+                    unit.ActionStart(actionToPerform);
                     ReloadAction();
                     break;
-                case "swap":
+                case ActionList.SWAP:
+                    unit.ActionStart(actionToPerform);
                     unit.StartCoroutine(EquipWeapon(unit.inventory.CycleWeapon()));
                     break;
-                case "useItem":
+                case ActionList.USEITEM:
+                    unit.ActionStart(actionToPerform);
                     ItemAction(contextItem, contextCharacter);
+                    break;
+                case ActionList.NONE:
+                    NoneAction();
                     break;
             }
         }
@@ -155,7 +163,7 @@ public class CharacterActor
             unit.velocityZ = distance / 2;
 
             // Slow down movement speed if character is vaulting
-            float distanceDelta = (unit.GetFlag("vaulting")) ? 0.01f : 0.03f;
+            float distanceDelta = (unit.GetFlag(FlagType.VAULT)) ? 0.01f : 0.03f;
 
             // If the final move target is also the most immediate one, slow down move speed as we approach
             if (moveTargetDestination == moveTargetImmediate)
@@ -208,7 +216,7 @@ public class CharacterActor
             foreach (Tile tile in previewPath)
                 tile.Highlighted(false);
 
-        if (!unit.GetFlag("moving"))
+        if (!unit.GetFlag(FlagType.MOVE))
         {
             if (CheckTileMove(newTile))
             {
@@ -312,7 +320,7 @@ public class CharacterActor
     bool CheckForObstacle()
     {
         // Checks a short distance in front of character for objects in the "VaultOver" layer
-        if (unit.GetFlag("vaulting"))
+        if (unit.GetFlag(FlagType.VAULT))
             return false;
 
         Vector3 direction = (moveTargetImmediate.transform.position - unit.transform.position);
@@ -347,7 +355,7 @@ public class CharacterActor
             if (!IsCrouching())
             {
                 unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.STOW, true);
-                while (unit.GetFlag("stowing"))
+                while (unit.GetFlag(FlagType.STOW))
                     yield return new WaitForSeconds(0.01f);
             }
             else
@@ -375,7 +383,7 @@ public class CharacterActor
                 unit.inventory.equippedWeapon.PlaySound(Weapon.WeaponSound.SWAP, unit);
                 unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.DRAW, true);
 
-                while (unit.GetFlag("drawing"))
+                while (unit.GetFlag(FlagType.DRAW))
                     yield return new WaitForSeconds(0.01f);
             }
             else
@@ -435,8 +443,6 @@ public class CharacterActor
         // animator.SetBool("aiming", true);
         // animator.updateMode = AnimatorUpdateMode.AnimatePhysics;
 
-        yield return new WaitForSeconds(0.5f);
-        unit.AddFlag("aiming");
         yield return new WaitForSeconds(0.25f);
 
         // Inflict damage on target character
@@ -539,5 +545,10 @@ public class CharacterActor
         unit.stats.actionPointsCurrent -= currentAction.cost;
         item.UseItem(unit, target);
         unit.transform.LookAt(target.transform);
+    }
+
+    void NoneAction()
+    {
+        unit.stats.actionPointsCurrent -= currentAction.cost;
     }
 }
