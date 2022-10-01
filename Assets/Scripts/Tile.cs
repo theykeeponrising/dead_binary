@@ -129,25 +129,13 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         nearestTile = this;
 
         // How many search iterations to perform
-        int currentIteration = 1;
+        int currentIteration = 0;
 
         // Create a list to keep track of all tiles found during iteration
-        List<Tile> foundTiles = new List<Tile>(neighbours);
+        List<Tile> foundTiles = new List<Tile> { this };
 
         // To randomize path movement
         //var rnd = new System.Random();
-
-        // If destination is adjacent to current tile, skip tile find
-        if (foundTiles.Contains(findTile))
-        {
-            if (grid.isTilePathObstructed(this, findTile))
-                foundTiles.Remove(findTile);
-            else
-            {
-                findTile.nearestTile = this;
-                return FindPath(findTile);
-            }
-        }
 
         // Begin iterating through nearby tiles
         while (currentIteration < maxDist)
