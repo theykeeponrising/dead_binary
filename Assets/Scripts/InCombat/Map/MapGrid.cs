@@ -172,7 +172,6 @@ public class MapGrid : MonoBehaviour
             tilesInRange.AddRange(nextTiles);
             foundTiles = nextTiles;
         }
-        Debug.Log(tilesInRange.Count);
         return tilesInRange;
     }
 

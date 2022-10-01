@@ -88,7 +88,7 @@ public class EnemyUnit : Unit
             case Strategy.Default:
                 KillWeight = 7.0f;
                 DamageWeight = 1.0f;
-                CoverWeight = 10.0f;
+                CoverWeight = 2.0f;
                 ConserveAmmoWeight = 0.5f;
                 ApproachWeight = 0.3f;
                 LeaveCoverPenalty = 0.5f;
@@ -297,6 +297,12 @@ public class EnemyUnit : Unit
             numTilesCloserToBestShootTarget = oldDist - newDist;
         }
 
+        if (isCover)
+        {
+            float a = System.Convert.ToSingle(isCover);
+            float b = GetCoverWeightScaling(newDist, CoverScalingType.LINEAR);
+        }
+
         float actionValue = 0.0f;
         if (actions.Count > 0) 
         {
@@ -317,15 +323,16 @@ public class EnemyUnit : Unit
         switch (scaling)
         {
             case CoverScalingType.LINEAR:
-                return ScaleCoverLinear(tileDist);
+                return ScaleCoverLinear((float) tileDist);
             default:
                 return 0.0f;
         }
     }
 
-    private float ScaleCoverLinear(int tileDist, int maxDist=12)
+    private float ScaleCoverLinear(float tileDist, float maxDist=12.0f)
     {
-        return (maxDist - tileDist) / maxDist;
+        float coverScale = (maxDist - tileDist) / maxDist;
+        return coverScale;
     }
 
     private float CalculateActionValue(EnemyAction action)
