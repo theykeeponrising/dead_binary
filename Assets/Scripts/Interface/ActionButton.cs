@@ -19,7 +19,7 @@ public class ActionButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     int buttonIndex;
     FiniteState<InCombatPlayerAction> state;
 
-    ActionList boundAction;
+    UnitAction boundAction;
     bool requirementsMet;
     Item boundItem;
 
@@ -84,7 +84,7 @@ public class ActionButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 
     void CheckRequirements()
     {
-        requirementsMet = Action.CheckRequirements(boundAction, playerAction.selectedCharacter, boundItem);
+        requirementsMet = boundAction.CheckRequirements();
         if (!requirementsMet) currentButtonState = ButtonState.DISABLED;
         else if (requirementsMet && currentButtonState == ButtonState.DISABLED) currentButtonState = ButtonState.PASSIVE;
 
@@ -117,14 +117,14 @@ public class ActionButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         if (requirementsMet) currentButtonState = ButtonState.PASSIVE;
     }
 
-    public void BindAction(ActionList action)
+    public void BindAction(UnitAction action)
     {
         // Stores action for checking requirements
 
         boundAction = action;
     }
 
-    public ActionList GetAction()
+    public UnitAction GetAction()
     {
         // Returns bound action
 
@@ -208,3 +208,5 @@ public static class ActionButtons
     public static string btn_action_medkit = "Buttons/btn_medkit";
     public static string btn_action_grenade = "Buttons/btn_grenade";
 }
+
+public enum ActionButtonSprite { MOVE, SHOOT, RELOAD, SWAP, CHOOSE_ITEM, MEDKIT, GRENADE }

@@ -27,11 +27,10 @@ public class InfoPanelScript : MonoBehaviour
         button.onClick.AddListener(ButtonPress);
     }
 
-    public void UpdateAction(ActionList actionEnum)
+    public void UpdateAction(UnitAction unitAction)
     {
-        Action action = Action.ActionsDict[actionEnum];
-        string actionName = action.aname;
-        string actionDesc = action.description;
+        string actionName = unitAction.actionName;
+        string actionDesc = unitAction.actionDescription;
         textObjects = GetComponentsInChildren<TextMeshProUGUI>();
         textObjects[0].text = string.Format(">> {0} <<", actionName);
         textObjects[1].text = actionDesc;

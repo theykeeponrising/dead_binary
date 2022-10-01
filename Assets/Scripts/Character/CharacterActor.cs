@@ -22,7 +22,7 @@ public class CharacterActor
     
     Unit unit;
 
-    public Action currentAction;
+    public UnitAction currentAction;
     public List<Unit> potentialTargets;
 
     public CharacterActor(Unit unit)
@@ -108,11 +108,11 @@ public class CharacterActor
         }
     }
 
-    public void ProcessAction(Action actionToPerform, Tile contextTile=null, List<Tile> contextPath=null, Unit contextCharacter=null, Item contextItem=null)
+    public void ProcessAction(UnitAction actionToPerform, Tile contextTile=null, List<Tile> contextPath=null, Unit contextCharacter=null)
     {
         // Determine if action can be performed, and perform action
 
-        int actionCost = actionToPerform.cost;
+        int actionCost = actionToPerform.actionCost;
         if (actionCost > unit.stats.actionPointsCurrent)
         {
             Debug.Log("Not enough AP!"); // This will eventually be shown in UI
@@ -120,25 +120,34 @@ public class CharacterActor
         else
         {
             currentAction = actionToPerform;
-            switch (actionToPerform.context)
-            {
-                case "move":
-                    MoveAction(contextTile, contextPath);
-                    break;
-                case "shoot":
-                    ShootAction(contextCharacter);
-                    break;
-                case "reload":
-                    ReloadAction();
-                    break;
-                case "swap":
-                    unit.StartCoroutine(EquipWeapon(unit.inventory.CycleWeapon()));
-                    break;
-                case "useItem":
-                    ItemAction(contextItem, contextCharacter);
-                    break;
-            }
+            targetCharacter = contextCharacter;
+           
+            if (actionToPerform.GetType() == typeof(UnitActionMove))
+                MoveAction(contextTile, contextPath);
+            else
+                actionToPerform.UseAction(contextCharacter);
         }
+    }
+
+    public UnitAction FindActionOfType(System.Type actionType)
+    {
+        // Finds an action by type from the unit's current action list
+
+        foreach (UnitAction unitAction in unit.unitActions)
+            if (unitAction.GetType() == actionType)
+                return unitAction;
+        return null;
+    }
+
+    public bool IsActing()
+    {
+        // Checks all unit actions to see if any are currently performing
+        // Returns True/False if any action is currently performing
+
+        foreach (UnitAction action in unit.unitActions)
+            if (action.Performing())
+                return true;
+        return false;
     }
 
     void Movement()
@@ -201,8 +210,8 @@ public class CharacterActor
         // Sets the target destination tile
         // Once a path is found, begin movement routine
 
-        if (!unit.GetAvailableActions().Contains(ActionList.MOVE))
-            return;
+        //if (!unit.GetAvailableActions().Contains(ActionList.MOVE))
+            //return;
 
         if (previewPath != null)
             foreach (Tile tile in previewPath)
@@ -220,7 +229,7 @@ public class CharacterActor
                 if (movePath.Count > 0)
                 {
                     unit.StartCoroutine(MoveToPath());
-                    unit.stats.actionPointsCurrent -= currentAction.cost;
+                    unit.stats.actionPointsCurrent -= currentAction.actionCost;
                 }
                 
             }
@@ -389,20 +398,6 @@ public class CharacterActor
         }
     }
 
-    public void ReloadAction()
-    {
-        // Reload action handler
-
-        if (unit.inventory.equippedWeapon.stats.ammoCurrent >= unit.inventory.equippedWeapon.stats.ammoMax)
-        {
-            Debug.Log("Ammo is max already!"); // TO DO - Show this in UI
-            return;
-        }
-        unit.stats.actionPointsCurrent -= currentAction.cost;
-        unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.RELOAD, true);
-        unit.inventory.equippedWeapon.Reload();
-    }
-
     public Vector3 GetTargetPosition(bool snap=false)
     {
         // Gets target's position relative to the tip of the gun
@@ -421,39 +416,6 @@ public class CharacterActor
         Vector3 direction = Vector3.Slerp(targetDirection, aimDirection, blendOut);
         if (snap) direction = targetDirection;
         return unit.inventory.equippedWeapon.transform.position + direction;
-    }
-
-    IEnumerator ShootWeapon(int distanceToTarget, Unit shootTarget=null)
-    {
-        // Sets the characters aiming and physics flags
-        // Performs the shoot animation and inflicts damage on the target
-        // When done, returns flags and physics to default
-
-        unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.AIMING, true);
-
-        // animator.SetBool("aiming", true);
-        // animator.updateMode = AnimatorUpdateMode.AnimatePhysics;
-
-        yield return new WaitForSeconds(0.5f);
-        unit.AddFlag("aiming");
-        yield return new WaitForSeconds(0.25f);
-
-        // Inflict damage on target character
-        if (shootTarget)
-            shootTarget.TakeDamage(unit, unit.inventory.equippedWeapon.stats.damage, distanceToTarget);
-
-        unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.SHOOT, true);
-        unit.inventory.equippedWeapon.stats.ammoCurrent -= 1;
-
-        // Wait until shoot state completes
-        while (playerAction.stateMachine.GetCurrentState().GetType() == typeof(SelectedStates.ShootTarget)) yield return new WaitForSeconds(0.01f);
-
-        // Crouch down if expected
-        CoverCrouch();
-
-        // Shooting animation completed (should maybe just implement this with a callback function, honestly)
-        unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.AIMING, false);
-        unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.IDLE, true);
     }
 
     void ToggleCrouch(bool instant=false)
@@ -493,8 +455,8 @@ public class CharacterActor
                 if (unit.inventory.equippedWeapon.stats.ammoCurrent > 0)
                 {
                     targetCharacter = selectedTarget;
-                    unit.stats.actionPointsCurrent -= currentAction.cost;
-                    unit.StartCoroutine(ShootWeapon(distanceToTarget, targetCharacter));
+
+                    //unit.StartCoroutine(ShootWeapon(distanceToTarget, targetCharacter));
                     // RemoveFlag("targeting");
                 }
                 else
@@ -533,9 +495,9 @@ public class CharacterActor
         infoPanel.gameObject.SetActive(false);
     }
 
-    void ItemAction(Item item, Unit target)
+    public void ItemAction(Item item, Unit target)
     {
-        unit.stats.actionPointsCurrent -= currentAction.cost;
+        unit.stats.actionPointsCurrent -= item.itemAction.actionCost;
         item.UseItem(unit, target);
         unit.transform.LookAt(target.transform);
     }

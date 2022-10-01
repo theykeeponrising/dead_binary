@@ -26,7 +26,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
     GameState gameState;
 
     [HideInInspector] public CoverObject currentCover;
-    public List<ActionList> availableActions;
+    public List<UnitAction> unitActions;
 
     // Attributes are mosty permanent descriptors about the character
     [System.Serializable] public class Attributes
@@ -67,6 +67,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         stats.actionPointsCurrent = stats.actionPointsMax;
 
         SetupUnit();
+        GenerateActions();
     }
 
     protected override void Awake()
@@ -141,9 +142,19 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         return charSFX;
     }
 
-    public List<ActionList> GetAvailableActions()
+    public List<UnitAction> GetAvailableActions()
     {
-        return availableActions;
+        return unitActions;
+    }
+
+    public Weapon GetEquippedWeapon()
+    {
+        return inventory.equippedWeapon;
+    }
+
+    public void SetEquippedWeapon(Weapon weapon)
+    {
+        inventory.equippedWeapon = weapon;
     }
 
     public List<Item> GetItems()
@@ -157,6 +168,53 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
 
         InCombatPlayerAction playerAction = playerTurnState.GetPlayerAction();
         charActor.SetPlayerAction(playerAction);
+    }
+
+    void GenerateActions()
+    {
+        // Adds actions to the character based on its current equipment
+
+        int index = 0;
+
+        // If we have movement, add move action
+        if (stats.movement > 0)
+        {
+            unitActions.Insert(index, ActionManager.Instance.unitActions.move);
+            index += 1;
+        }
+
+        // If we have an equipped weapon, add shoot action
+        if (GetEquippedWeapon())
+        {
+            unitActions.Insert(index, ActionManager.Instance.unitActions.shoot);
+            index += 1;
+        }
+
+        // If we have an equipped weapon, add reload action
+        if (GetEquippedWeapon())
+        {
+            unitActions.Insert(index, ActionManager.Instance.unitActions.reload);
+            index += 1;
+        }
+
+        // If we have multiple weapons, add swap action
+        if (inventory.weapons.Count > 1)
+        {
+            unitActions.Insert(index, ActionManager.Instance.unitActions.swap);
+            index += 1;
+        }
+
+        // If we have items, add inventory action
+        if (GetItems().Count > 0)
+        {
+            unitActions.Insert(index, ActionManager.Instance.unitActions.inventory);
+            index += 1;
+        }
+
+        for (index = 0; index < unitActions.Count; index++)
+        {
+            unitActions[index] = Instantiate(unitActions[index], transform);
+        }
     }
 
         //TODO: Should add additional events to specifically play a sound
@@ -179,6 +237,13 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
     public void Event_PlaySound(CharacterSFX.AnimationEventSound sound)
     {
         GetSFX().Event_PlaySound(sound);
+    }
+    
+    public void SpendActionPoints(int amount)
+    {
+        // Reduces action points by amount provided
+
+        stats.actionPointsCurrent -= amount;
     }
 
     public void RefreshActionPoints()
@@ -230,7 +295,6 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         return grid.GetTilesInRange(pos, stats.movement);
     }
 
-
     protected float CalculateExpectedDamage(Unit attacker, Unit defender, Tile attackerTile)
     {
         float weaponDamange = attacker.inventory.equippedWeapon.GetDamage();
@@ -238,13 +302,13 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         return weaponDamange * hitChance;
     }
 
-    //Overload for simplicity
+    // Overload for simplicity
     public float CalculateHitChance(Unit attacker, Unit defender)
     {
         return CalculateHitChance(attacker, defender, attacker.currentTile);
     }
 
-    //Calculate Hit Chance
+    // Calculate Hit Chance
     public float CalculateHitChance(Unit attacker, Unit defender, Tile attackerTile)
     {
         int distance = grid.GetTileDistance(attackerTile, defender.currentTile);

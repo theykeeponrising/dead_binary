@@ -1900,6 +1900,7 @@ GameObject:
   - component: {fileID: 339635957}
   - component: {fileID: 339635956}
   - component: {fileID: 339635958}
+  - component: {fileID: 339635961}
   - component: {fileID: 339635959}
   - component: {fileID: 339635960}
   m_Layer: 0
@@ -2169,6 +2170,26 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &339635961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 339635955}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 514e5de22c3342846b110670760763c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unitActions:
+    move: {fileID: -6212773934008074624, guid: 5c29c73f40f8a3949a95f048a3d37241, type: 3}
+    shoot: {fileID: -7717606581783689183, guid: f2ae4ad16d3449247a8408b557533bac, type: 3}
+    swap: {fileID: 6676440689040728651, guid: 5dc0ea1708a5d304496c237b3ab1d71a, type: 3}
+    reload: {fileID: -915205017902729285, guid: 82c271c22c54dd64fac70d3c4a786234, type: 3}
+    inventory: {fileID: 2921273104778741837, guid: 09849cce6048d5447b546dd512e27cfd, type: 3}
+    item_grenade: {fileID: 3652251968811846348, guid: 377566d31a1fa644d9c71d42d954a6df, type: 3}
+    item_medkit: {fileID: 57096388351021912, guid: 5f2152e6e0a445b42b738daa07df58a4, type: 3}
 --- !u!1 &353174119
 GameObject:
   m_ObjectHideFlags: 0

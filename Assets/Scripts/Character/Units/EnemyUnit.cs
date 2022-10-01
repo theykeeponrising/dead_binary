@@ -62,7 +62,8 @@ public class EnemyUnit : Unit
         //If no ammo, either reload or switch weapon
         if (inventory.equippedWeapon.stats.ammoCurrent == 0)
         {
-            GetActor().ReloadAction();
+            UnitAction reloadAction = GetActor().FindActionOfType(typeof(UnitActionReload));
+            reloadAction.UseAction();
             enemyActions.Add(Action.action_reload);
             stats.actionPointsCurrent--;
         }
@@ -113,7 +114,8 @@ public class EnemyUnit : Unit
                         currentTarget = other;
                     }
                 }
-                GetActor().ProcessAction(Action.action_shoot, null, null, currentTarget);
+                UnitAction shootAction = GetActor().FindActionOfType(typeof(UnitActionShoot));
+                GetActor().ProcessAction(shootAction, null, null, currentTarget);
                 enemyActions.Add(Action.action_shoot);
             } 
 
@@ -179,8 +181,11 @@ public class EnemyUnit : Unit
         }
 
         //Perform actions
-        GetActor().ProcessAction(Action.action_move, bestTile, null, null);
-        GetActor().ProcessAction(Action.action_shoot, null, null, currentTarget);
+        UnitAction moveAction = GetActor().FindActionOfType(typeof(UnitActionMove));
+        UnitAction shootAction = GetActor().FindActionOfType(typeof(UnitActionShoot));
+        
+        GetActor().ProcessAction(moveAction, bestTile, null, null);
+        GetActor().ProcessAction(shootAction, null, null, currentTarget);
 
         List<Action> enemyActions = new List<Action>();
         enemyActions.Add(Action.action_move);

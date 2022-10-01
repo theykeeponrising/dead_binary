@@ -123,12 +123,15 @@ public class CharacterAnimator
         return body.chest.transform.position;
     }
 
-    public bool AnimatorIsPlaying()
+    public bool AnimatorIsPlaying(string animationName)
     {
         // True/False whether an animation is currently playing on the equipped weapon layer.
+        // Should always be called during a LateUpdate
         // Note -- lengthy transitions will not work
 
-        return animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).length > animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).normalizedTime;
+        if (animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName(animationName))
+            return animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).length > animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).normalizedTime;
+        return false;
     }
 
     public bool AnimationPause()
@@ -168,15 +171,9 @@ public class CharacterAnimator
                 animator.Play("Shoot");
                 break;
             
-            case (AnimationEventContext.RELOAD):
-                unit.AddFlag("reloading");
-                animator.Play("Reload");
-                break;
-            
             case (AnimationEventContext.AIMING):
                 unit.AddFlag("aiming");
                 animator.SetBool("aiming", true);
-                animator.updateMode = AnimatorUpdateMode.AnimatePhysics;
 
                 //Non-monobehaviour, so coroutine called through Character
                 unit.StartCoroutine(WaitForAiming());
@@ -185,17 +182,6 @@ public class CharacterAnimator
             case (AnimationEventContext.DODGE):
                 unit.AddFlag("dodging");
                 animator.SetTrigger("dodge");
-                break;
-
-            // Stow weapon animation is completed
-            case (AnimationEventContext.STOW):
-                unit.AddFlag("stowing");
-                animator.Play("Stow");
-                break;
-
-            // Draw weapon animation is completed
-            case (AnimationEventContext.DRAW):
-                unit.AddFlag("drawing");
                 break;
 
             // Move
@@ -230,13 +216,6 @@ public class CharacterAnimator
                 ClearShootingFlags();
                 break;
             
-            case (AnimationEventContext.RELOAD):
-                // Reload weapon animation is completed
-                unit.RemoveFlag("reloading");
-                unit.inventory.equippedWeapon.stats.ammoCurrent = unit.inventory.equippedWeapon.stats.ammoMax;
-                CoverCrouch();
-                break;
-            
             case (AnimationEventContext.AIMING):
                 animator.SetBool("aiming", false);
                 animator.updateMode = AnimatorUpdateMode.Normal;
@@ -245,18 +224,6 @@ public class CharacterAnimator
             
             case (AnimationEventContext.DODGE):
                 unit.RemoveFlag("dodging");
-                break;
-
-            // Stow weapon animation is completed
-            case (AnimationEventContext.STOW):
-                unit.RemoveFlag("stowing");
-                unit.inventory.equippedWeapon.gameObject.SetActive(false);
-                animator.SetLayerWeight(unit.inventory.equippedWeapon.weaponLayer, 0);
-                break;
-
-            // Draw weapon animation is completed
-            case (AnimationEventContext.DRAW):
-                unit.RemoveFlag("drawing");
                 break;
 
             // Move
@@ -281,14 +248,23 @@ public class CharacterAnimator
         switch (context)
         {
             case (AnimationEventContext.TAKE_DAMAGE):
-                unit.GetActor().targetCharacter.GetAnimator().TakeDamageEffect(unit.inventory.equippedWeapon);
+                unit.GetActor().targetCharacter.GetAnimator().TakeDamageEffect(unit.GetEquippedWeapon());
                 break;
         }
     }
 
     public void SetBool(string flag, bool state)
     {
+        // Sets animator bool
+
         animator.SetBool(flag, state);
+    }
+
+    public void SetUpdateMode(AnimatorUpdateMode updateMode = AnimatorUpdateMode.Normal)
+    {
+        // Sets animator update mode, defaults to normal
+
+        animator.updateMode = updateMode;
     }
 
     IEnumerator WaitForAiming()
@@ -461,5 +437,12 @@ public class CharacterAnimator
     public void SetAnimationSpeed(float animSpeed)
     {
         animator.SetFloat("animSpeed", animSpeed);
+    }
+
+    public void Play(string animation)
+    {
+        // Quick reference to play animation
+
+        animator.Play(animation);
     }
 }
