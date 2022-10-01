@@ -271,10 +271,10 @@ public class CharacterActor
 
         // Wait until character comes to a stop before completing movement action
         if (moveTargetImmediate == moveTargetDestination)
-            while (Vector3.Distance(unit.transform.position, moveTargetImmediate.standPoint) > 0)
+            while (Vector3.Distance(unit.transform.position, moveTargetImmediate.standPoint) > 0.01)
                 yield return new WaitForSeconds(0.001f);
         else
-            while (Vector3.Distance(unit.transform.position, moveTargetImmediate.transform.position) > 0)
+            while (Vector3.Distance(unit.transform.position, moveTargetImmediate.transform.position) > 0.01)
                 yield return new WaitForSeconds(0.001f);
         unit.transform.position = new Vector3(unit.currentTile.standPoint.x, 0f, unit.currentTile.standPoint.z);
 
