@@ -88,7 +88,7 @@ public class Action
     public static Action action_chooseItem = new Action("Choose Item", ActionList.CHOOSEITEM, null, 0, 0, ActionButtons.btn_action_chooseItem, ActionRequirement.NONE);
     public static Action action_useItem = new Action("Use Item", ActionList.USEITEM, null, 1, 0, ActionButtons.btn_action_useItem, ActionRequirement.NONE);
     public static Action action_none = new Action("Do nothing.", ActionList.NONE, null, 1, 0, null, ActionRequirement.NONE);
-    public static Action action_item_medkit = new Action("Medkit", ActionList.MEDKIT, "Heals a target friendly unit", 1, 0, ActionButtons.btn_action_medkit, new ActionRequirement[] { ActionRequirement.AP, ActionRequirement.QUANTITY });
+    public static Action action_item_medkit = new Action("Medkit", ActionList.USEITEM, "Heals a target friendly unit", 1, 0, ActionButtons.btn_action_medkit, new ActionRequirement[] { ActionRequirement.AP, ActionRequirement.QUANTITY });
     public static Action action_item_grenade = new Action("Grenade", ActionList.USEITEM, "Damages a target enemy unit", 1, 0, ActionButtons.btn_action_grenade, new ActionRequirement[] { ActionRequirement.AP, ActionRequirement.QUANTITY });
     public static Action action_item_grenade_heal = new Action("Healnade", ActionList.USEITEM, "A grenade that heals friendly units", 1, 0, ActionButtons.btn_action_grenade, new ActionRequirement[] { ActionRequirement.AP, ActionRequirement.QUANTITY });
     public static Action action_item_grenade_win = new Action("\"Win\" Grenade", ActionList.USEITEM, "For use when frustrated with the robots", 1, 0, ActionButtons.btn_action_grenade, new ActionRequirement[] { ActionRequirement.AP, ActionRequirement.QUANTITY });
