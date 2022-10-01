@@ -11,7 +11,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
 {
     //List of units on opposing faction that are alive
     protected List<Unit> oppFactionUnits;
-    public Grid grid;
+    public MapGrid grid;
     // lol
     protected CharacterActor charActor;
     protected CharacterAnimator charAnim;
