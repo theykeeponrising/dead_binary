@@ -14,6 +14,10 @@ public class EnemyUnit : Unit
         Custom,
     };
 
+    public enum CoverScalingType {
+        LINEAR
+    };
+
     public Strategy unitStrategy;
     //Prefer doing damage
     public float DamageWeight;
@@ -68,25 +72,25 @@ public class EnemyUnit : Unit
             case Strategy.Aggressive:
                 KillWeight = 10.0f;
                 DamageWeight = 1.2f;
-                CoverWeight = 1.0f;
+                CoverWeight = 2.0f;
                 ConserveAmmoWeight = 0.5f;
-                ApproachWeight = 0.6f;
+                ApproachWeight = 0.4f;
                 LeaveCoverPenalty = 0.5f;
                 break;
             case Strategy.Defensive:
                 KillWeight = 5.0f;
                 DamageWeight = 1.0f;
-                CoverWeight = 2.0f;
+                CoverWeight = 3.0f;
                 ConserveAmmoWeight = 1.0f;
-                ApproachWeight = 0.4f;
+                ApproachWeight = 0.2f;
                 LeaveCoverPenalty = 0.5f;
                 break;
             case Strategy.Default:
                 KillWeight = 7.0f;
                 DamageWeight = 1.0f;
-                CoverWeight = 2.0f;
+                CoverWeight = 10.0f;
                 ConserveAmmoWeight = 0.5f;
-                ApproachWeight = 0.5f;
+                ApproachWeight = 0.3f;
                 LeaveCoverPenalty = 0.5f;
                 break;
         }
@@ -191,6 +195,7 @@ public class EnemyUnit : Unit
         return enemyActions;
     }
 
+
     private EnemyAction CreateMoveAction(Tile targetTile)
     {
         return new EnemyAction(Action.action_move, targetTile, null, null);
@@ -252,7 +257,7 @@ public class EnemyUnit : Unit
         List<Unit> oppFactionUnits = GetOppFactionUnits();
 
         //If current tile is cover, don't add additional bonus
-        bool prevCover = CheckIfCovered(GetNearestTarget(currentTile, oppFactionUnits));
+        bool prevCover = grid.CheckIfCovered(GetNearestTarget(currentTile, oppFactionUnits).currentTile, currentTile);
         bool isCover = false;
 
         Tile unitTile = currentTile;
@@ -262,7 +267,7 @@ public class EnemyUnit : Unit
             //The last tile we move to will determine the cover value
             if (enemyAction.ActionType == Action.action_move)
             {                
-                isCover = CheckIfCovered(GetNearestTarget(enemyAction.Tile, oppFactionUnits), enemyAction.Tile);
+                isCover = grid.CheckIfCovered(GetNearestTarget(enemyAction.Tile, oppFactionUnits).currentTile, enemyAction.Tile);
                 
                 //Update the tile we do calculations with
                 unitTile = enemyAction.Tile;
@@ -270,21 +275,25 @@ public class EnemyUnit : Unit
             {
                 numShots++;
                 //Calculated expected damage, if it would kill, etc.
-                float damage = CalculateExpectedDamage(this, enemyAction.ContextChar, currentTile);
+                float damage = CalculateExpectedDamage(this, enemyAction.ContextChar, unitTile);
 
                 //TODO: Make this probabilistic (i.e. numKill += prob(kill))
                 if (damage > enemyAction.ContextChar.GetHealth()) numKill += 1.0f;
                 totalExpectedDamage += Mathf.Min(enemyAction.ContextChar.GetHealth(), damage);
-                // if(debug) Debug.Log(string.Format("Would kill? {0}, Damage: {1}", numKill, damage));
             }
         }
+
+        //Currently using best shoot target as a proxy for closest/most dangerous enemy
+        //TODO: Replace best shoot target with enemy that would do highest expected damage or something
 
         //Make the unit approach the player
         Unit shootTarget; float expectedDamage;
         GetBestShootTarget(oppFactionUnits, currentTile, out shootTarget, out expectedDamage);
+        int oldDist, newDist = 0;
+
         if (shootTarget) {
-            int oldDist = grid.GetTileDistance(currentTile, shootTarget.currentTile);
-            int newDist = grid.GetTileDistance(unitTile, shootTarget.currentTile);
+            oldDist = grid.GetTileDistance(currentTile, shootTarget.currentTile);
+            newDist = grid.GetTileDistance(unitTile, shootTarget.currentTile);
             numTilesCloserToBestShootTarget = oldDist - newDist;
         }
 
@@ -292,11 +301,31 @@ public class EnemyUnit : Unit
         if (actions.Count > 0) 
         {
             float shootActionValue = (totalExpectedDamage * DamageWeight) + numKill * KillWeight - numShots * ConserveAmmoWeight;
-            float coverActionValue = (System.Convert.ToSingle(isCover) * CoverWeight - System.Convert.ToSingle(prevCover)) * LeaveCoverPenalty;
+            float coverActionValue = (System.Convert.ToSingle(isCover) * CoverWeight * GetCoverWeightScaling(newDist, CoverScalingType.LINEAR));
+            float leaveCoverPenalty = System.Convert.ToSingle(prevCover) * LeaveCoverPenalty;
             float moveActionValue = numTilesCloserToBestShootTarget * ApproachWeight;
             actionValue = Mathf.Max((shootActionValue + coverActionValue + moveActionValue) / actions.Count, 0.1f);
         }
         return actionValue;
+    }
+
+    //Scale the cover weight based on how close the unit is to the enemy unit
+    //The closer it is, the more that being under cover should matter
+    //TODO: Could maybe base this on enemy hit% instead of on tile distance
+    private float GetCoverWeightScaling(int tileDist, CoverScalingType scaling)
+    {
+        switch (scaling)
+        {
+            case CoverScalingType.LINEAR:
+                return ScaleCoverLinear(tileDist);
+            default:
+                return 0.0f;
+        }
+    }
+
+    private float ScaleCoverLinear(int tileDist, int maxDist=12)
+    {
+        return (maxDist - tileDist) / maxDist;
     }
 
     private float CalculateActionValue(EnemyAction action)
@@ -312,6 +341,7 @@ public class EnemyUnit : Unit
         tile = null;
         foreach (Tile nextTile in tilesInRange)
         {
+            if (nextTile == currentTile) continue;
             EnemyAction action = CreateMoveAction(nextTile);
             float actionVal = CalculateActionValue(action);
             if (actionVal > bestActionVal)
@@ -375,6 +405,7 @@ public class EnemyUnit : Unit
 
         foreach (Tile tile in tilesInRange)
         {
+            if (tile == currentTile) continue;
             Unit bestTarget;
             float expectedDamage;
             GetBestShootTarget(oppFactionUnits, tile, out bestTarget, out expectedDamage);

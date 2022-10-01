@@ -140,7 +140,7 @@ public class MapGrid : MonoBehaviour
         for (int currentIteration = 0; currentIteration < tileDist; currentIteration++)
         {
             List<Tile> nextTiles = new List<Tile>();
-            foreach (Tile tile in foundTiles)
+            foreach (Tile tile in new List<Tile>(foundTiles))
             {
                 // Ensures tiles only use the closest path if found by multiple tiles
                 if (tile.nearestTile == null)
@@ -165,13 +165,14 @@ public class MapGrid : MonoBehaviour
                         continue;
                     if (tile2.nearestTile == null)
                         tile2.nearestTile = tile;
-                    if (!nextTiles.Contains(tile2))
+                    if (!nextTiles.Contains(tile2) && !tilesInRange.Contains(tile2))
                         nextTiles.Add(tile2);
                 }
             }
             tilesInRange.AddRange(nextTiles);
             foundTiles = nextTiles;
         }
+        Debug.Log(tilesInRange.Count);
         return tilesInRange;
     }
 
@@ -216,5 +217,33 @@ public class MapGrid : MonoBehaviour
             pos += tile.gameObject.transform.position / tiles.Count;
         }
         return pos;
+    }
+
+    public bool CheckIfCovered(Tile attackerTile, Tile defenderTile)
+    {
+        // Checks if any cover objects are between character and attacker
+        // Does raycast from character to attacker in order to find closest potential cover object
+
+        // NOTE -- We use the tiles for raycast, not the characters or weapons
+        // This is to prevent animations or standpoints from impacting the calculation
+
+        //TODO: Rework this to iterate through tiles, similar to weapon line of sight logic
+
+        Vector3 defenderPosition = defenderTile.transform.position;
+        Vector3 attackerPosition = attackerTile.transform.position;
+
+        Vector3 direction = (attackerPosition - defenderPosition);
+        RaycastHit hit;
+        Ray ray = new Ray(defenderPosition, direction);
+        Debug.DrawRay(defenderPosition, direction, Color.red, 20, true); // For debug purposes
+        int layerMask = (1 << LayerMask.NameToLayer("CoverObject"));
+
+        // If cover object detected, and is the target character's current cover, return true
+        if (Physics.Raycast(ray, out hit, direction.magnitude * Mathf.Infinity, layerMask))
+        {
+            if (hit.collider.GetComponent<CoverObject>() && hit.collider.GetComponent<CoverObject>() == defenderTile.cover)
+                return true;
+        }
+        return false;
     }
 }

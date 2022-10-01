@@ -338,7 +338,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         // Calculate chance to be hit
         float hitModifier = GlobalManager.globalHit + attacker.stats.aim - stats.dodge - weaponAccuracyPenalty;
         // Add cover bonus if not being flanked
-        if (currentCover && CheckIfCovered(attacker)) hitModifier -= currentCover.CoverBonus();
+        if (defender.currentCover && grid.CheckIfCovered(attackerTile, defender.currentTile)) hitModifier -= defender.currentCover.CoverBonus();
         
         float hitChance = weaponAccuracyModifier * hitModifier;
         return hitChance / 100.0f;
@@ -444,62 +444,6 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
 
         if (inventory.equippedWeapon)
             inventory.equippedWeapon.DropGun();
-    }
-
-    public bool CheckIfCovered(Unit attacker)
-    {
-        // Checks if any cover objects are between character and attacker
-        // Does raycast from character to attacker in order to find closest potential cover object
-
-        // NOTE -- We use the tiles for raycast, not the characters or weapons
-        // This is to prevent animations or standpoints from impacting the calculation
-
-        //TODO: Rework this to iterate through tiles, similar to weapon line of sight logic
-
-        Vector3 defenderPosition = currentTile.transform.position;
-        Vector3 attackerPosition = attacker.currentTile.transform.position;
-
-        Vector3 direction = (attackerPosition - defenderPosition);
-        RaycastHit hit;
-        Ray ray = new Ray(defenderPosition, direction);
-        Debug.DrawRay(defenderPosition, direction, Color.red, 20, true); // For debug purposes
-        int layerMask = (1 << LayerMask.NameToLayer("CoverObject"));
-
-        // If cover object detected, and is the target character's current cover, return true
-        if (Physics.Raycast(ray, out hit, direction.magnitude * Mathf.Infinity, layerMask))
-        {
-            if (hit.collider.GetComponent<CoverObject>() && hit.collider.GetComponent<CoverObject>() == currentCover)
-                return true;
-        }
-        return false;
-    }
-
-    public bool CheckIfCovered(Unit attacker, Tile defenderTile)
-    {
-        // Checks if any cover objects are between character and attacker
-        // Does raycast from character to attacker in order to find closest potential cover object
-
-        // NOTE -- We use the tiles for raycast, not the characters or weapons
-        // This is to prevent animations or standpoints from impacting the calculation
-
-        //TODO: Rework this to iterate through tiles, similar to weapon line of sight logic
-
-        Vector3 defenderPosition = defenderTile.transform.position;
-        Vector3 attackerPosition = attacker.currentTile.transform.position;
-
-        Vector3 direction = (attackerPosition - defenderPosition);
-        RaycastHit hit;
-        Ray ray = new Ray(defenderPosition, direction);
-        Debug.DrawRay(defenderPosition, direction, Color.red, 20, true); // For debug purposes
-        int layerMask = (1 << LayerMask.NameToLayer("CoverObject"));
-
-        // If cover object detected, and is the target character's current cover, return true
-        if (Physics.Raycast(ray, out hit, direction.magnitude * Mathf.Infinity, layerMask))
-        {
-            if (hit.collider.GetComponent<CoverObject>() && hit.collider.GetComponent<CoverObject>() == defenderTile.cover)
-                return true;
-        }
-        return false;
     }
 
     public Unit GetNearestTarget(Tile unitTile, List<Unit> targets)
