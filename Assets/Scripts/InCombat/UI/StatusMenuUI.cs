@@ -38,6 +38,7 @@ public class StatusMenuUI : MonoBehaviour
         playerInput.Disable();
     }
 
+    // Better subscribe on user input events, instead of invoking unnecessarry checks in every frame.
     public bool HandleKeyPress()
     {
         bool keyPressed = false;
@@ -48,13 +49,17 @@ public class StatusMenuUI : MonoBehaviour
             keyPressed = true;
         }
 
-        if (playerInput.Controls.InputJoystick.ReadValue<Vector2>().x != 0)
+        float joystickX = playerInput.Controls.InputJoystick.ReadValue<Vector2>().x;
+
+        if (joystickX != 0)
         {
-            shouldQuit = !shouldQuit;
-            int alpha = 0;
-            if (shouldQuit) alpha = 1;
-            yesPanel.GetComponent<CanvasGroup>().alpha = alpha;
-            noPanel.GetComponent<CanvasGroup>().alpha = 1 - alpha;
+            int yesPanelAlpha = Mathf.CeilToInt(-joystickX);
+            int noPanelAlpha = 1 - yesPanelAlpha;
+
+            shouldQuit = yesPanelAlpha == 1;
+
+            yesPanel.GetComponent<CanvasGroup>().alpha = yesPanelAlpha;
+            noPanel.GetComponent<CanvasGroup>().alpha = noPanelAlpha;
             keyPressed = true;
         }
 
