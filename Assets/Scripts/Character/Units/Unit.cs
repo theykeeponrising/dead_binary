@@ -7,6 +7,18 @@ using UnityEngine.EventSystems;
 //Implementation of character/unit actions should be done in CharacterActor.cs
 //Implementation of character/unit animation logic should be done in CharacterAnimator.cs
 //Implementation of character/unit SFX logic should be in CharacterSFX.cs
+public enum FlagType {
+    MOVE,
+    SHOOT,
+    RELOAD,
+    VAULT,
+    DODGE,
+    AIM,
+    STOW,
+    DRAW,
+    DEAD
+};
+
 public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHandler
 {
     //List of units on opposing faction that are alive
@@ -17,7 +29,9 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
     protected CharacterAnimator charAnim;
     protected CharacterSFX charSFX;
 
-    public List<string> flags = new List<string>();
+    public List<FlagType> flags = new List<FlagType>();
+    
+    public int numActionsInFlight = 0;
     
     [HideInInspector] public Inventory inventory;
     [HideInInspector] public Healthbar healthbar;
@@ -122,7 +136,6 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
 
     public virtual void OnTurnStart()
     {
-        oppFactionUnits = new List<Unit>();
         RefreshActionPoints();
     }
 
@@ -187,6 +200,74 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         stats.actionPointsCurrent = stats.actionPointsMax;
     }
 
+    //TODO: Move this to the individual action classes, and add delegates/inherited method
+    public void ActionStart(Action action)
+    {
+        switch (action.context)
+        {
+            case ActionList.MOVE:
+                numActionsInFlight++;
+                break;
+            case ActionList.SHOOT:
+                numActionsInFlight++;
+                break;
+            case ActionList.RELOAD:
+                numActionsInFlight++;
+                break;
+            case ActionList.SWAP:
+                numActionsInFlight++;
+                break;
+            case ActionList.USEITEM:
+                numActionsInFlight++;
+                break;
+            default:
+                break; 
+        }
+    }
+
+    //TODO: Move this to the individual action classes, and add delegates/inherited method
+    public void ActionComplete(Action action)
+    {
+        switch (action.context)
+        {
+            case ActionList.MOVE:
+                numActionsInFlight--;
+                break;
+            case ActionList.SHOOT:
+                numActionsInFlight--;
+                break;
+            case ActionList.RELOAD:
+                numActionsInFlight--;
+                break;
+            case ActionList.SWAP:
+                numActionsInFlight--;
+                break;
+            case ActionList.USEITEM:
+                numActionsInFlight--;
+                break;
+            default:
+                break; 
+        }
+        if (numActionsInFlight < 0) Debug.LogError(string.Format("Number of actions in flight: {0}", numActionsInFlight));
+    }
+
+    //Basic action callback
+    //TODO: Move this to action classes
+    public void ActionCompleteCallback()
+    {
+
+    }
+
+    public int GetHealth()
+    {
+        return stats.healthCurrent;
+    }
+
+    public bool WouldKill(float damage)
+    {
+        return damage >= stats.healthCurrent;
+    }
+
     public void RestoreHealth(int amount)
     {
         // Heals character by the indicated amount
@@ -200,7 +281,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
     //TODO: Should maybe put this in the PlayerTurn/EnemyTurnProcess so we don't duplicate work or something
     public List<Unit> GetOppFactionUnits()
     {
-        if (oppFactionUnits != null && oppFactionUnits.Count != 0) return oppFactionUnits;
+        List<Unit> oppFactionUnits = new List<Unit>();
         Unit[] gos = GameObject.FindObjectsOfType<Unit>();
 
         foreach (var v in gos)
@@ -231,10 +312,12 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
     }
 
 
-    protected float CalculateExpectedDamage(Unit attacker, Unit defender, Tile attackerTile)
+    protected float CalculateExpectedDamage(Unit attacker, Unit defender, Tile attackerTile, bool debug=false)
     {
         float weaponDamange = attacker.inventory.equippedWeapon.GetDamage();
         float hitChance = CalculateHitChance(attacker, defender, attackerTile);
+        if (debug) Debug.Log(string.Format("Wep Damage {0}, Hit Chance: {1}", weaponDamange, hitChance));
+
         return weaponDamange * hitChance;
     }
 
@@ -255,7 +338,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         // Calculate chance to be hit
         float hitModifier = GlobalManager.globalHit + attacker.stats.aim - stats.dodge - weaponAccuracyPenalty;
         // Add cover bonus if not being flanked
-        if (currentCover && CheckIfCovered(attacker)) hitModifier -= currentCover.CoverBonus();
+        if (defender.currentCover && grid.CheckIfCovered(attackerTile, defender.currentTile)) hitModifier -= defender.currentCover.CoverBonus();
         
         float hitChance = weaponAccuracyModifier * hitModifier;
         return hitChance / 100.0f;
@@ -292,7 +375,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         if (!RollForHit(attacker, distanceToTarget))
         {
             if (currentCover) currentCover.Impact();
-            AddFlag("dodging");
+            AddFlag(FlagType.DODGE);
             Debug.Log(string.Format("{0} missed target {1}!", attacker.attributes.name, attributes.name));
             GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.DODGE, true);
             return;
@@ -317,21 +400,25 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
     {
         // Inflict damage on character
         Debug.Log(string.Format("{0} has attacked {1} for {2} damage!", attacker.attributes.name, attributes.name, damage)); // This will eventually be shown visually instead of told
-        stats.healthCurrent -= damage;
+
+        stats.healthCurrent -= Mathf.Min(damage, stats.healthCurrent);
         GetComponentInChildren<Healthbar>().UpdateHealthPoints();
 
         // Character death
-        if (stats.healthCurrent <= 0) StartCoroutine(Death(attacker, direction, distance, impactForce));
+        if (stats.healthCurrent <= 0) 
+        {
+            AddFlag(FlagType.DEAD);
+            StartCoroutine(Death(attacker, direction, distance, impactForce));
+        }
     }
 
     IEnumerator Death(Unit attacker, Vector3 attackDirection, float distance, float impactForce)
     {
-        AddFlag("dead");
         // Disables animator, turns on ragdoll effect, and applies a small force to push the character over
 
         // Wait for attacker animation to complete
        // while (attacker.GetAnimator().AnimatorIsPlaying())
-       while (attacker.GetFlag("shooting"))
+       while (attacker.GetFlag(FlagType.SHOOT))
             yield return new WaitForSeconds(0.01f);
 
         // Disable top collider
@@ -359,35 +446,24 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
             inventory.equippedWeapon.DropGun();
     }
 
-    public bool CheckIfCovered(Unit attacker)
+    public Unit GetNearestTarget(Tile unitTile, List<Unit> targets)
     {
-        // Checks if any cover objects are between character and attacker
-        // Does raycast from character to attacker in order to find closest potential cover object
-
-        // NOTE -- We use the tiles for raycast, not the characters or weapons
-        // This is to prevent animations or standpoints from impacting the calculation
-
-        //TODO: Rework this to iterate through tiles, similar to weapon line of sight logic
-
-        Vector3 defenderPosition = currentTile.transform.position;
-        Vector3 attackerPosition = attacker.currentTile.transform.position;
-
-        Vector3 direction = (attackerPosition - defenderPosition);
-        RaycastHit hit;
-        Ray ray = new Ray(defenderPosition, direction);
-        Debug.DrawRay(defenderPosition, direction, Color.red, 20, true); // For debug purposes
-        int layerMask = (1 << LayerMask.NameToLayer("CoverObject"));
-
-        // If cover object detected, and is the target character's current cover, return true
-        if (Physics.Raycast(ray, out hit, direction.magnitude * Mathf.Infinity, layerMask))
+        if (targets.Count == 0) return null;
+        float minDistance = float.MaxValue;
+        Unit closestUnit = targets[0];
+        foreach (Unit target in targets)
         {
-            if (hit.collider.GetComponent<CoverObject>() && hit.collider.GetComponent<CoverObject>() == currentCover)
-                return true;
+            float tileDist = grid.GetTileDistance(unitTile, target.currentTile);
+            if (tileDist < minDistance)
+            {
+                minDistance = tileDist;
+                closestUnit = target;
+            }
         }
-        return false;
+        return closestUnit;
     }
 
-    public void AddFlag(string flag)
+    public void AddFlag(FlagType flag)
     {
         // Handler for adding new flags
         // Used to prevent duplicate flags
@@ -396,7 +472,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
             flags.Add(flag);
     }
 
-    public void RemoveFlag(string flag)
+    public void RemoveFlag(FlagType flag)
     {
         // Handler for adding new flags
         // Used for consistency with AddFlag function
@@ -405,7 +481,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
             flags.Remove(flag);
     }
 
-    public bool GetFlag(string flag)
+    public bool GetFlag(FlagType flag)
     {
         return flags.Contains(flag);
     }
@@ -413,6 +489,6 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
     //Used by EnemyUnit to determine when to move on to the next unit
     public bool IsActing()
     {
-        return GetFlag("moving")|| GetFlag("attacking") || GetFlag("stowing") || GetFlag("reloading") || GetFlag("aiming") || GetFlag("dodging");
+        return numActionsInFlight > 0;
     }
 }

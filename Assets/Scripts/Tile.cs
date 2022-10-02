@@ -111,7 +111,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     }
 
     //TODO: Move this to grid.cs, and simplify
-    public List<Tile> FindCost(Tile findTile, int maxDist = 10)
+    public List<Tile> FindCost(Tile findTile, int maxDist = 10, bool debug=false)
     {
         // Finds the nearest path to the destination tile
         // Returns path of tiles in ordered list format
@@ -129,25 +129,13 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         nearestTile = this;
 
         // How many search iterations to perform
-        int currentIteration = 1;
+        int currentIteration = 0;
 
         // Create a list to keep track of all tiles found during iteration
-        List<Tile> foundTiles = new List<Tile>(neighbours);
+        List<Tile> foundTiles = new List<Tile> { this };
 
         // To randomize path movement
         //var rnd = new System.Random();
-
-        // If destination is adjacent to current tile, skip tile find
-        if (foundTiles.Contains(findTile))
-        {
-            if (isTilePathObstructed(this, findTile))
-                foundTiles.Remove(findTile);
-            else
-            {
-                findTile.nearestTile = this;
-                return FindPath(findTile);
-            }
-        }
 
         // Begin iterating through nearby tiles
         while (currentIteration < maxDist)
@@ -164,7 +152,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                 }
 
                 // If tile path is obstructed, remove it from the list and allow it to be found by alternative paths
-                if (tile.nearestTile == this && isTilePathObstructed(this, tile))
+                if (tile.nearestTile == this && grid.isTilePathObstructed(this, tile))
                 {
                     tile.nearestTile = null;
                     continue;
@@ -176,7 +164,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                 {
                     if (!tile2.isTileTraversable() && tile2 != findTile)
                         continue;
-                    if (isTilePathObstructed(tile, tile2))
+                    if (grid.isTilePathObstructed(tile, tile2))
                         continue;
                     if (tile2.nearestTile == null)
                         tile2.nearestTile = tile;
@@ -195,22 +183,6 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public bool isTileTraversable()
     {
         return !this.occupant || this.occupant.isTraversable;
-    }
-
-    public bool isTilePathObstructed(Tile tileStart, Tile tileDest)
-    {
-        // Returns True/False if any obstructions are blocking the path
-
-        // First, check if both tiles have any cover object
-        if (!tileStart.cover || !tileDest.cover)
-            return false;
-
-        // Then, check if the cover object is full sized or vaultable
-        if (tileDest.cover.coverSize != CoverObject.CoverSize.full && tileDest.cover.canVaultOver)
-            return false;
-
-        // Lastly, check if both tiles share the same cover object
-        return tileStart.cover == tileDest.cover;
     }
 
     private List<Tile> FindPath(Tile reverseTile)

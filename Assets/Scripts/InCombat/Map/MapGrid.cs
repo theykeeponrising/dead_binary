@@ -97,30 +97,104 @@ public class MapGrid : MonoBehaviour
     }
 
     //Get all tiles within a certain distance of the start tile
+    // public List<Tile> GetTilesInRange(Vector3 startPos, int tileDist)
+    // {
+    //     List<Tile> tilesInRange = new List<Tile>();
+    //     startPos = NormalizePositionToGrid(startPos);
+    //     for (int i = -tileDist; i <= tileDist; i++)
+    //     {
+    //         for (int j = -tileDist; j <= tileDist; j++)
+    //         {
+                
+    //             if (Mathf.Abs(i) + Math.Abs(j) > tileDist) continue;
+    //             Vector3 nextPos = startPos + new Vector3((float) i, 0.0f, (float) j);
+    //             int flattened_index = GetFlattenedIndex(nextPos);
+                
+
+    //             //Ignore any indices that would be out of bounds
+    //             if (flattened_index >= 0)
+    //             {
+    //                 Tile nextTile = grid[flattened_index];
+    //                 if (nextTile.isTileTraversable()) tilesInRange.Add(nextTile);
+    //             }
+    //         }
+    //     }
+    //     return tilesInRange;
+    // }
+
+    //Get all tiles within a certain distance of the start tile
     public List<Tile> GetTilesInRange(Vector3 startPos, int tileDist)
     {
         List<Tile> tilesInRange = new List<Tile>();
-        startPos = NormalizePositionToGrid(startPos);
-        for (int i = -tileDist; i <= tileDist; i++)
-        {
-            for (int j = -tileDist; j <= tileDist; j++)
-            {
-                
-                if (Mathf.Abs(i) + Math.Abs(j) > tileDist) continue;
-                Vector3 nextPos = startPos + new Vector3((float) i, 0.0f, (float) j);
-                int flattened_index = GetFlattenedIndex(nextPos);
-                
+        tilesInRange.Add(GetTile(startPos));
 
-                //Ignore any indices that would be out of bounds
-                if (flattened_index >= 0)
+        // Reset path for tiles
+        foreach (Tile tile in grid)
+            tile.nearestTile = null;
+
+        // Prevent finding our current tile again
+        Tile currentTile = tilesInRange[0];
+        List<Tile> foundTiles = tilesInRange;
+
+        // Begin iterating through nearby tiles
+        for (int currentIteration = 0; currentIteration < tileDist; currentIteration++)
+        {
+            List<Tile> nextTiles = new List<Tile>();
+            foreach (Tile tile in new List<Tile>(foundTiles))
+            {
+                // Ensures tiles only use the closest path if found by multiple tiles
+                if (tile.nearestTile == null)
                 {
-                    Tile nextTile = grid[flattened_index];
-                    tilesInRange.Add(nextTile);
+                    tile.nearestTile = currentTile;
+                }
+
+                // If tile path is obstructed, remove it from the list and allow it to be found by alternative paths
+                if (tile.nearestTile == currentTile && isTilePathObstructed(currentTile, tile))
+                {
+                    tile.nearestTile = null;
+                    continue;
+                }
+
+                // Expands to next row of neighboring tiles, and returns path if destination tile is found
+                //foreach (Tile tile2 in tile.neighbours.OrderBy(item => rnd.Next()))
+                foreach (Tile tile2 in tile.neighbours)
+                {
+                    if (!tile2.isTileTraversable())
+                        continue;
+                    if (isTilePathObstructed(tile, tile2))
+                        continue;
+                    if (tile2.nearestTile == null)
+                        tile2.nearestTile = tile;
+                    if (!nextTiles.Contains(tile2) && !tilesInRange.Contains(tile2))
+                        nextTiles.Add(tile2);
                 }
             }
+            tilesInRange.AddRange(nextTiles);
+            foundTiles = nextTiles;
         }
         return tilesInRange;
     }
+
+    public bool isTilePathObstructed(Tile tileStart, Tile tileDest)
+    {
+        // Returns True/False if any obstructions are blocking the path
+
+        // Trivial check
+        if (tileStart == tileDest) return false;
+
+        // First, check if both tiles have any cover object
+        if (!tileStart.cover || !tileDest.cover)
+            return false;
+
+        // Then, check if the cover object is full sized or vaultable
+        if (tileDest.cover.coverSize != CoverObject.CoverSize.full && tileDest.cover.canVaultOver)
+            return false;
+
+        // Lastly, check if both tiles share the same cover object
+        return tileStart.cover == tileDest.cover;
+    }
+
+    
 
     //Path distance between two tiles (Note: Not straight-line distance!)
     public int GetTileDistance(Tile a, Tile b)
@@ -132,5 +206,43 @@ public class MapGrid : MonoBehaviour
         //Note: Not straight line distance
         float dist = Mathf.Abs(diff.x) + Mathf.Abs(diff.z);
         return Mathf.RoundToInt(dist / tileSpacing);
+    }
+
+    public Vector3 GetAverageTileLocation(List<Tile> tiles)
+    {
+        Vector3 pos = new Vector3(0.0f, 0.0f, 0.0f);
+        foreach (Tile tile in tiles)
+        {
+            pos += tile.gameObject.transform.position / tiles.Count;
+        }
+        return pos;
+    }
+
+    public bool CheckIfCovered(Tile attackerTile, Tile defenderTile)
+    {
+        // Checks if any cover objects are between character and attacker
+        // Does raycast from character to attacker in order to find closest potential cover object
+
+        // NOTE -- We use the tiles for raycast, not the characters or weapons
+        // This is to prevent animations or standpoints from impacting the calculation
+
+        //TODO: Rework this to iterate through tiles, similar to weapon line of sight logic
+
+        Vector3 defenderPosition = defenderTile.transform.position;
+        Vector3 attackerPosition = attackerTile.transform.position;
+
+        Vector3 direction = (attackerPosition - defenderPosition);
+        RaycastHit hit;
+        Ray ray = new Ray(defenderPosition, direction);
+        Debug.DrawRay(defenderPosition, direction, Color.red, 20, true); // For debug purposes
+        int layerMask = (1 << LayerMask.NameToLayer("CoverObject"));
+
+        // If cover object detected, and is the target character's current cover, return true
+        if (Physics.Raycast(ray, out hit, direction.magnitude * Mathf.Infinity, layerMask))
+        {
+            if (hit.collider.GetComponent<CoverObject>() && hit.collider.GetComponent<CoverObject>() == defenderTile.cover)
+                return true;
+        }
+        return false;
     }
 }

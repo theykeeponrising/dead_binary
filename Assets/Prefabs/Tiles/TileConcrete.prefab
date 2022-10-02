@@ -55,6 +55,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: TileConcrete
       objectReference: {fileID: 0}
+    - target: {fileID: 5467914658934915307, guid: c8b4bac8a0e022847bb1bdb68c977477, type: 3}
+      propertyPath: m_Size.y
+      value: 1.9957671
+      objectReference: {fileID: 0}
+    - target: {fileID: 5467914658934915307, guid: c8b4bac8a0e022847bb1bdb68c977477, type: 3}
+      propertyPath: m_Center.y
+      value: 0.89788306
+      objectReference: {fileID: 0}
     - target: {fileID: 6151756185518166924, guid: c8b4bac8a0e022847bb1bdb68c977477, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
