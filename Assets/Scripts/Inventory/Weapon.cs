@@ -127,6 +127,7 @@ public class Weapon : MonoBehaviour
         // Reload sound effect
 
         PlaySound(WeaponSound.RELOAD);
+        stats.ammoCurrent = stats.ammoMax;
     }
 
     public void Reload()

@@ -2501,7 +2501,7 @@ GameObject:
   - component: {fileID: 6291031834349497891}
   - component: {fileID: 7167511141153434010}
   - component: {fileID: 3296876834387543054}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Character
   m_TagString: Character
   m_Icon: {fileID: 0}
@@ -2704,11 +2704,11 @@ MonoBehaviour:
   objectTiles: []
   isTraversable: 0
   impactType: 0
+  currentTile: {fileID: 0}
   grid: {fileID: 0}
   flags: []
   inventory: {fileID: 0}
   healthbar: {fileID: 0}
-  currentTile: {fileID: 0}
   currentCover: {fileID: 0}
   availableActions: 0000000001000000020000000300000005000000
   stats:

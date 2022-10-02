@@ -5,6 +5,9 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
+
+
+
 //Handles all the animations+animation logic for a particular character
 //Currently includes flags, though maybe that should be moved elsewhere
 public class CharacterAnimator
@@ -23,6 +26,8 @@ public class CharacterAnimator
             bone = setBone;
         }
     }
+
+    public enum AnimationEventContext { SHOOT, TAKE_DAMAGE, AIMING, RELOAD, STOW, DRAW, DODGE, VAULT, FOOTSTEP_LEFT, FOOTSTEP_RIGHT, IDLE, MOVE, THROW };
     HumanBone[] humanBones;
     Animator animator;
     public class Body
@@ -43,8 +48,6 @@ public class CharacterAnimator
     Rigidbody[] ragdoll;
     [SerializeField] bool useTorsoTwist = true;
 
-    public enum AnimationEventContext { SHOOT, TAKE_DAMAGE, AIMING, RELOAD, STOW, DRAW, DODGE, VAULT, FOOTSTEP_LEFT, FOOTSTEP_RIGHT, IDLE, MOVE, THROW };
-
     public CharacterAnimator(Unit unit)
     {
         this.unit = unit;
@@ -60,6 +63,7 @@ public class CharacterAnimator
             new HumanBone(HumanBodyBones.UpperChest),
             new HumanBone(HumanBodyBones.Spine)
         };
+
         boneTransforms = new Transform[humanBones.Length];
         for (int i = 0; i < humanBones.Length; i++)
             boneTransforms[i] = animator.GetBoneTransform(humanBones[i].bone);
@@ -95,7 +99,7 @@ public class CharacterAnimator
     {
         // Changes movement animation based on flags
 
-        if (unit.GetFlag("moving"))
+        if (unit.GetFlag(FlagType.MOVE))
         {
             animator.SetFloat("velocityX", unit.velocityX / GlobalManager.gameSpeed);
             animator.SetFloat("velocityZ", unit.velocityZ / GlobalManager.gameSpeed);
@@ -160,19 +164,18 @@ public class CharacterAnimator
         {
             //TODO: Vault sound in middle of animation?
             case (AnimationEventContext.VAULT):
-                unit.AddFlag("vaulting");
+                unit.AddFlag(FlagType.VAULT);
                 animator.Play("Default");
                 animator.SetTrigger("vaulting");
                 break;
 
             // Fire weapon effect
             case (AnimationEventContext.SHOOT):
-                unit.AddFlag("shooting");
+                unit.AddFlag(FlagType.SHOOT);
                 animator.Play("Shoot");
                 break;
             
             case (AnimationEventContext.AIMING):
-                unit.AddFlag("aiming");
                 animator.SetBool("aiming", true);
 
                 //Non-monobehaviour, so coroutine called through Character
@@ -180,13 +183,13 @@ public class CharacterAnimator
                 break;
             
             case (AnimationEventContext.DODGE):
-                unit.AddFlag("dodging");
+                unit.AddFlag(FlagType.DODGE);
                 animator.SetTrigger("dodge");
                 break;
 
             // Move
             case (AnimationEventContext.MOVE):
-                unit.AddFlag("moving");
+                unit.AddFlag(FlagType.MOVE);
                 SetBool("moving", true);
                 break;
 
@@ -208,33 +211,36 @@ public class CharacterAnimator
         switch (context)
         {
             case (AnimationEventContext.VAULT):
-                unit.RemoveFlag("vaulting");
+                unit.RemoveFlag(FlagType.VAULT);
                 break;
 
             // Fire weapon effect
             case (AnimationEventContext.SHOOT):
                 ClearShootingFlags();
+                unit.ActionComplete(Action.action_shoot);
                 break;
             
             case (AnimationEventContext.AIMING):
                 animator.SetBool("aiming", false);
                 animator.updateMode = AnimatorUpdateMode.Normal;
-                unit.RemoveFlag("aiming");
+                unit.RemoveFlag(FlagType.AIM);
                 break;
             
             case (AnimationEventContext.DODGE):
-                unit.RemoveFlag("dodging");
+                unit.RemoveFlag(FlagType.DODGE);
                 break;
 
             // Move
             case (AnimationEventContext.MOVE):
-                unit.RemoveFlag("moving");
                 SetBool("moving", false);
+                unit.RemoveFlag(FlagType.MOVE);
+                unit.ActionComplete(Action.action_move);
                 break;
 
             // Throw
             case (AnimationEventContext.THROW):
                 ThrowItem();
+                unit.ActionComplete(Action.action_useItem);
                 break;
 
             default:
@@ -273,7 +279,7 @@ public class CharacterAnimator
 
         while (IsCrouching()) yield return new WaitForSeconds(0.01f);
         yield return new WaitForSeconds(0.25f);
-        unit.AddFlag("aiming");
+        unit.AddFlag(FlagType.AIM);
     }
 
     public void ToggleCrouch(bool instant=false)
@@ -343,7 +349,7 @@ public class CharacterAnimator
                 Vector3 aimDirection = unit.inventory.equippedWeapon.transform.forward;
                 
                 // Updates rotation up until the actual shoot animation happens
-                if (unit.GetFlag("aiming"))
+                if (unit.GetFlag(FlagType.AIM))
                     aimTowards = Quaternion.FromToRotation(aimDirection, targetDirection);
 
                 // Gets absolute angle
@@ -362,11 +368,9 @@ public class CharacterAnimator
     void ClearShootingFlags()
     {
         // Removes flags after shoot animation completes
-
-        unit.RemoveFlag("shooting");
-
         if (unit.GetActor().targetCharacter)
-            unit.GetActor().targetCharacter.RemoveFlag("dodging");
+            unit.GetActor().targetCharacter.RemoveFlag(FlagType.DODGE);
+        unit.RemoveFlag(FlagType.SHOOT);
     }
 
     public Transform GetBoneTransform(HumanBodyBones bone) 
@@ -390,7 +394,7 @@ public class CharacterAnimator
         // Damage is not actually applied in this function
 
         // If unit is dodging, skip damage effect
-        if (unit.GetFlag("dodging")) return;
+        if (unit.GetFlag(FlagType.DODGE)) return;
 
         // Play impact sound
         unit.GetSFX().PlayRandomImpactSound();
