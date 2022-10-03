@@ -50,16 +50,15 @@ public class ActionPanelScript : MonoBehaviour
         {
             panel.SetActive(true);
 
-            List<ActionList> actionsList = new List<ActionList>();
-            foreach (ActionList characterAction in playerAction.selectedCharacter.GetAvailableActions())
+            List<UnitAction> actionsList = new List<UnitAction>();
+            foreach (UnitAction characterAction in playerAction.selectedCharacter.GetUnitActions())
             {
-                if (!Action.ActionsDict.ContainsKey(characterAction)) continue;
-                if (Action.ActionsDict[characterAction].buttonPath != null)
+                if (characterAction.HasSprite())
                 {
                     actionsList.Add(characterAction);
                     buttons.Add(Instantiate(buttonPrefab, panel.transform));
                     int index = buttons.Count - 1;
-                    string spritePath = Action.ActionsDict[actionsList[index]].buttonPath;
+                    string spritePath = UnitActionSprites.GetSprite(characterAction.actionSprite);
 
                     buttons[index].LoadResources(spritePath);
                     buttons[index].BindAction(characterAction);

@@ -2526,6 +2526,7 @@ Transform:
   - {fileID: 7324549120656334255}
   - {fileID: 7040024009383911731}
   - {fileID: 946980306}
+  - {fileID: 3591376873847124216}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2706,11 +2707,11 @@ MonoBehaviour:
   impactType: 0
   currentTile: {fileID: 0}
   grid: {fileID: 0}
-  flags: []
+  flags: 
+  numActionsInFlight: 0
   inventory: {fileID: 0}
   healthbar: {fileID: 0}
-  currentCover: {fileID: 0}
-  availableActions: 0000000001000000020000000300000005000000
+  unitActions: []
   stats:
     healthCurrent: 10
     healthMax: 10
@@ -4695,6 +4696,37 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &7653880225778615937
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3591376873847124216}
+  m_Layer: 8
+  m_Name: Actions
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3591376873847124216
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7653880225778615937}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7329307604263240806}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8566444867832285230
 GameObject:
   m_ObjectHideFlags: 0

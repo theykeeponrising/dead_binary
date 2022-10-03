@@ -103,18 +103,17 @@ public class InCombatPlayerAction
         SelectAction(targetCharacter);        
     }
 
-    public ActionList GetBindings(int index)
+    public UnitAction GetBindings(int index)
     {
         // Returns which action should be bound to which action button index
 
         if (!selectedCharacter)
-            return 0;
+            return null;
 
-        List<ActionList> actionsList = new List<ActionList>();
-        foreach (ActionList characterAction in selectedCharacter.GetAvailableActions())
+        List<UnitAction> actionsList = new List<UnitAction>();
+        foreach (UnitAction characterAction in selectedCharacter.GetUnitActions())
         {
-            if (!Action.ActionsDict.ContainsKey(characterAction)) continue;
-            if (Action.ActionsDict[characterAction].buttonPath != null)
+            if (characterAction.HasSprite())
                 actionsList.Add(characterAction);
         }
 
@@ -122,39 +121,43 @@ public class InCombatPlayerAction
         {
             foreach (Item item in selectedCharacter.GetItems())
             {
-                if (!Action.ActionsDict.ContainsKey(item.itemAction)) continue;
-                if (Action.ActionsDict[item.itemAction].buttonPath != null)
+                if (item.itemAction.HasSprite())
                     actionsList.Add(item.itemAction);
             }
         }
 
         if (index > actionsList.Count)
-            return 0;
+            return null;
         return actionsList[index-1];
     }
 
-    public void MoveCharacter()
+    public int GetIndex(UnitAction action)
     {
-        // Orders target to move on right-click
-        if (selectedCharacter)
-        {
-            //if (stateMachine.GetCurrentState().GetType() 
-            //    == typeof(SelectedStates.ChoosingMoveDestination))
-            {
-                RaycastHit hit;
-                Ray ray;
-                ray = Camera.main.ScreenPointToRay(playerInput.Controls.InputPosition.ReadValue<Vector2>());
-                int layerMask = (1 << LayerMask.NameToLayer("TileMap"));
+        // Returns which index an action should be bound at
 
-                if (Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask))
-                {
-                    if (hit.collider.GetComponent<Tile>())
-                    {
-                        selectedCharacter.GetActor().ProcessAction(Action.action_move, contextTile: hit.collider.GetComponent<Tile>(), contextPath: previewPath);
-                    }
-                }
+        if (!selectedCharacter)
+            return 0;
+
+        List<UnitAction> actionsList = new List<UnitAction>();
+        foreach (UnitAction characterAction in selectedCharacter.GetUnitActions())
+        {
+            if (characterAction.HasSprite())
+                actionsList.Add(characterAction);
+        }
+
+        if (UIManager.GetInventoryPanel().gameObject.activeSelf)
+        {
+            foreach (Item item in selectedCharacter.GetItems())
+            {
+                if (item.itemAction.HasSprite())
+                    actionsList.Add(item.itemAction);
             }
         }
+
+        if (!actionsList.Contains(action))
+            return 0;
+
+        return actionsList.IndexOf(action) + 1;
     }
 
     public void SelectAction(Unit targetCharacter = null)
@@ -211,7 +214,7 @@ public class InCombatPlayerAction
             return;
 
         // Previews move path on mouse over
-        if (selectedCharacter && targetTile)
+        if (selectedCharacter && !selectedCharacter.GetActor().IsActing() && targetTile)
         {
            //if(stateMachine.GetCurrentState().GetType() 
             //    == typeof(SelectedStates.ChoosingMoveDestination))

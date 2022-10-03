@@ -48,9 +48,11 @@ MonoBehaviour:
   targetType: 0
   targetFaction: 1
   itemName: '"Win" Grenade'
-  itemAction: 11
+  itemAction: {fileID: 3652251968811846348, guid: 377566d31a1fa644d9c71d42d954a6df, type: 3}
   itemUsesCurrent: 1
   itemUsesMax: 1
+  itemInfoName: '"Win" Grenade'
+  itemInfoDescription: Dodge this you bastard
   hpAmount: -50
   areaOfEffect: 9
   range: 7

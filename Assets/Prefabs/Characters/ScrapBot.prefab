@@ -1362,6 +1362,37 @@ Transform:
   m_Father: {fileID: 3550870420268330763}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2240066186751696445
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7083468753861370024}
+  m_Layer: 8
+  m_Name: Actions
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7083468753861370024
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2240066186751696445}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3698992464614909888}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2273426188279366592
 GameObject:
   m_ObjectHideFlags: 0
@@ -2340,6 +2371,7 @@ Transform:
   - {fileID: 3809991894908718095}
   - {fileID: 8380820800285804308}
   - {fileID: 3550870420268330763}
+  - {fileID: 7083468753861370024}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2520,11 +2552,11 @@ MonoBehaviour:
   impactType: 1
   currentTile: {fileID: 0}
   grid: {fileID: 0}
-  flags: []
+  flags: 
+  numActionsInFlight: 0
   inventory: {fileID: 0}
   healthbar: {fileID: 0}
-  currentCover: {fileID: 0}
-  availableActions: 000000000100000002000000030000000400000005000000
+  unitActions: []
   stats:
     healthCurrent: 10
     healthMax: 10
@@ -2544,7 +2576,10 @@ MonoBehaviour:
   DamageWeight: 0
   KillWeight: 0
   CoverWeight: 0
-  isActing: 0
+  ConserveAmmoWeight: 0
+  ApproachWeight: 0
+  LeaveCoverPenalty: 0
+  isProcessingTurn: 0
 --- !u!114 &3809991894843442051
 MonoBehaviour:
   m_ObjectHideFlags: 0

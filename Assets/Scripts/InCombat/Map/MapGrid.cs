@@ -234,7 +234,7 @@ public class MapGrid : MonoBehaviour
         Vector3 direction = (attackerPosition - defenderPosition);
         RaycastHit hit;
         Ray ray = new Ray(defenderPosition, direction);
-        Debug.DrawRay(defenderPosition, direction, Color.red, 20, true); // For debug purposes
+        // Debug.DrawRay(defenderPosition, direction, Color.red, 20, true); // For debug purposes
         int layerMask = (1 << LayerMask.NameToLayer("CoverObject"));
 
         // If cover object detected, and is the target character's current cover, return true

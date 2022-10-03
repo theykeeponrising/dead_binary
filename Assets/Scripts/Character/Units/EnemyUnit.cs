@@ -7,14 +7,16 @@ using UnityEngine;
 //Handles all unit logic that is enemy-specific
 public class EnemyUnit : Unit
 {
-    public enum Strategy {
+    public enum Strategy
+    {
         Default,
         Aggressive,
         Defensive,
         Custom,
     };
 
-    public enum CoverScalingType {
+    public enum CoverScalingType
+    {
         LINEAR
     };
 
@@ -37,9 +39,10 @@ public class EnemyUnit : Unit
 
     public bool isProcessingTurn = false;
 
-    public struct EnemyAction {
-        private readonly Action actionType;
-        public Action ActionType { get { return actionType; } }
+    public struct EnemyAction
+    {
+        private readonly UnitAction unitAction;
+        public UnitAction GetUnitAction() => unitAction;
 
         private readonly Tile tile;
         public Tile Tile { get { return tile; } }
@@ -50,9 +53,9 @@ public class EnemyUnit : Unit
         private readonly Unit contextChar;
         public Unit ContextChar { get { return contextChar; } }
 
-        public EnemyAction(Action actionType, Tile tile, List<Tile> path, Unit contextChar)
+        public EnemyAction(UnitAction unitAction, Tile tile, List<Tile> path, Unit contextChar)
         {
-            this.actionType = actionType;
+            this.unitAction = unitAction;
             this.tile = tile;
             this.path = path;
             this.contextChar = contextChar;
@@ -100,7 +103,7 @@ public class EnemyUnit : Unit
     {
         Debug.Log(string.Format("Beginning Unit turn: {0}", gameObject.name));
         if (GetFlag(FlagType.DEAD)) return;
-        OnTurnStart();  
+        OnTurnStart();
     }
 
     public override void OnTurnStart()
@@ -118,8 +121,9 @@ public class EnemyUnit : Unit
     protected override void Update()
     {
         base.Update();
-        if (IsActing() || !IsProcessingTurn()) return;
-        if (actionsQueue.Count == 0 && stats.actionPointsCurrent == 0) {
+        if (GetActor().IsActing() || !IsProcessingTurn()) return;
+        if (actionsQueue.Count == 0 && stats.actionPointsCurrent == 0)
+        {
             isProcessingTurn = false;
         }
         else if (actionsQueue.Count > 0)
@@ -127,7 +131,8 @@ public class EnemyUnit : Unit
             //Process queued actions
             EnemyAction nextAction = actionsQueue.Dequeue();
             PerformAction(nextAction);
-        } else
+        }
+        else
         {
             //If no actions queued up, get more
             List<EnemyAction> enemyActions = GetNextEnemyActions();
@@ -155,14 +160,15 @@ public class EnemyUnit : Unit
         }
 
         //If there's no tiles we can move to, or no enemies, do nothing
-        if (tilesInRange.Count == 0 || oppFactionUnits.Count == 0) {
+        if (tilesInRange.Count == 0 || oppFactionUnits.Count == 0)
+        {
             enemyActions.Add(CreateNoneAction(currentTile));
             return enemyActions;
-        } 
+        }
 
         //Next, we want to consider different combinations of actions, and their expected values
         //I.e. move+shoot, move+move, shoot+shoot, etc.
-        
+
         List<EnemyAction> bestActions;
 
         //Get best 1AP Shoot Action
@@ -176,14 +182,15 @@ public class EnemyUnit : Unit
         {
             bestActions = moveActions;
         }
-        
+
         //Get Best 2AP Move + Shoot actions
         //Note: Action values for 2AP actions are averaged
-        if (stats.actionPointsCurrent >= 2) {
+        if (stats.actionPointsCurrent >= 2)
+        {
             List<EnemyAction> moveAndShootActions = MoveAndShoot(oppFactionUnits, tilesInRange);
             float moveAndShootValue = CalculateActionsValue(moveAndShootActions);
             //Debug.Log(string.Format("Shoot+Move AV: {0}", moveAndShootValue));
-            if (moveAndShootValue > CalculateActionsValue(bestActions)) 
+            if (moveAndShootValue > CalculateActionsValue(bestActions))
             {
                 bestActions = moveAndShootActions;
             }
@@ -195,25 +202,28 @@ public class EnemyUnit : Unit
         return enemyActions;
     }
 
-
     private EnemyAction CreateMoveAction(Tile targetTile)
     {
-        return new EnemyAction(Action.action_move, targetTile, null, null);
+        UnitAction moveAction = GetActor().FindActionOfType(typeof(UnitActionMove));
+        return new EnemyAction(moveAction, targetTile, null, null);
     }
 
     private EnemyAction CreateShootAction(Unit contextChar, Tile unitTile)
     {
-        return new EnemyAction(Action.action_shoot, unitTile, null, contextChar);
+        UnitAction shootAction = GetActor().FindActionOfType(typeof(UnitActionShoot));
+        return new EnemyAction(shootAction, unitTile, null, contextChar);
     }
 
     private EnemyAction CreateReloadAction(Tile unitTile)
     {
-        return new EnemyAction(Action.action_reload, unitTile, null, null);
+        UnitAction reloadAction = GetActor().FindActionOfType(typeof(UnitActionReload));
+        return new EnemyAction(reloadAction, unitTile, null, null);
     }
 
     private EnemyAction CreateNoneAction(Tile unitTile)
     {
-        return new EnemyAction(Action.action_none, unitTile, null, null);
+        UnitAction noneAction = GetActor().FindActionOfType(typeof(UnitActionDoNothing));
+        return new EnemyAction(noneAction, unitTile, null, null);
     }
 
     //Calculate best target to shoot, using 1 AP
@@ -226,7 +236,7 @@ public class EnemyUnit : Unit
         if (shootTarget != null)
         {
             EnemyAction shootAction = CreateShootAction(shootTarget, currentTile);
-            actions.Add(shootAction); 
+            actions.Add(shootAction);
         }
         return actions;
     }
@@ -247,7 +257,7 @@ public class EnemyUnit : Unit
 
     //Determines the total expected benefit of proposed action plan
     //Maybe do some sort of deferred reward calculation?
-    private float CalculateActionsValue(List<EnemyAction> actions, bool debug=false)
+    private float CalculateActionsValue(List<EnemyAction> actions, bool debug = false)
     {
         float numKill = 0.0f;
         float totalExpectedDamage = 0.0f;
@@ -261,17 +271,19 @@ public class EnemyUnit : Unit
         bool isCover = false;
 
         Tile unitTile = currentTile;
-        // Tile unitTile = currentTile;
         foreach (EnemyAction enemyAction in actions)
         {
+            UnitAction unitAction = enemyAction.GetUnitAction();
+
             //The last tile we move to will determine the cover value
-            if (enemyAction.ActionType == Action.action_move)
-            {                
+            if (unitAction.IsType(typeof(UnitActionMove)))
+            {
                 isCover = grid.CheckIfCovered(GetNearestTarget(enemyAction.Tile, oppFactionUnits).currentTile, enemyAction.Tile);
-                
+
                 //Update the tile we do calculations with
                 unitTile = enemyAction.Tile;
-            } else if (enemyAction.ActionType == Action.action_shoot)
+            }
+            if (unitAction.IsType(typeof(UnitActionShoot)))
             {
                 numShots++;
                 //Calculated expected damage, if it would kill, etc.
@@ -291,7 +303,8 @@ public class EnemyUnit : Unit
         GetBestShootTarget(oppFactionUnits, currentTile, out shootTarget, out expectedDamage);
         int oldDist, newDist = 0;
 
-        if (shootTarget) {
+        if (shootTarget)
+        {
             oldDist = grid.GetTileDistance(currentTile, shootTarget.currentTile);
             newDist = grid.GetTileDistance(unitTile, shootTarget.currentTile);
             numTilesCloserToBestShootTarget = oldDist - newDist;
@@ -304,7 +317,7 @@ public class EnemyUnit : Unit
         }
 
         float actionValue = 0.0f;
-        if (actions.Count > 0) 
+        if (actions.Count > 0)
         {
             float shootActionValue = (totalExpectedDamage * DamageWeight) + numKill * KillWeight - numShots * ConserveAmmoWeight;
             float coverActionValue = (System.Convert.ToSingle(isCover) * CoverWeight * GetCoverWeightScaling(newDist, CoverScalingType.LINEAR));
@@ -323,13 +336,13 @@ public class EnemyUnit : Unit
         switch (scaling)
         {
             case CoverScalingType.LINEAR:
-                return ScaleCoverLinear((float) tileDist);
+                return ScaleCoverLinear((float)tileDist);
             default:
                 return 0.0f;
         }
     }
 
-    private float ScaleCoverLinear(float tileDist, float maxDist=12.0f)
+    private float ScaleCoverLinear(float tileDist, float maxDist = 12.0f)
     {
         float coverScale = (maxDist - tileDist) / maxDist;
         return coverScale;
@@ -364,7 +377,8 @@ public class EnemyUnit : Unit
     public void GetBestShootTarget(List<Unit> oppFactionUnits, Tile tile, out Unit currentTarget, out float highestExpectedDamage)
     {
         highestExpectedDamage = 0.0f;
-        if (oppFactionUnits.Count == 0) {
+        if (oppFactionUnits.Count == 0)
+        {
             currentTarget = null;
             return;
         };
@@ -380,13 +394,15 @@ public class EnemyUnit : Unit
             if (!wouldKill && expectedDamage == other.stats.healthCurrent)
             {
                 wouldKill = true;
-                highestExpectedDamage = expectedDamage;    
-                currentTarget = other;        
-            //Continue if shot wouldn't kill (and another shot would)
-            } else if (wouldKill && expectedDamage < other.stats.healthCurrent) continue;
+                highestExpectedDamage = expectedDamage;
+                currentTarget = other;
+                //Continue if shot wouldn't kill (and another shot would)
+            }
+            else if (wouldKill && expectedDamage < other.stats.healthCurrent) continue;
 
             //If this shot would do more damage, choose it
-            if (expectedDamage > highestExpectedDamage) {
+            if (expectedDamage > highestExpectedDamage)
+            {
                 highestExpectedDamage = expectedDamage;
                 currentTarget = other;
             }
@@ -420,31 +436,32 @@ public class EnemyUnit : Unit
             EnemyAction moveAction = CreateMoveAction(tile);
             EnemyAction shootAction = CreateShootAction(currentTarget, tile);
 
-            List<EnemyAction> enemyActions = new List<EnemyAction> {moveAction, shootAction};
-            if (CalculateActionsValue(enemyActions) > CalculateActionsValue(bestActions)) 
+            List<EnemyAction> enemyActions = new List<EnemyAction> { moveAction, shootAction };
+            if (CalculateActionsValue(enemyActions) > CalculateActionsValue(bestActions))
                 bestActions = enemyActions;
         }
         return bestActions;
     }
 
-    private void PerformAction(EnemyAction action) 
+    private void PerformAction(EnemyAction action)
     {
-        Action actionType = action.ActionType;
-        if (actionType == Action.action_move)
+        UnitAction unitAction = action.GetUnitAction();
+
+        if (unitAction.IsType(typeof(UnitActionMove)))
         {
-            GetActor().ProcessAction(actionType, action.Tile, null, null);
+            GetActor().ProcessAction(unitAction, contextTile: action.Tile);
         }
-        else if (actionType == Action.action_shoot)
+        else if (unitAction.IsType(typeof(UnitActionShoot)))
         {
-            GetActor().ProcessAction(actionType, null, null, action.ContextChar);
+            GetActor().ProcessAction(unitAction, contextCharacter: action.ContextChar);
         }
-        else if (actionType == Action.action_reload)
+        else if (unitAction.IsType(typeof(UnitActionReload)))
         {
-            GetActor().ProcessAction(actionType, null, null, null);
+            GetActor().ProcessAction(unitAction);
         }
-        else if (actionType == Action.action_none)
+        else // (unitAction.IsType(typeof(UnitActionDoNothing)))
         {
-            GetActor().ProcessAction(actionType, null, null, null);
+            GetActor().ProcessAction(unitAction);
         }
     }
 }
@@ -523,7 +540,7 @@ public class EnemyUnit : Unit
 //         int nextNumBullets = numBullets;
 //         if (testAction.ActionType == Actions.action_reload) nextNumBullets = inventory.equippedWeapon.stats.ammoMax;
 //         else if (testAction.ActionType == Actions.action_shoot) nextNumBullets--;
-        
+
 //         //Recursively calculate action value for a list of actions
 //         float nextActionVal = CalculateBestAction(ref newActionsList, ref availableActions, numActionPoints - 1, nextNumBullets);
 //         if (nextActionVal > bestActionVal)

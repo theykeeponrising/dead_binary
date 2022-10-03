@@ -8,9 +8,24 @@ public abstract class Item : MonoBehaviour
     public TargetFaction targetFaction;
 
     public string itemName;
-    public ActionList itemAction;
+    public UnitAction itemAction;
     public int itemUsesCurrent;
     public int itemUsesMax;
+
+    public string itemInfoName;
+    public string itemInfoDescription;
+
+    public bool CheckRequirements() => itemAction.CheckRequirements();
+
+    private void Awake()
+    {
+        if (itemAction)
+        {
+            itemAction = Instantiate(itemAction, transform);
+            if (itemInfoName != "") itemAction.actionName = itemInfoName;
+            if (itemInfoDescription != "") itemAction.actionDescription = itemInfoDescription;
+        }
+    }
 
     public bool CheckAffinity(Unit sourceUnit, Unit targetedUnit)
     {
@@ -68,6 +83,7 @@ public abstract class Item : MonoBehaviour
     {
         Debug.Log("No item effect found for item! (Source and target parameters)");
     }
+
 }
 
 public enum ItemType { ATTACHMENT, EQUIPMENT, CONSUMABLE, QUEST }

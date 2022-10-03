@@ -122,11 +122,18 @@ public class Weapon : MonoBehaviour
         gunLight.enabled = false;
     }
 
-    public void Reload()
+    public void ReloadEffect()
     {
         // Reload sound effect
 
         PlaySound(WeaponSound.RELOAD);
+        stats.ammoCurrent = stats.ammoMax;
+    }
+
+    public void Reload()
+    {
+        // Sets current ammo to weapon's maximum
+
         stats.ammoCurrent = stats.ammoMax;
     }
 
@@ -176,5 +183,12 @@ public class Weapon : MonoBehaviour
         shell.GetComponent<Rigidbody>().AddForce(shellEject.forward * randomForce, ForceMode.VelocityChange);
         shell.GetComponent<Rigidbody>().AddForce(-shellEject.right * randomForce/2, ForceMode.VelocityChange);
 
+    }
+
+    public void SpendAmmo(int amount = 1)
+    {
+        // Spends a shot from the current ammo, defaults to 1 shot
+
+        stats.ammoCurrent -= amount;
     }
 }
