@@ -41,7 +41,7 @@ public class Weapon : MonoBehaviour
     public class Stats
     {
         public int damage;
-        public int minRange;
+        public int minRangeNoPenalty;
         public int maxRangeNoPenalty;
         public int ammoMax;
         public int ammoCurrent;
@@ -49,6 +49,7 @@ public class Weapon : MonoBehaviour
         //Note: Not capped at 1.
         public float baseAccuracyModifier;
         public float overRangeAccuracyPenalty;
+        public float underRangeAccuracyPenalty;
     }
     public Stats stats;
 
@@ -91,7 +92,7 @@ public class Weapon : MonoBehaviour
 
     public int GetMinimumRange()
     {
-        return stats.minRange;
+        return stats.minRangeNoPenalty;
     }
 
     public int GetMaximumRange()
@@ -101,8 +102,20 @@ public class Weapon : MonoBehaviour
 
     public float GetAccuracyPenalty(int range)
     {
-        int rangeDiff = range - GetMaximumRange();
-        float penalty = rangeDiff > 0 ? rangeDiff * stats.overRangeAccuracyPenalty : 0.0f;
+        int maxRangeDiff = range - GetMaximumRange();
+        int minRangeDiff = -(range - GetMinimumRange());
+
+        float penalty = 0;
+
+        if (maxRangeDiff > 0) 
+        {
+            penalty = maxRangeDiff * stats.overRangeAccuracyPenalty;
+        }
+        else if (minRangeDiff > 0)
+        {
+            penalty = minRangeDiff * stats.underRangeAccuracyPenalty;
+        }
+
         return penalty;
     }
 
