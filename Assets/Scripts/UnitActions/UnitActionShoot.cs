@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class UnitActionShoot : UnitTargetAction
 {
-    int minWeaponRange;
     int distanceToTarget;
     Timer bufferStartTimer;
     Timer bufferEndTimer;
@@ -21,15 +20,8 @@ public class UnitActionShoot : UnitTargetAction
         }
 
         targetUnit = setTarget;
-        minWeaponRange = unit.GetEquippedWeapon().GetMinimumRange();
         distanceToTarget = unit.currentTile.FindCost(targetUnit.currentTile, 15).Count;
         unit.AddFlag(FlagType.AIM);
-
-        if (distanceToTarget < minWeaponRange) // TO DO -- rework minimum range to inflict accuracy penality instead
-        {
-            Debug.Log(string.Format("Target is too close! \nDistance: {0}, Weapon Range: {1}", distanceToTarget, minWeaponRange)); // This will eventually be shown visually instead of told
-            return;
-        }
 
         unit.GetActor().targetCharacter = setTarget;
         unit.SpendActionPoints(actionCost);

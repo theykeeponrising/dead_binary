@@ -232,13 +232,14 @@ MonoBehaviour:
     animSpeed: 1
   stats:
     damage: 7
-    minRange: 3
+    minRangeNoPenalty: 3
     maxRangeNoPenalty: 7
     ammoMax: 2
     ammoCurrent: 2
     reloadSpeed: 0
     baseAccuracyModifier: 0.8
     overRangeAccuracyPenalty: 10
+    underRangeAccuracyPenalty: 10
 --- !u!1 &1169424319978930721
 GameObject:
   m_ObjectHideFlags: 0
