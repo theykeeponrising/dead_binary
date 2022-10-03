@@ -25,6 +25,13 @@ public abstract class DamageItem : Item
     [HideInInspector] public Unit targetedUnit;
     [HideInInspector] public Vector3 triggerPosition;
 
+    public bool isTargetInRange(Unit sourceUnit, Unit targetedUnit)
+    {
+        // Returns true if target is within range of the item
+
+        return (sourceUnit.transform.position - targetedUnit.transform.position).magnitude / GlobalManager.tileSpacing <= range;
+    }
+
     public override void TriggerItem()
     {
         // Callback function for props, initiates the item effect

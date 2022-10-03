@@ -50,7 +50,7 @@ public class StateUseItem : StateTarget
                     if (item.CheckAffinity(t.selectedCharacter, v) == true)
                     {
                         // Exclude targets that are out of range
-                        if (t.selectedCharacter.grid.GetTilesInRange(t.selectedCharacter.currentTile.transform.position, t.selectedCharacter.stats.range).Contains(v.currentTile))
+                        if (((DamageItem)item).isTargetInRange(t.selectedCharacter, v))
                         {
                             targets.Add(v);
                         }
