@@ -49,7 +49,11 @@ public class StateUseItem : StateTarget
                 {
                     if (item.CheckAffinity(t.selectedCharacter, v) == true)
                     {
-                        targets.Add(v);
+                        // Exclude targets that are out of range
+                        if (((DamageItem)item).isTargetInRange(t.selectedCharacter, v))
+                        {
+                            targets.Add(v);
+                        }
                     }
                 }
             }
