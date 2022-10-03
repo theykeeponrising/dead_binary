@@ -27,7 +27,7 @@ public class CharacterAnimator
         }
     }
 
-    public enum AnimationEventContext { SHOOT, TAKE_DAMAGE, AIMING, RELOAD, STOW, DRAW, DODGE, VAULT, FOOTSTEP_LEFT, FOOTSTEP_RIGHT, IDLE, MOVE, THROW };
+    public enum AnimationEventContext { SHOOT, TAKE_DAMAGE, AIMING, RELOAD, STOW, DRAW, DODGE, VAULT, FOOTSTEP_LEFT, FOOTSTEP_RIGHT, IDLE, THROW };
     HumanBone[] humanBones;
     Animator animator;
     public class Body
@@ -99,14 +99,14 @@ public class CharacterAnimator
     {
         // Changes movement animation based on flags
 
-        if (unit.GetFlag(FlagType.MOVE))
+        if (unit.GetActor().FindActionOfType(typeof(UnitActionMove)).Performing())
         {
             animator.SetFloat("velocityX", unit.velocityX / GlobalManager.gameSpeed);
             animator.SetFloat("velocityZ", unit.velocityZ / GlobalManager.gameSpeed);
         }
         else
         {
-            animator.SetBool("moving", false);
+            //animator.SetBool("moving", false);
             animator.SetFloat("velocityX", 0);
             animator.SetFloat("velocityZ", 0);
         }
@@ -138,19 +138,6 @@ public class CharacterAnimator
         return false;
     }
 
-    public bool AnimationPause()
-    {
-        // True/False if any of the listed animations are playing
-
-        bool[] uninterruptibleAnims = { 
-            animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Aiming"), 
-            animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Shoot"), 
-            animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Crouch-Up"),
-            animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Crouch-Down"),
-            animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Crouch")};
-        return uninterruptibleAnims.Any(x => x == true);
-    }
-
     public void ProcessAnimationEvent(AnimationEventContext context, bool state)
     {
         // State == True corresponds to entering an animation, False for exiting one
@@ -168,12 +155,6 @@ public class CharacterAnimator
                 animator.Play("Default");
                 animator.SetTrigger("vaulting");
                 break;
-
-            // Fire weapon effect
-            case (AnimationEventContext.SHOOT):
-                unit.AddFlag(FlagType.SHOOT);
-                animator.Play("Shoot");
-                break;
             
             case (AnimationEventContext.AIMING):
                 animator.SetBool("aiming", true);
@@ -185,12 +166,6 @@ public class CharacterAnimator
             case (AnimationEventContext.DODGE):
                 unit.AddFlag(FlagType.DODGE);
                 animator.SetTrigger("dodge");
-                break;
-
-            // Move
-            case (AnimationEventContext.MOVE):
-                unit.AddFlag(FlagType.MOVE);
-                SetBool("moving", true);
                 break;
 
             // Idle
@@ -213,12 +188,6 @@ public class CharacterAnimator
             case (AnimationEventContext.VAULT):
                 unit.RemoveFlag(FlagType.VAULT);
                 break;
-
-            // Fire weapon effect
-            case (AnimationEventContext.SHOOT):
-                ClearShootingFlags();
-                unit.ActionComplete(Action.action_shoot);
-                break;
             
             case (AnimationEventContext.AIMING):
                 animator.SetBool("aiming", false);
@@ -230,17 +199,9 @@ public class CharacterAnimator
                 unit.RemoveFlag(FlagType.DODGE);
                 break;
 
-            // Move
-            case (AnimationEventContext.MOVE):
-                SetBool("moving", false);
-                unit.RemoveFlag(FlagType.MOVE);
-                unit.ActionComplete(Action.action_move);
-                break;
-
             // Throw
             case (AnimationEventContext.THROW):
                 ThrowItem();
-                unit.ActionComplete(Action.action_useItem);
                 break;
 
             default:

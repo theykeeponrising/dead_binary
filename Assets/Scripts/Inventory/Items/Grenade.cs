@@ -8,6 +8,7 @@ public class Grenade : DamageItem
     {
         // Gets unit information, creates grenade prop, and plays throwing animation
 
+        itemAction.StartPerformance();
         sourceUnit = setSourceUnit;
         targetedUnit = setTargetedUnit;
 

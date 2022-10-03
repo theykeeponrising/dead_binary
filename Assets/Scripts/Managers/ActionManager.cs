@@ -7,7 +7,7 @@ public class ActionManager : MonoBehaviour
     // Manifest of prefab assets for use in function calls
     public static ActionManager Instance = null;
 
-    void Start()
+    void Awake()
     {
         Instance = this;
     }

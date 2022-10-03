@@ -40,6 +40,8 @@ public abstract class DamageItem : Item
 
         foreach (Unit unit in Tile.GetTileOccupants(Tile.AreaOfEffect(targetedUnit, areaOfEffect)))
             ItemEffect(sourceUnit, unit);
+
+        itemAction.EndPerformance();
     }
 
     public override void TriggerItem(Vector3 setTriggerPosition)
@@ -57,6 +59,8 @@ public abstract class DamageItem : Item
 
         foreach (Unit unit in Tile.GetTileOccupants(Tile.AreaOfEffect(targetedUnit, areaOfEffect)))
             ItemEffect(sourceUnit, unit);
+
+        itemAction.EndPerformance();
     }
 
     public override void ItemEffect(Unit sourceUnit, Unit targetedUnit)

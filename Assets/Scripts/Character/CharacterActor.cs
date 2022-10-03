@@ -13,9 +13,13 @@ public class CharacterActor
     InfoPanelScript infoPanel;
     GameObject selectionCircle;
 
-    [HideInInspector] public List<Tile> movePath;
-    Tile moveTargetImmediate;
-    Tile moveTargetDestination;
+    public struct MoveData
+    {
+        public List<Tile> path;
+        public Tile immediate;
+        public Tile destination;
+    }
+    public MoveData moveData = new MoveData();
 
     [HideInInspector] public Unit targetCharacter;
     [HideInInspector] public InCombatPlayerAction playerAction;
@@ -108,25 +112,40 @@ public class CharacterActor
         }
     }
 
-    public void ProcessAction(UnitAction actionToPerform, Tile contextTile=null, List<Tile> contextPath=null, Unit contextCharacter=null)
+    public void ProcessAction(UnitAction actionToPerform, Tile contextTile=null, Unit contextCharacter=null)
     {
         // Determine if action can be performed, and perform action
 
-        int actionCost = actionToPerform.actionCost;
-        if (actionCost > unit.stats.actionPointsCurrent)
+        // If unit is already performing an action, ignore new action
+        if (IsActing())
+            return;
+
+        if (actionToPerform.actionCost > unit.stats.actionPointsCurrent)
         {
-            Debug.Log("Not enough AP!"); // This will eventually be shown in UI
+            Debug.Log(string.Format("{0} attempted to perform action {1} but not enough AP", unit.gameObject, actionToPerform)); // This will eventually be shown in UI
+            return;
         }
+
+        currentAction = actionToPerform;
+
+        // Actions that target a specific tile
+        if (contextTile)
+        {
+            actionToPerform.UseAction(contextTile);
+        }
+
+        // Actions that target a specific character
+        else if (contextCharacter)
+        {
+            actionToPerform.UseAction(contextCharacter);
+        }
+
+        // Everything else
         else
         {
-            currentAction = actionToPerform;
-            targetCharacter = contextCharacter;
-           
-            if (actionToPerform.GetType() == typeof(UnitActionMove))
-                MoveAction(contextTile, contextPath);
-            else
-                actionToPerform.UseAction(contextCharacter);
+            actionToPerform.UseAction();
         }
+
     }
 
     public UnitAction FindActionOfType(System.Type actionType)
@@ -144,9 +163,14 @@ public class CharacterActor
         // Checks all unit actions to see if any are currently performing
         // Returns True/False if any action is currently performing
 
-        foreach (UnitAction action in unit.unitActions)
+        foreach (UnitAction action in unit.GetUnitActions())
             if (action.Performing())
                 return true;
+
+        foreach (Item item in unit.GetItems())
+            if (item.itemAction.Performing())
+                return true;
+
         return false;
     }
 
@@ -156,26 +180,26 @@ public class CharacterActor
         // If there is no move target, then this action is skipped
         
         // If we have a move target, begin moving
-        if (moveTargetImmediate)
+        if (moveData.immediate)
         {
             Vector3 relativePos;
-            Vector3 moveTargetPoint = moveTargetDestination.standPoint;
+            Vector3 moveTargetPoint = moveData.destination.standPoint;
             float distance = Vector3.Distance(unit.transform.position, moveTargetPoint);
             unit.velocityZ = distance / 2;
 
             // Slow down movement speed if character is vaulting
-            float distanceDelta = (unit.GetFlag(FlagType.VAULT)) ? 0.01f : 0.03f;
+            float distanceDelta = (unit.GetFlag(FlagType.VAULT)) ? 0.0125f : 0.03f;
 
             // If the final move target is also the most immediate one, slow down move speed as we approach
-            if (moveTargetDestination == moveTargetImmediate)
+            if (moveData.destination == moveData.immediate)
             {
                 unit.transform.position = Vector3.MoveTowards(unit.transform.position, moveTargetPoint, distanceDelta);
                 relativePos = moveTargetPoint - unit.transform.position;
             }
             else
             {
-                unit.transform.position = Vector3.MoveTowards(unit.transform.position, moveTargetImmediate.transform.position, distanceDelta);
-                relativePos = moveTargetImmediate.transform.position - unit.transform.position;
+                unit.transform.position = Vector3.MoveTowards(unit.transform.position, moveData.immediate.transform.position, distanceDelta);
+                relativePos = moveData.immediate.transform.position - unit.transform.position;
             }
 
             // Gradually rotate character to face towards move target
@@ -189,7 +213,7 @@ public class CharacterActor
         }
 
         // Gradually rotate character to expected look direction while behind cover
-        else if (unit.currentCover && !unit.GetAnimator().AnimationPause())
+        else if (unit.currentCover && !unit.GetActor().IsActing())
         {
             // Get which the direction the cover is relative to the tile
             Vector3 lookDirection = (unit.currentCover.transform.position - unit.currentTile.transform.position);
@@ -205,126 +229,13 @@ public class CharacterActor
         }
     }
 
-    public void MoveAction(Tile newTile, List<Tile> previewPath)
-    {
-        // Sets the target destination tile
-        // Once a path is found, begin movement routine
-
-        //if (!unit.GetAvailableActions().Contains(ActionList.MOVE))
-            //return;
-
-        if (previewPath != null)
-            foreach (Tile tile in previewPath)
-                tile.Highlighted(false);
-
-        if (!unit.GetFlag(FlagType.MOVE))
-        {
-            if (CheckTileMove(newTile))
-            {
-                // If tile is occupied, we can't move there
-                if (newTile.occupant)
-                    movePath = null;
-                else movePath = unit.currentTile.FindCost(newTile, unit.stats.movement);
-                
-                if (movePath.Count > 0)
-                {
-                    unit.StartCoroutine(MoveToPath());
-                    unit.stats.actionPointsCurrent -= currentAction.actionCost;
-                }
-                
-            }
-        }
-    }
-
-    IEnumerator MoveToPath()
-    {
-        //stateMachine.ChangeState(new SelectedStates.Moving(stateMachine));
-
-        // Movement routine
-        // Sets "moving" flag before and removes after
-        unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.MOVE, true);
-
-        // Stand up if crouched
-        if (IsCrouching())
-            ToggleCrouch(true);
-
-        moveTargetDestination = movePath[movePath.Count - 1];
-        unit.currentTile.ChangeTileOccupant();
-        unit.currentCover = null;
-
-        // Move to each tile in the provided path
-        foreach (Tile path in movePath)
-        {
-            if (moveTargetImmediate)
-                moveTargetImmediate.ChangeTileOccupant();
-            moveTargetImmediate = path;
-
-            // Wait until immediate tile is reached before moving to the next one
-            while (unit.currentTile != path)
-            {
-                CheckForObstacle();
-                unit.currentTile = unit.grid.GetTile(unit.transform.position);
-                yield return new WaitForSeconds(0.01f);
-            }
-            path.ChangeTileOccupant(unit);
-            unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.VAULT, false);
-        }
-
-        // Wait until character comes to a stop before completing movement action
-        if (moveTargetImmediate == moveTargetDestination)
-            while (Vector3.Distance(unit.transform.position, moveTargetImmediate.standPoint) > 0.01)
-                yield return new WaitForSeconds(0.001f);
-        else
-            while (Vector3.Distance(unit.transform.position, moveTargetImmediate.transform.position) > 0.01)
-                yield return new WaitForSeconds(0.001f);
-        unit.transform.position = new Vector3(unit.currentTile.standPoint.x, 0f, unit.currentTile.standPoint.z);
-
-        // End movement animation
-        unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.MOVE, false);
-
-        // Register cover object
-        if (unit.currentTile.cover)
-        {
-            unit.currentCover = unit.currentTile.cover;
-            //Crouch, should maybe set a bool outside of the animator
-            if (unit.currentTile.cover.coverSize == CoverObject.CoverSize.half && !IsCrouching())
-                ToggleCrouch();
-        }
-        moveTargetImmediate = null;
-        moveTargetDestination = null;
-
-
-       // stateMachine.ChangeState(new SelectedStates.Idle(stateMachine));
-    }
-
-    public bool CheckTileMove(Tile newTile)
-    {
-        // Gets the shortest tile distance to target and compares to maximum allowed moves
-        // If destination is too far, abort move action
-
-
-        movePath = unit.currentTile.FindCost(newTile);
-        if (movePath.Count == 0 || !newTile.isTileTraversable())
-        {
-            Debug.Log("No move path."); // Replace this with UI eventually
-            return false;
-        }
-        if (movePath.Count > unit.stats.movement)
-        {
-            Debug.Log(string.Format("Destination Too Far! \nDistance: {0}, Max Moves: {1}", movePath.Count, unit.stats.movement)); // This will eventually be shown visually instead of told
-            // unit.currentTile.FindCost(newTile, 10, true);
-            return false;
-        }
-        return true;
-    }
-
-    bool CheckForObstacle()
+    public bool CheckForObstacle()
     {
         // Checks a short distance in front of character for objects in the "VaultOver" layer
         if (unit.GetFlag(FlagType.VAULT))
             return false;
 
-        Vector3 direction = (moveTargetImmediate.transform.position - unit.transform.position);
+        Vector3 direction = (moveData.immediate.transform.position - unit.transform.position);
         RaycastHit hit;
         Ray ray = new Ray(unit.transform.position, direction);
         int layerMask = (1 << LayerMask.NameToLayer("CoverObject"));
@@ -336,68 +247,10 @@ public class CharacterActor
             if (hit.collider.GetComponent<CoverObject>().canVaultOver)
             {
                 unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.VAULT, true);
-                //animator.Play("Default", unit.inventory.equippedWeapon.weaponLayer);
                 return true;
             }
         }
         return false;
-    }
-
-    IEnumerator EquipWeapon(Weapon weapon)
-    {
-        // Character equip or swap weapons
-        // Previous weapon is stowed in extra slot
-
-        // If character has a weapon equipped currently, stow it
-        if (unit.inventory.equippedWeapon && unit.inventory.equippedWeapon != AssetManager.Instance.weapon.noWeapon)
-        {
-            // If crouching, do not play stow animation
-            // This is until we can get a proper crouch-stow animation
-            if (!IsCrouching())
-            {
-                unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.STOW, true);
-                while (unit.GetFlag(FlagType.STOW))
-                    yield return new WaitForSeconds(0.01f);
-            }
-            else
-            {
-                unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.STOW, false);
-            }
-        }
-
-        // Equipping the new weapon
-        if (weapon)
-        {
-            unit.inventory.equippedWeapon = weapon;
-
-            // Enable weapon object, set position and animation layer
-            unit.inventory.equippedWeapon.gameObject.SetActive(true);
-            unit.inventory.equippedWeapon.DefaultPosition(unit);
-            
-            unit.GetAnimator().SetLayerWeight(unit.inventory.equippedWeapon.weaponLayer, 1);
-            unit.GetAnimator().SetAnimationSpeed(unit.inventory.equippedWeapon.attributes.animSpeed);
-
-            // If crouching, do not play draw animation
-            // This is until we can get a proper crouch-draw animation
-            if (!IsCrouching())
-            {
-                unit.inventory.equippedWeapon.PlaySound(Weapon.WeaponSound.SWAP, unit);
-                unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.DRAW, true);
-
-                while (unit.GetFlag(FlagType.DRAW))
-                    yield return new WaitForSeconds(0.01f);
-            }
-            else
-            {
-                unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.DRAW, false);
-            }
-
-            if (infoPanel.gameObject.activeSelf)
-            {
-                infoPanel.UpdateHit(unit.GetCurrentHitChance());
-                infoPanel.UpdateDamage(-unit.inventory.equippedWeapon.GetDamage());
-            }
-        }
     }
 
     public Vector3 GetTargetPosition(bool snap=false)
@@ -441,35 +294,6 @@ public class CharacterActor
         unit.GetAnimator().CoverCrouch();
     }
 
-    public void ShootAction(Unit selectedTarget=null)
-    {
-        // Sets the character's target and performs action on them
-        // Called by InCombatPlayerAction
-
-        if (selectedTarget)
-        {
-            int minWeaponRange = unit.inventory.equippedWeapon.GetMinimumRange();
-            int distanceToTarget = unit.currentTile.FindCost(selectedTarget.currentTile, 15).Count;
-
-            //Check if target within weapon range
-            if (distanceToTarget >= minWeaponRange)
-                {
-                if (unit.inventory.equippedWeapon.stats.ammoCurrent > 0)
-                {
-                    targetCharacter = selectedTarget;
-
-                    //unit.StartCoroutine(ShootWeapon(distanceToTarget, targetCharacter));
-                    // RemoveFlag("targeting");
-                }
-                else
-                {
-                    Debug.Log("Out of Ammo! Reload weapon"); // This will eventually be shown in UI
-                }
-            } 
-            else Debug.Log(string.Format("Target is too close! \nDistance: {0}, Weapon Range: {1}", distanceToTarget, minWeaponRange)); // This will eventually be shown visually instead of told       
-        }
-    }
-
     public void GetTarget()
     {
         // Character it put into "targeting" mode
@@ -484,28 +308,25 @@ public class CharacterActor
         infoPanel.UpdateDamage(-unit.inventory.equippedWeapon.GetDamage());
     }
 
-
     public void ClearTarget()
     {
-        // Removes targeting flag and combat stance
+        // Cleans up targeting-related objects
 
         unit.GetComponentInChildren<CharacterCamera>().enabled = false;
-        unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.AIMING, false);
-        targetCharacter = null;
-        CoverCrouch();
-
         infoPanel.gameObject.SetActive(false);
+
+        unit.GetAnimator().SetBool("aiming", false);
+        unit.GetAnimator().SetUpdateMode();
+        unit.RemoveFlag(FlagType.AIM);
+        targetCharacter = null;
+
+        CoverCrouch();
     }
 
     public void ItemAction(Item item, Unit target)
     {
-        unit.stats.actionPointsCurrent -= item.itemAction.actionCost;
+        unit.SpendActionPoints(item.itemAction.actionCost);
         item.UseItem(unit, target);
         unit.transform.LookAt(target.transform);
-    }
-
-    void NoneAction()
-    {
-        unit.stats.actionPointsCurrent -= currentAction.cost;
     }
 }

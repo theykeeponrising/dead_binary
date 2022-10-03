@@ -39,7 +39,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
     Faction IFaction.faction { get { return attributes.faction; } set { attributes.faction = value; } }
     GameState gameState;
 
-    [HideInInspector] public CoverObject currentCover;
+    [HideInInspector] public CoverObject currentCover => currentTile.cover;
     public List<UnitAction> unitActions;
 
     // Attributes are mosty permanent descriptors about the character
@@ -155,7 +155,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         return charSFX;
     }
 
-    public List<UnitAction> GetAvailableActions()
+    public List<UnitAction> GetUnitActions()
     {
         return unitActions;
     }
@@ -226,7 +226,8 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
 
         for (index = 0; index < unitActions.Count; index++)
         {
-            unitActions[index] = Instantiate(unitActions[index], transform);
+            Transform actionsContainer = transform.Find("Actions");
+            unitActions[index] = Instantiate(unitActions[index], actionsContainer);
         }
     }
 
@@ -263,64 +264,6 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
     {
         // Used to refresh character action points to max.
         stats.actionPointsCurrent = stats.actionPointsMax;
-    }
-
-    //TODO: Move this to the individual action classes, and add delegates/inherited method
-    public void ActionStart(Action action)
-    {
-        switch (action.context)
-        {
-            case ActionList.MOVE:
-                numActionsInFlight++;
-                break;
-            case ActionList.SHOOT:
-                numActionsInFlight++;
-                break;
-            case ActionList.RELOAD:
-                numActionsInFlight++;
-                break;
-            case ActionList.SWAP:
-                numActionsInFlight++;
-                break;
-            case ActionList.USEITEM:
-                numActionsInFlight++;
-                break;
-            default:
-                break; 
-        }
-    }
-
-    //TODO: Move this to the individual action classes, and add delegates/inherited method
-    public void ActionComplete(Action action)
-    {
-        switch (action.context)
-        {
-            case ActionList.MOVE:
-                numActionsInFlight--;
-                break;
-            case ActionList.SHOOT:
-                numActionsInFlight--;
-                break;
-            case ActionList.RELOAD:
-                numActionsInFlight--;
-                break;
-            case ActionList.SWAP:
-                numActionsInFlight--;
-                break;
-            case ActionList.USEITEM:
-                numActionsInFlight--;
-                break;
-            default:
-                break; 
-        }
-        if (numActionsInFlight < 0) Debug.LogError(string.Format("Number of actions in flight: {0}", numActionsInFlight));
-    }
-
-    //Basic action callback
-    //TODO: Move this to action classes
-    public void ActionCompleteCallback()
-    {
-
     }
 
     public int GetHealth()
@@ -548,11 +491,5 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
     public bool GetFlag(FlagType flag)
     {
         return flags.Contains(flag);
-    }
-
-    //Used by EnemyUnit to determine when to move on to the next unit
-    public bool IsActing()
-    {
-        return numActionsInFlight > 0;
     }
 }

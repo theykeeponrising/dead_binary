@@ -51,7 +51,7 @@ public class ActionPanelScript : MonoBehaviour
             panel.SetActive(true);
 
             List<UnitAction> actionsList = new List<UnitAction>();
-            foreach (UnitAction characterAction in playerAction.selectedCharacter.GetAvailableActions())
+            foreach (UnitAction characterAction in playerAction.selectedCharacter.GetUnitActions())
             {
                 if (characterAction.HasSprite())
                 {

@@ -43,9 +43,11 @@ public class StateIdle : FiniteState<InCombatPlayerAction>
     public override void InputSecndry(InCombatPlayerAction t)
     {
         // Orders selected character to move to target tile
+        UnitAction unitAction = t.selectedCharacter.GetActor().FindActionOfType(typeof(UnitActionMove));
+        UnitActionMove unitActionMove = (UnitActionMove)unitAction;
 
         // Check that we have a selected character and they meet the AP cost
-        if (t.selectedCharacter && t.selectedCharacter.stats.actionPointsCurrent >= Action.action_move.cost)
+        if (unitAction.CheckRequirements())
         {
             RaycastHit hit;
             Ray ray;
@@ -62,18 +64,18 @@ public class StateIdle : FiniteState<InCombatPlayerAction>
                     //t.selectedCharacter.GetActor().ProcessAction(Action.action_move, contextTile: tile, contextPath: t.previewPath); // TO DO -- FIX THIS
 
                     //TODO: Clean this up. Need to check that this is a valid move before sending to state machine.
-                    if (t.selectedCharacter.GetActor().CheckTileMove(tile) == true)
+                    if (unitActionMove.CheckTileMove(tile))
                     {
-                        UnitAction moveAction = t.selectedCharacter.GetActor().FindActionOfType(typeof(UnitActionMove));
-                        t.selectedCharacter.GetActor().ProcessAction(moveAction, tile);
-                        ChangeState(new StateMoving(Machine, tile));
+                        t.PathPreviewClear();
+                        t.selectedCharacter.GetActor().ProcessAction(unitActionMove, tile);
+                        ChangeState(new StateWaitForAction(Machine, unitAction));
                     }
                 }
             }
         }
 
         // If we can't perform move, inform player
-        else if (t.selectedCharacter && t.selectedCharacter.stats.actionPointsCurrent < Action.action_move.cost)
+        else if (t.selectedCharacter && t.selectedCharacter.stats.actionPointsCurrent < unitAction.actionCost)
         {
             Debug.Log("Out of AP, cannot move!"); // TODO: Display this to player in UI
         }

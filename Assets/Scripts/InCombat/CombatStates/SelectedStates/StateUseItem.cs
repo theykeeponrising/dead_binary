@@ -120,7 +120,7 @@ public class StateUseItem : StateTarget
         }
         else
             Debug.Log("No Target to Use Item. But how. Reverting to idle.");
-        ChangeState(new StateIdle(Machine));
+        ChangeState(new StateWaitForAction(Machine, item.itemAction));
     }
 
     public override void InputActionBtn(InCombatPlayerAction t, int index)

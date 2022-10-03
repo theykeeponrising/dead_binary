@@ -111,7 +111,7 @@ public class InCombatPlayerAction
             return null;
 
         List<UnitAction> actionsList = new List<UnitAction>();
-        foreach (UnitAction characterAction in selectedCharacter.GetAvailableActions())
+        foreach (UnitAction characterAction in selectedCharacter.GetUnitActions())
         {
             if (characterAction.HasSprite())
                 actionsList.Add(characterAction);
@@ -139,7 +139,7 @@ public class InCombatPlayerAction
             return 0;
 
         List<UnitAction> actionsList = new List<UnitAction>();
-        foreach (UnitAction characterAction in selectedCharacter.GetAvailableActions())
+        foreach (UnitAction characterAction in selectedCharacter.GetUnitActions())
         {
             if (characterAction.HasSprite())
                 actionsList.Add(characterAction);
@@ -214,7 +214,7 @@ public class InCombatPlayerAction
             return;
 
         // Previews move path on mouse over
-        if (selectedCharacter && targetTile)
+        if (selectedCharacter && !selectedCharacter.GetActor().IsActing() && targetTile)
         {
            //if(stateMachine.GetCurrentState().GetType() 
             //    == typeof(SelectedStates.ChoosingMoveDestination))

@@ -96,7 +96,6 @@ public class StateChoosingTarget : StateTarget
         // Same action pressed -- execute action
         if (storedAction == action)
         {
-            ButtonPress(index);
             InputSpacebar(t);
         }
 
@@ -131,6 +130,8 @@ public class StateChoosingTarget : StateTarget
         int index = t.GetIndex(storedAction);
         infoPanel.gameObject.SetActive(false);
         ButtonPress(index);
-        ChangeState(new StateShootTarget(Machine, storedAction));
+        storedAction.UseAction(t.selectedCharacter.GetActor().targetCharacter);
+        ChangeState(new StateWaitForAction(Machine, storedAction));
+        //ChangeState(new StateShootTarget(Machine, storedAction));
     }
 }
