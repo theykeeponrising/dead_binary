@@ -49,7 +49,11 @@ public class StateUseItem : StateTarget
                 {
                     if (item.CheckAffinity(t.selectedCharacter, v) == true)
                     {
-                        targets.Add(v);
+                        // Exclude targets that are out of range
+                        if (t.selectedCharacter.grid.GetTilesInRange(t.selectedCharacter.currentTile.transform.position, t.selectedCharacter.stats.range).Contains(v.currentTile))
+                        {
+                            targets.Add(v);
+                        }
                     }
                 }
             }

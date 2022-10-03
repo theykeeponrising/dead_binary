@@ -61,6 +61,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         public float dodge;
         public int actionPointsCurrent;
         public int actionPointsMax;
+        public int range;
     }
 
     [Header("--Character Info")]
