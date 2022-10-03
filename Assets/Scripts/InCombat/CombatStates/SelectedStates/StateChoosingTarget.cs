@@ -104,6 +104,7 @@ public class StateChoosingTarget : StateTarget
         {
             ButtonPress(index);
             action.UseAction();
+            ChangeState(new StateWaitForAction(Machine, action, this));
         }
 
         // If we are selecting a state-changing action, allow action to proceed

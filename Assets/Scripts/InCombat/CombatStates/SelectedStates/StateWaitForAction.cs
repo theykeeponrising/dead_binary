@@ -5,12 +5,17 @@ using UnityEngine;
 public class StateWaitForAction : FiniteState<InCombatPlayerAction>
 {
     UnitAction storedAction;
-    public StateWaitForAction(StateMachine<InCombatPlayerAction> machine, UnitAction unitAction) : base(machine) { Machine = machine; storedAction = unitAction; }
+    FiniteState<InCombatPlayerAction> NextState;
+    public StateWaitForAction(StateMachine<InCombatPlayerAction> machine, UnitAction unitAction, FiniteState<InCombatPlayerAction> nextState = null) : base(machine) { Machine = machine; storedAction = unitAction; NextState = nextState; }
 
 
     public override void Execute(InCombatPlayerAction t)
     {
+        // Waits until the storedAction completes, and then proceed to the next state
+        // If no state was provided, default to StateIdle
+
+        if (NextState == null) NextState = new StateIdle(Machine);
         if (!storedAction.Performing())
-            ChangeState(new StateIdle(Machine));
+            ChangeState(NextState);
     }
 }
