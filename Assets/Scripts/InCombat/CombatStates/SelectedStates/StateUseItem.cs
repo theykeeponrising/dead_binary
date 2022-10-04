@@ -56,6 +56,7 @@ public class StateUseItem : StateTarget
             });
 
             target = targets[0];
+            ShowSelectionCircle(target.transform.position);
         }
     }
 
@@ -93,7 +94,8 @@ public class StateUseItem : StateTarget
                     {
                         target = hit.collider.GetComponent<Unit>();
                         targetedTile = null;
-                        tileSelectionCircle.SetActive(false);
+
+                        ShowSelectionCircle(target.transform.position);
                     }
                 }
                 else if (hit.collider.gameObject.GetComponent<Unit>())
@@ -107,10 +109,7 @@ public class StateUseItem : StateTarget
                         target = null;
                         targetedTile = hit.collider.gameObject.GetComponent<Tile>();
 
-                        tileSelectionCircle.transform.position = targetedTile.transform.position;
-                        float itemAreaOfEffect = ((DamageItem)item).areaOfEffect * GlobalManager.tileSpacing;
-                        tileSelectionCircle.transform.localScale = new Vector3(itemAreaOfEffect, itemAreaOfEffect, itemAreaOfEffect);
-                        tileSelectionCircle.SetActive(true);
+                        ShowSelectionCircle(targetedTile.transform.position);
                     }
                     else
                     {
@@ -159,5 +158,13 @@ public class StateUseItem : StateTarget
         ButtonPress(index);
         action.UseAction();
         ChangeState(new StateWaitForAction(Machine, action));
+    }
+
+    public void ShowSelectionCircle(Vector3 position)
+    {
+        tileSelectionCircle.transform.position = position;
+        float itemAreaOfEffect = ((DamageItem)item).areaOfEffect * GlobalManager.tileSpacing;
+        tileSelectionCircle.transform.localScale = new Vector3(itemAreaOfEffect, itemAreaOfEffect, itemAreaOfEffect);
+        tileSelectionCircle.SetActive(true);
     }
 }
