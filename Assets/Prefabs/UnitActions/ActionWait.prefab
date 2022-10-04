@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7163403929201480120}
   - component: {fileID: 3932326382128960471}
   m_Layer: 0
-  m_Name: ActionDoNothing
+  m_Name: ActionWait
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -45,11 +45,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Wait
-  actionDescription: Skip remaining actions
-  actionCost: 0
+  actionDescription: Wait until next turn
+  actionCost: 1
   actionCooldown: 0
-  actionRequirements: 
-  actionSprite: 0
+  actionCooldownRemaining: 0
+  actionRequirements: 01000000
+  actionSprite: 8
   unit: {fileID: 0}
   item: {fileID: 0}
   actionStage: 0

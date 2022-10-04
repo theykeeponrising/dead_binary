@@ -25,5 +25,5 @@ public interface IFaction
 
 public enum Faction
 {
-    Neutral, Good, Bad
+    Neutral, Good, Bad, Any
 }

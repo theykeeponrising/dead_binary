@@ -162,11 +162,6 @@ public class CharacterAnimator
                 //Non-monobehaviour, so coroutine called through Character
                 unit.StartCoroutine(WaitForAiming());
                 break;
-            
-            case (AnimationEventContext.DODGE):
-                unit.AddFlag(FlagType.DODGE);
-                animator.SetTrigger("dodge");
-                break;
 
             // Idle
             case (AnimationEventContext.IDLE):
@@ -193,10 +188,6 @@ public class CharacterAnimator
                 animator.SetBool("aiming", false);
                 animator.updateMode = AnimatorUpdateMode.Normal;
                 unit.RemoveFlag(FlagType.AIM);
-                break;
-            
-            case (AnimationEventContext.DODGE):
-                unit.RemoveFlag(FlagType.DODGE);
                 break;
 
             // Throw
@@ -225,6 +216,13 @@ public class CharacterAnimator
         // Sets animator bool
 
         animator.SetBool(flag, state);
+    }
+
+    public void SetTrigger(string flag)
+    {
+        // Sets animator trigger
+
+        animator.SetTrigger(flag);
     }
 
     public void SetUpdateMode(AnimatorUpdateMode updateMode = AnimatorUpdateMode.Normal)
@@ -326,14 +324,6 @@ public class CharacterAnimator
         }
     }
 
-    void ClearShootingFlags()
-    {
-        // Removes flags after shoot animation completes
-        if (unit.GetActor().targetCharacter)
-            unit.GetActor().targetCharacter.RemoveFlag(FlagType.DODGE);
-        unit.RemoveFlag(FlagType.SHOOT);
-    }
-
     public Transform GetBoneTransform(HumanBodyBones bone) 
     {
         return animator.GetBoneTransform(bone);
@@ -355,7 +345,7 @@ public class CharacterAnimator
         // Damage is not actually applied in this function
 
         // If unit is dodging, skip damage effect
-        if (unit.GetFlag(FlagType.DODGE)) return;
+        if (AnimatorIsPlaying("Dodge") || AnimatorIsPlaying("Crouch-Dodge")) return;
 
         // Play impact sound
         unit.GetSFX().PlayRandomImpactSound();

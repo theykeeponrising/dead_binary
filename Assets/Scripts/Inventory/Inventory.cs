@@ -47,7 +47,7 @@ public class Inventory : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        unit = GetComponent<Unit>();
+        unit = GetComponentInParent<Unit>();
 
         // Init starting weapons from inspector
         for (int index = 0; index < weapons.Count; index++)

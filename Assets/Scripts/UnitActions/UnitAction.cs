@@ -8,20 +8,28 @@ public abstract class UnitAction : MonoBehaviour
     public string actionName;
     public string actionDescription;
     public int actionCost;
+
     public int actionCooldown;
+    public int actionCooldownRemaining;
+    public bool OnCooldown() => actionCooldownRemaining > 0;
+
     public UnitActionRequirement[] actionRequirements;
     public UnitActionEnum actionSprite;
+    public bool HasSprite() => actionSprite != UnitActionEnum.NONE;
 
     // Gamestate values
     [HideInInspector] public FiniteState<InCombatPlayerAction> currentState;
     [HideInInspector] public Unit unit;
     [HideInInspector] public Item item;
     [HideInInspector] public int actionStage = 0;
-    bool actionPerforming;
+
     public float bufferStart;
     public float bufferEnd;
 
+    bool actionPerforming;
+    bool actionPerformed;
     public bool Performing() => actionPerforming;
+    public bool Performed() => actionPerformed;
 
     private void Awake()
     {
@@ -39,12 +47,13 @@ public abstract class UnitAction : MonoBehaviour
         return GetType() == type;
     }
 
-    public bool HasSprite()
+    public void OnTurnStart()
     {
-        // Used to check if action should show up on the action bar
-        // Returns false if actionSprite is the NONE choice
+        // Called at the start of the unit's turn
+        // Reduce cooldown (if any) and reset the performed flag
 
-        return actionSprite != UnitActionEnum.NONE;
+        if (OnCooldown()) actionCooldownRemaining -= 1;
+        actionPerformed = false;
     }
 
     public bool CheckRequirements(bool printDebug = false)
@@ -89,11 +98,17 @@ public abstract class UnitAction : MonoBehaviour
         return true;
     }
 
+    public void SetPerformed(bool performed)
+    {
+        actionPerformed = performed;
+    }
+
     public void StartPerformance()
     {
         // Starts action's performing flag
 
         actionPerforming = true;
+        SetPerformed(true);
     }
 
     public void StartPerformance(string animation)
@@ -101,6 +116,7 @@ public abstract class UnitAction : MonoBehaviour
         // Starts action's performing flag with an animation
 
         actionPerforming = true;
+        SetPerformed(true);
         unit.GetAnimator().Play(animation);
     }
 
@@ -112,13 +128,7 @@ public abstract class UnitAction : MonoBehaviour
         actionPerforming = false;
         actionStage = 0;
         unit.GetAnimator().CoverCrouch();
-    }
-
-    public virtual void SetPerformance(bool performing)
-    {
-        // Called by actions that are continuous, such as movement
-
-        actionPerforming = performing;
+        unit.GetActor().playerAction.CheckTurnEnd();
     }
 
     public void NextStage()

@@ -10,10 +10,12 @@ using UnityEngine.InputSystem;
 
 public class InCombatPlayerAction
 {
+    public Map activeMap = GlobalManager.Instance.activeMap;
+
     // Used to manage user inputs
     public PlayerInput playerInput;
     public Unit selectedCharacter;
-    public List<Unit> allCharacters; // TO DO -- Characters should be dynamically added to this list
+    public List<Unit> playerUnits;
     public List<Tile> previewPath = new List<Tile>();
     public Tile targetTile;
     public enum ClickAction { select, target }
@@ -47,13 +49,9 @@ public class InCombatPlayerAction
         infoPanelScript = UIManager.GetInfoPanel();
         infoPanelScript.gameObject.SetActive(false);
         playerActionUI = UIManager.GetPlayerAction();
-
-        // Add characters to allCharacters list
-        allCharacters = new List<Unit>();
-        GameObject[] characterGOs = GameObject.FindGameObjectsWithTag("Character");
-        foreach (GameObject go in characterGOs) allCharacters.Add(go.GetComponent<Unit>());
-
         stateDebugText = GameObject.Find("StateDebugText").GetComponent<TextMeshProUGUI>();
+
+        playerUnits = activeMap.FindUnits(Faction.Good);
     }
 
     public void EnablePlayerInput()
@@ -180,6 +178,7 @@ public class InCombatPlayerAction
 
             selectedCharacter = targetCharacter;
             selectedCharacter.GetActor().SelectUnit(true);
+            selectedCharacter.GetActor().SetWaiting(false);
         }
 
         // Select action, character selected, no previous selection
@@ -251,9 +250,9 @@ public class InCombatPlayerAction
 
         Debug.Log("Starting player turn");
 
-        foreach (Unit character in allCharacters)
+        foreach (Unit unit in playerUnits)
         {
-            character.RefreshActionPoints();
+            unit.OnTurnStart();
         }
     }
 
@@ -264,5 +263,16 @@ public class InCombatPlayerAction
         // TO DO -- Any end of turn effects, and transfer to AI
         SelectAction(null);
         this.playerTurnState.EndTurn();
+    }
+
+    public void CheckTurnEnd()
+    {
+        // Checks if all player units have exhausted their turn
+        // Returns False if any units can still perform actions
+
+        foreach (Unit unit in playerUnits)
+            if (!unit.HasTurnEnded())
+                return;
+        Debug.Log("Turn over!");
     }
 }
