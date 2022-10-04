@@ -9,6 +9,7 @@ public class StateTarget : StateCancel
 
     public List<Unit> targets = new List<Unit>();
     public Unit target;
+    public Tile targetTile;
 
     public override void Exit(InCombatPlayerAction t)
     {

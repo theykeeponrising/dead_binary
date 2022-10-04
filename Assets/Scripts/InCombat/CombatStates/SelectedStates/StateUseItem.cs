@@ -104,11 +104,17 @@ public class StateUseItem : StateTarget
                     if (target != hit.collider.GetComponent<Unit>())
                     {
                         target = hit.collider.GetComponent<Unit>();
+                        targetTile = null;
                     }
                 }
                 else if (hit.collider.gameObject.GetComponent<Unit>())
                 {
                     Debug.Log("Not a target but don't want to revert to idle. Do nothing.");
+                }
+                else if (hit.collider.gameObject.GetComponent<Tile>())
+                {
+                    target = null;
+                    targetTile = hit.collider.gameObject.GetComponent<Tile>();
                 }
                 else
                     ChangeState(new StateIdle(Machine));
@@ -121,6 +127,10 @@ public class StateUseItem : StateTarget
         if (target)
         {
             t.selectedCharacter.GetActor().ItemAction(item, target);
+        }
+        else if (targetTile)
+        {
+            t.selectedCharacter.GetActor().ItemAction(item, targetTile);
         }
         else
             Debug.Log("No Target to Use Item. But how. Reverting to idle.");

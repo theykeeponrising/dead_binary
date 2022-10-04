@@ -23,6 +23,7 @@ public abstract class DamageItem : Item
 
     [HideInInspector] public Unit sourceUnit;
     [HideInInspector] public Unit targetedUnit;
+    [HideInInspector] public Vector3 targetPosition;
     [HideInInspector] public Vector3 triggerPosition;
 
     public bool isTargetInRange(Unit sourceUnit, Unit targetedUnit)
@@ -45,7 +46,7 @@ public abstract class DamageItem : Item
             spawnEffect.transform.localScale = Vector3.one * (areaOfEffect / 2);
         }
 
-        foreach (Unit unit in Tile.GetTileOccupants(Tile.AreaOfEffect(targetedUnit, areaOfEffect)))
+        foreach (Unit unit in Tile.GetTileOccupants(Tile.AreaOfEffect(sourceUnit.grid.GetTile(targetPosition), areaOfEffect)))
             ItemEffect(sourceUnit, unit);
 
         itemAction.EndPerformance();
@@ -64,7 +65,7 @@ public abstract class DamageItem : Item
             spawnEffect.transform.localScale = Vector3.one * (areaOfEffect / 2);
         }   
 
-        foreach (Unit unit in Tile.GetTileOccupants(Tile.AreaOfEffect(targetedUnit, areaOfEffect)))
+        foreach (Unit unit in Tile.GetTileOccupants(Tile.AreaOfEffect(sourceUnit.grid.GetTile(targetPosition), areaOfEffect)))
             ItemEffect(sourceUnit, unit);
 
         itemAction.EndPerformance();

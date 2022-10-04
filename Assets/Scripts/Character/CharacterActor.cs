@@ -326,7 +326,14 @@ public class CharacterActor
     public void ItemAction(Item item, Unit target)
     {
         unit.SpendActionPoints(item.itemAction.actionCost);
-        item.UseItem(unit, target);
+        item.UseItem(unit, target.transform.position);
         unit.transform.LookAt(target.transform);
+    }
+
+    public void ItemAction(Item item, Tile targetTile)
+    {
+        unit.SpendActionPoints(item.itemAction.actionCost);
+        item.UseItem(unit, targetTile.transform.position);
+        unit.transform.LookAt(targetTile.transform);
     }
 }

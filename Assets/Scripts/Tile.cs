@@ -256,7 +256,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     }
 
 
-    public static List<Tile> AreaOfEffect(GridObject target, float areaOfEffect)
+    public static List<Tile> AreaOfEffect(Tile targetTile, float areaOfEffect)
     {
         // Gets affected tiles from target position based on "areaOfEffect" stat
         // Every odd number of range adds horizontal and vertical neighbor tiles
@@ -265,11 +265,11 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         Tile[] tiles = GameObject.FindObjectsOfType<Tile>();
         List<Tile> impactedTiles = new List<Tile>();
 
-        impactedTiles.Add(target.currentTile);
+        impactedTiles.Add(targetTile);
 
         foreach (Tile tile in tiles)
         {
-            float distance = Vector3.Distance(target.transform.position, tile.gameObject.transform.position);
+            float distance = Vector3.Distance(targetTile.transform.position, tile.transform.position);
             if (distance <= areaOfEffect && !impactedTiles.Contains(tile)) impactedTiles.Add(tile);
         }
 
