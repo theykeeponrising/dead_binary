@@ -108,6 +108,8 @@ public class StateUseItem : StateTarget
                         targetedTile = hit.collider.gameObject.GetComponent<Tile>();
 
                         tileSelectionCircle.transform.position = targetedTile.transform.position;
+                        float itemAreaOfEffect = ((DamageItem)item).areaOfEffect * GlobalManager.tileSpacing;
+                        tileSelectionCircle.transform.localScale = new Vector3(itemAreaOfEffect, itemAreaOfEffect, itemAreaOfEffect);
                         tileSelectionCircle.SetActive(true);
                     }
                     else

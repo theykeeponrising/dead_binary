@@ -19,7 +19,6 @@ public class StateTarget : StateCancel
 
         // Instantiate tile selection circle
         tileSelectionCircle = t.selectedCharacter.grid.InstantiateTileSelectionCircle(Vector3.zero);
-        tileSelectionCircle.GetComponent<Renderer>().material.color = Color.green;
     }
 
     public override void Exit(InCombatPlayerAction t)
