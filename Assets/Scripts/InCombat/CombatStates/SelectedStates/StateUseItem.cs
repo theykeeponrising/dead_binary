@@ -162,6 +162,9 @@ public class StateUseItem : StateTarget
 
     public void ShowSelectionCircle(Vector3 position)
     {
+        // Only show selection circle for aoe items
+        if (((DamageItem)item).areaOfEffect <= 1) return;
+
         tileSelectionCircle.transform.position = position;
         float itemAreaOfEffect = ((DamageItem)item).areaOfEffect * GlobalManager.tileSpacing;
         tileSelectionCircle.transform.localScale = new Vector3(itemAreaOfEffect, itemAreaOfEffect, itemAreaOfEffect);
