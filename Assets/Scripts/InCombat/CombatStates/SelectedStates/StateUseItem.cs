@@ -36,27 +36,15 @@ public class StateUseItem : StateTarget
         }
     }
 
-    public void FindTargets<T>(InCombatPlayerAction t)
+    public void FindTargets<TargetType>(InCombatPlayerAction t)
     {
-        var x = typeof(T);
-
-        if (x == typeof(Unit))
+        if (typeof(TargetType) == typeof(Unit))
         {
-            Unit[] chars = GameObject.FindObjectsOfType<Unit>();
-            foreach (var v in chars)
-            {
-                if (v.GetComponent<IFaction>() != null && v.stats.healthCurrent > 0)
-                {
-                    if (item.CheckAffinity(t.selectedCharacter, v) == true)
-                    {
-                        // Exclude targets that are out of range
-                        if (((DamageItem)item).isTargetInRange(t.selectedCharacter, v))
-                        {
-                            targets.Add(v);
-                        }
-                    }
-                }
-            }
+            List<Unit> units = t.activeMap.FindUnits(item.GetAffinity(t.selectedCharacter));
+
+            foreach (Unit unit in units)
+                if (unit.stats.healthCurrent > 0 && ((DamageItem)item).isTargetInRange(t.selectedCharacter, unit))
+                    targets.Add(unit);
         }
 
         //Find closest Target

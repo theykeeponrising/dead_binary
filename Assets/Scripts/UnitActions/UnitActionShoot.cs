@@ -10,8 +10,11 @@ public class UnitActionShoot : UnitTargetAction
 
     public override void UseAction(Unit setTarget)
     {
-        // Kicks off unit and weapon's reload methods
+        // Locks in target information and begins shoot sequence
         // Sets action to "performing" state
+
+        if (unit.GetActor().IsActing())
+            return;
 
         if (!setTarget)
         {

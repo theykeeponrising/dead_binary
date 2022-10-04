@@ -8117,6 +8117,7 @@ MonoBehaviour:
     inventory: {fileID: 2921273104778741837, guid: 09849cce6048d5447b546dd512e27cfd, type: 3}
     item_grenade: {fileID: 3652251968811846348, guid: 377566d31a1fa644d9c71d42d954a6df, type: 3}
     item_medkit: {fileID: 57096388351021912, guid: 5f2152e6e0a445b42b738daa07df58a4, type: 3}
+    wait: {fileID: 3932326382128960471, guid: 0ae4ed69cbe6a134dabc7bddba926d9e, type: 3}
 --- !u!1001 &339933134
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13769,6 +13770,30 @@ PrefabInstance:
       value: 
       objectReference: {fileID: -4286811643612619385, guid: 20fac855fc6f6184a93851ff222fc0c7, type: 3}
     - target: {fileID: 4129411967720868935, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4984933978760455573, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
+      propertyPath: items.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4984933978760455573, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
+      propertyPath: items.Array.data[0]
+      value: 
+      objectReference: {fileID: 7653284390000000886, guid: 642999ad8b784e7439debfdb1c72d0ac, type: 3}
+    - target: {fileID: 4984933978760455573, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
+      propertyPath: items.Array.data[1]
+      value: 
+      objectReference: {fileID: 7653284390000000886, guid: 23bac704f212da844b7dd8d9f0c87f71, type: 3}
+    - target: {fileID: 4984933978760455573, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
+      propertyPath: items.Array.data[2]
+      value: 
+      objectReference: {fileID: -8518260373924283274, guid: 98946c2f933e53443a14dc6914f5c469, type: 3}
+    - target: {fileID: 4984933978760455573, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
+      propertyPath: weapons.Array.data[0]
+      value: 
+      objectReference: {fileID: -4286811643612619385, guid: 20fac855fc6f6184a93851ff222fc0c7, type: 3}
+    - target: {fileID: 6909383301399375281, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
@@ -22330,6 +22355,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af90d26de13a7ea449ca6b099fcc7988, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  detailMap: {fileID: 0}
+  tileMap: {fileID: 0}
+  coverMap: {fileID: 0}
+  unitMap: {fileID: 0}
 --- !u!114 &920186846
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -38265,6 +38294,22 @@ PrefabInstance:
       propertyPath: weapons.Array.data[2]
       value: 
       objectReference: {fileID: 877797045781911332, guid: 074955a812631f44b88f9cb1f37ff1be, type: 3}
+    - target: {fileID: 4984933978760455573, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
+      propertyPath: items.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4984933978760455573, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
+      propertyPath: items.Array.data[0]
+      value: 
+      objectReference: {fileID: 7653284390000000886, guid: 642999ad8b784e7439debfdb1c72d0ac, type: 3}
+    - target: {fileID: 4984933978760455573, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
+      propertyPath: items.Array.data[1]
+      value: 
+      objectReference: {fileID: 7653284390000000886, guid: 4837cf8048c309546ba73d9c0011d24c, type: 3}
+    - target: {fileID: 4984933978760455573, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
+      propertyPath: items.Array.data[2]
+      value: 
+      objectReference: {fileID: 7653284390000000886, guid: a0ef0f7113cba6141b1969b4ed9b2bdb, type: 3}
     - target: {fileID: 6379414259080875437, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -38276,6 +38321,10 @@ PrefabInstance:
     - target: {fileID: 7167511141153434010, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
       propertyPath: stats.healthCurrent
       value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 7167511141153434010, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
+      propertyPath: unitActions.Array.size
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7323552420328571708, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
       propertyPath: m_Name

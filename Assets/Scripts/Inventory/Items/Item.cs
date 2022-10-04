@@ -49,6 +49,22 @@ public abstract class Item : MonoBehaviour
         return false;
     }
 
+    public Faction GetAffinity(Unit sourceUnit)
+    {
+        // Returns the target faction based on relative affinity to source unit
+
+        if (targetFaction == TargetFaction.FRIENDLY) 
+            return sourceUnit.attributes.faction;
+        else if (targetFaction == TargetFaction.ENEMY)
+        {
+            if (sourceUnit.attributes.faction == Faction.Good)
+                return Faction.Bad;
+            else
+                return Faction.Good;
+        }
+        else return Faction.Any;
+    }
+
     public virtual void UseItem()
     {
         Debug.Log("No item use found for item! (No parameters)");

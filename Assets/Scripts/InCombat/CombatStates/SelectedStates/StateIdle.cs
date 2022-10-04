@@ -67,7 +67,7 @@ public class StateIdle : FiniteState<InCombatPlayerAction>
                     if (unitActionMove.CheckTileMove(tile))
                     {
                         t.PathPreviewClear();
-                        t.selectedCharacter.GetActor().ProcessAction(unitActionMove, tile);
+                        unitActionMove.UseAction(tile);
                         ChangeState(new StateWaitForAction(Machine, unitAction));
                     }
                 }

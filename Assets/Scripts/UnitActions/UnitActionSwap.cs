@@ -9,6 +9,9 @@ public class UnitActionSwap : UnitAction
     {
         // Kicks off performance with the swap animation
 
+        if (unit.GetActor().IsActing())
+            return;
+
         StartPerformance("Stow");
     }
 
