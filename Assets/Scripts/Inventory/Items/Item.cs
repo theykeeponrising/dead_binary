@@ -82,7 +82,7 @@ public abstract class Item : MonoBehaviour
 
     public virtual void UseItem(Unit sourceUnit, Vector3 setTargetPosition)
     {
-        Debug.Log("No item use found for item! (Source parameter and target position)");
+        Debug.Log("No item use found for item! (Source and target position parameters)");
     }
 
     public virtual void TriggerItem()

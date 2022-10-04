@@ -92,7 +92,8 @@ public class StateUseItem : StateTarget
                     if (target != hit.collider.GetComponent<Unit>())
                     {
                         target = hit.collider.GetComponent<Unit>();
-                        targetTile = null;
+                        targetedTile = null;
+                        tileSelectionCircle.SetActive(false);
                     }
                 }
                 else if (hit.collider.gameObject.GetComponent<Unit>())
@@ -100,12 +101,25 @@ public class StateUseItem : StateTarget
                     Debug.Log("Not a target but don't want to revert to idle. Do nothing.");
                 }
                 else if (hit.collider.gameObject.GetComponent<Tile>())
-                {
-                    target = null;
-                    targetTile = hit.collider.gameObject.GetComponent<Tile>();
+                {                    
+                    if (((DamageItem)item).isTargetInRange(t.selectedCharacter, hit.collider.gameObject.GetComponent<Tile>()))
+                    {
+                        target = null;
+                        targetedTile = hit.collider.gameObject.GetComponent<Tile>();
+
+                        tileSelectionCircle.transform.position = targetedTile.transform.position;
+                        tileSelectionCircle.SetActive(true);
+                    }
+                    else
+                    {
+                        Debug.Log("Target out of range but don't want to revert to idle. Do nothing.");
+                    }
                 }
                 else
+                {
+                    tileSelectionCircle.SetActive(false);
                     ChangeState(new StateIdle(Machine));
+                }
             }
         }
     }
@@ -115,13 +129,15 @@ public class StateUseItem : StateTarget
         if (target)
         {
             t.selectedCharacter.GetActor().ItemAction(item, target);
+
         }
-        else if (targetTile)
+        else if (targetedTile)
         {
-            t.selectedCharacter.GetActor().ItemAction(item, targetTile);
+            t.selectedCharacter.GetActor().ItemAction(item, targetedTile);
         }
         else
             Debug.Log("No Target to Use Item. But how. Reverting to idle.");
+
         ChangeState(new StateWaitForAction(Machine, item.itemAction));
     }
 

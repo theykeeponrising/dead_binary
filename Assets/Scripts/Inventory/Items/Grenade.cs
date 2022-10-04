@@ -6,6 +6,16 @@ public class Grenade : DamageItem
 {
     public override void UseItem(Unit setSourceUnit, Vector3 setTargetPosition)
     {
+        UseItemOnTargetPosition(setSourceUnit, setTargetPosition);
+    }
+
+    public override void UseItem(Unit setSourceUnit, Unit setTargetedUnit)
+    {
+        UseItemOnTargetPosition(setSourceUnit, setTargetedUnit.transform.position);
+    }
+
+    public void UseItemOnTargetPosition(Unit setSourceUnit, Vector3 setTargetPosition)
+    {
         // Gets unit information, creates grenade prop, and plays throwing animation
 
         itemAction.StartPerformance();

@@ -299,7 +299,7 @@ public class CharacterActor
     public void ItemAction(Item item, Unit target)
     {
         unit.SpendActionPoints(item.itemAction.actionCost);
-        item.UseItem(unit, target.transform.position);
+        item.UseItem(unit, target);
         unit.transform.LookAt(target.transform);
     }
 

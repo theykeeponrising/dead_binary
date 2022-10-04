@@ -33,6 +33,13 @@ public abstract class DamageItem : Item
         return (sourceUnit.transform.position - targetedUnit.transform.position).magnitude / GlobalManager.tileSpacing <= range;
     }
 
+    public bool isTargetInRange(Unit sourceUnit, Tile targetedTile)
+    {
+        // Returns true if target is within range of the item
+
+        return (sourceUnit.transform.position - targetedTile.transform.position).magnitude / GlobalManager.tileSpacing <= range;
+    }
+
     public override void TriggerItem()
     {
         // Callback function for props, initiates the item effect
@@ -45,8 +52,11 @@ public abstract class DamageItem : Item
             GameObject spawnEffect = GlobalManager.Instance.activeMap.CreateTimedEffect(itemEffect.gameObject, triggerPosition, itemEffect.transform.rotation, 3f);
             spawnEffect.transform.localScale = Vector3.one * (areaOfEffect / 2);
         }
+        
+        // Use on unit if possible, otherwise on empty tile
+        Tile targetedTile = targetedUnit ? targetedUnit.currentTile : sourceUnit.grid.GetTile(targetPosition);
 
-        foreach (Unit unit in Tile.GetTileOccupants(Tile.AreaOfEffect(sourceUnit.grid.GetTile(targetPosition), areaOfEffect)))
+        foreach (Unit unit in Tile.GetTileOccupants(Tile.AreaOfEffect(targetedTile, areaOfEffect)))
             ItemEffect(sourceUnit, unit);
 
         itemAction.EndPerformance();

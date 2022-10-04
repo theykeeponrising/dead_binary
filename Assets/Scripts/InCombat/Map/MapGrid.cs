@@ -16,6 +16,8 @@ public class MapGrid : MonoBehaviour
 
     // Distance between neighboring tiles
     public static float tileSpacing = 2.0f;
+
+    public GameObject tileSelectionCircle;
     
     void Awake() 
     {
@@ -54,7 +56,6 @@ public class MapGrid : MonoBehaviour
             Tile tile = go.GetComponent<Tile>();
             AddTile(tile);
         }
-
     }
 
     public void AddTile(Tile tile) 
@@ -244,5 +245,15 @@ public class MapGrid : MonoBehaviour
                 return true;
         }
         return false;
+    }
+
+    public GameObject InstantiateTileSelectionCircle(Vector3 position)
+    {
+        return Instantiate(tileSelectionCircle, position, Quaternion.identity, transform);
+    }
+
+    public void DestroyTileSelectionCircle(GameObject tileSelectionCircle)
+    {
+        Destroy(tileSelectionCircle);
     }
 }
