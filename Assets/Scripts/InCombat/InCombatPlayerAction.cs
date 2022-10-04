@@ -265,4 +265,18 @@ public class InCombatPlayerAction
         SelectAction(null);
         this.playerTurnState.EndTurn();
     }
+
+    public bool CheckTurnOver()
+    {
+        // Player turn is over if all action points were used
+
+        bool turnOver = true;
+
+        foreach (Unit character in allCharacters)
+        {
+            if (character.attributes.faction == playerFaction && character.stats.actionPointsCurrent != 0) turnOver = false;
+        }
+
+        return turnOver;
+    }
 }

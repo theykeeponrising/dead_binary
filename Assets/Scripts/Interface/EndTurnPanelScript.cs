@@ -18,7 +18,7 @@ public class EndTurnPanelScript : MonoBehaviour, IPointerEnterHandler, IPointerE
     enum ButtonState { ACTIVE, PASSIVE, DISABLED };
     ButtonState currentButtonState = ButtonState.PASSIVE;
 
-    bool requirementsMet => StateHandler.Instance.GetStateObject(StateHandler.State.PlayerTurnState).isActive();
+    bool requirementsMet => StateHandler.Instance.GetStateObject(StateHandler.State.PlayerTurnOverState).isActive();
 
     // Colors for the icon and frame
     Dictionary<ButtonState, Color32> IconColors = new Dictionary<ButtonState, Color32>() {

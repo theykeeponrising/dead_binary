@@ -48,12 +48,22 @@ public class PlayerTurnState : GameState
             playerActionStateMachine.Update();
             playerAction.GetPlayerActionUI().GetStateText().text = playerActionStateMachine.GetCurrentState().GetType().Name;
         }
+
+        if (playerAction.CheckTurnOver())
+        {
+            TurnOver();
+        }
     }
 
     public override void FixedUpdate()
     {
         base.FixedUpdate();
         HandleContinuousInput();
+    }
+
+    public void TurnOver()
+    {
+        this.ChangeState(StateHandler.State.PlayerTurnOverState);
     }
 
     public void EndTurn()
@@ -86,4 +96,13 @@ public class PlayerTurnState : GameState
         playerAction.DisablePlayerInput();
     }
 
+}
+
+public class PlayerTurnOverState : GameState
+{
+    public override void Init(GameState parentState, StateHandler stateHandler)
+    {
+        base.Init(parentState, stateHandler);
+        this.stateEnum = StateHandler.State.PlayerTurnOverState;
+    }
 }

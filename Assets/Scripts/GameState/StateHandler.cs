@@ -13,6 +13,7 @@ public class StateHandler: MonoBehaviour
         StatusMenuState,
         CombatState,
         PlayerTurnState,
+        PlayerTurnOverState, // Player is out of AP, waiting for End Turn button press
         EnemyTurnState
     };
 
