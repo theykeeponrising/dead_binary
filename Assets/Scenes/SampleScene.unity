@@ -8117,7 +8117,7 @@ MonoBehaviour:
     inventory: {fileID: 2921273104778741837, guid: 09849cce6048d5447b546dd512e27cfd, type: 3}
     item_grenade: {fileID: 3652251968811846348, guid: 377566d31a1fa644d9c71d42d954a6df, type: 3}
     item_medkit: {fileID: 57096388351021912, guid: 5f2152e6e0a445b42b738daa07df58a4, type: 3}
-    doNothing: {fileID: 3932326382128960471, guid: 0ae4ed69cbe6a134dabc7bddba926d9e, type: 3}
+    wait: {fileID: 3932326382128960471, guid: 0ae4ed69cbe6a134dabc7bddba926d9e, type: 3}
 --- !u!1001 &339933134
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -22355,6 +22355,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af90d26de13a7ea449ca6b099fcc7988, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  detailMap: {fileID: 0}
+  tileMap: {fileID: 0}
+  coverMap: {fileID: 0}
+  unitMap: {fileID: 0}
 --- !u!114 &920186846
 MonoBehaviour:
   m_ObjectHideFlags: 0

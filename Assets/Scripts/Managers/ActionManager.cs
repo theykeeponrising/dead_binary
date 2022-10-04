@@ -22,7 +22,7 @@ public class ActionManager : MonoBehaviour
         public UnitAction inventory;
         public UnitAction item_grenade;
         public UnitAction item_medkit;
-        public UnitAction doNothing;
+        public UnitAction wait;
     }
 
     public UnitActionPrefabs unitActions;

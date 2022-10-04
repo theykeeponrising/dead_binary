@@ -132,7 +132,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
     {
         ResetActions(); 
         ResetActionPoints();
-        GetActor().DoNothing(false);
+        GetActor().SetWaiting(false);
     }
 
     public bool HasTurnEnded()
@@ -140,7 +140,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         if (stats.actionPointsCurrent == 0)
             return true;
 
-        if (GetActor().FindActionOfType(typeof(UnitActionDoNothing)).Performed())
+        if (GetActor().FindActionOfType(typeof(UnitActionWait)).Performed())
             return true;
 
         return false;
@@ -230,8 +230,8 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
             index += 1;
         }
 
-        // Always add "Do Nothing" action
-        unitActions.Insert(index, ActionManager.Instance.unitActions.doNothing);
+        // Always add "Wait" action
+        unitActions.Insert(index, ActionManager.Instance.unitActions.wait);
 
         for (index = 0; index < unitActions.Count; index++)
         {

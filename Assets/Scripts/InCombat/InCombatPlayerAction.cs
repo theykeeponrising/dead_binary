@@ -178,7 +178,7 @@ public class InCombatPlayerAction
 
             selectedCharacter = targetCharacter;
             selectedCharacter.GetActor().SelectUnit(true);
-            selectedCharacter.GetActor().DoNothing(false);
+            selectedCharacter.GetActor().SetWaiting(false);
         }
 
         // Select action, character selected, no previous selection

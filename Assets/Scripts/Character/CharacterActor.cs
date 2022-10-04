@@ -138,11 +138,13 @@ public class CharacterActor
         return false;
     }
 
-    public void DoNothing(bool act)
+    public void SetWaiting(bool isWaiting)
     {
-        if (FindActionOfType(typeof(UnitActionDoNothing)))
-            FindActionOfType(typeof(UnitActionDoNothing)).SetPerformed(act);
-        unit.healthbar.DoNothingIndicator(act);
+        // Toggles the unit's "waiting" state
+
+        UnitAction waitAction = FindActionOfType(typeof(UnitActionWait));
+        if (waitAction) waitAction.SetPerformed(performed: isWaiting);
+        unit.healthbar.WaitingIndicator(showSprites: isWaiting);
     }
 
     void Movement()

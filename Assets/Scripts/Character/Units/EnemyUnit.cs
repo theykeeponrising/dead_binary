@@ -222,7 +222,7 @@ public class EnemyUnit : Unit
 
     private EnemyAction CreateNoneAction(Tile unitTile)
     {
-        UnitAction noneAction = GetActor().FindActionOfType(typeof(UnitActionDoNothing));
+        UnitAction noneAction = GetActor().FindActionOfType(typeof(UnitActionWait));
         return new EnemyAction(noneAction, unitTile, null, null);
     }
 
