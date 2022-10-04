@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.00065872906, g: 0.00065872906, b: 0.00065872906, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -30054,6 +30054,7 @@ MonoBehaviour:
   height: 0
   gridOffsetX: 0
   gridOffsetZ: 0
+  tileSelectionCircle: {fileID: 1316760766372239566, guid: b3a12fc0a4626e04998ae8ac7322f88b, type: 3}
 --- !u!1001 &1251227164
 PrefabInstance:
   m_ObjectHideFlags: 0
