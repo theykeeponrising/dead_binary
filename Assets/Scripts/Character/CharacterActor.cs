@@ -112,42 +112,6 @@ public class CharacterActor
         }
     }
 
-    public void ProcessAction(UnitAction actionToPerform, Tile contextTile=null, Unit contextCharacter=null)
-    {
-        // Determine if action can be performed, and perform action
-
-        // If unit is already performing an action, ignore new action
-        if (IsActing())
-            return;
-
-        if (actionToPerform.actionCost > unit.stats.actionPointsCurrent)
-        {
-            Debug.Log(string.Format("{0} attempted to perform action {1} but not enough AP", unit.gameObject, actionToPerform)); // This will eventually be shown in UI
-            return;
-        }
-
-        currentAction = actionToPerform;
-
-        // Actions that target a specific tile
-        if (contextTile)
-        {
-            actionToPerform.UseAction(contextTile);
-        }
-
-        // Actions that target a specific character
-        else if (contextCharacter)
-        {
-            actionToPerform.UseAction(contextCharacter);
-        }
-
-        // Everything else
-        else
-        {
-            actionToPerform.UseAction();
-        }
-
-    }
-
     public UnitAction FindActionOfType(System.Type actionType)
     {
         // Finds an action by type from the unit's current action list
@@ -172,6 +136,13 @@ public class CharacterActor
                 return true;
 
         return false;
+    }
+
+    public void DoNothing(bool act)
+    {
+        if (FindActionOfType(typeof(UnitActionDoNothing)))
+            FindActionOfType(typeof(UnitActionDoNothing)).SetPerformed(act);
+        unit.healthbar.DoNothingIndicator(act);
     }
 
     void Movement()

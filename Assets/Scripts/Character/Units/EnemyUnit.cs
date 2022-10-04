@@ -447,22 +447,12 @@ public class EnemyUnit : Unit
     {
         UnitAction unitAction = action.GetUnitAction();
 
-        if (unitAction.IsType(typeof(UnitActionMove)))
-        {
-            GetActor().ProcessAction(unitAction, contextTile: action.Tile);
-        }
-        else if (unitAction.IsType(typeof(UnitActionShoot)))
-        {
-            GetActor().ProcessAction(unitAction, contextCharacter: action.ContextChar);
-        }
-        else if (unitAction.IsType(typeof(UnitActionReload)))
-        {
-            GetActor().ProcessAction(unitAction);
-        }
-        else // (unitAction.IsType(typeof(UnitActionDoNothing)))
-        {
-            GetActor().ProcessAction(unitAction);
-        }
+        if (unitAction.IsType(typeof(UnitActionMove))) unitAction.UseAction(action.Tile);
+
+        else if (unitAction.IsType(typeof(UnitActionShoot))) unitAction.UseAction(action.ContextChar);
+
+        else unitAction.UseAction();
+
     }
 }
 

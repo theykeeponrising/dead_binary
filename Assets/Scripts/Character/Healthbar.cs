@@ -34,6 +34,14 @@ public class Healthbar : MonoBehaviour
         }},
     };
 
+    //////////////////////////
+    // Do Nothing Indicator //
+    //////////////////////////
+
+    public Transform doNothingIndicator;
+    public Image doNothingBackground;
+    public Image doNothingForeground;
+
     /////////////////////
     // Cover indicator //
     /////////////////////
@@ -55,15 +63,27 @@ public class Healthbar : MonoBehaviour
         }},
     };
 
-    void Start()
+    void Awake()
     {
         unit = GetComponentInParent<Unit>();
         pointsContainer.Add(transform.Find("Points"));
         pointsBackground.Add(pointsContainer[0].Find("Background"));
+
+        doNothingIndicator = transform.Find("WaitIndicator");
+        doNothingBackground = doNothingIndicator.GetComponent<Image>();
+        doNothingForeground = doNothingIndicator.GetComponentsInChildren<Image>()[1];
+        doNothingForeground.color = CoverIndicatorColors[unit.attributes.faction][CoverState.ACTIVE];
+
+        doNothingBackground.enabled = false;
+        doNothingForeground.enabled = false;
+
         coverIndicator = transform.Find("CoverIndicator");
         coverFull = coverIndicator.GetComponentsInChildren<Image>()[1];
         coverHalf = coverIndicator.GetComponentsInChildren<Image>()[2];
+    }
 
+    private void Start()
+    {
         Show();
         CreateHealthPoints();
     }
@@ -229,5 +249,11 @@ public class Healthbar : MonoBehaviour
             coverHalf.color = CoverIndicatorColors[unit.attributes.faction][CoverState.ACTIVE];
             coverFull.color = CoverIndicatorColors[unit.attributes.faction][CoverState.INACTIVE];
         }
+    }
+
+    public void DoNothingIndicator(bool showSprites = true)
+    {
+        doNothingBackground.enabled = showSprites;
+        doNothingForeground.enabled = showSprites;
     }
 }

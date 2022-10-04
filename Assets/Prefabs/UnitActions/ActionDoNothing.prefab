@@ -46,10 +46,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   actionName: Wait
   actionDescription: Skip remaining actions
-  actionCost: 0
+  actionCost: 1
   actionCooldown: 0
-  actionRequirements: 
-  actionSprite: 0
+  actionCooldownRemaining: 0
+  actionRequirements: 01000000
+  actionSprite: 8
   unit: {fileID: 0}
   item: {fileID: 0}
   actionStage: 0

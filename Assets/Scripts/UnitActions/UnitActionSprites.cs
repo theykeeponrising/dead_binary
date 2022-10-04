@@ -15,6 +15,7 @@ public class UnitActionSprites
     public static string btn_action_useItem = "Buttons/btn_useItem";
     public static string btn_action_medkit = "Buttons/btn_medkit";
     public static string btn_action_grenade = "Buttons/btn_grenade";
+    public static string btn_action_doNothing = "Buttons/btn_doNothing";
 
     public static Dictionary<UnitActionEnum, string> UnitActionSpritesDict = new Dictionary<UnitActionEnum, string>() {
         { UnitActionEnum.MOVE, btn_action_move },
@@ -24,6 +25,7 @@ public class UnitActionSprites
         { UnitActionEnum.CHOOSE_ITEM, btn_action_chooseItem },
         { UnitActionEnum.MEDKIT, btn_action_medkit },
         { UnitActionEnum.GRENADE, btn_action_grenade },
+        { UnitActionEnum.DO_NOTHING, btn_action_doNothing },
     };
 
     public static string GetSprite(UnitActionEnum match)
@@ -34,4 +36,4 @@ public class UnitActionSprites
     }
 }
 
-public enum UnitActionEnum { NONE, MOVE, SHOOT, RELOAD, SWAP, CHOOSE_ITEM, MEDKIT, GRENADE };
+public enum UnitActionEnum { NONE, MOVE, SHOOT, RELOAD, SWAP, CHOOSE_ITEM, MEDKIT, GRENADE, DO_NOTHING };

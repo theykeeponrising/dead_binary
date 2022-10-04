@@ -9,6 +9,11 @@ public class UnitActionMove : UnitAction
 
     public override void UseAction(Tile tile)
     {
+        // Sets units move data and updates as unit progresses
+
+        if (unit.GetActor().IsActing())
+            return;
+
         movePath = unit.GetActor().moveData.path;
         moveCount = 0;
 

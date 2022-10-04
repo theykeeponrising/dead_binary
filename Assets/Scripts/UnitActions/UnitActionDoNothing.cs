@@ -6,6 +6,15 @@ public class UnitActionDoNothing : UnitAction
 {
     public override void UseAction()
     {
-        Debug.Log(string.Format("{0} used a DoNothing action!"), unit.gameObject);
+        // Flags the unit as "doing nothing"
+        // Displays waiting icon above character and flags them as ending turn
+
+        if (unit.GetActor().IsActing())
+            return;
+
+        SetPerformed(true);
+        unit.GetActor().GetPlayerAction().SelectAction();
+        unit.healthbar.DoNothingIndicator(true);
+        unit.GetActor().playerAction.CheckTurnEnd();
     }
 }

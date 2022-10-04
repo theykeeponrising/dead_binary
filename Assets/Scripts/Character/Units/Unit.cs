@@ -12,7 +12,6 @@ public enum FlagType {
     SHOOT,
     RELOAD,
     VAULT,
-    DODGE,
     AIM,
     STOW,
     DRAW,
@@ -24,7 +23,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
     //List of units on opposing faction that are alive
     protected List<Unit> oppFactionUnits;
     public MapGrid grid;
-    // lol
+
     protected CharacterActor charActor;
     protected CharacterAnimator charAnim;
     protected CharacterSFX charSFX;
@@ -37,7 +36,6 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
     [HideInInspector] public Healthbar healthbar;
     public IFaction ifaction;
     Faction IFaction.faction { get { return attributes.faction; } set { attributes.faction = value; } }
-    GameState gameState;
 
     [HideInInspector] public CoverObject currentCover => currentTile.cover;
     public List<UnitAction> unitActions;
@@ -88,7 +86,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
     {
         base.Awake();
         this.name = string.Format("{0} (Character)", attributes.name);
-        inventory = GetComponent<Inventory>();
+        inventory = GetComponentInChildren<Inventory>();
         ifaction = this;
         
         if (objectTiles.Count > 0) currentTile = objectTiles[0];
@@ -130,14 +128,22 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         GetActor().OnPointerExit(eventData);
     }
 
-    public void SetGameState(GameState gameState)
-    {
-        this.gameState = gameState;
-    }
-
     public virtual void OnTurnStart()
     {
-        RefreshActionPoints();
+        ResetActions(); 
+        ResetActionPoints();
+        GetActor().DoNothing(false);
+    }
+
+    public bool HasTurnEnded()
+    {
+        if (stats.actionPointsCurrent == 0)
+            return true;
+
+        if (GetActor().FindActionOfType(typeof(UnitActionDoNothing)).Performed())
+            return true;
+
+        return false;
     }
 
     public CharacterActor GetActor()
@@ -224,6 +230,9 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
             index += 1;
         }
 
+        // Always add "Do Nothing" action
+        unitActions.Insert(index, ActionManager.Instance.unitActions.doNothing);
+
         for (index = 0; index < unitActions.Count; index++)
         {
             Transform actionsContainer = transform.Find("Actions");
@@ -260,10 +269,21 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         stats.actionPointsCurrent -= amount;
     }
 
-    public void RefreshActionPoints()
+    public void ResetActionPoints()
     {
-        // Used to refresh character action points to max.
+        // Used to refresh character action points to max
+        // TO-DO -- Add AP penalties here from debuffs
+
         stats.actionPointsCurrent = stats.actionPointsMax;
+    }
+
+    public void ResetActions()
+    {
+        // Resets all actions back to starting point
+        // Called at the beginning of the turn
+
+        foreach (UnitAction unitAction in unitActions)
+            unitAction.OnTurnStart();
     }
 
     public int GetHealth()
@@ -382,9 +402,9 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         if (!RollForHit(attacker, distanceToTarget))
         {
             if (currentCover) currentCover.Impact();
-            AddFlag(FlagType.DODGE);
+            GetAnimator().SetTrigger("dodge");
             Debug.Log(string.Format("{0} missed target {1}!", attacker.attributes.name, attributes.name));
-            GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.DODGE, true);
+            
             return;
         }
 

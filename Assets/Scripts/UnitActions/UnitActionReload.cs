@@ -11,6 +11,9 @@ public class UnitActionReload : UnitAction
         // Kicks off unit and weapon's reload methods
         // Sets action to "performing" state
 
+        if (unit.GetActor().IsActing())
+            return;
+
         unit.SpendActionPoints(actionCost);
         weapon = unit.GetEquippedWeapon();
         weapon.ReloadEffect();
