@@ -56,6 +56,7 @@ public class StateUseItem : StateTarget
             });
 
             target = targets[0];
+            ShowSelectionCircle(target.transform.position);
         }
     }
 
@@ -92,14 +93,34 @@ public class StateUseItem : StateTarget
                     if (target != hit.collider.GetComponent<Unit>())
                     {
                         target = hit.collider.GetComponent<Unit>();
+                        targetedTile = null;
+
+                        ShowSelectionCircle(target.transform.position);
                     }
                 }
                 else if (hit.collider.gameObject.GetComponent<Unit>())
                 {
                     Debug.Log("Not a target but don't want to revert to idle. Do nothing.");
                 }
+                else if (hit.collider.gameObject.GetComponent<Tile>())
+                {                    
+                    if (((DamageItem)item).isTargetInRange(t.selectedCharacter, hit.collider.gameObject.GetComponent<Tile>()))
+                    {
+                        target = null;
+                        targetedTile = hit.collider.gameObject.GetComponent<Tile>();
+
+                        ShowSelectionCircle(targetedTile.transform.position);
+                    }
+                    else
+                    {
+                        Debug.Log("Target out of range but don't want to revert to idle. Do nothing.");
+                    }
+                }
                 else
+                {
+                    tileSelectionCircle.SetActive(false);
                     ChangeState(new StateIdle(Machine));
+                }
             }
         }
     }
@@ -109,9 +130,15 @@ public class StateUseItem : StateTarget
         if (target)
         {
             t.selectedCharacter.GetActor().ItemAction(item, target);
+
+        }
+        else if (targetedTile)
+        {
+            t.selectedCharacter.GetActor().ItemAction(item, targetedTile);
         }
         else
             Debug.Log("No Target to Use Item. But how. Reverting to idle.");
+
         ChangeState(new StateWaitForAction(Machine, item.itemAction));
     }
 
@@ -131,5 +158,16 @@ public class StateUseItem : StateTarget
         ButtonPress(index);
         action.UseAction();
         ChangeState(new StateWaitForAction(Machine, action));
+    }
+
+    public void ShowSelectionCircle(Vector3 position)
+    {
+        // Only show selection circle for aoe items
+        if (((DamageItem)item).areaOfEffect <= 1) return;
+
+        tileSelectionCircle.transform.position = position;
+        float itemAreaOfEffect = ((DamageItem)item).areaOfEffect * GlobalManager.tileSpacing;
+        tileSelectionCircle.transform.localScale = new Vector3(itemAreaOfEffect, itemAreaOfEffect, itemAreaOfEffect);
+        tileSelectionCircle.SetActive(true);
     }
 }

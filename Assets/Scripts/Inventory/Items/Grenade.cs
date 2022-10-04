@@ -4,15 +4,25 @@ using UnityEngine;
 
 public class Grenade : DamageItem
 {
+    public override void UseItem(Unit setSourceUnit, Vector3 setTargetPosition)
+    {
+        UseItemOnTargetPosition(setSourceUnit, setTargetPosition);
+    }
+
     public override void UseItem(Unit setSourceUnit, Unit setTargetedUnit)
+    {
+        UseItemOnTargetPosition(setSourceUnit, setTargetedUnit.transform.position);
+    }
+
+    public void UseItemOnTargetPosition(Unit setSourceUnit, Vector3 setTargetPosition)
     {
         // Gets unit information, creates grenade prop, and plays throwing animation
 
         itemAction.StartPerformance();
         sourceUnit = setSourceUnit;
-        targetedUnit = setTargetedUnit;
+        targetPosition = setTargetPosition;
 
-        float distance = (sourceUnit.transform.position - targetedUnit.transform.position).magnitude;
+        float distance = (sourceUnit.transform.position - targetPosition).magnitude;
 
         if (distance > MapGrid.tileSpacing * 3)
             sourceUnit.GetComponent<Animator>().Play("Throw-Long");
@@ -21,7 +31,7 @@ public class Grenade : DamageItem
 
         ItemProp grenade = Instantiate(itemProp, sourceUnit.GetAnimator().body.handLeft);
         grenade.SetItemEffect(this);
-        grenade.SetItemDestination(targetedUnit.transform.position);
+        grenade.SetItemDestination(targetPosition);
 
         sourceUnit.GetActor().ClearTarget();
     }

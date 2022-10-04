@@ -208,6 +208,13 @@ public class InCombatPlayerAction
             return;
         }
 
+        // Don't show path preview if we are using an item
+        if (stateMachine.GetCurrentState().GetType() == typeof(StateUseItem))
+        { 
+            PathPreviewClear();
+            return;
+        }
+
         // Don't show if we are not currently using the main camera
         if (Camera.current != Camera.main)
             return;
