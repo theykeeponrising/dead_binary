@@ -16,6 +16,7 @@ public class CombatState : GameState
         this.stateEnum = StateHandler.State.CombatState;
         this.substates = new List<GameState> {
             new PlayerTurnState(),
+            new PlayerTurnOverState(),
             new EnemyTurnState(),
         };
 
