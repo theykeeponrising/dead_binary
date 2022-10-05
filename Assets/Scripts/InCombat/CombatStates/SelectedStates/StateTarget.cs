@@ -40,7 +40,7 @@ public class StateTarget : StateCancel
         base.Exit(t);
     }
 
-    public void FindTargets<TargetType>(InCombatPlayerAction t)
+    public virtual void FindTargets<TargetType>(InCombatPlayerAction t)
     {
         if (typeof(TargetType) == typeof(Unit))
         {
@@ -70,6 +70,12 @@ public class StateTarget : StateCancel
         // Returns true if target is within range of the item
 
         return (sourceUnit.transform.position - targetedUnit.transform.position).magnitude / GlobalManager.tileSpacing <= targetRange;
+    }
+
+    public virtual void ChangeTarget(InCombatPlayerAction t, Unit targetUnit)
+    {
+        t.selectedCharacter.GetActor().targetCharacter = targetUnit;
+        infoPanel.CreateTargetButtons(targets);
     }
 
     public override void InputPrimary(InCombatPlayerAction t)
@@ -112,8 +118,6 @@ public class StateTarget : StateCancel
         if (n < 0) n = targets.Count - 1;
         if (n > targets.Count - 1) n = 0;
 
-        target = targets[n];
-        t.selectedCharacter.GetActor().targetCharacter = target;
-        infoPanel.UpdateTargetButtons();
+        ChangeTarget(t, targets[n]);
     }
 }

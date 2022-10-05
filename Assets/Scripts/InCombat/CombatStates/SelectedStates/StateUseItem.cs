@@ -36,7 +36,7 @@ public class StateUseItem : StateTarget
         }
     }
 
-    public void FindTargets<TargetType>(InCombatPlayerAction t)
+    public override void FindTargets<TargetType>(InCombatPlayerAction t)
     {
         if (typeof(TargetType) == typeof(Unit))
         {
@@ -55,9 +55,16 @@ public class StateUseItem : StateTarget
                 return Vector2.Distance(t.selectedCharacter.transform.position, a.transform.position).CompareTo(Vector2.Distance(t.selectedCharacter.transform.position, b.transform.position));
             });
 
-            target = targets[0];
-            ShowSelectionCircle(target.transform.position);
+            ChangeTarget(t, targets[0]);
         }
+    }
+
+    public override void ChangeTarget(InCombatPlayerAction t, Unit targetUnit)
+    {
+        target = targetUnit;
+        t.selectedCharacter.GetActor().targetCharacter = target;
+        infoPanel.CreateTargetButtons(targets);
+        ShowSelectionCircle(target.transform.position);
     }
 
     public override void Execute(InCombatPlayerAction t)
@@ -88,6 +95,7 @@ public class StateUseItem : StateTarget
 
             if (Physics.Raycast(ray, out hit, Mathf.Infinity))
             {
+                // Directly targeting a valid unit with mouse primary
                 if (targets.Contains(hit.collider.GetComponent<Unit>()))
                 {
                     if (target != hit.collider.GetComponent<Unit>())
@@ -95,21 +103,28 @@ public class StateUseItem : StateTarget
                         target = hit.collider.GetComponent<Unit>();
                         targetedTile = null;
 
+                        t.selectedCharacter.GetActor().targetCharacter = target;
                         ShowSelectionCircle(target.transform.position);
+                        infoPanel.CreateTargetButtons(targets);
                     }
                 }
+
+                // Directly targeting an invalid unit with mouse primary
                 else if (hit.collider.gameObject.GetComponent<Unit>())
                 {
                     Debug.Log("Not a target but don't want to revert to idle. Do nothing.");
                 }
+
+                // Directly targeting a tile with mouse primary
                 else if (hit.collider.gameObject.GetComponent<Tile>())
                 {                    
                     if (((DamageItem)item).isTargetInRange(t.selectedCharacter, hit.collider.gameObject.GetComponent<Tile>()))
                     {
                         target = null;
                         targetedTile = hit.collider.gameObject.GetComponent<Tile>();
-
+                        t.selectedCharacter.GetActor().targetCharacter = null;
                         ShowSelectionCircle(targetedTile.transform.position);
+                        infoPanel.CreateTargetButtons(targets);
                     }
                     else
                     {

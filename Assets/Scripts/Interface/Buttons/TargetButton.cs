@@ -51,8 +51,7 @@ public class TargetButton : ActionButton
         ButtonTrigger();
         StateTarget currentState = (StateTarget)GetCurrentState();
         InCombatPlayerAction playerAction = GetPlayerAction();
-        currentState.target = boundUnit;
-        playerAction.selectedCharacter.GetActor().targetCharacter = boundUnit;
+        currentState.ChangeTarget(playerAction, boundUnit);
         infoPanel.UpdateTargetButtons();
     }
 }
