@@ -47,10 +47,13 @@ MonoBehaviour:
   itemType: 2
   targetType: 0
   targetFaction: 0
+  immuneUnitTypes: 01000000
   itemName: Medkit
   itemAction: {fileID: 57096388351021912, guid: 5f2152e6e0a445b42b738daa07df58a4, type: 3}
   itemUsesCurrent: 1
   itemUsesMax: 1
+  itemInfoName: 
+  itemInfoDescription: 
   hpAmount: 5
   areaOfEffect: 1
   range: 1
@@ -59,4 +62,5 @@ MonoBehaviour:
   itemEffect: {fileID: 0}
   sourceUnit: {fileID: 0}
   targetedUnit: {fileID: 0}
+  targetPosition: {x: 0, y: 0, z: 0}
   triggerPosition: {x: 0, y: 0, z: 0}

@@ -50,6 +50,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
     {
         public string name;
         public Faction faction;
+        public UnitType unitType;
         public AudioManager.FootstepSource footstepSource;
     }
 
@@ -64,7 +65,6 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         public float dodge;
         public int actionPointsCurrent;
         public int actionPointsMax;
-        public UnitType unitType;
     }
 
     [Header("--Character Info")]

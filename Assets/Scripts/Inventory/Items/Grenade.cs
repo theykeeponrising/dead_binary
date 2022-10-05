@@ -4,16 +4,14 @@ using UnityEngine;
 
 public class Grenade : DamageItem
 {
-    public override bool UseItem(Unit setSourceUnit, Vector3 setTargetPosition)
+    public override void UseItem(Unit setSourceUnit, Vector3 setTargetPosition)
     {
         UseItemOnTargetPosition(setSourceUnit, setTargetPosition);
-        return true;
     }
 
-    public override bool UseItem(Unit setSourceUnit, Unit setTargetedUnit)
+    public override void UseItem(Unit setSourceUnit, Unit setTargetedUnit)
     {
         UseItemOnTargetPosition(setSourceUnit, setTargetedUnit.transform.position);
-        return true;
     }
 
     public void UseItemOnTargetPosition(Unit setSourceUnit, Vector3 setTargetPosition)

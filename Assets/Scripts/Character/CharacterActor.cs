@@ -298,11 +298,15 @@ public class CharacterActor
 
     public void ItemAction(Item item, Unit target)
     {
-        if (item.UseItem(unit, target))
+        if (item.immuneUnitTypes.Contains(target.attributes.unitType))
         {
-            unit.SpendActionPoints(item.itemAction.actionCost);
-            unit.transform.LookAt(target.transform);
+            Debug.Log("Units of this type are immune to the effect of this item.");
+            return;
         }
+
+        item.UseItem(unit, target);
+        unit.SpendActionPoints(item.itemAction.actionCost);
+        unit.transform.LookAt(target.transform);
     }
 
     public void ItemAction(Item item, Tile targetTile)
