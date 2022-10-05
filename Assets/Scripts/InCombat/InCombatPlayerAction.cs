@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.InputSystem;
-
+using Unity.VisualScripting;
 
 public class InCombatPlayerAction
 {
@@ -99,6 +99,20 @@ public class InCombatPlayerAction
         }
 
         SelectAction(targetCharacter);        
+    }
+
+    public void SelectRemainingUnit()
+    {
+        // Selects the remaining player unit (meaning unit that still has AP) with the most AP left
+
+        if (CheckTurnEnd()) return;
+
+        Unit highestApUnit = playerUnits[0];        
+        for (int i = 1; i < playerUnits.Count; i++)
+        {
+            if (playerUnits[i].stats.actionPointsCurrent > highestApUnit.stats.actionPointsCurrent) highestApUnit = playerUnits[i];
+        }
+        SelectAction(highestApUnit);
     }
 
     public UnitAction GetBindings(int index)
@@ -255,8 +269,6 @@ public class InCombatPlayerAction
     {
         // Start player's next turn
 
-        Debug.Log("Starting player turn");
-
         foreach (Unit unit in playerUnits)
         {
             unit.OnTurnStart();
@@ -272,14 +284,14 @@ public class InCombatPlayerAction
         this.playerTurnState.EndTurn();
     }
 
-    public void CheckTurnEnd()
+    public bool CheckTurnEnd()
     {
         // Checks if all player units have exhausted their turn
         // Returns False if any units can still perform actions
 
         foreach (Unit unit in playerUnits)
             if (!unit.HasTurnEnded())
-                return;
-        Debug.Log("Turn over!");
+                return false;
+        return true;
     }
 }
