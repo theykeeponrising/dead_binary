@@ -65,24 +65,32 @@ public abstract class Item : MonoBehaviour
         else return Faction.Any;
     }
 
-    public virtual void UseItem()
+    public virtual bool UseItem()
     {
+        // Returns true if items was used successfully
         Debug.Log("No item use found for item! (No parameters)");
+        return false;
     }
 
-    public virtual void UseItem(Unit target)
+    public virtual bool UseItem(Unit target)
     {
+        // Returns true if items was used successfully
         Debug.Log("No item use found for item! (Target parameter)");
+        return false;
     }
 
-    public virtual void UseItem(Unit sourceUnit, Unit targetUnit)
+    public virtual bool UseItem(Unit sourceUnit, Unit targetUnit)
     {
+        // Returns true if items was used successfully
         Debug.Log("No item use found for item! (Source and target parameters)");
+        return false;
     }
 
-    public virtual void UseItem(Unit sourceUnit, Vector3 setTargetPosition)
+    public virtual bool UseItem(Unit sourceUnit, Vector3 setTargetPosition)
     {
+        // Returns true if items was used successfully
         Debug.Log("No item use found for item! (Source and target position parameters)");
+        return false;
     }
 
     public virtual void TriggerItem()

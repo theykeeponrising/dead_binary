@@ -298,9 +298,11 @@ public class CharacterActor
 
     public void ItemAction(Item item, Unit target)
     {
-        unit.SpendActionPoints(item.itemAction.actionCost);
-        item.UseItem(unit, target);
-        unit.transform.LookAt(target.transform);
+        if (item.UseItem(unit, target))
+        {
+            unit.SpendActionPoints(item.itemAction.actionCost);
+            unit.transform.LookAt(target.transform);
+        }
     }
 
     public void ItemAction(Item item, Tile targetTile)

@@ -2436,6 +2436,7 @@ MonoBehaviour:
     dodge: 3
     actionPointsCurrent: 2
     actionPointsMax: 2
+    unitType: 1
   attributes:
     name: Scrapbot
     faction: 2

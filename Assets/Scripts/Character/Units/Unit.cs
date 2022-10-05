@@ -18,6 +18,11 @@ public enum FlagType {
     DEAD
 };
 
+public enum UnitType {
+    HUMAN,
+    ROBOTIC
+}
+
 public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHandler
 {
     //List of units on opposing faction that are alive
@@ -59,6 +64,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         public float dodge;
         public int actionPointsCurrent;
         public int actionPointsMax;
+        public UnitType unitType;
     }
 
     [Header("--Character Info")]
