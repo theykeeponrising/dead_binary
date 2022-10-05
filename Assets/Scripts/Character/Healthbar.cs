@@ -38,9 +38,7 @@ public class Healthbar : MonoBehaviour
     // Do Nothing Indicator //
     //////////////////////////
 
-    public Transform waitingIndicator;
-    public Image waitingBackground;
-    public Image waitingForeground;
+    public Image waitingIndicator;
 
     /////////////////////
     // Cover indicator //
@@ -69,13 +67,9 @@ public class Healthbar : MonoBehaviour
         pointsContainer.Add(transform.Find("Points"));
         pointsBackground.Add(pointsContainer[0].Find("Background"));
 
-        waitingIndicator = transform.Find("WaitIndicator");
-        waitingBackground = waitingIndicator.GetComponent<Image>();
-        waitingForeground = waitingIndicator.GetComponentsInChildren<Image>()[1];
-        waitingForeground.color = CoverIndicatorColors[unit.attributes.faction][CoverState.ACTIVE];
-
-        waitingBackground.enabled = false;
-        waitingForeground.enabled = false;
+        waitingIndicator = transform.Find("WaitIndicator").GetComponent<Image>();
+        waitingIndicator.color = CoverIndicatorColors[unit.attributes.faction][CoverState.ACTIVE];
+        waitingIndicator.enabled = false;
 
         coverIndicator = transform.Find("CoverIndicator");
         coverFull = coverIndicator.GetComponentsInChildren<Image>()[1];
@@ -255,7 +249,6 @@ public class Healthbar : MonoBehaviour
     {
         // Toggle to show/hide the "Waiting" sprites
 
-        waitingBackground.enabled = showSprites;
-        waitingForeground.enabled = showSprites;
+        waitingIndicator.enabled = showSprites;
     }
 }

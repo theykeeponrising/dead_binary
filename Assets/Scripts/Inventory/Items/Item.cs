@@ -18,6 +18,11 @@ public abstract class Item : MonoBehaviour
     public string itemInfoName;
     public string itemInfoDescription;
 
+    public float areaOfEffect;
+    [Tooltip("Usable tile range for the item.")]
+    public int range;
+    [Tooltip("Impact effect of the item.")]
+
     public bool CheckRequirements() => itemAction.CheckRequirements();
 
     private void Awake()

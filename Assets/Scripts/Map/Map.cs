@@ -7,6 +7,7 @@ using UnityEngine.Tilemaps;
 public class Map : MonoBehaviour
 {
     MapEffects mapEffects;
+    public MapGrid mapGrid;
     public Tilemap detailMap;
     public Tilemap tileMap;
     public Tilemap coverMap;
@@ -15,6 +16,7 @@ public class Map : MonoBehaviour
     void Awake()
     {
         mapEffects = GetComponent<MapEffects>();
+        mapGrid = GetComponentInChildren<MapGrid>();
         Tilemap[] tilemaps = GetComponentsInChildren<Tilemap>();
 
         detailMap = tilemaps[0];

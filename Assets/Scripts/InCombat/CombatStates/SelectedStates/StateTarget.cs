@@ -5,13 +5,17 @@ using UnityEngine;
 public class StateTarget : StateCancel
 {
     public List<System.Type> CompatibleActions = new List<System.Type>() { typeof(UnitActionSwap) };
-    public Faction targetFaction;
-    public float targetRange;
-    public StateTarget(StateMachine<InCombatPlayerAction> machine, Faction targetFaction, float targetRange = 50f) : base(machine) { Machine = machine; this.targetFaction = targetFaction; this.targetRange = targetRange; }
+    public UnitTargetAction storedAction;
+    public StateTarget(StateMachine<InCombatPlayerAction> machine, UnitTargetAction storedAction) : base(machine) { Machine = machine; this.storedAction = storedAction; }
 
-    public List<Unit> targets = new List<Unit>();
-    public Unit target;
+    public List<Unit> targets;
+    public Unit targetedUnit;
     public Tile targetedTile;
+    public TargetType targetType = TargetType.CHARACTER;
+
+    public Faction targetFaction;
+    public float targetRange = 50f;
+    public float areaOfEffect = 1f;
 
     public GameObject tileSelectionCircle;
 
@@ -19,8 +23,41 @@ public class StateTarget : StateCancel
     {
         base.Enter(t);
 
+        // Display info panel
+        infoPanel.gameObject.SetActive(true);
+        infoPanel.UpdateAction(storedAction);
+        infoPanel.UpdateHit(-1);
+
+        targets = new List<Unit>();
+        targetFaction = IFaction.GetFactionByRelation(t.selectedCharacter);
+
+        if (storedAction.GetType().IsSubclassOf(typeof(UnitActionItem)))
+        {
+            targetFaction = IFaction.GetFactionByRelation(t.selectedCharacter, storedAction.item.targetFaction);
+            targetRange = storedAction.item.range;
+            areaOfEffect = storedAction.item.areaOfEffect;
+            targetType = storedAction.item.targetType;
+
+            if (storedAction.item.GetType().BaseType == typeof(DamageItem))
+            {
+                var itemType = (DamageItem)storedAction.item;
+                infoPanel.UpdateDamage(itemType.hpAmount);
+            }
+        }
+
         // Instantiate tile selection circle
-        tileSelectionCircle = t.selectedCharacter.grid.InstantiateTileSelectionCircle(Vector3.zero);
+        tileSelectionCircle = GlobalManager.Instance.activeMap.mapGrid.InstantiateTileSelectionCircle(Vector3.zero);
+
+        //Find Targets
+        switch (targetType)
+        {
+            case TargetType.CHARACTER:
+                FindTargets<Unit>(t);
+                break;
+            default:
+                Debug.Log("Types other than Character are not yet implemented");
+                break;
+        }
     }
 
     public override void Exit(InCombatPlayerAction t)
@@ -35,9 +72,27 @@ public class StateTarget : StateCancel
             c.GetActor().IsTargetUX(false, false);
         }
 
-        t.selectedCharacter.grid.DestroyTileSelectionCircle(tileSelectionCircle);
+        GlobalManager.Instance.activeMap.mapGrid.DestroyTileSelectionCircle(tileSelectionCircle);
 
         base.Exit(t);
+    }
+
+    public override void Execute(InCombatPlayerAction t)
+    {
+        if (t.selectedCharacter == null) ChangeState(new StateNoSelection(Machine));
+
+        foreach (var v in targets)
+        {
+            if (v.GetComponent<Unit>() == true)
+            {
+                Unit c = v.GetComponent<Unit>();
+
+                if (v == targetedUnit)
+                    c.GetActor().IsTargetUX(true, true);
+                else
+                    c.GetActor().IsTargetUX(false, true);
+            }
+        }
     }
 
     public virtual void FindTargets<TargetType>(InCombatPlayerAction t)
@@ -59,64 +114,128 @@ public class StateTarget : StateCancel
                 return Vector2.Distance(t.selectedCharacter.transform.position, a.transform.position).CompareTo(Vector2.Distance(t.selectedCharacter.transform.position, b.transform.position));
             });
 
-            target = targets[0];
-            t.selectedCharacter.GetActor().targetCharacter = target;
-            infoPanel.CreateTargetButtons(targets);
+            if (!targetedUnit) ChangeTarget(t, targets[0]);
+            else ChangeTarget(t, targetedUnit);
         }
     }
 
-    public bool TargetInRange(Unit sourceUnit, Unit targetedUnit)
+    public bool TargetInRange(Unit sourceUnit, Unit targetUnit)
     {
-        // Returns true if target is within range of the item
+        // Returns true if target unit is within range of the action
 
-        return (sourceUnit.transform.position - targetedUnit.transform.position).magnitude / GlobalManager.tileSpacing <= targetRange;
+        return Mathf.Round(Vector3.Distance(sourceUnit.transform.position, targetUnit.transform.position) / GlobalManager.tileSpacing) <= targetRange;
+    }
+
+    public bool TargetInRange(Unit sourceUnit, Tile targetTile)
+    {
+        // Returns true if target tile is within range of the action
+
+        return Mathf.Round(Vector3.Distance(sourceUnit.transform.position, targetTile.transform.position) / GlobalManager.tileSpacing) <= targetRange;
     }
 
     public virtual void ChangeTarget(InCombatPlayerAction t, Unit targetUnit)
     {
-        t.selectedCharacter.GetActor().targetCharacter = targetUnit;
+        // Changes target to provided unit, clears tile target
+
+        targetedUnit = targetUnit;
+        targetedTile = null;
+        t.selectedCharacter.GetActor().targetCharacter = targetedUnit;
         infoPanel.CreateTargetButtons(targets);
+        ShowSelectionCircle(targetedUnit.transform.position);
+    }
+
+    public virtual void ChangeTarget(InCombatPlayerAction t, Tile targetTile)
+    {
+        // Changes target to provided tile, clears unit target
+
+        targetedUnit = null;
+        targetedTile = targetTile;
+        t.selectedCharacter.GetActor().targetCharacter = null;
+        infoPanel.CreateTargetButtons(targets);
+        ShowSelectionCircle(targetedTile.transform.position);
+    }
+
+    public void ShowSelectionCircle(Vector3 position)
+    {
+        // Only show selection circle for aoe items
+        if (areaOfEffect <= 1) return;
+
+        tileSelectionCircle.transform.position = position;
+        float itemAreaOfEffect = areaOfEffect * GlobalManager.tileSpacing;
+        tileSelectionCircle.transform.localScale = new Vector3(itemAreaOfEffect, itemAreaOfEffect, itemAreaOfEffect);
+        tileSelectionCircle.SetActive(true);
     }
 
     public override void InputPrimary(InCombatPlayerAction t)
     {
-        // If valid target, make Target
         if (!IsPointerOverUIElement(t))
         {
-            Camera raycastCamera = Camera.main;
             RaycastHit hit;
             Ray ray;
+            ray = Camera.main.ScreenPointToRay(t.playerInput.Controls.InputPosition.ReadValue<Vector2>());
 
-            if (t.selectedCharacter.GetComponentInChildren<Camera>())
-                raycastCamera = t.selectedCharacter.GetComponentInChildren<Camera>();
-
-            ray = raycastCamera.ScreenPointToRay(t.playerInput.Controls.InputPosition.ReadValue<Vector2>());
-
-            int layerMask = (1 << LayerMask.NameToLayer("TileMap"));
-
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity, ~layerMask))
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity))
             {
-                if (hit.collider.GetComponent<Unit>())
+                // Directly targeting a valid unit with mouse primary
+                if (targets.Contains(hit.collider.GetComponent<Unit>()))
                 {
-                    var c = hit.collider.GetComponent<Unit>();
-
-                    if (targets.Contains(c))
+                    if (targetedUnit != hit.collider.GetComponent<Unit>())
                     {
-                        t.selectedCharacter.GetActor().targetCharacter = c;
-                        infoPanel.UpdateTargetButtons();
+                        ChangeTarget(t, hit.collider.GetComponent<Unit>());
                     }
+                }
+
+                // Directly targeting an invalid unit with mouse primary
+                else if (hit.collider.gameObject.GetComponent<Unit>())
+                {
+                    Debug.Log("Not a target but don't want to revert to idle. Do nothing.");
+                }
+
+                // Directly targeting a tile with mouse primary
+                else if (hit.collider.gameObject.GetComponent<Tile>())
+                {
+                    if (TargetInRange(t.selectedCharacter, hit.collider.gameObject.GetComponent<Tile>()))
+                    {
+                        ChangeTarget(t, hit.collider.gameObject.GetComponent<Tile>());
+                    }
+                    else
+                    {
+                        Debug.Log("Target out of range but don't want to revert to idle. Do nothing.");
+                    }
+                }
+                else
+                {
+                    tileSelectionCircle.SetActive(false);
+                    ChangeState(new StateIdle(Machine));
                 }
             }
         }
     }
 
+    public override void InputSpacebar(InCombatPlayerAction t)
+    {
+        if (targetedUnit)
+        {
+            storedAction.UseAction(targetedUnit);
+        }
+        else if (targetedTile)
+        {
+            storedAction.UseAction(targetedTile);
+        }
+        else
+            storedAction.UseAction();
+
+        ChangeState(new StateWaitForAction(Machine, storedAction));
+    }
+
     public override void InputTab(InCombatPlayerAction t, bool shift)
     {
-        int index = targets.IndexOf(target);
+        int index = targets.IndexOf(targetedUnit);
         int n = shift ? index - 1 : index + 1;
 
         if (n < 0) n = targets.Count - 1;
         if (n > targets.Count - 1) n = 0;
+        if (targets.Count == 0) return;
 
         ChangeTarget(t, targets[n]);
     }

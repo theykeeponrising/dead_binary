@@ -109,8 +109,8 @@ public class InCombatPlayerAction
 
         foreach (Unit unit in playerUnits)
         {
-            if (unit.GetFlag(FlagType.DEAD)) continue;
-
+            if (unit.GetFlag(FlagType.DEAD) || unit.HasTurnEnded()) continue;
+            if (selectedCharacter == unit) return;
             SelectAction(unit);
             return;
         }

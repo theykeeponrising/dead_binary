@@ -33,9 +33,7 @@ public class StateChooseItem : StateCancel
     {
         ActionPanelScript actionPanel = UIManager.GetActionPanel();
         int offset = actionPanel.GetButtons().Count;
-        int fixed_index = index - 1 - offset;
         UnitAction action = t.GetBindings(index);
-        List<Item> items = t.selectedCharacter.GetItems();
 
         // If the Choose Item button was selected again, close the panel and return to Idle
         if (action.GetType() == typeof(UnitActionInventory))
@@ -49,12 +47,18 @@ public class StateChooseItem : StateCancel
         else if (action.GetType().IsSubclassOf(typeof(UnitActionItem)) && action.CheckRequirements())
         {
             ButtonPress(index);
-            action.UseAction(this, items[fixed_index]);
+            action.UseAction(this);
             return;
         }
 
+        else if (action.GetType().IsSubclassOf(typeof(UnitTargetAction)))
+        {
+            ButtonPress(index);
+            ChangeState(new StateChoosingTarget(Machine, (UnitTargetAction)action));
+        }
+
         // If a normal action button was selected, perform that action
-        else if (index <= offset)
+                else if (index <= offset)
         {
             new StateIdle(Machine).InputActionBtn(t, index);
             return;
