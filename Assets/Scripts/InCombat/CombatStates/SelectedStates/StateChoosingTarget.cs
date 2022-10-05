@@ -6,7 +6,7 @@ public class StateChoosingTarget : StateTarget
 {
     UnitAction storedAction;
 
-    public StateChoosingTarget(StateMachine<InCombatPlayerAction> machine, UnitAction setAction) : base(machine) { Machine = machine; storedAction = setAction; }
+    public StateChoosingTarget(StateMachine<InCombatPlayerAction> machine, UnitAction setAction) : base(machine, Faction.Bad) { Machine = machine; storedAction = setAction; }
 
     public override void Enter(InCombatPlayerAction t)
     {
@@ -119,8 +119,9 @@ public class StateChoosingTarget : StateTarget
         else
         {
             t.selectedCharacter.GetActor().ClearTarget();
-            new StateIdle(Machine).InputActionBtn(t, index);
-            ChangeState(new StateIdle(Machine));
+            StateIdle stateIdle = new StateIdle(Machine);
+            stateIdle.InputActionBtn(t, index);
+            ChangeState(new StateWaitForAction(Machine, action, stateIdle));
         }
     }
 

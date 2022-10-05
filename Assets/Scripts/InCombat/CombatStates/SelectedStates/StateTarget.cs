@@ -5,7 +5,9 @@ using UnityEngine;
 public class StateTarget : StateCancel
 {
     public List<System.Type> CompatibleActions = new List<System.Type>() { typeof(UnitActionSwap) };
-    public StateTarget(StateMachine<InCombatPlayerAction> machine) : base(machine) { Machine = machine; }
+    public Faction targetFaction;
+    public float targetRange;
+    public StateTarget(StateMachine<InCombatPlayerAction> machine, Faction targetFaction, float targetRange = 50f) : base(machine) { Machine = machine; this.targetFaction = targetFaction; this.targetRange = targetRange; }
 
     public List<Unit> targets = new List<Unit>();
     public Unit target;
@@ -23,6 +25,38 @@ public class StateTarget : StateCancel
         }
 
         base.Exit(t);
+    }
+
+    public void FindTargets<TargetType>(InCombatPlayerAction t)
+    {
+        if (typeof(TargetType) == typeof(Unit))
+        {
+            List<Unit> units = t.activeMap.FindUnits(targetFaction);
+
+            foreach (Unit unit in units)
+                if (unit.stats.healthCurrent > 0 && TargetInRange(t.selectedCharacter, unit))
+                    targets.Add(unit);
+        }
+
+        //Find closest Target
+        if (targets.Count > 0)
+        {
+            targets.Sort(delegate (Unit a, Unit b)
+            {
+                return Vector2.Distance(t.selectedCharacter.transform.position, a.transform.position).CompareTo(Vector2.Distance(t.selectedCharacter.transform.position, b.transform.position));
+            });
+
+            target = targets[0];
+            t.selectedCharacter.GetActor().targetCharacter = target;
+            infoPanel.CreateTargetButtons(targets);
+        }
+    }
+
+    public bool TargetInRange(Unit sourceUnit, Unit targetedUnit)
+    {
+        // Returns true if target is within range of the item
+
+        return (sourceUnit.transform.position - targetedUnit.transform.position).magnitude / GlobalManager.tileSpacing <= targetRange;
     }
 
     public override void InputPrimary(InCombatPlayerAction t)
@@ -48,7 +82,10 @@ public class StateTarget : StateCancel
                     var c = hit.collider.GetComponent<Unit>();
 
                     if (targets.Contains(c))
+                    {
                         t.selectedCharacter.GetActor().targetCharacter = c;
+                        infoPanel.UpdateTargetButtons();
+                    }
                 }
             }
         }
@@ -64,5 +101,6 @@ public class StateTarget : StateCancel
 
         target = targets[n];
         t.selectedCharacter.GetActor().targetCharacter = target;
+        infoPanel.UpdateTargetButtons();
     }
 }

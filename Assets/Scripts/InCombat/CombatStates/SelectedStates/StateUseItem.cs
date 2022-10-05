@@ -6,7 +6,7 @@ public class StateUseItem : StateTarget
 {
     Item item;
 
-    public StateUseItem(StateMachine<InCombatPlayerAction> machine, Item useItem) : base(machine) { Machine = machine; item = useItem; }
+    public StateUseItem(StateMachine<InCombatPlayerAction> machine, Item useItem) : base(machine, useItem.GetAffinity(useItem.unit)) { Machine = machine; item = useItem; }
 
     public override void Enter(InCombatPlayerAction t)
     {
@@ -36,28 +36,30 @@ public class StateUseItem : StateTarget
         }
     }
 
-    public void FindTargets<TargetType>(InCombatPlayerAction t)
-    {
-        if (typeof(TargetType) == typeof(Unit))
-        {
-            List<Unit> units = t.activeMap.FindUnits(item.GetAffinity(t.selectedCharacter));
+    //public void FindTargets<TargetType>(InCombatPlayerAction t)
+    //{
+    //    if (typeof(TargetType) == typeof(Unit))
+    //    {
+    //        List<Unit> units = t.activeMap.FindUnits(item.GetAffinity(t.selectedCharacter));
 
-            foreach (Unit unit in units)
-                if (unit.stats.healthCurrent > 0 && ((DamageItem)item).isTargetInRange(t.selectedCharacter, unit))
-                    targets.Add(unit);
-        }
+    //        foreach (Unit unit in units)
+    //            if (unit.stats.healthCurrent > 0 && ((DamageItem)item).isTargetInRange(t.selectedCharacter, unit))
+    //                targets.Add(unit);
+    //    }
 
-        //Find closest Target
-        if (targets.Count > 0)
-        {
-            targets.Sort(delegate (Unit a, Unit b)
-            {
-                return Vector2.Distance(t.selectedCharacter.transform.position, a.transform.position).CompareTo(Vector2.Distance(t.selectedCharacter.transform.position, b.transform.position));
-            });
+    //    //Find closest Target
+    //    if (targets.Count > 0)
+    //    {
+    //        targets.Sort(delegate (Unit a, Unit b)
+    //        {
+    //            return Vector2.Distance(t.selectedCharacter.transform.position, a.transform.position).CompareTo(Vector2.Distance(t.selectedCharacter.transform.position, b.transform.position));
+    //        });
 
-            target = targets[0];
-        }
-    }
+    //        target = targets[0];
+    //        t.selectedCharacter.GetActor().targetCharacter = target;
+    //        infoPanel.CreateTargetButtons(targets);
+    //    }
+    //}
 
     public override void Execute(InCombatPlayerAction t)
     {
@@ -92,6 +94,8 @@ public class StateUseItem : StateTarget
                     if (target != hit.collider.GetComponent<Unit>())
                     {
                         target = hit.collider.GetComponent<Unit>();
+                        t.selectedCharacter.GetActor().targetCharacter = target;
+                        infoPanel.UpdateTargetButtons();
                     }
                 }
                 else if (hit.collider.gameObject.GetComponent<Unit>())

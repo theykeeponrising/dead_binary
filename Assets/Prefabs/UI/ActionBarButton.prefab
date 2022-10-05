@@ -227,7 +227,7 @@ GameObject:
   - component: {fileID: 6769374170054772962}
   - component: {fileID: 2731226593703120154}
   m_Layer: 5
-  m_Name: ActionButton
+  m_Name: ActionBarButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

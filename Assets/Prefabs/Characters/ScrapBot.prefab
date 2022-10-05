@@ -2216,7 +2216,6 @@ GameObject:
   - component: {fileID: 7019620656351241454}
   - component: {fileID: 190433427531185719}
   - component: {fileID: 5511761140728847718}
-  - component: {fileID: 3809991894843442051}
   m_Layer: 8
   m_Name: ScrapBot
   m_TagString: Character
@@ -2242,6 +2241,7 @@ Transform:
   - {fileID: 8380820800285804308}
   - {fileID: 7025926703298510289}
   - {fileID: 7083468753861370024}
+  - {fileID: 3347725188806967610}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2439,6 +2439,7 @@ MonoBehaviour:
   attributes:
     name: Scrapbot
     faction: 2
+    unitIcon: 1
     footstepSource: 1
   velocityX: 0
   velocityZ: 0
@@ -2450,24 +2451,6 @@ MonoBehaviour:
   ApproachWeight: 0
   LeaveCoverPenalty: 0
   isProcessingTurn: 0
---- !u!114 &3809991894843442051
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4043852725619244410}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1c490b25532104d418f8ebcd479a7e15, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  weapons:
-  - {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
-  items: []
-  itemStats: []
-  equippedWeapon: {fileID: 0}
-  weaponsMax: 2
 --- !u!1 &4130446979763077459
 GameObject:
   m_ObjectHideFlags: 0
@@ -4345,6 +4328,56 @@ Transform:
   m_Father: {fileID: 920044837178485227}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7496225670242363732
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3347725188806967610}
+  - component: {fileID: 3146834139877818258}
+  m_Layer: 8
+  m_Name: Inventory
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3347725188806967610
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7496225670242363732}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3698992464614909888}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3146834139877818258
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7496225670242363732}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c490b25532104d418f8ebcd479a7e15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weapons:
+  - {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
+  items: []
+  itemStats: []
+  equippedWeapon: {fileID: 0}
+  weaponsMax: 2
 --- !u!1 &8353946537576864455
 GameObject:
   m_ObjectHideFlags: 0

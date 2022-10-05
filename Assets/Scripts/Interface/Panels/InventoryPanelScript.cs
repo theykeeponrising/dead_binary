@@ -68,9 +68,9 @@ public class InventoryPanelScript : ActionPanelScript
         BuildActions();
 
         // Remove existing bindings if any
-        foreach (ActionButton button in buttons) button.UnbindButton();
+        foreach (ActionBarButton button in buttons) button.UnbindButton();
 
         // Bind buttons to inputs
-        foreach (ActionButton button in buttons) button.BindButton(buttons.IndexOf(button) + offset);
+        foreach (ActionBarButton button in buttons) button.BindIndex(buttons.IndexOf(button) + offset);
     }
 }

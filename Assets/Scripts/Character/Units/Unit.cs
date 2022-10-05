@@ -45,6 +45,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
     {
         public string name;
         public Faction faction;
+        public UnitIconEnum unitIcon;
         public AudioManager.FootstepSource footstepSource;
     }
 
@@ -132,7 +133,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
     {
         ResetActions(); 
         ResetActionPoints();
-        GetActor().SetWaiting(false);
+        if (GetActor() != null) GetActor().SetWaiting(false);
     }
 
     public bool HasTurnEnded()
