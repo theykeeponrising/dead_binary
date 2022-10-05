@@ -36,30 +36,29 @@ public class StateUseItem : StateTarget
         }
     }
 
-    //public void FindTargets<TargetType>(InCombatPlayerAction t)
-    //{
-    //    if (typeof(TargetType) == typeof(Unit))
-    //    {
-    //        List<Unit> units = t.activeMap.FindUnits(item.GetAffinity(t.selectedCharacter));
+    public void FindTargets<TargetType>(InCombatPlayerAction t)
+    {
+        if (typeof(TargetType) == typeof(Unit))
+        {
+            List<Unit> units = t.activeMap.FindUnits(item.GetAffinity(t.selectedCharacter));
 
-    //        foreach (Unit unit in units)
-    //            if (unit.stats.healthCurrent > 0 && ((DamageItem)item).isTargetInRange(t.selectedCharacter, unit))
-    //                targets.Add(unit);
-    //    }
+            foreach (Unit unit in units)
+                if (unit.stats.healthCurrent > 0 && ((DamageItem)item).isTargetInRange(t.selectedCharacter, unit) && !item.immuneUnitTypes.Contains(unit.attributes.unitType))
+                    targets.Add(unit);
+        }
 
-    //    //Find closest Target
-    //    if (targets.Count > 0)
-    //    {
-    //        targets.Sort(delegate (Unit a, Unit b)
-    //        {
-    //            return Vector2.Distance(t.selectedCharacter.transform.position, a.transform.position).CompareTo(Vector2.Distance(t.selectedCharacter.transform.position, b.transform.position));
-    //        });
+        //Find closest Target
+        if (targets.Count > 0)
+        {
+            targets.Sort(delegate (Unit a, Unit b)
+            {
+                return Vector2.Distance(t.selectedCharacter.transform.position, a.transform.position).CompareTo(Vector2.Distance(t.selectedCharacter.transform.position, b.transform.position));
+            });
 
-    //        target = targets[0];
-    //        t.selectedCharacter.GetActor().targetCharacter = target;
-    //        infoPanel.CreateTargetButtons(targets);
-    //    }
-    //}
+            target = targets[0];
+            ShowSelectionCircle(target.transform.position);
+        }
+    }
 
     public override void Execute(InCombatPlayerAction t)
     {
@@ -94,16 +93,34 @@ public class StateUseItem : StateTarget
                     if (target != hit.collider.GetComponent<Unit>())
                     {
                         target = hit.collider.GetComponent<Unit>();
-                        t.selectedCharacter.GetActor().targetCharacter = target;
-                        infoPanel.UpdateTargetButtons();
+                        targetedTile = null;
+
+                        ShowSelectionCircle(target.transform.position);
                     }
                 }
                 else if (hit.collider.gameObject.GetComponent<Unit>())
                 {
                     Debug.Log("Not a target but don't want to revert to idle. Do nothing.");
                 }
+                else if (hit.collider.gameObject.GetComponent<Tile>())
+                {                    
+                    if (((DamageItem)item).isTargetInRange(t.selectedCharacter, hit.collider.gameObject.GetComponent<Tile>()))
+                    {
+                        target = null;
+                        targetedTile = hit.collider.gameObject.GetComponent<Tile>();
+
+                        ShowSelectionCircle(targetedTile.transform.position);
+                    }
+                    else
+                    {
+                        Debug.Log("Target out of range but don't want to revert to idle. Do nothing.");
+                    }
+                }
                 else
+                {
+                    tileSelectionCircle.SetActive(false);
                     ChangeState(new StateIdle(Machine));
+                }
             }
         }
     }
@@ -113,9 +130,15 @@ public class StateUseItem : StateTarget
         if (target)
         {
             t.selectedCharacter.GetActor().ItemAction(item, target);
+
+        }
+        else if (targetedTile)
+        {
+            t.selectedCharacter.GetActor().ItemAction(item, targetedTile);
         }
         else
             Debug.Log("No Target to Use Item. But how. Reverting to idle.");
+
         ChangeState(new StateWaitForAction(Machine, item.itemAction));
     }
 
@@ -135,5 +158,16 @@ public class StateUseItem : StateTarget
         ButtonPress(index);
         action.UseAction();
         ChangeState(new StateWaitForAction(Machine, action));
+    }
+
+    public void ShowSelectionCircle(Vector3 position)
+    {
+        // Only show selection circle for aoe items
+        if (((DamageItem)item).areaOfEffect <= 1) return;
+
+        tileSelectionCircle.transform.position = position;
+        float itemAreaOfEffect = ((DamageItem)item).areaOfEffect * GlobalManager.tileSpacing;
+        tileSelectionCircle.transform.localScale = new Vector3(itemAreaOfEffect, itemAreaOfEffect, itemAreaOfEffect);
+        tileSelectionCircle.SetActive(true);
     }
 }

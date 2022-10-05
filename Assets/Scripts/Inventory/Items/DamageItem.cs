@@ -23,6 +23,7 @@ public abstract class DamageItem : Item
 
     [HideInInspector] public Unit sourceUnit;
     [HideInInspector] public Unit targetedUnit;
+    [HideInInspector] public Vector3 targetPosition;
     [HideInInspector] public Vector3 triggerPosition;
 
     public bool isTargetInRange(Unit sourceUnit, Unit targetedUnit)
@@ -30,6 +31,13 @@ public abstract class DamageItem : Item
         // Returns true if target is within range of the item
 
         return (sourceUnit.transform.position - targetedUnit.transform.position).magnitude / GlobalManager.tileSpacing <= range;
+    }
+
+    public bool isTargetInRange(Unit sourceUnit, Tile targetedTile)
+    {
+        // Returns true if target is within range of the item
+
+        return (sourceUnit.transform.position - targetedTile.transform.position).magnitude / GlobalManager.tileSpacing <= range;
     }
 
     public override void TriggerItem()
@@ -44,8 +52,11 @@ public abstract class DamageItem : Item
             GameObject spawnEffect = GlobalManager.Instance.activeMap.CreateTimedEffect(itemEffect.gameObject, triggerPosition, itemEffect.transform.rotation, 3f);
             spawnEffect.transform.localScale = Vector3.one * (areaOfEffect / 2);
         }
+        
+        // Use on unit if possible, otherwise on empty tile
+        Tile targetedTile = targetedUnit ? targetedUnit.currentTile : sourceUnit.grid.GetTile(targetPosition);
 
-        foreach (Unit unit in Tile.GetTileOccupants(Tile.AreaOfEffect(targetedUnit, areaOfEffect)))
+        foreach (Unit unit in Tile.GetTileOccupants(Tile.AreaOfEffect(targetedTile, areaOfEffect)))
             ItemEffect(sourceUnit, unit);
 
         itemAction.EndPerformance();
@@ -64,7 +75,7 @@ public abstract class DamageItem : Item
             spawnEffect.transform.localScale = Vector3.one * (areaOfEffect / 2);
         }   
 
-        foreach (Unit unit in Tile.GetTileOccupants(Tile.AreaOfEffect(targetedUnit, areaOfEffect)))
+        foreach (Unit unit in Tile.GetTileOccupants(Tile.AreaOfEffect(sourceUnit.grid.GetTile(targetPosition), areaOfEffect)))
             ItemEffect(sourceUnit, unit);
 
         itemAction.EndPerformance();

@@ -11,6 +11,17 @@ public class StateTarget : StateCancel
 
     public List<Unit> targets = new List<Unit>();
     public Unit target;
+    public Tile targetedTile;
+
+    public GameObject tileSelectionCircle;
+
+    public override void Enter(InCombatPlayerAction t)
+    {
+        base.Enter(t);
+
+        // Instantiate tile selection circle
+        tileSelectionCircle = t.selectedCharacter.grid.InstantiateTileSelectionCircle(Vector3.zero);
+    }
 
     public override void Exit(InCombatPlayerAction t)
     {
@@ -23,6 +34,8 @@ public class StateTarget : StateCancel
             v.TryGetComponent(out Unit c);
             c.GetActor().IsTargetUX(false, false);
         }
+
+        t.selectedCharacter.grid.DestroyTileSelectionCircle(tileSelectionCircle);
 
         base.Exit(t);
     }

@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 public abstract class Item : MonoBehaviour
 {
@@ -7,6 +8,7 @@ public abstract class Item : MonoBehaviour
     public ItemType itemType;
     public TargetType targetType;
     public TargetFaction targetFaction;
+    public List<UnitType> immuneUnitTypes;
 
     public string itemName;
     public UnitAction itemAction;
@@ -78,9 +80,14 @@ public abstract class Item : MonoBehaviour
         Debug.Log("No item use found for item! (Target parameter)");
     }
 
-    public virtual void UseItem(Unit sourceUnit, Unit targetedUnit)
+    public virtual void UseItem(Unit sourceUnit, Unit targetUnit)
     {
         Debug.Log("No item use found for item! (Source and target parameters)");
+    }
+
+    public virtual void UseItem(Unit sourceUnit, Vector3 setTargetPosition)
+    {
+        Debug.Log("No item use found for item! (Source and target position parameters)");
     }
 
     public virtual void TriggerItem()

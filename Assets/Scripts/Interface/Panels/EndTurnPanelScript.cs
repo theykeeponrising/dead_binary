@@ -18,7 +18,7 @@ public class EndTurnPanelScript : MonoBehaviour, IPointerEnterHandler, IPointerE
     enum ButtonState { ACTIVE, PASSIVE, DISABLED };
     ButtonState currentButtonState = ButtonState.PASSIVE;
 
-    bool requirementsMet => StateHandler.Instance.GetStateObject(StateHandler.State.PlayerTurnState).isActive();
+    bool requirementsMet => playerAction.CheckTurnEnd() && StateHandler.Instance.GetStateObject(StateHandler.State.PlayerTurnState).isActive();
 
     // Colors for the icon and frame
     Dictionary<ButtonState, Color32> IconColors = new Dictionary<ButtonState, Color32>() {
@@ -53,6 +53,8 @@ public class EndTurnPanelScript : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         button = GetComponentInChildren<Button>();
         button.onClick.AddListener(ButtonPress);
+
+        playerAction = ((PlayerTurnState)StateHandler.Instance.GetStateObject(StateHandler.State.PlayerTurnState)).GetPlayerAction();
     }
 
     // Update is called once per frame
@@ -93,13 +95,15 @@ public class EndTurnPanelScript : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     void ButtonPress()
     {
-        if (!requirementsMet) return;
+        if (!requirementsMet)
+        {
+            playerAction.SelectRemainingUnit();
+            return;
+        }
 
         AudioClip audioClip = AudioManager.Instance.GetInterfaceSound(AudioManager.InterfaceSFX.MOUSE_CLICK, 0);
         audioSource.PlayOneShot(audioClip);
 
-        PlayerTurnState playerTurnState = (PlayerTurnState)StateHandler.Instance.GetStateObject(StateHandler.State.PlayerTurnState);
-        playerAction = playerTurnState.GetPlayerAction();
         playerAction.EndTurn();
     }
 }
