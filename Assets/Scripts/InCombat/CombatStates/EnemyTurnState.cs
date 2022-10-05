@@ -26,6 +26,7 @@ public class EnemyTurnState : GameState
 
     public void EndTurn()
     {
+        Debug.Log("Enemy turn!");
         this.ChangeState(StateHandler.State.PlayerTurnState);
     }
 }
