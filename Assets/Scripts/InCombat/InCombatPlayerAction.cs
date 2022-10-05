@@ -103,16 +103,17 @@ public class InCombatPlayerAction
 
     public void SelectRemainingUnit()
     {
-        // Selects the remaining player unit (meaning unit that still has AP) with the most AP left
+        // Selects a remaining player unit (meaning unit that still has AP)
 
         if (CheckTurnEnd()) return;
 
-        Unit highestApUnit = playerUnits[0];
-        for (int i = 1; i < playerUnits.Count; i++)
+        foreach (Unit unit in playerUnits)
         {
-            if (playerUnits[i].stats.actionPointsCurrent > highestApUnit.stats.actionPointsCurrent) highestApUnit = playerUnits[i];
+            if (unit.GetFlag(FlagType.DEAD)) continue;
+
+            SelectAction(unit);
+            return;
         }
-        SelectAction(highestApUnit);
     }
 
     public UnitAction GetBindings(int index)
