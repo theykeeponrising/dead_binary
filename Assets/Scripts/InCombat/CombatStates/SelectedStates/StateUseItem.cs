@@ -43,7 +43,7 @@ public class StateUseItem : StateTarget
             List<Unit> units = t.activeMap.FindUnits(item.GetAffinity(t.selectedCharacter));
 
             foreach (Unit unit in units)
-                if (unit.stats.healthCurrent > 0 && ((DamageItem)item).isTargetInRange(t.selectedCharacter, unit))
+                if (unit.stats.healthCurrent > 0 && ((DamageItem)item).isTargetInRange(t.selectedCharacter, unit) && !item.immuneUnitTypes.Contains(unit.attributes.unitType))
                     targets.Add(unit);
         }
 

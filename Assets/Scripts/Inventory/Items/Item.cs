@@ -1,11 +1,13 @@
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 public abstract class Item : MonoBehaviour
 {
     public ItemType itemType;
     public TargetType targetType;
     public TargetFaction targetFaction;
+    public List<UnitType> immuneUnitTypes;
 
     public string itemName;
     public UnitAction itemAction;
