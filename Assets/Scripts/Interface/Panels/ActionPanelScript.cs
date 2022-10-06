@@ -7,9 +7,9 @@ public class ActionPanelScript : MonoBehaviour
 {
     [HideInInspector] public InCombatPlayerAction playerAction;
     [HideInInspector] public GameObject panel;
-    [HideInInspector] public List<ActionButton> buttons = new List<ActionButton>();
+    [HideInInspector] public List<ActionBarButton> buttons = new List<ActionBarButton>();
     [HideInInspector] public PlayerTurnState playerTurnState;
-    public ActionButton buttonPrefab;
+    public ActionBarButton buttonPrefab;
     [HideInInspector] public TextMeshProUGUI[] textObjects;
 
     // ELEMENT LIST
@@ -30,11 +30,11 @@ public class ActionPanelScript : MonoBehaviour
     {
         // When action panel is disabled, destroy all buttons
 
-        foreach (ActionButton button in buttons)
+        foreach (ActionBarButton button in buttons)
         {
             Destroy(button.gameObject);
         }
-        buttons = new List<ActionButton>();
+        buttons = new List<ActionBarButton>();
     }
 
     void BuildActions()
@@ -99,13 +99,13 @@ public class ActionPanelScript : MonoBehaviour
         BuildActions();
 
         // Remove existing bindings if any
-        foreach (ActionButton button in buttons) button.UnbindButton();
+        foreach (ActionBarButton button in buttons) button.UnbindButton();
 
         // Bind buttons to inputs
-        foreach (ActionButton button in buttons) button.BindButton(buttons.IndexOf(button));
+        foreach (ActionBarButton button in buttons) button.BindIndex(buttons.IndexOf(button));
     }
 
-    public List<ActionButton> GetButtons()
+    public List<ActionBarButton> GetButtons()
     {
         // Returns all currently-active buttons
 

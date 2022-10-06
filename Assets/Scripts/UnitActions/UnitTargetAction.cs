@@ -6,6 +6,7 @@ public abstract class UnitTargetAction : UnitAction
 {
     [HideInInspector] public Unit targetUnit;
     [HideInInspector] public Vector3 targetPosition;
+    public Faction targetFaction;
 
     public override void UseAction(Unit unit)
     {

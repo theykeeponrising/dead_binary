@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public abstract class Item : MonoBehaviour
 {
+    public Unit unit;
     public ItemType itemType;
     public TargetType targetType;
     public TargetFaction targetFaction;
@@ -17,10 +18,17 @@ public abstract class Item : MonoBehaviour
     public string itemInfoName;
     public string itemInfoDescription;
 
+    public float areaOfEffect;
+    [Tooltip("Usable tile range for the item.")]
+    public int range;
+    [Tooltip("Impact effect of the item.")]
+
     public bool CheckRequirements() => itemAction.CheckRequirements();
 
     private void Awake()
     {
+        unit = GetComponentInParent<Unit>();
+
         if (itemAction)
         {
             itemAction = Instantiate(itemAction, transform);

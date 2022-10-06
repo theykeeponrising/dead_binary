@@ -95,7 +95,7 @@ public class StateIdle : FiniteState<InCombatPlayerAction>
 
         ButtonPress(index);
         if (action.GetType().IsSubclassOf(typeof(UnitTargetAction)))
-            ChangeState(new StateChoosingTarget(Machine, action));
+            ChangeState(new StateChoosingTarget(Machine, (UnitTargetAction)action));
         else if (action.GetType().IsSubclassOf(typeof(UnitStateAction)))
             action.UseAction(this);
         else

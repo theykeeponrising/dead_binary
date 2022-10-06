@@ -27,3 +27,22 @@ public enum Faction
 {
     Neutral, Good, Bad, Any
 }
+
+public class FactionHelper
+{
+    public static Faction GetFactionByRelation(Unit sourceUnit, TargetFaction targetFaction = TargetFaction.ENEMY)
+    {
+        // Returns the target faction based on relative affinity to source unit
+
+        if (targetFaction == TargetFaction.FRIENDLY)
+            return sourceUnit.attributes.faction;
+        else if (targetFaction == TargetFaction.ENEMY)
+        {
+            if (sourceUnit.attributes.faction == Faction.Good)
+                return Faction.Bad;
+            else
+                return Faction.Good;
+        }
+        else return Faction.Any;
+    }
+}

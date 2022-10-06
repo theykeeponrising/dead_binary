@@ -11,10 +11,6 @@ public abstract class DamageItem : Item
     [Tooltip("HP amount change from use. Positive amounts will heal.")]
     public int hpAmount;
     [Tooltip("Circular effect area in tiles.")]
-    public float areaOfEffect;
-    [Tooltip("Usable tile range for the item.")]
-    public int range;
-    [Tooltip("Impact effect of the item.")]
     public Weapon.WeaponImpact itemImpact;
     [Tooltip("Item prop displayed when item is used.")]
     public ItemProp itemProp;
@@ -25,20 +21,6 @@ public abstract class DamageItem : Item
     [HideInInspector] public Unit targetedUnit;
     [HideInInspector] public Vector3 targetPosition;
     [HideInInspector] public Vector3 triggerPosition;
-
-    public bool isTargetInRange(Unit sourceUnit, Unit targetedUnit)
-    {
-        // Returns true if target is within range of the item
-
-        return (sourceUnit.transform.position - targetedUnit.transform.position).magnitude / GlobalManager.tileSpacing <= range;
-    }
-
-    public bool isTargetInRange(Unit sourceUnit, Tile targetedTile)
-    {
-        // Returns true if target is within range of the item
-
-        return (sourceUnit.transform.position - targetedTile.transform.position).magnitude / GlobalManager.tileSpacing <= range;
-    }
 
     public override void TriggerItem()
     {

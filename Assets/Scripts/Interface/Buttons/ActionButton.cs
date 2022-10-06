@@ -5,59 +5,41 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
 
-public class ActionButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public abstract class ActionButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     // Class used to handle sprites for action buttons
     // Will be used to control mouse-over effects as well
 
-    AudioSource audioSource;
-    Button button;
-    string spritePath;
+    public AudioSource audioSource;
+    public Button button;
 
-    [SerializeField] private InCombatPlayerAction playerAction;
-    PlayerTurnState playerTurnState;
-    int buttonIndex;
-    FiniteState<InCombatPlayerAction> state;
+    public Item boundItem;
+    public UnitAction boundAction;
+    public Unit boundUnit;
+    public bool requirementsMet;
 
-    UnitAction boundAction;
-    bool requirementsMet;
-    Item boundItem;
-
-    Sprite icon;
-    Image btnBackground;
-    Image btnFrame;
-    Image btnIcon;
-    TextMeshProUGUI btnQuantity;
-
-    enum ButtonState { ACTIVE, PASSIVE, DISABLED };
-    ButtonState currentButtonState = ButtonState.PASSIVE;
+    public enum ButtonState { ACTIVE, PASSIVE, DISABLED };
+    public ButtonState currentButtonState = ButtonState.PASSIVE;
 
     // Colors for the icon and frame
-    Dictionary<ButtonState, Color32> IconColors = new Dictionary<ButtonState, Color32>() {
+    public Dictionary<ButtonState, Color32> IconColors = new Dictionary<ButtonState, Color32>() {
         { ButtonState.ACTIVE, new Color32(37, 232, 232, 255) },
         { ButtonState.PASSIVE, new Color32(0, 0, 0, 255) },
         { ButtonState.DISABLED, new Color32(100, 100, 100, 255) },
     };
 
     // Colors for the background
-    Dictionary<ButtonState, Color32> BackgroundColors = new Dictionary<ButtonState, Color32>() { 
+    public Dictionary<ButtonState, Color32> BackgroundColors = new Dictionary<ButtonState, Color32>() {
         { ButtonState.ACTIVE, new Color32(0, 0, 0, 255) },
         { ButtonState.PASSIVE, new Color32(37, 232, 232, 255) },
         { ButtonState.DISABLED, new Color32(0, 0, 0, 255) },
     };
 
-    void Start()
-    {
-        playerTurnState = (PlayerTurnState)StateHandler.Instance.GetStateObject(StateHandler.State.PlayerTurnState);
-        playerAction = playerTurnState.GetPlayerAction();
-
-        btnBackground = GetComponentsInChildren<Image>()[0];
-        btnFrame = GetComponentsInChildren<Image>()[1];
-        btnIcon = GetComponentsInChildren<Image>()[2];
-        btnQuantity = GetComponentsInChildren<TextMeshProUGUI>()[1];
-
-        btnIcon.sprite = icon;
-    }
+    // Colors for the factions
+    public Dictionary<Faction, Color32> FactionColors = new Dictionary<Faction, Color32>() {
+        { Faction.Good, new Color32(37, 232, 232, 255) },
+        { Faction.Bad, new Color32(232, 37, 37, 255) },
+    };
 
     void OnEnable()
     {
@@ -67,37 +49,28 @@ public class ActionButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 
     void Update()
     {
-        CheckRequirements();
-        CheckQuantity();
+        if (boundAction) CheckRequirements();
+        if (boundItem) CheckQuantity();
     }
 
-    public void LoadResources(string newSpritePath)
+    public virtual void LoadResources(string newSpritePath)
     {
-        spritePath = newSpritePath;
-        icon = Resources.Load<Sprite>(spritePath);
+        Debug.Log("Load Resources override missing for button!");
     }
 
-    public string GetSpritePath()
+    public virtual void LoadResources(string[] newSpritePath)
     {
-        return spritePath;
+        Debug.Log("Load Resources override missing for button!");
     }
 
-    void CheckRequirements()
+    public virtual void CheckRequirements()
     {
-        requirementsMet = boundAction.CheckRequirements();
-        if (!requirementsMet) currentButtonState = ButtonState.DISABLED;
-        else if (requirementsMet && currentButtonState == ButtonState.DISABLED) currentButtonState = ButtonState.PASSIVE;
-
-        btnIcon.color = IconColors[currentButtonState];
-        btnFrame.color = IconColors[currentButtonState];
-        btnBackground.color = BackgroundColors[currentButtonState];
-        btnQuantity.color = IconColors[currentButtonState];
+        Debug.Log("Check Requirements override missing for button!");
     }
 
-    void CheckQuantity()
+    public virtual void CheckQuantity()
     {
-        if (boundItem)
-            btnQuantity.text = boundItem.itemUsesCurrent.ToString();
+        Debug.Log("Check Quantity override missing for button!");
     }
 
     void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
@@ -117,11 +90,23 @@ public class ActionButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         if (requirementsMet) currentButtonState = ButtonState.PASSIVE;
     }
 
-    public void BindAction(UnitAction action)
+    public virtual void BindAction(UnitAction action)
     {
         // Stores action for checking requirements
 
         boundAction = action;
+    }
+
+    public virtual void BindItem(Item item)
+    {
+        // Binds item for requirement checking
+
+        boundItem = item;
+    }
+
+    public virtual void BindUnit(Unit unit)
+    {
+        boundUnit = unit;
     }
 
     public UnitAction GetAction()
@@ -131,12 +116,24 @@ public class ActionButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         return boundAction;
     }
 
-    public void BindButton(int index)
+    public Item GetItem()
     {
-        // Binds state to action buttons
+        // Returns bound action
 
-        buttonIndex = index;
-        button.onClick.AddListener(ButtonPress);
+        return boundItem;
+    }
+
+    public InCombatPlayerAction GetPlayerAction()
+    {
+        PlayerTurnState playerTurnState = (PlayerTurnState)StateHandler.Instance.GetStateObject(StateHandler.State.PlayerTurnState);
+        InCombatPlayerAction playerAction = playerTurnState.GetPlayerAction();
+        return playerAction;
+    }
+
+    public FiniteState<InCombatPlayerAction> GetCurrentState()
+    {
+        FiniteState<InCombatPlayerAction> state = GetPlayerAction().stateMachine.GetCurrentState();
+        return state;
     }
 
     public void UnbindButton()
@@ -146,17 +143,9 @@ public class ActionButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         button.onClick.RemoveAllListeners();
     }
 
-    public void ButtonPress()
+    public virtual void ButtonPress()
     {
-        // On button press, play sound and execute indexed action from the state
-
-        if (!requirementsMet)
-            return;
-
-        playerTurnState = (PlayerTurnState)StateHandler.Instance.GetStateObject(StateHandler.State.PlayerTurnState);
-        playerAction = playerTurnState.GetPlayerAction();
-        state = playerAction.stateMachine.GetCurrentState();
-        state.InputActionBtn(playerAction, buttonIndex + 1);
+        Debug.Log("Button Press override missing for button!");
     }
 
     public void ButtonTrigger()
@@ -177,20 +166,6 @@ public class ActionButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         currentButtonState = ButtonState.ACTIVE;
         yield return new WaitForSeconds(0.2f);
         currentButtonState = ButtonState.PASSIVE;
-    }
-
-    public void SetLabel(string newLabel)
-    {
-        // Changes text label to new value
-
-        GetComponentInChildren<TextMeshProUGUI>().text = newLabel;
-    }
-
-    public void BindItem(Item item)
-    {
-        // Binds item for requirement checking
-
-        boundItem = item;
     }
 }
 

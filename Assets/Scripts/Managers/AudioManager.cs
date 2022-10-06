@@ -145,8 +145,7 @@ public class AudioManager : MonoBehaviour
         return shellSmall[Random.Range(0, range)];
     }
 
-
-    void Start()
+    void Awake()
     {
         Instance = this;
         audioSource = GetComponent<AudioSource>();

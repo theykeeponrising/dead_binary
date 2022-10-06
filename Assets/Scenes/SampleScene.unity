@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.00065872906, g: 0.00065872906, b: 0.00065872906, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -34964,6 +34964,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 730792869}
     m_Modifications:
+    - target: {fileID: 6858889560412213118, guid: d36d2d9d17c511941bf49ad7b8fefbcf, type: 3}
+      propertyPath: cover
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6858889560412213118, guid: d36d2d9d17c511941bf49ad7b8fefbcf, type: 3}
+      propertyPath: choice
+      value: Full Wall
+      objectReference: {fileID: 0}
     - target: {fileID: 9013263080144921958, guid: d36d2d9d17c511941bf49ad7b8fefbcf, type: 3}
       propertyPath: m_Name
       value: TileConcrete
@@ -50310,6 +50318,18 @@ PrefabInstance:
     - target: {fileID: 3699802338143857911, guid: 3b0dcb06d7729234c850f8280ff35856, type: 3}
       propertyPath: m_Name
       value: UI
+      objectReference: {fileID: 0}
+    - target: {fileID: 4978648681691798997, guid: 3b0dcb06d7729234c850f8280ff35856, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4978648681691798997, guid: 3b0dcb06d7729234c850f8280ff35856, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4978648681691798997, guid: 3b0dcb06d7729234c850f8280ff35856, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 6013342191820365739, guid: 3b0dcb06d7729234c850f8280ff35856, type: 3}
       propertyPath: buttonPrefab
