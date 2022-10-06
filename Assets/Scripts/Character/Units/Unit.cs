@@ -139,7 +139,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
     {
         ResetActions(); 
         ResetActionPoints();
-        if (GetActor() != null) GetActor().SetWaiting(false);
+        GetActor()?.SetWaiting(false);
     }
 
     public bool HasTurnEnded()

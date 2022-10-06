@@ -21,7 +21,15 @@ public interface IFaction
 
         return beHostile;
     }
+}
 
+public enum Faction
+{
+    Neutral, Good, Bad, Any
+}
+
+public class FactionHelper
+{
     public static Faction GetFactionByRelation(Unit sourceUnit, TargetFaction targetFaction = TargetFaction.ENEMY)
     {
         // Returns the target faction based on relative affinity to source unit
@@ -37,9 +45,4 @@ public interface IFaction
         }
         else return Faction.Any;
     }
-}
-
-public enum Faction
-{
-    Neutral, Good, Bad, Any
 }

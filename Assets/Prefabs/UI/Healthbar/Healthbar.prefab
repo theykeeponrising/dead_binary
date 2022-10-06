@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3859878633969545658}
   - component: {fileID: 795443336047859850}
   - component: {fileID: 5863711425578954702}
+  - component: {fileID: 1001973184301085327}
   m_Layer: 0
   m_Name: WaitIndicator
   m_TagString: Untagged
@@ -76,6 +77,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &1001973184301085327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1390392327187722509}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ffa55cb7688027c4b8ec95e62fa37a7d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2485551461735247990
 GameObject:
   m_ObjectHideFlags: 0
@@ -404,10 +417,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4be0a5a81be36e42b9d0a10d40d946d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  healthPointPrefab: {fileID: 3180425741984059436, guid: efea9e7835c55814da583d88204f326f, type: 3}
-  waitingIndicator: {fileID: 0}
-  waitingBackground: {fileID: 0}
-  waitingForeground: {fileID: 0}
+  HealthPointPrefab: {fileID: 3180425741984059436, guid: efea9e7835c55814da583d88204f326f, type: 3}
 --- !u!1 &7670198251133163704
 GameObject:
   m_ObjectHideFlags: 0

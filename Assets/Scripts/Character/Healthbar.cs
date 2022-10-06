@@ -18,8 +18,8 @@ public class Healthbar : MonoBehaviour
 
     int healthMax => unit.stats.healthMax;
     int healthCurrent => unit.stats.healthCurrent;
-    List<GameObject> healthPoints = new List<GameObject>();
-    public GameObject healthPointPrefab;
+    List<Image> healthPoints = new List<Image>();
+    public GameObject HealthPointPrefab;
     enum HealthState { HEALTHY, INJURED };
 
     // Colors for the health bar sprites
@@ -38,13 +38,13 @@ public class Healthbar : MonoBehaviour
     // Do Nothing Indicator //
     //////////////////////////
 
-    public Image waitingIndicator;
+    WaitIndicator waitIndicator;
 
     /////////////////////
     // Cover indicator //
     /////////////////////
 
-    Transform coverIndicator;
+    Image coverIndicator;
     Image coverHalf;
     Image coverFull;
     enum CoverState { ACTIVE, INACTIVE };
@@ -67,11 +67,11 @@ public class Healthbar : MonoBehaviour
         pointsContainer.Add(transform.Find("Points"));
         pointsBackground.Add(pointsContainer[0].Find("Background"));
 
-        waitingIndicator = transform.Find("WaitIndicator").GetComponent<Image>();
-        waitingIndicator.color = CoverIndicatorColors[unit.attributes.faction][CoverState.ACTIVE];
-        waitingIndicator.enabled = false;
+        waitIndicator = GetComponentInChildren<WaitIndicator>(); ;
+        waitIndicator.SetColor(CoverIndicatorColors[unit.attributes.faction][CoverState.ACTIVE]);
+        waitIndicator.ShowSprite(false);
 
-        coverIndicator = transform.Find("CoverIndicator");
+        coverIndicator = transform.Find("CoverIndicator").GetComponent<Image>();
         coverFull = coverIndicator.GetComponentsInChildren<Image>()[1];
         coverHalf = coverIndicator.GetComponentsInChildren<Image>()[2];
     }
@@ -155,12 +155,12 @@ public class Healthbar : MonoBehaviour
             }
 
             // Create the health point object and assign to the correct container
-            GameObject newPoint = Instantiate(healthPointPrefab, pointsContainer[pointsRow]);
+            Image newPoint = Instantiate(HealthPointPrefab, pointsContainer[pointsRow]).GetComponent<Image>();
             healthPoints.Add(newPoint);
             int index = healthPoints.IndexOf(newPoint);
 
             // Set the color to the correct faction color
-            newPoint.GetComponent<Image>().color = HealthPointColors[unit.attributes.faction][HealthState.HEALTHY];
+            newPoint.color = HealthPointColors[unit.attributes.faction][HealthState.HEALTHY];
 
             // Ensure we are treating the first health point of reach row the same way
             if (index >= containerLength) index = index - (containerLength * (pointsContainer.Count - 1));
@@ -211,9 +211,9 @@ public class Healthbar : MonoBehaviour
         while (i < healthMax)
         {
             if (i < healthCurrent)
-                healthPoints[i].GetComponent<Image>().color = HealthPointColors[unit.attributes.faction][HealthState.HEALTHY];
+                healthPoints[i].color = HealthPointColors[unit.attributes.faction][HealthState.HEALTHY];
             else
-                healthPoints[i].GetComponent<Image>().color = HealthPointColors[unit.attributes.faction][HealthState.INJURED];
+                healthPoints[i].color = HealthPointColors[unit.attributes.faction][HealthState.INJURED];
             i++;
         }
     }
@@ -224,7 +224,7 @@ public class Healthbar : MonoBehaviour
         // If not behind cover, disable the frame and make the cover icons transparent
         if (!unit.currentCover)
         {
-            coverIndicator.GetComponent<Image>().enabled = false;
+            coverIndicator.enabled = false;
             coverHalf.color = CoverIndicatorColors[unit.attributes.faction][CoverState.INACTIVE];
             coverFull.color = CoverIndicatorColors[unit.attributes.faction][CoverState.INACTIVE];
         }
@@ -232,14 +232,14 @@ public class Healthbar : MonoBehaviour
         // If behind cover, enable the frame and set the colors
         else if (unit.currentCover.coverSize == CoverObject.CoverSize.full)
         {
-            coverIndicator.GetComponent<Image>().enabled = true;
+            coverIndicator.enabled = true;
             coverHalf.color = CoverIndicatorColors[unit.attributes.faction][CoverState.INACTIVE];
             coverFull.color = CoverIndicatorColors[unit.attributes.faction][CoverState.ACTIVE];
         }
 
         else
         {
-            coverIndicator.GetComponent<Image>().enabled = true;
+            coverIndicator.enabled = true;
             coverHalf.color = CoverIndicatorColors[unit.attributes.faction][CoverState.ACTIVE];
             coverFull.color = CoverIndicatorColors[unit.attributes.faction][CoverState.INACTIVE];
         }
@@ -249,6 +249,6 @@ public class Healthbar : MonoBehaviour
     {
         // Toggle to show/hide the "Waiting" sprites
 
-        waitingIndicator.enabled = showSprites;
+        waitIndicator?.ShowSprite(showSprites);
     }
 }

@@ -4,20 +4,21 @@ using UnityEngine;
 
 public class StateTarget : StateCancel
 {
-    public List<System.Type> CompatibleActions = new List<System.Type>() { typeof(UnitActionSwap) };
-    public UnitTargetAction storedAction;
+    protected List<System.Type> compatibleActions = new List<System.Type>() { typeof(UnitActionSwap) };
+    protected UnitTargetAction storedAction;
     public StateTarget(StateMachine<InCombatPlayerAction> machine, UnitTargetAction storedAction) : base(machine) { Machine = machine; this.storedAction = storedAction; }
 
-    public List<Unit> targets;
-    public Unit targetedUnit;
-    public Tile targetedTile;
-    public TargetType targetType = TargetType.CHARACTER;
+    List<Unit> targets;
+    TargetType targetType = TargetType.CHARACTER;
+    Faction targetFaction;
 
-    public Faction targetFaction;
-    public float targetRange = 50f;
-    public float areaOfEffect = 1f;
+    protected Unit targetedUnit;
+    protected Tile targetedTile;
 
-    public GameObject tileSelectionCircle;
+    float targetRange = 50f;
+    float areaOfEffect = 1f;
+
+    GameObject tileSelectionCircle;
 
     public override void Enter(InCombatPlayerAction t)
     {
@@ -29,11 +30,11 @@ public class StateTarget : StateCancel
         infoPanel.UpdateHit(-1);
 
         targets = new List<Unit>();
-        targetFaction = IFaction.GetFactionByRelation(t.selectedCharacter);
+        targetFaction = FactionHelper.GetFactionByRelation(t.selectedCharacter);
 
         if (storedAction.GetType().IsSubclassOf(typeof(UnitActionItem)))
         {
-            targetFaction = IFaction.GetFactionByRelation(t.selectedCharacter, storedAction.item.targetFaction);
+            targetFaction = FactionHelper.GetFactionByRelation(t.selectedCharacter, storedAction.item.targetFaction);
             targetRange = storedAction.item.range;
             areaOfEffect = storedAction.item.areaOfEffect;
             targetType = storedAction.item.targetType;

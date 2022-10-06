@@ -143,7 +143,7 @@ public class CharacterActor
         // Toggles the unit's "waiting" state
 
         UnitAction waitAction = FindActionOfType(typeof(UnitActionWait));
-        if (waitAction) waitAction.SetPerformed(performed: isWaiting);
+        waitAction?.SetPerformed(performed: isWaiting);
         unit.healthbar.WaitingIndicator(showSprites: isWaiting);
     }
 

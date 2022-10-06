@@ -25,7 +25,7 @@ public class StateChoosingTarget : StateTarget
         }
 
         // An action that will not interrupt aiming is pressed
-        else if (CompatibleActions.Contains(action.GetType()))
+        else if (compatibleActions.Contains(action.GetType()))
         {
             ButtonPress(index);
             action.UseAction();
