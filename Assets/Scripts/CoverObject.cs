@@ -11,7 +11,7 @@ public class CoverObject : MonoBehaviour
     public bool canVaultOver;
 
     AudioSource audioSource;
-    public AudioManager.ImpactType impactType;
+    public ImpactType impactType;
 
     private void Start()
     {
@@ -22,7 +22,7 @@ public class CoverObject : MonoBehaviour
     {
         // Impact noise that is played when character is protected by cover
 
-        AudioClip audioClip = AudioManager.Instance.GetRandomImpactSound(impactType);
+        AudioClip audioClip = AudioManager.Instance.Impact.GetRandomSound(impactType);
         audioSource.PlayOneShot(audioClip);
     }
 

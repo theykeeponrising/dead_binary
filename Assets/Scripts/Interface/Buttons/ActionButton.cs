@@ -79,7 +79,7 @@ public abstract class ActionButton : MonoBehaviour, IPointerEnterHandler, IPoint
 
         if (requirementsMet) currentButtonState = ButtonState.ACTIVE;
 
-        AudioClip audioClip = AudioManager.Instance.GetInterfaceSound(AudioManager.InterfaceSFX.MOUSE_OVER, 0);
+        AudioClip audioClip = AudioManager.Instance.Interface.GetSound(InterfaceSFX.MOUSE_OVER, 0);
         audioSource.PlayOneShot(audioClip);
     }
 
@@ -160,7 +160,7 @@ public abstract class ActionButton : MonoBehaviour, IPointerEnterHandler, IPoint
         // Simulates the visual look of the action button being clicked
         // For use when action button is triggered via another input
 
-        AudioClip audioClip = AudioManager.Instance.GetInterfaceSound(AudioManager.InterfaceSFX.MOUSE_CLICK, 0);
+        AudioClip audioClip = AudioManager.Instance.Interface.GetSound(InterfaceSFX.MOUSE_CLICK, 0);
         audioSource.PlayOneShot(audioClip);
 
         currentButtonState = ButtonState.ACTIVE;

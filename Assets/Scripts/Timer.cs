@@ -27,4 +27,11 @@ public class Timer
         timer = 0f;
         return true;
     }
+
+    public void SetTimer(float newValue)
+    {
+        // Sets the timer without the need for a new timer object
+
+        timer = newValue;
+    }
 }

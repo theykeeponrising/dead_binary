@@ -5,7 +5,7 @@ using UnityEngine;
 public class MapAmbience : MonoBehaviour
 {
     AudioSource audioSource;
-    [SerializeField] AudioManager.AmbienceSFX ambienceSFX;
+    [SerializeField] AmbienceType ambienceSFX;
 
     // Start is called before the first frame update
     void Start()
@@ -24,7 +24,7 @@ public class MapAmbience : MonoBehaviour
         // Plays ambience sound
         if (!audioSource.isPlaying)
         {
-            audioSource.clip = AudioManager.Instance.GetRandomAmbienceSound(ambienceSFX);
+            audioSource.clip = AudioManager.Instance.Ambience.GetRandomSound(ambienceSFX);
             audioSource.Play();
         }
     }

@@ -19,11 +19,10 @@ public class Weapon : MonoBehaviour
     public WeaponFamily weaponFamily;
     public enum WeaponImpact { LIGHT, MEDIUM, HEAVY }
     public WeaponImpact weaponImpact;
-    public enum WeaponSound { FIRE, RELOAD, SWAP };
+    public enum WeaponSound { FIRE, RELOAD };
 
     [SerializeField] AudioClip[] fireSound;
     [SerializeField] AudioClip[] reloadSound;
-    [SerializeField] AudioClip[] swapSound;
 
     [SerializeField] Vector3 offset;
 
@@ -177,9 +176,6 @@ public class Weapon : MonoBehaviour
                 break;
             case (WeaponSound.RELOAD):
                 audioClip = reloadSound[Random.Range(0, reloadSound.Length)];
-                break;
-            case (WeaponSound.SWAP):
-                audioClip = swapSound[Random.Range(0, swapSound.Length)];
                 break;
         }
 

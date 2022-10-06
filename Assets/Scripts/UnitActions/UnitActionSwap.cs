@@ -58,21 +58,21 @@ public class UnitActionSwap : UnitAction
             unit.inventory.equippedWeapon = weapon;
 
             // Enable weapon object, set position and animation layer
-            unit.inventory.equippedWeapon.gameObject.SetActive(true);
-            unit.inventory.equippedWeapon.DefaultPosition(unit);
+            unit.GetEquippedWeapon().gameObject.SetActive(true);
+            unit.GetEquippedWeapon().DefaultPosition(unit);
 
             // Set animator values, play animation
             unit.GetAnimator().Play("Draw");
-            unit.GetAnimator().SetLayerWeight(unit.inventory.equippedWeapon.weaponLayer, 1);
-            unit.GetAnimator().SetAnimationSpeed(unit.inventory.equippedWeapon.attributes.animSpeed);
-            unit.GetEquippedWeapon().PlaySound(Weapon.WeaponSound.SWAP, unit);
+            unit.GetAnimator().SetLayerWeight(unit.GetEquippedWeapon().weaponLayer, 1);
+            unit.GetAnimator().SetAnimationSpeed(unit.GetEquippedWeapon().attributes.animSpeed);
+            unit.GetSFX().Event_PlaySound(AnimationType.SWAP);
 
             // Update info panel to the new weapon values
             InfoPanelScript infoPanel = UIManager.GetInfoPanel();
             if (infoPanel.gameObject.activeSelf)
             {
                 infoPanel.UpdateHit(unit.GetCurrentHitChance());
-                infoPanel.UpdateDamage(-unit.inventory.equippedWeapon.GetDamage());
+                infoPanel.UpdateDamage(-unit.GetEquippedWeapon().GetDamage());
             }
         }
     }
