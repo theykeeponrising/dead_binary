@@ -48,19 +48,16 @@ MonoBehaviour:
   targetType: 0
   targetFaction: 0
   immuneUnitTypes: 01000000
-  itemName: Healnade
   itemAction: {fileID: 3652251968811846348, guid: 377566d31a1fa644d9c71d42d954a6df, type: 3}
   itemUsesCurrent: 1
   itemUsesMax: 1
-  itemInfoName: Healnade
-  itemInfoDescription: A grenade that will heal friendly units in an area
-  hpAmount: 5
+  itemInfoName: Throw Healnade
+  itemInfoDescription: A grenade that will heal non-robotic units in an area
   areaOfEffect: 3
   range: 7
+  itemSFX: 2
+  hpAmount: 5
   itemImpact: 2
   itemProp: {fileID: -1962813526457966920, guid: e55834e73ebdfa24c99779a557416511, type: 3}
-  itemEffect: {fileID: 7049021522817580541, guid: 772f0322f9a4a9947a4b9a5f69e5002e, type: 3}
-  sourceUnit: {fileID: 0}
-  targetedUnit: {fileID: 0}
-  targetPosition: {x: 0, y: 0, z: 0}
-  triggerPosition: {x: 2.179435, y: 1.1159633, z: -1.8748484}
+  itemEffect: {fileID: 5915368302288556678, guid: ce8a36562d5f1c749862c97d2b8c8fba, type: 3}
+  flashTime: 5

@@ -4,24 +4,27 @@ using System.Collections.Generic;
 
 public abstract class Item : MonoBehaviour
 {
-    public Unit unit;
+    protected Unit unit;
     public ItemType itemType;
     public TargetType targetType;
     public TargetFaction targetFaction;
     public List<UnitType> immuneUnitTypes;
 
-    public string itemName;
     public UnitAction itemAction;
     public int itemUsesCurrent;
     public int itemUsesMax;
 
     public string itemInfoName;
+    [Tooltip("Action displayed on the Info Panel action button.")]
     public string itemInfoDescription;
+    [Tooltip("Description displayed on the Info Panel action button.")]
 
     public float areaOfEffect;
     [Tooltip("Usable tile range for the item.")]
     public int range;
     [Tooltip("Impact effect of the item.")]
+
+    [SerializeField] protected ItemEffectType itemSFX;
 
     public bool CheckRequirements() => itemAction.CheckRequirements();
 
@@ -103,6 +106,11 @@ public abstract class Item : MonoBehaviour
     public virtual void TriggerItem(Vector3 triggerPosition)
     {
         Debug.Log("No item trigger found for item! (Trigger position parameter)");
+    }
+
+    public virtual void TriggerItem(Unit triggerTarget)
+    {
+        Debug.Log("No item trigger found for item! (Trigger unit parameter)");
     }
 
     public virtual void ItemEffect()

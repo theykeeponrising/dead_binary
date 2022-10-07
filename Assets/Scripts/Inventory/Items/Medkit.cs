@@ -13,8 +13,8 @@ public class Medkit : DamageItem
 
         sourceUnit.GetActor().ClearTarget();
 
-        base.TriggerItem();
+        base.TriggerItem(targetedUnit);
     }
 
-    // TO-DO : Medkit SFX, animations
+    // TO-DO : Medkit animations
 }

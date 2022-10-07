@@ -52,7 +52,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         public Faction faction;
         public UnitType unitType;
         public UnitIconEnum unitIcon;
-        public AudioManager.FootstepSource footstepSource;
+        public FootstepSource footstepSource;
     }
 
     // Stats are values that will be referenced and changed frequently during combat
@@ -264,7 +264,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         GetAnimator().Event_PlayAnimation(context);
     }
 
-    public void Event_PlaySound(CharacterSFX.AnimationEventSound sound)
+    public void Event_PlaySound(AnimationType sound)
     {
         GetSFX().Event_PlaySound(sound);
     }

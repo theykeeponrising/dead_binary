@@ -291,7 +291,7 @@ public class InCombatPlayerAction
         // Returns False if any units can still perform actions
 
         foreach (Unit unit in playerUnits)
-            if (!unit.HasTurnEnded())
+            if (!unit.HasTurnEnded() && !unit.GetFlag(FlagType.DEAD))
                 return false;
         return true;
     }

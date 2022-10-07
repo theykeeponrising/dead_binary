@@ -47,18 +47,17 @@ MonoBehaviour:
   itemType: 2
   targetType: 0
   targetFaction: 1
-  itemName: '"Win" Grenade'
+  immuneUnitTypes: 
   itemAction: {fileID: 3652251968811846348, guid: 377566d31a1fa644d9c71d42d954a6df, type: 3}
   itemUsesCurrent: 1
   itemUsesMax: 1
-  itemInfoName: '"Win" Grenade'
+  itemInfoName: Throw "Win" Grenade
   itemInfoDescription: Dodge this you bastard
-  hpAmount: -50
   areaOfEffect: 9
   range: 7
+  itemSFX: 1
+  hpAmount: -50
   itemImpact: 2
   itemProp: {fileID: -1962813526457966920, guid: e55834e73ebdfa24c99779a557416511, type: 3}
-  itemEffect: {fileID: 7049021522817580541, guid: 14ea1e2750cc18846b3450d4355e31fc, type: 3}
-  sourceUnit: {fileID: 0}
-  targetedUnit: {fileID: 0}
-  triggerPosition: {x: 0, y: 0, z: 0}
+  itemEffect: {fileID: 5915368302288556678, guid: f2e00e6df90e601409040714dbb5e4c1, type: 3}
+  flashTime: 5

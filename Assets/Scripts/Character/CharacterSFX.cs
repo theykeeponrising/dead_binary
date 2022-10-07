@@ -2,19 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
 
 //Handles all the SFX for a particular character, e.g. footsteps
 public class CharacterSFX
 {
     Unit unit;
     AudioSource audioSource;
-    public enum AnimationEventSound { NONE, IMPACT, FOOTSTEP_LEFT, FOOTSTEP_RIGHT, SHOOT };
+    Dictionary<AnimationType, AudioSource> bodyAudioSources;
 
     public CharacterSFX(Unit unit)
     {
         this.unit = unit;
+
+        bodyAudioSources = new Dictionary<AnimationType, AudioSource>()
+        { 
+            { AnimationType.FOOTSTEP_LEFT, unit.GetAnimator().GetBoneTransform(HumanBodyBones.LeftFoot).GetComponent<AudioSource>() },
+            { AnimationType.FOOTSTEP_RIGHT, unit.GetAnimator().GetBoneTransform(HumanBodyBones.RightFoot).GetComponent<AudioSource>() },
+        };
     }
 
     public void PlayOneShot(AudioClip clip)
@@ -27,19 +31,12 @@ public class CharacterSFX
         this.audioSource = audioSource;
     }
 
-    
-    void Footsteps(AnimationEventSound whichFoot)
+    void PlayFootstepSound(AnimationType whichFoot)
     {
         // Plays a random footstep sound based on tile data
 
-        AudioClip footstep = AudioManager.Instance.GetRandomFootstepSound(unit.currentTile.footstepMaterial, unit.attributes.footstepSource);
-        AudioSource footAudioSource;
-
-        // Determine which foot to play the sound at
-        if (whichFoot == AnimationEventSound.FOOTSTEP_LEFT)
-            footAudioSource = unit.GetAnimator().GetBoneTransform(HumanBodyBones.LeftFoot).GetComponent<AudioSource>();
-        else
-            footAudioSource = unit.GetAnimator().GetBoneTransform(HumanBodyBones.RightFoot).GetComponent<AudioSource>();
+        AudioClip footstep = AudioManager.Instance.Footstep.GetSound(unit.currentTile.footstepMaterial, unit.attributes.footstepSource);
+        AudioSource footAudioSource = bodyAudioSources[whichFoot];
 
         // Prevent overlapping footstep sounds from the same foot
         if (!footAudioSource.isPlaying)
@@ -51,23 +48,32 @@ public class CharacterSFX
 
     public void PlayRandomImpactSound()
     {
-        AudioClip impactSound = AudioManager.Instance.GetRandomImpactSound(unit.impactType);
+        AudioClip impactSound = AudioManager.Instance.Impact.GetSound(unit.impactType);
         PlayOneShot(impactSound);
     }
 
-    public void Event_PlaySound(AnimationEventSound sound)
+    public void PlayRandomAnimationSound(AnimationType sound)
+    {
+        AudioClip throwSound = AudioManager.Instance.Animation.GetSound(sound);
+        PlayOneShot(throwSound);
+    }
+
+    public void Event_PlaySound(AnimationType sound)
     {
         //Nothing for now.
         switch (sound)
         {
-            case (AnimationEventSound.FOOTSTEP_LEFT):
-                Footsteps(AnimationEventSound.FOOTSTEP_LEFT);
+            case (AnimationType.FOOTSTEP_LEFT):
+                PlayFootstepSound(AnimationType.FOOTSTEP_LEFT);
                 break;
-            case (AnimationEventSound.FOOTSTEP_RIGHT):
-                Footsteps(AnimationEventSound.FOOTSTEP_RIGHT);
+            case (AnimationType.FOOTSTEP_RIGHT):
+                PlayFootstepSound(AnimationType.FOOTSTEP_RIGHT);
                 break;
-            case (AnimationEventSound.SHOOT):
-                unit.inventory.equippedWeapon.Shoot();
+            case (AnimationType.SHOOT):
+                unit.GetEquippedWeapon().Shoot();
+                break;
+            case (AnimationType.THROW): case (AnimationType.PRIME): case (AnimationType.SWAP):
+                PlayRandomAnimationSound(sound);
                 break;
         }
         return;

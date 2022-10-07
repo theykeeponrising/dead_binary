@@ -174,6 +174,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b53b8b485acc1ae42b5e8a303d1905c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sfxShellCollision:
+  - {fileID: 8300000, guid: dab8de6bdf7483b42a41d84d964f268a, type: 3}
+  - {fileID: 8300000, guid: 253cb7f3a0b25424d84829da9b222093, type: 3}
+  - {fileID: 8300000, guid: 842669ce28c6a874bbf4901372706a68, type: 3}
+  - {fileID: 8300000, guid: b08506006975caa46b0e57e6c4b1c4f3, type: 3}
+  - {fileID: 8300000, guid: f250c3d59812b5141ac247e7d6b7a3d9, type: 3}
+  - {fileID: 8300000, guid: 73a407580aec5614cb13337041d4e4fd, type: 3}
+  - {fileID: 8300000, guid: d364f07f23258da4cb1cd39bbeb3d6f4, type: 3}
+  - {fileID: 8300000, guid: 2686990fff7d86a4aae5027da5658edd, type: 3}
+  - {fileID: 8300000, guid: 1389d7221bb1e2041b25755438e2412d, type: 3}
+  - {fileID: 8300000, guid: e48ea05775e0c7e40888b0a8af3703a2, type: 3}
 --- !u!1 &1997569707916577363
 GameObject:
   m_ObjectHideFlags: 0

@@ -4,6 +4,56 @@ using UnityEngine;
 
 public class Grenade : DamageItem
 {
+    ItemProp grenade;
+    Timer flashTimer;
+    [SerializeField] float flashTime = 05;
+    bool flash;
+
+    Transform lightContainer;
+    Material lightMaterial;
+    Light lightComponent;
+
+    private void Update()
+    {
+        FlashLight();
+    }
+
+    void FlashLight()
+    {
+        // Flashes the prop light at the flash time interval
+
+        if (grenade == null || lightContainer == null)
+            return;
+
+        if (flashTimer.CheckTimer())
+        {
+            flash = !flash;
+
+            if (flash) lightMaterial.EnableKeyword("_EMISSION");
+            else lightMaterial.DisableKeyword("_EMISSION");
+
+            lightComponent.enabled = flash;
+            flashTimer.SetTimer(flashTime);
+        }
+    }
+
+    void SpawnGrenade()
+    {
+        // Instantiates grenade prop and sets up the callback
+
+        flashTimer = new Timer(flashTime);
+        grenade = Instantiate(itemProp, sourceUnit.GetAnimator().body.handLeft);
+        grenade.SetItemEffect(this);
+        grenade.SetItemDestination(targetPosition);
+
+        lightContainer = grenade.transform.Find("GrenadeLight");
+        if (lightContainer)
+        {
+            lightMaterial = lightContainer.GetComponent<MeshRenderer>().material;
+            lightComponent = lightContainer.GetComponentInChildren<Light>();
+        }
+    }
+
     public override void UseItem(Unit setSourceUnit, Vector3 setTargetPosition)
     {
         UseItemOnTargetPosition(setSourceUnit, setTargetPosition);
@@ -29,10 +79,7 @@ public class Grenade : DamageItem
         else
             sourceUnit.GetComponent<Animator>().Play("Throw-Short");
 
-        ItemProp grenade = Instantiate(itemProp, sourceUnit.GetAnimator().body.handLeft);
-        grenade.SetItemEffect(this);
-        grenade.SetItemDestination(targetPosition);
-
+        SpawnGrenade();
         sourceUnit.GetActor().ClearTarget();
     }
 
