@@ -31,7 +31,7 @@ public class SFXItems
         return dict[animationSFX][index];
     }
 
-    public AudioClip GetRandomSound(ItemEffectType animationSFX)
+    public AudioClip GetSound(ItemEffectType animationSFX)
     {
         // Returns a random sound for the provided type
 

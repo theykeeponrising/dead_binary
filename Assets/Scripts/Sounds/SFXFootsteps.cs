@@ -37,7 +37,7 @@ public class SFXFootsteps
         return dict[footstepMaterial][footstepSource][index];
     }
 
-    public AudioClip GetRandomSound(FootstepMaterial footstepMaterial, FootstepSource footstepSource)
+    public AudioClip GetSound(FootstepMaterial footstepMaterial, FootstepSource footstepSource)
     {
         // Returns a random sound for the provided type
 

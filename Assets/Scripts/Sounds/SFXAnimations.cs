@@ -33,7 +33,7 @@ public class SFXAnimations
         return dict[animationSFX][index];
     }
 
-    public AudioClip GetRandomSound(AnimationType animationSFX)
+    public AudioClip GetSound(AnimationType animationSFX)
     {
         // Returns a random sound for the provided type
 

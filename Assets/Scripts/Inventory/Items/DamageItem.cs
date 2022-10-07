@@ -37,7 +37,10 @@ public abstract class DamageItem : Item
         Tile targetedTile = targetedUnit ? targetedUnit.currentTile : sourceUnit.grid.GetTile(targetPosition);
 
         foreach (Unit unit in Tile.GetTileOccupants(Tile.AreaOfEffect(targetedTile, areaOfEffect)))
-            ItemEffect(sourceUnit, unit);
+        {
+            if (!immuneUnitTypes.Contains(unit.attributes.unitType)) 
+                ItemEffect(sourceUnit, unit);
+        }
 
         itemAction.EndPerformance();
     }
@@ -93,7 +96,7 @@ public abstract class DamageItem : Item
             return;
 
         AudioSource audioSource = itemEffect.GetComponent<AudioSource>();
-        AudioClip audioClip = AudioManager.Instance.Items.GetRandomSound(itemSFX);
+        AudioClip audioClip = AudioManager.Instance.Items.GetSound(itemSFX);
         audioSource.PlayOneShot(audioClip);
     }
 }

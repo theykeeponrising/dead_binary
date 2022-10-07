@@ -22,7 +22,7 @@ public class CoverObject : MonoBehaviour
     {
         // Impact noise that is played when character is protected by cover
 
-        AudioClip audioClip = AudioManager.Instance.Impact.GetRandomSound(impactType);
+        AudioClip audioClip = AudioManager.Instance.Impact.GetSound(impactType);
         audioSource.PlayOneShot(audioClip);
     }
 

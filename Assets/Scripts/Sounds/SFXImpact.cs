@@ -34,7 +34,7 @@ public class SFXImpact
         return dict[impactType][index];
     }
 
-    public AudioClip GetRandomSound(ImpactType impactType)
+    public AudioClip GetSound(ImpactType impactType)
     {
         // Returns a random sound for the provided type
 

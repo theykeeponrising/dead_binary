@@ -29,7 +29,7 @@ public class SFXAmbience
         return dict[ambienceSFX][index];
     }
 
-    public AudioClip GetRandomSound(AmbienceType ambienceSFX)
+    public AudioClip GetSound(AmbienceType ambienceSFX)
     {
         // Returns a random sound for the provided type
 

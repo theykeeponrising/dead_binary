@@ -52,7 +52,7 @@ MonoBehaviour:
   itemUsesCurrent: 1
   itemUsesMax: 1
   itemInfoName: Throw Healnade
-  itemInfoDescription: A grenade that will heal friendly units in an area
+  itemInfoDescription: A grenade that will heal non-robotic units in an area
   areaOfEffect: 3
   range: 7
   itemSFX: 2

@@ -32,7 +32,7 @@ public class SFXInterface
         return dict[interfaceSFX][index];
     }
 
-    public AudioClip GetRandomSound(InterfaceSFX interfaceSFX)
+    public AudioClip GetSound(InterfaceSFX interfaceSFX)
     {
         // Returns a random sound for the provided type
 
