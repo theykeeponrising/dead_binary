@@ -14,6 +14,7 @@ public class WaitIndicator : MonoBehaviour
 
     public void SetColor(Color32 color)
     {
+        if (!image) image = GetComponent<Image>();
         image.color = color;
     }
 

@@ -23,4 +23,9 @@ public class StateNoSelection : FiniteState<InCombatPlayerAction>
         if (!IsPointerOverUIElement(t))
             t.SelectUnit();
     }
+
+    public override void InputTab(InCombatPlayerAction t, bool shiftPressed)
+    {
+        t.SelectNextUnit(reverseOrder: shiftPressed);
+    }
 }

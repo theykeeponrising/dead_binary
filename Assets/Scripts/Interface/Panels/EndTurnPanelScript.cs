@@ -81,7 +81,7 @@ public class EndTurnPanelScript : MonoBehaviour, IPointerEnterHandler, IPointerE
 
         if (!requirementsMet) return;
         currentButtonState = ButtonState.ACTIVE;
-        AudioClip audioClip = AudioManager.Instance.Interface.GetSound(InterfaceSFX.MOUSE_OVER, 0);
+        AudioClip audioClip = AudioManager.GetSound(InterfaceType.MOUSE_OVER, 0);
         audioSource.PlayOneShot(audioClip);
     }
 
@@ -101,7 +101,7 @@ public class EndTurnPanelScript : MonoBehaviour, IPointerEnterHandler, IPointerE
             return;
         }
 
-        AudioClip audioClip = AudioManager.Instance.Interface.GetSound(InterfaceSFX.MOUSE_CLICK, 0);
+        AudioClip audioClip = AudioManager.GetSound(InterfaceType.MOUSE_CLICK, 0);
         audioSource.PlayOneShot(audioClip);
 
         playerAction.EndTurn();

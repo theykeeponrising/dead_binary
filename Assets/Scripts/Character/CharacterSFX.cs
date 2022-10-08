@@ -9,10 +9,12 @@ public class CharacterSFX
     Unit unit;
     AudioSource audioSource;
     Dictionary<AnimationType, AudioSource> bodyAudioSources;
+    FootstepData footstepData;
 
     public CharacterSFX(Unit unit)
     {
         this.unit = unit;
+        footstepData = new FootstepData(unit);
 
         bodyAudioSources = new Dictionary<AnimationType, AudioSource>()
         { 
@@ -21,7 +23,7 @@ public class CharacterSFX
         };
     }
 
-    public void PlayOneShot(AudioClip clip)
+    private void PlayOneShot(AudioClip clip)
     {
         audioSource.PlayOneShot(clip);
     }
@@ -31,11 +33,11 @@ public class CharacterSFX
         this.audioSource = audioSource;
     }
 
-    void PlayFootstepSound(AnimationType whichFoot)
+    private void PlayFootstepSound(AnimationType whichFoot)
     {
         // Plays a random footstep sound based on tile data
 
-        AudioClip footstep = AudioManager.Instance.Footstep.GetSound(unit.currentTile.footstepMaterial, unit.attributes.footstepSource);
+        AudioClip footstep = AudioManager.GetSound(footstepData);
         AudioSource footAudioSource = bodyAudioSources[whichFoot];
 
         // Prevent overlapping footstep sounds from the same foot
@@ -48,13 +50,13 @@ public class CharacterSFX
 
     public void PlayRandomImpactSound()
     {
-        AudioClip impactSound = AudioManager.Instance.Impact.GetSound(unit.impactType);
+        AudioClip impactSound = AudioManager.GetSound(unit.impactType);
         PlayOneShot(impactSound);
     }
 
     public void PlayRandomAnimationSound(AnimationType sound)
     {
-        AudioClip throwSound = AudioManager.Instance.Animation.GetSound(sound);
+        AudioClip throwSound = AudioManager.GetSound(sound);
         PlayOneShot(throwSound);
     }
 

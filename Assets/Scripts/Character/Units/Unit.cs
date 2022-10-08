@@ -35,8 +35,6 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
 
     public List<FlagType> flags = new List<FlagType>();
     
-    public int numActionsInFlight = 0;
-    
     [HideInInspector] public Inventory inventory;
     [HideInInspector] public Healthbar healthbar;
     public IFaction ifaction;
@@ -194,6 +192,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
 
         InCombatPlayerAction playerAction = playerTurnState.GetPlayerAction();
         charActor.SetPlayerAction(playerAction);
+        inventory.Init(this);
     }
 
     void GenerateActions()

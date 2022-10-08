@@ -105,8 +105,8 @@ public class StateIdle : FiniteState<InCombatPlayerAction>
         }
     }
 
-    public override void InputTab(InCombatPlayerAction t, bool shift)
+    public override void InputTab(InCombatPlayerAction t, bool shiftPressed)
     {
-        // Iterate through player characters
+        t.SelectNextUnit(reverseOrder: shiftPressed);
     }
 }

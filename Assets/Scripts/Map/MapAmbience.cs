@@ -24,7 +24,7 @@ public class MapAmbience : MonoBehaviour
         // Plays ambience sound
         if (!audioSource.isPlaying)
         {
-            audioSource.clip = AudioManager.Instance.Ambience.GetSound(ambienceSFX);
+            audioSource.clip = AudioManager.GetSound(ambienceSFX);
             audioSource.Play();
         }
     }

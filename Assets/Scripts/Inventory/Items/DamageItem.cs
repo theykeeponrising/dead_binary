@@ -96,7 +96,7 @@ public abstract class DamageItem : Item
             return;
 
         AudioSource audioSource = itemEffect.GetComponent<AudioSource>();
-        AudioClip audioClip = AudioManager.Instance.Items.GetSound(itemSFX);
+        AudioClip audioClip = AudioManager.GetSound(itemSFX);
         audioSource.PlayOneShot(audioClip);
     }
 }
