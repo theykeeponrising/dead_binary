@@ -17,24 +17,24 @@ public class EnemyUnit : Unit
         LINEAR
     };
 
-    private Strategy unitStrategy;
+    private Strategy _unitStrategy;
     //Prefer doing damage
-    private float DamageWeight;
+    private float _damageWeight;
     //Prefer kill
-    private float KillWeight;
+    private float _killWeight;
     //Prefer being under cover
-    private float CoverWeight;
+    private float _coverWeight;
     //Prefer conserving ammo if e.g. expect to do very little damage
-    private float ConserveAmmoWeight;
+    private float _conserveAmmoWeight;
     //Prefer approaching player units
-    private float ApproachWeight;
+    private float _approachWeight;
     //Penalize leaving current cover
-    private float LeaveCoverPenalty;
+    private float _leaveCoverPenalty;
 
-    private Queue<EnemyAction> actionsQueue;
+    private Queue<EnemyAction> _actionsQueue;
     //TODO: Maybe a small weight for moving towards the player?
 
-    private bool isProcessingTurn = false;
+    private bool _isProcessingTurn = false;
 
     private struct EnemyAction
     {
@@ -62,7 +62,7 @@ public class EnemyUnit : Unit
     protected override void Awake()
     {
         base.Awake();
-        SetUnitStrategy(unitStrategy);
+        SetUnitStrategy(_unitStrategy);
     }
 
     private void SetUnitStrategy(Strategy strategy)
@@ -70,28 +70,28 @@ public class EnemyUnit : Unit
         switch (strategy)
         {
             case Strategy.Aggressive:
-                KillWeight = 10.0f;
-                DamageWeight = 1.2f;
-                CoverWeight = 2.0f;
-                ConserveAmmoWeight = 0.5f;
-                ApproachWeight = 0.4f;
-                LeaveCoverPenalty = 0.5f;
+                _killWeight = 10.0f;
+                _damageWeight = 1.2f;
+                _coverWeight = 2.0f;
+                _conserveAmmoWeight = 0.5f;
+                _approachWeight = 0.4f;
+                _leaveCoverPenalty = 0.5f;
                 break;
             case Strategy.Defensive:
-                KillWeight = 5.0f;
-                DamageWeight = 1.0f;
-                CoverWeight = 3.0f;
-                ConserveAmmoWeight = 1.0f;
-                ApproachWeight = 0.2f;
-                LeaveCoverPenalty = 0.5f;
+                _killWeight = 5.0f;
+                _damageWeight = 1.0f;
+                _coverWeight = 3.0f;
+                _conserveAmmoWeight = 1.0f;
+                _approachWeight = 0.2f;
+                _leaveCoverPenalty = 0.5f;
                 break;
             case Strategy.Default:
-                KillWeight = 7.0f;
-                DamageWeight = 1.0f;
-                CoverWeight = 2.0f;
-                ConserveAmmoWeight = 0.5f;
-                ApproachWeight = 0.3f;
-                LeaveCoverPenalty = 0.5f;
+                _killWeight = 7.0f;
+                _damageWeight = 1.0f;
+                _coverWeight = 2.0f;
+                _conserveAmmoWeight = 0.5f;
+                _approachWeight = 0.3f;
+                _leaveCoverPenalty = 0.5f;
                 break;
         }
     }
@@ -106,34 +106,34 @@ public class EnemyUnit : Unit
     public override void OnTurnStart()
     {
         base.OnTurnStart();
-        isProcessingTurn = true;
-        actionsQueue = new Queue<EnemyAction>();
+        _isProcessingTurn = true;
+        _actionsQueue = new Queue<EnemyAction>();
     }
 
     public bool IsProcessingTurn()
     {
-        return isProcessingTurn;
+        return _isProcessingTurn;
     }
 
     protected override void Update()
     {
         base.Update();
         if (GetActor().IsActing() || !IsProcessingTurn()) return;
-        if (actionsQueue.Count == 0 && stats.actionPointsCurrent == 0)
+        if (_actionsQueue.Count == 0 && stats.actionPointsCurrent == 0)
         {
-            isProcessingTurn = false;
+            _isProcessingTurn = false;
         }
-        else if (actionsQueue.Count > 0)
+        else if (_actionsQueue.Count > 0)
         {
             //Process queued actions
-            EnemyAction nextAction = actionsQueue.Dequeue();
+            EnemyAction nextAction = _actionsQueue.Dequeue();
             PerformAction(nextAction);
         }
         else
         {
             //If no actions queued up, get more
             List<EnemyAction> enemyActions = GetNextEnemyActions();
-            foreach (EnemyAction action in enemyActions) actionsQueue.Enqueue(action);
+            foreach (EnemyAction action in enemyActions) _actionsQueue.Enqueue(action);
         }
     }
 
@@ -316,10 +316,10 @@ public class EnemyUnit : Unit
         float actionValue = 0.0f;
         if (actions.Count > 0)
         {
-            float shootActionValue = (totalExpectedDamage * DamageWeight) + numKill * KillWeight - numShots * ConserveAmmoWeight;
-            float coverActionValue = (System.Convert.ToSingle(isCover) * CoverWeight * GetCoverWeightScaling(newDist, CoverScalingType.LINEAR));
-            float leaveCoverPenalty = System.Convert.ToSingle(prevCover) * LeaveCoverPenalty;
-            float moveActionValue = numTilesCloserToBestShootTarget * ApproachWeight;
+            float shootActionValue = (totalExpectedDamage * _damageWeight) + numKill * _killWeight - numShots * _conserveAmmoWeight;
+            float coverActionValue = (System.Convert.ToSingle(isCover) * _coverWeight * GetCoverWeightScaling(newDist, CoverScalingType.LINEAR));
+            float leaveCoverPenalty = System.Convert.ToSingle(prevCover) * _leaveCoverPenalty;
+            float moveActionValue = numTilesCloserToBestShootTarget * _approachWeight;
             actionValue = Mathf.Max((shootActionValue + coverActionValue + moveActionValue) / actions.Count, 0.1f);
         }
         return actionValue;
