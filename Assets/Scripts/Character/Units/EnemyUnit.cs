@@ -31,7 +31,7 @@ public class EnemyUnit : Unit
     //Penalize leaving current cover
     public float LeaveCoverPenalty;
 
-    Queue<EnemyAction> actionsQueue;
+    private Queue<EnemyAction> actionsQueue;
     //TODO: Maybe a small weight for moving towards the player?
 
     public bool isProcessingTurn = false;
@@ -407,13 +407,13 @@ public class EnemyUnit : Unit
     }
 
     //Get tiles unit could move to, given unit is on startTile
-    List<Tile> GetTilesInMoveRange(Tile startTile)
+    private List<Tile> GetTilesInMoveRange(Tile startTile)
     {
         Vector3 pos = startTile.transform.position;
         return grid.GetTilesInRange(pos, stats.movement);
     }
 
-    List<EnemyAction> MoveAndShoot(List<Unit> oppFactionUnits, List<Tile> tilesInRange)
+    private List<EnemyAction> MoveAndShoot(List<Unit> oppFactionUnits, List<Tile> tilesInRange)
     {
         //TODO: Find optimal position for each attackable unit, weight by cover, etc.
         //For each tile, calculate highest expected damage from attacking
