@@ -41,6 +41,7 @@ public class EnemyUnit: Unit
         Defensive,
         Custom,
     };
+
     public bool IsProcessingTurn() => _isProcessingTurn;
 
     public override void OnTurnStart()
