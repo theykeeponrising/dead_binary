@@ -40,14 +40,9 @@ public class Inventory : MonoBehaviour
     [Range(0, 10)]
     int weaponsMax = 2; // If we eventually want to allow some characters to equip more weapons
 
-    // [SerializeField]
-    // [Range(0, 10)]
-    // int itemsMax = 2;
-
-    // Start is called before the first frame update
-    void Start()
+    public void Init(Unit unit)
     {
-        unit = GetComponentInParent<Unit>();
+        this.unit = unit;
 
         // Init starting weapons from inspector
         for (int index = 0; index < weapons.Count; index++)

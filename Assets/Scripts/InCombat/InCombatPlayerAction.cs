@@ -101,6 +101,33 @@ public class InCombatPlayerAction
         SelectAction(targetCharacter);        
     }
 
+    public void SelectNextUnit(bool reverseOrder = false)
+    {
+        // Default index 0
+        int index = 0;
+
+        List<Unit> validUnits = new List<Unit>();
+        foreach (Unit unit in playerUnits)
+            if (!unit.GetFlag(FlagType.DEAD) && (!unit.HasTurnEnded()))
+                validUnits.Add(unit);
+
+        // Get the index of the currently selected unit (if any)
+        if (selectedCharacter) index = validUnits.IndexOf(selectedCharacter);
+
+        // If we have reached the end of the list, start at position 0 again
+        if (reverseOrder)
+            index = (index - 1 >= 0) ? index - 1 : validUnits.Count - 1;
+        else
+            index = (index + 1 < validUnits.Count) ? index + 1 : 0;
+
+        // If we are back to the same unit, do nothing
+        if (validUnits[index] == selectedCharacter)
+            return;
+
+        // Select the next unit
+        SelectAction(validUnits[index]);
+    }
+
     public void SelectRemainingUnit()
     {
         // Selects a remaining player unit (meaning unit that still has AP)

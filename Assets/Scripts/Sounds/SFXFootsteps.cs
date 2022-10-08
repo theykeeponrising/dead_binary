@@ -29,22 +29,37 @@ public class SFXFootsteps
         return FootstepSounds;
     }
 
-    public AudioClip GetSound(FootstepMaterial footstepMaterial, FootstepSource footstepSource, int index)
+    public AudioClip GetSound(FootstepData footstepData, int index)
     {
         // Returns a specific sound for the provided type and index
+
+        FootstepMaterial footstepMaterial = footstepData.footstepMaterial;
+        FootstepSource footstepSource = footstepData.footstepSource;
 
         var dict = GetDict();
         return dict[footstepMaterial][footstepSource][index];
     }
 
-    public AudioClip GetSound(FootstepMaterial footstepMaterial, FootstepSource footstepSource)
+    public AudioClip GetSound(FootstepData footstepData)
     {
         // Returns a random sound for the provided type
+
+        FootstepMaterial footstepMaterial = footstepData.footstepMaterial;
+        FootstepSource footstepSource = footstepData.footstepSource;
 
         var dict = GetDict();
         int range = dict[footstepMaterial][footstepSource].Length;
         return dict[footstepMaterial][footstepSource][Random.Range(0, range)];
     }
+}
+
+public class FootstepData
+{
+    Unit unit;
+    public FootstepMaterial footstepMaterial => unit.currentTile.footstepMaterial;
+    public FootstepSource footstepSource => unit.attributes.footstepSource;
+
+    public FootstepData(Unit unit) { this.unit = unit; }
 }
 
 public enum FootstepSource { HUMAN, SCRAPBOT }

@@ -13,18 +13,18 @@ public class SFXInterface
     [SerializeField] AudioClip[] interfaceMouseClick;
     [SerializeField] AudioClip[] interfaceMouseOver;
 
-    Dictionary<InterfaceSFX, AudioClip[]> GetDict()
+    Dictionary<InterfaceType, AudioClip[]> GetDict()
     {
-        var interfaceSounds = new Dictionary<InterfaceSFX, AudioClip[]> 
+        var interfaceSounds = new Dictionary<InterfaceType, AudioClip[]> 
         {
-            {InterfaceSFX.MOUSE_CLICK, interfaceMouseClick },
-            {InterfaceSFX.MOUSE_OVER, interfaceMouseOver },
+            {InterfaceType.MOUSE_CLICK, interfaceMouseClick },
+            {InterfaceType.MOUSE_OVER, interfaceMouseOver },
         };
 
         return interfaceSounds;
     }
 
-    public AudioClip GetSound(InterfaceSFX interfaceSFX, int index)
+    public AudioClip GetSound(InterfaceType interfaceSFX, int index)
     {
         // Returns a specific sound for the provided type and index
 
@@ -32,7 +32,7 @@ public class SFXInterface
         return dict[interfaceSFX][index];
     }
 
-    public AudioClip GetSound(InterfaceSFX interfaceSFX)
+    public AudioClip GetSound(InterfaceType interfaceSFX)
     {
         // Returns a random sound for the provided type
 
@@ -42,4 +42,4 @@ public class SFXInterface
     }
 }
 
-public enum InterfaceSFX { MOUSE_OVER, MOUSE_CLICK }; 
+public enum InterfaceType { MOUSE_OVER, MOUSE_CLICK }; 
