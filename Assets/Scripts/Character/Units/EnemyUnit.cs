@@ -70,6 +70,7 @@ public class EnemyUnit : Unit
         switch (strategy)
         {
             case Strategy.Aggressive:
+            {
                 _killWeight = 10.0f;
                 _damageWeight = 1.2f;
                 _coverWeight = 2.0f;
@@ -77,7 +78,9 @@ public class EnemyUnit : Unit
                 _approachWeight = 0.4f;
                 _leaveCoverPenalty = 0.5f;
                 break;
+            }
             case Strategy.Defensive:
+            {
                 _killWeight = 5.0f;
                 _damageWeight = 1.0f;
                 _coverWeight = 3.0f;
@@ -85,7 +88,9 @@ public class EnemyUnit : Unit
                 _approachWeight = 0.2f;
                 _leaveCoverPenalty = 0.5f;
                 break;
+            }
             case Strategy.Default:
+            {
                 _killWeight = 7.0f;
                 _damageWeight = 1.0f;
                 _coverWeight = 2.0f;
@@ -93,6 +98,7 @@ public class EnemyUnit : Unit
                 _approachWeight = 0.3f;
                 _leaveCoverPenalty = 0.5f;
                 break;
+            }
         }
     }
 
