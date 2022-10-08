@@ -169,12 +169,8 @@ public class EnemyUnit: Unit
         //Get best 1AP Shoot Action
         List<EnemyAction> bestActions = ShootActionStrategy(oppFactionUnits);
 
-        //Debug.Log(string.Format("Shoot AV: {0}", CalculateActionsValue(bestActions)));
-
         //Get Best 1AP Movement Action
         List<EnemyAction> moveActions = MoveActionStrategy(tilesInRange);
-
-        //Debug.Log(string.Format("Move AV: {0}", CalculateActionsValue(moveActions)));
 
         if(CalculateActionsValue(moveActions) > CalculateActionsValue(bestActions))
         {
@@ -187,8 +183,6 @@ public class EnemyUnit: Unit
         {
             List<EnemyAction> moveAndShootActions = MoveAndShoot(oppFactionUnits, tilesInRange);
             float moveAndShootValue = CalculateActionsValue(moveAndShootActions);
-
-            //Debug.Log(string.Format("Shoot+Move AV: {0}", moveAndShootValue));
 
             if(moveAndShootValue > CalculateActionsValue(bestActions))
             {
@@ -463,94 +457,3 @@ public class EnemyUnit: Unit
         useActionDelegate.Invoke();
     }
 }
-
-//Recursively determines best actions. Shelved for now.
-//TODO: Use DetermineOptimalActions to get the best set of actions recursively
-//On backburner for now - kinda complicated to implement
-
-// public List<EnemyAction> DetermineOptimalActions(List<Tile> tilesInRange, List<Unit> oppFactionUnits)
-// {
-//     List<EnemyAction> turnActions = new List<EnemyAction>();
-//     List<Actions.Action> availableActions = new List<Actions.Action>() {
-//         Actions.action_move,
-//         Actions.action_shoot,
-//         Actions.action_reload
-//     };
-//     CalculateBestAction(ref turnActions, ref availableActions, stats.actionPointsMax, inventory.equippedWeapon.stats.ammoCurrent);
-// return turnActions;
-
-//Get the best action for each unit
-//Note: Exponential runtime in number of action points (and potentially high mem) so don't increase numActionPoints by a huge amount
-// private float CalculateBestAction(ref List<EnemyAction> currentActions, ref List<Actions.Action> availableActions, int numActionPoints, int numBullets)
-// {
-//     // Base Case
-//     if (numActionPoints == 0) return CalculateActionsValue(currentActions);
-//     Tile unitTile;
-//     if (currentActions.Count == 0) unitTile = currentTile;
-//     else unitTile = currentActions.Last().Tile;
-
-//     List<EnemyAction> actionsToTest = new List<EnemyAction>();
-//     //Get current tile
-
-//     //Generate list of enemy actions we want to test
-//     foreach (Actions.Action possibleAction in availableActions)
-//     {
-//         //Can't shoot with no bullets
-//         if (numBullets == 0 && possibleAction == Actions.action_shoot) continue;
-
-//         //Determine best target to shoot
-//         if (possibleAction == Actions.action_shoot)
-//         {
-//             Unit contextChar = null;
-//             float expectedDamage = 0.0f;
-//             GetBestShootTarget(unitTile, out contextChar, out expectedDamage);
-
-//             EnemyAction nextAction = CreateShootAction(contextChar, unitTile);
-//             actionsToTest.Add(nextAction);
-//         }
-//         //Recurse on all possible move tiles
-//         //Maybe memoize based on visited tile?
-//         else if (possibleAction == Actions.action_move)
-//         {
-//             List<Tile> tilesInRange = GetTilesInMoveRange(unitTile);
-//             foreach (Tile nextTile in tilesInRange)
-//             {
-//                 EnemyAction nextAction = CreateMoveAction(nextTile);
-//                 actionsToTest.Add(nextAction);
-//             }
-//         }
-//         else if (possibleAction == Actions.action_reload)
-//         {
-//             EnemyAction nextAction = CreateReloadAction(unitTile);
-//             actionsToTest.Add(nextAction);
-//         }
-//     }
-
-//     List<EnemyAction> bestActions = null;
-//     float bestActionVal = -1.0f;
-
-//     foreach (EnemyAction testAction in actionsToTest)
-//     {
-//         List<EnemyAction> newActionsList = new List<EnemyAction>(currentActions);
-//         newActionsList.Add(testAction);
-
-//         //Adjust number of bullets based on reloading/shooting
-//         int nextNumBullets = numBullets;
-//         if (testAction.ActionType == Actions.action_reload) nextNumBullets = inventory.equippedWeapon.stats.ammoMax;
-//         else if (testAction.ActionType == Actions.action_shoot) nextNumBullets--;
-
-//         //Recursively calculate action value for a list of actions
-//         float nextActionVal = CalculateBestAction(ref newActionsList, ref availableActions, numActionPoints - 1, nextNumBullets);
-//         if (nextActionVal > bestActionVal)
-//         {
-//             bestActionVal = nextActionVal;
-//             bestActions = newActionsList;
-//         }
-//     }
-
-//     //Combine the current actions with the new best action list
-//     //Note: the resulting list will always have length = numActionPoints, and represent a full set of actions
-//     //At the top level, this will be the optimal set of actions
-//     currentActions.AddRange(bestActions);
-//     return bestActionVal;
-// }
