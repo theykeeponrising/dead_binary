@@ -165,7 +165,6 @@ public class EnemyUnit: Unit
     private float CalculateActionValue(EnemyAction action)
     {
         List<EnemyAction> actions = new() { action };
-
         return CalculateActionsValue(actions);
     }
 
