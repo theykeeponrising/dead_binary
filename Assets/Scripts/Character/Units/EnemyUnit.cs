@@ -36,29 +36,18 @@ public class EnemyUnit : Unit
 
     private struct EnemyAction
     {
-        private readonly UnitAction unitAction;
-
-        public UnitAction GetUnitAction() => unitAction;
-
-        private readonly Tile tile;
-
-        public Tile Tile { get { return tile; } }
-
-        private readonly List<Tile> path;
-
-        public List<Tile> Path { get { return path; } }
-
-        private readonly Unit contextChar;
-
-        public Unit ContextChar { get { return contextChar; } }
-
         public EnemyAction(UnitAction unitAction, Tile tile, List<Tile> path, Unit contextChar)
         {
-            this.unitAction = unitAction;
-            this.tile = tile;
-            this.path = path;
-            this.contextChar = contextChar;
+            UnitAction = unitAction;
+            Tile = tile;
+            Path = path;
+            ContextChar = contextChar;
         }
+
+        public UnitAction UnitAction { get; }
+        public Tile Tile { get; }
+        public List<Tile> Path { get; }
+        public Unit ContextChar { get; }
     };
 
     protected override void Awake()
@@ -296,7 +285,7 @@ public class EnemyUnit : Unit
 
         foreach (EnemyAction enemyAction in actions)
         {
-            UnitAction unitAction = enemyAction.GetUnitAction();
+            UnitAction unitAction = enemyAction.UnitAction;
 
             //The last tile we move to will determine the cover value
             if (unitAction.IsType(typeof(UnitActionMove)))
@@ -493,7 +482,7 @@ public class EnemyUnit : Unit
 
     private void PerformAction(EnemyAction action)
     {
-        UnitAction unitAction = action.GetUnitAction();
+        UnitAction unitAction = action.UnitAction;
 
         if(unitAction.IsType(typeof(UnitActionMove)))
         {
