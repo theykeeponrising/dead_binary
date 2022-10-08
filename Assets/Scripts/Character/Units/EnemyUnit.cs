@@ -110,10 +110,7 @@ public class EnemyUnit : Unit
         _actionsQueue = new Queue<EnemyAction>();
     }
 
-    public bool IsProcessingTurn()
-    {
-        return _isProcessingTurn;
-    }
+    public bool IsProcessingTurn() => _isProcessingTurn;
 
     protected override void Update()
     {
