@@ -4,7 +4,7 @@ using UnityEngine;
 //Handles all unit logic that is enemy-specific
 public class EnemyUnit : Unit
 {
-    public enum Strategy
+    private enum Strategy
     {
         Default,
         Aggressive,
@@ -12,31 +12,31 @@ public class EnemyUnit : Unit
         Custom,
     };
 
-    public enum CoverScalingType
+    private enum CoverScalingType
     {
         LINEAR
     };
 
-    public Strategy unitStrategy;
+    private Strategy unitStrategy;
     //Prefer doing damage
-    public float DamageWeight;
+    private float DamageWeight;
     //Prefer kill
-    public float KillWeight;
+    private float KillWeight;
     //Prefer being under cover
-    public float CoverWeight;
+    private float CoverWeight;
     //Prefer conserving ammo if e.g. expect to do very little damage
-    public float ConserveAmmoWeight;
+    private float ConserveAmmoWeight;
     //Prefer approaching player units
-    public float ApproachWeight;
+    private float ApproachWeight;
     //Penalize leaving current cover
-    public float LeaveCoverPenalty;
+    private float LeaveCoverPenalty;
 
     private Queue<EnemyAction> actionsQueue;
     //TODO: Maybe a small weight for moving towards the player?
 
-    public bool isProcessingTurn = false;
+    private bool isProcessingTurn = false;
 
-    public struct EnemyAction
+    private struct EnemyAction
     {
         private readonly UnitAction unitAction;
         public UnitAction GetUnitAction() => unitAction;
@@ -65,7 +65,7 @@ public class EnemyUnit : Unit
         SetUnitStrategy(unitStrategy);
     }
 
-    public void SetUnitStrategy(Strategy strategy)
+    private void SetUnitStrategy(Strategy strategy)
     {
         switch (strategy)
         {
@@ -139,7 +139,7 @@ public class EnemyUnit : Unit
 
     //Decide what to do with action points
 
-    public List<EnemyAction> GetNextEnemyActions()
+    private List<EnemyAction> GetNextEnemyActions()
     {
         //Get tiles unit can move to
         List<Tile> tilesInRange = GetTilesInMoveRange();
@@ -352,7 +352,7 @@ public class EnemyUnit : Unit
         return CalculateActionsValue(actions);
     }
 
-    public void GetBestMoveTile(List<Tile> tilesInRange, out Tile tile)
+    private void GetBestMoveTile(List<Tile> tilesInRange, out Tile tile)
     {
         float bestActionVal = 0.0f;
         tile = null;
@@ -371,7 +371,7 @@ public class EnemyUnit : Unit
 
     //Get the target that the unit would do the most damage to
     //If unit can kill multiple target(s), choose the one it would deal the most damage to
-    public void GetBestShootTarget(List<Unit> oppFactionUnits, Tile tile, out Unit currentTarget, out float highestExpectedDamage)
+    private void GetBestShootTarget(List<Unit> oppFactionUnits, Tile tile, out Unit currentTarget, out float highestExpectedDamage)
     {
         highestExpectedDamage = 0.0f;
         if (oppFactionUnits.Count == 0)
