@@ -10,6 +10,7 @@ using UnityEngine.InputSystem;
 //May be worth splitting up further
 public class CharacterActor
 {
+    const float colorIncrement = 1.0f/255.0f;
     InfoPanelScript infoPanel;
     GameObject selectionCircle;
 
@@ -58,7 +59,7 @@ public class CharacterActor
         if (playerAction.selectedCharacter != unit)
         {
             selectionCircle.SetActive(true);
-            selectionCircle.GetComponent<Renderer>().material.color = new Color(0, 255, 0, 0.10f);
+            selectionCircle.GetComponent<Renderer>().material.color = new Color(0, colorIncrement, 0, 0.10f) * 255;
         }
     }
 

@@ -6,6 +6,8 @@ using UnityEngine.EventSystems;
 
 public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
+    const float colorIncrement = 1.0f/255.0f;
+
     // Main script for Tile behavior, such as pathing and cover objects
     [HideInInspector]
     public string choice;
@@ -69,7 +71,6 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
         if (highlighted)
         {
-            float colorIncrement = 1.0f/255.0f;
             if (highlightType == "preview")
             {
                 if (eval == "movement" && !occupant)
