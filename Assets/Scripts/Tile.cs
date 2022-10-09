@@ -6,6 +6,8 @@ using UnityEngine.EventSystems;
 
 public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
+    const float colorIncrement = 1.0f/255.0f;
+
     // Main script for Tile behavior, such as pathing and cover objects
     [HideInInspector]
     public string choice;
@@ -21,6 +23,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     InCombatPlayerAction playerAction;
     public FootstepMaterial footstepMaterial;
     MapGrid grid;
+    public float selectionCircleColorIntensity = 120.0f;
     
     // Use this for initialization
     void Start()
@@ -71,12 +74,12 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             if (highlightType == "preview")
             {
                 if (eval == "movement" && !occupant)
-                    tileGlow.color = new Color(0, 0, 150, 0.50f);
+                    tileGlow.color = new Color(0, 0, colorIncrement, 1.0f) * selectionCircleColorIntensity;
                 else
-                    tileGlow.color = new Color(150, 0, 0, 0.50f);
+                    tileGlow.color = new Color(colorIncrement, 0, 0, 1.0f) * selectionCircleColorIntensity;
             }
             else if (highlightType == "moving")
-                tileGlow.color = new Color(0, 150, 0, 0.50f);
+                tileGlow.color = new Color(0, colorIncrement, 0, 1.0f)  * selectionCircleColorIntensity;
             else if (highlightType == "error")
                 tileGlow.color = Color.red;
         }
