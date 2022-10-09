@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.2557612, g: 0.3168497, b: 0.41936767, a: 1}
+  m_IndirectSpecularColor: {r: 0.2561884, g: 0.31743145, b: 0.42013597, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -55368,14 +55368,6 @@ PrefabInstance:
     - target: {fileID: 4043852725619244410, guid: 54e47a82077df83449270378389a8116, type: 3}
       propertyPath: m_Name
       value: ScrapBot (2)
-      objectReference: {fileID: 0}
-    - target: {fileID: 4043852725619244410, guid: 54e47a82077df83449270378389a8116, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5511761140728847718, guid: 54e47a82077df83449270378389a8116, type: 3}
-      propertyPath: attributes.name
-      value: Scrapbot (2)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 54e47a82077df83449270378389a8116, type: 3}
