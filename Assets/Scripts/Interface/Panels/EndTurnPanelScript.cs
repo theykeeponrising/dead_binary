@@ -95,11 +95,16 @@ public class EndTurnPanelScript : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     void ButtonPress()
     {
-        if (!requirementsMet)
+#if UNITY_DEBUG
+        if (true)
+#else 
+        if (requirementsMet)
+#endif
         {
             playerAction.SelectRemainingUnit();
             return;
         }
+
 
         AudioClip audioClip = AudioManager.GetSound(InterfaceType.MOUSE_CLICK, 0);
         audioSource.PlayOneShot(audioClip);
