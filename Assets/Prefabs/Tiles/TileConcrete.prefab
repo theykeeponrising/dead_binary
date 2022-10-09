@@ -7,6 +7,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 241171489602707141, guid: c8b4bac8a0e022847bb1bdb68c977477, type: 3}
+      propertyPath: selectionCircleColorIntensity
+      value: 120
+      objectReference: {fileID: 0}
     - target: {fileID: 2405749593759790300, guid: c8b4bac8a0e022847bb1bdb68c977477, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -63,6 +67,10 @@ PrefabInstance:
       propertyPath: m_Center.y
       value: 0.89788306
       objectReference: {fileID: 0}
+    - target: {fileID: 5755940388939343253, guid: c8b4bac8a0e022847bb1bdb68c977477, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 61ce2095160d0084e9cd154fca62c923, type: 2}
     - target: {fileID: 6151756185518166924, guid: c8b4bac8a0e022847bb1bdb68c977477, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
