@@ -161,7 +161,7 @@ Material:
     - _TransparentSortPriority: 0
     - _TransparentZWrite: 0
     - _UVSec: 0
-    - _UseEmissiveIntensity: 0
+    - _UseEmissiveIntensity: 1
     - _UseUIAlphaClip: 0
     - _ZTestDepthEqualForOpaque: 4
     - _ZTestModeDistortion: 4

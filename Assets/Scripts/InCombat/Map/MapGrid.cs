@@ -17,7 +17,7 @@ public class MapGrid : MonoBehaviour
     // Distance between neighboring tiles
     public static float tileSpacing = 2.0f;
 
-    public GameObject tileSelectionCircle;
+    public GameObject indicatorAOEPrefab;
     
     void Awake() 
     {
@@ -97,33 +97,6 @@ public class MapGrid : MonoBehaviour
         return grid[GetFlattenedIndex(pos)];
     }
 
-    //Get all tiles within a certain distance of the start tile
-    // public List<Tile> GetTilesInRange(Vector3 startPos, int tileDist)
-    // {
-    //     List<Tile> tilesInRange = new List<Tile>();
-    //     startPos = NormalizePositionToGrid(startPos);
-    //     for (int i = -tileDist; i <= tileDist; i++)
-    //     {
-    //         for (int j = -tileDist; j <= tileDist; j++)
-    //         {
-                
-    //             if (Mathf.Abs(i) + Math.Abs(j) > tileDist) continue;
-    //             Vector3 nextPos = startPos + new Vector3((float) i, 0.0f, (float) j);
-    //             int flattened_index = GetFlattenedIndex(nextPos);
-                
-
-    //             //Ignore any indices that would be out of bounds
-    //             if (flattened_index >= 0)
-    //             {
-    //                 Tile nextTile = grid[flattened_index];
-    //                 if (nextTile.isTileTraversable()) tilesInRange.Add(nextTile);
-    //             }
-    //         }
-    //     }
-    //     return tilesInRange;
-    // }
-
-    //Get all tiles within a certain distance of the start tile
     public List<Tile> GetTilesInRange(Vector3 startPos, int tileDist)
     {
         List<Tile> tilesInRange = new List<Tile>();
@@ -247,13 +220,13 @@ public class MapGrid : MonoBehaviour
         return false;
     }
 
-    public GameObject InstantiateTileSelectionCircle(Vector3 position)
+    public GameObject InstantiateIndicatorAOE(Vector3 position)
     {
-        return Instantiate(tileSelectionCircle, position, Quaternion.identity, transform);
+        return Instantiate(indicatorAOEPrefab, position, Quaternion.identity, transform);
     }
 
-    public void DestroyTileSelectionCircle(GameObject tileSelectionCircle)
+    public void DestroyIndicatorAOE(GameObject indicatorAOE)
     {
-        Destroy(tileSelectionCircle);
+        Destroy(indicatorAOE);
     }
 }

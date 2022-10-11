@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using TMPro;
 
 public abstract class ActionButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
@@ -33,12 +32,6 @@ public abstract class ActionButton : MonoBehaviour, IPointerEnterHandler, IPoint
         { ButtonState.ACTIVE, new Color32(0, 0, 0, 255) },
         { ButtonState.PASSIVE, new Color32(37, 232, 232, 255) },
         { ButtonState.DISABLED, new Color32(0, 0, 0, 255) },
-    };
-
-    // Colors for the factions
-    public Dictionary<Faction, Color32> FactionColors = new Dictionary<Faction, Color32>() {
-        { Faction.Good, new Color32(37, 232, 232, 255) },
-        { Faction.Bad, new Color32(232, 37, 37, 255) },
     };
 
     void OnEnable()

@@ -48,9 +48,14 @@ MonoBehaviour:
   actionDescription: Throws a grenade at a target unit
   actionCost: 1
   actionCooldown: 0
+  actionCooldownRemaining: 0
   actionRequirements: 0100000004000000
   actionSprite: 7
   unit: {fileID: 0}
+  item: {fileID: 0}
   actionStage: 0
   bufferStart: 1
   bufferEnd: 1
+  targetUnit: {fileID: 0}
+  targetPosition: {x: 0, y: 0, z: 0}
+  targetFaction: 1

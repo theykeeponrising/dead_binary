@@ -23,7 +23,7 @@ public enum UnitType {
     ROBOTIC
 }
 
-public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHandler
+public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
 {
     //List of units on opposing faction that are alive
     protected List<Unit> oppFactionUnits;
@@ -37,8 +37,6 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
     
     [HideInInspector] public Inventory inventory;
     [HideInInspector] public Healthbar healthbar;
-    public IFaction ifaction;
-    Faction IFaction.faction { get { return attributes.faction; } set { attributes.faction = value; } }
 
     [HideInInspector] public CoverObject currentCover => currentTile.cover;
     public List<UnitAction> unitActions;
@@ -92,7 +90,6 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         base.Awake();
         this.name = string.Format("{0} (Character)", attributes.name);
         inventory = GetComponentInChildren<Inventory>();
-        ifaction = this;
         
         if (objectTiles.Count > 0) currentTile = objectTiles[0];
         
@@ -320,10 +317,9 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
 
         foreach (var v in gos)
         {
-            if (v.GetComponent<IFaction>() != null)
-                if (attributes.faction != v.attributes.faction)
-                    if (v.stats.healthCurrent > 0)
-                        oppFactionUnits.Add(v);
+            if (attributes.faction != v.attributes.faction)
+                if (v.stats.healthCurrent > 0)
+                    oppFactionUnits.Add(v);
         }
 
         //Sort list by distance to current unit

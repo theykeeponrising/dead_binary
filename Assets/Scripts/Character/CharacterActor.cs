@@ -1,18 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
 
 //Class if focused on implementing the characters actions
 //I.e. the logic for moving, shooting, jumping, etc.
 //May be worth splitting up further
 public class CharacterActor
 {
-    const float colorIncrement = 1.0f/255.0f;
     InfoPanelScript infoPanel;
-    GameObject selectionCircle;
+    SelectionCircle selectionCircle;
 
     public struct MoveData
     {
@@ -33,8 +30,8 @@ public class CharacterActor
     public CharacterActor(Unit unit)
     {
         infoPanel = UIManager.GetInfoPanel();
-        selectionCircle = unit.transform.Find("SelectionCircle").gameObject;
         this.unit = unit;
+        selectionCircle = unit.GetComponentInChildren<SelectionCircle>();
         potentialTargets = null;
     }
 
@@ -56,21 +53,13 @@ public class CharacterActor
     public void OnPointerEnter(PointerEventData eventData)
     {
         // Highlights unit on mouse over
-        if (playerAction.selectedCharacter != unit)
-        {
-            selectionCircle.SetActive(true);
-            selectionCircle.GetComponent<Renderer>().material.color = new Color(0, colorIncrement, 0, 0.10f) * 255;
-        }
+        SelectUnit(SelectionType.HIGHLIGHT);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
         // Clears unit highlight on mouse leave
-        if (playerAction.selectedCharacter != unit)
-        {
-            selectionCircle.SetActive(false);
-            selectionCircle.GetComponent<Renderer>().material.color = Color.white;
-        }
+        SelectUnit(SelectionType.CLEAR);
     }
 
     public Vector3 GetCharacterChestPosition()
@@ -78,38 +67,24 @@ public class CharacterActor
         return unit.GetAnimator().GetCharacterChestPosition();
     }
 
-    public void SelectUnit(bool selected)
+    public void SelectUnit(SelectionType selectionType = SelectionType.CLEAR)
     {
-        // Highlights selected unit, or removes highlight if not selected
-
-        if (selected)
-        {
-            selectionCircle.SetActive(true);
-            selectionCircle.GetComponent<Renderer>().material.color = Color.green;
-        }
-        else
-        {
-            selectionCircle.SetActive(false);
-            selectionCircle.GetComponent<Renderer>().material.color = Color.white;
-        }
+        // Changes selection circle based on selection type
+        selectionCircle.ChangeSelection(selectionType);
     }
 
     public void IsTargetUX(bool isTarget, bool isPotentialTarget)
     {
         if(isPotentialTarget)
         {
-            selectionCircle.SetActive(true);
-
             if (isTarget)
-                selectionCircle.GetComponent<Renderer>().material.color = Color.red;
+                SelectUnit(SelectionType.TARGET_MAIN);
             else
-                selectionCircle.GetComponent<Renderer>().material.color = Color.yellow;
+                SelectUnit(SelectionType.TARGET_POTENTIAL);
         }
         else
         {
-            selectionCircle.SetActive(false);
-            selectionCircle.GetComponent<Renderer>().material.color = Color.white;
-            if (playerAction.selectedCharacter == unit) SelectUnit(true);
+            SelectUnit(SelectionType.CLEAR);
         }
     }
 

@@ -18,7 +18,7 @@ public class StateTarget : StateCancel
     float targetRange = 50f;
     float areaOfEffect = 1f;
 
-    GameObject tileSelectionCircle;
+    GameObject indicatorAOE;
 
     public override void Enter(InCombatPlayerAction t)
     {
@@ -30,11 +30,11 @@ public class StateTarget : StateCancel
         infoPanel.UpdateHit(-1);
 
         targets = new List<Unit>();
-        targetFaction = FactionHelper.GetFactionByRelation(t.selectedCharacter);
+        targetFaction = t.selectedCharacter.attributes.faction.GetFactionsByRelation(storedAction.targetFaction)[0];
 
         if (storedAction.GetType().IsSubclassOf(typeof(UnitActionItem)))
         {
-            targetFaction = FactionHelper.GetFactionByRelation(t.selectedCharacter, storedAction.item.targetFaction);
+            targetFaction = t.selectedCharacter.attributes.faction.GetFactionsByRelation(storedAction.item.targetFaction)[0];
             targetRange = storedAction.item.range;
             areaOfEffect = storedAction.item.areaOfEffect;
             targetType = storedAction.item.targetType;
@@ -47,7 +47,7 @@ public class StateTarget : StateCancel
         }
 
         // Instantiate tile selection circle
-        tileSelectionCircle = GlobalManager.Instance.activeMap.mapGrid.InstantiateTileSelectionCircle(Vector3.zero);
+        indicatorAOE = GlobalManager.Instance.activeMap.mapGrid.InstantiateIndicatorAOE(Vector3.zero);
 
         //Find Targets
         switch (targetType)
@@ -73,7 +73,7 @@ public class StateTarget : StateCancel
             c.GetActor().IsTargetUX(false, false);
         }
 
-        GlobalManager.Instance.activeMap.mapGrid.DestroyTileSelectionCircle(tileSelectionCircle);
+        GlobalManager.Instance.activeMap.mapGrid.DestroyIndicatorAOE(indicatorAOE);
 
         base.Exit(t);
     }
@@ -161,10 +161,10 @@ public class StateTarget : StateCancel
         // Only show selection circle for aoe items
         if (areaOfEffect <= 1) return;
 
-        tileSelectionCircle.transform.position = position;
+        indicatorAOE.transform.position = position;
         float itemAreaOfEffect = areaOfEffect * GlobalManager.tileSpacing;
-        tileSelectionCircle.transform.localScale = new Vector3(itemAreaOfEffect, itemAreaOfEffect, itemAreaOfEffect);
-        tileSelectionCircle.SetActive(true);
+        indicatorAOE.transform.localScale = new Vector3(itemAreaOfEffect, itemAreaOfEffect, itemAreaOfEffect);
+        indicatorAOE.SetActive(true);
     }
 
     public override void InputPrimary(InCombatPlayerAction t)
@@ -206,7 +206,7 @@ public class StateTarget : StateCancel
                 }
                 else
                 {
-                    tileSelectionCircle.SetActive(false);
+                    indicatorAOE.SetActive(false);
                     ChangeState(new StateIdle(Machine));
                 }
             }

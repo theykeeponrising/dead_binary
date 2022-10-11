@@ -35,8 +35,8 @@ public class TargetButton : ActionButton
     void SetIconColor()
     {
         Faction unitFaction = boundUnit.attributes.faction;
-        iconBracket.color = FactionColors[unitFaction];
-        iconUnit.color = FactionColors[unitFaction];
+        iconBracket.color = unitFaction.FactionColor;
+        iconUnit.color = unitFaction.FactionColor;
     }
 
     public void ShowBracket(bool show)
