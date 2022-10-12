@@ -37,9 +37,11 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     
     [HideInInspector] public Inventory inventory;
     [HideInInspector] public Healthbar healthbar;
+    [HideInInspector] public Weapon EquippedWeapon => GetEquippedWeapon();
 
     [HideInInspector] public CoverObject currentCover => currentTile.cover;
-    public List<UnitAction> unitActions;
+    [SerializeField] private List<UnitAction> _unitActions;
+    private Transform _unitActionsContainer;
 
     // Attributes are mosty permanent descriptors about the character
     [System.Serializable] public class Attributes
@@ -90,7 +92,8 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
         base.Awake();
         this.name = string.Format("{0} (Character)", attributes.name);
         inventory = GetComponentInChildren<Inventory>();
-        
+        _unitActionsContainer = transform.Find("Actions");
+
         if (objectTiles.Count > 0) currentTile = objectTiles[0];
         
         // Initialize the character actor
@@ -149,39 +152,28 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     }
 
     public CharacterActor GetActor()
-    {
-        return charActor;
-    }
+    { return charActor; }
 
     public CharacterAnimator GetAnimator()
-    {
-        return charAnim;
-    }
+    { return charAnim; }
 
     public CharacterSFX GetSFX()
-    {
-        return charSFX;
-    }
+    { return charSFX; }
 
     public List<UnitAction> GetUnitActions()
-    {
-        return unitActions;
-    }
+    { return _unitActions; }
+
+    public Transform GetUnitActionsContainer()
+    { return _unitActionsContainer; }
 
     public Weapon GetEquippedWeapon()
-    {
-        return inventory.equippedWeapon;
-    }
+    { return inventory.equippedWeapon; }
 
     public void SetEquippedWeapon(Weapon weapon)
-    {
-        inventory.equippedWeapon = weapon;
-    }
+    { inventory.equippedWeapon = weapon; }
 
     public List<Item> GetItems()
-    {
-        return inventory.items;
-    }
+    { return inventory.items; }
 
     public void SetupUnit()
     {
@@ -201,49 +193,48 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
         // If we have movement, add move action
         if (stats.movement > 0)
         {
-            unitActions.Insert(index, ActionManager.Instance.unitActions.move);
+            _unitActions.Insert(index, ActionManager.Instance.unitActions.move);
             index += 1;
         }
 
         // If we have an equipped weapon, add shoot action
-        if (GetEquippedWeapon())
+        if (EquippedWeapon)
         {
-            unitActions.Insert(index, ActionManager.Instance.unitActions.shoot);
+            _unitActions.Insert(index, EquippedWeapon.WeaponAction);
             index += 1;
         }
 
         // If we have an equipped weapon, add reload action
-        if (GetEquippedWeapon())
+        if (EquippedWeapon)
         {
-            unitActions.Insert(index, ActionManager.Instance.unitActions.reload);
+            _unitActions.Insert(index, ActionManager.Instance.unitActions.reload);
             index += 1;
         }
 
         // If we have multiple weapons, add swap action
         if (inventory.weapons.Count > 1)
         {
-            unitActions.Insert(index, ActionManager.Instance.unitActions.swap);
+            _unitActions.Insert(index, ActionManager.Instance.unitActions.swap);
             index += 1;
         }
 
         // If we have items, add inventory action
         if (GetItems().Count > 0)
         {
-            unitActions.Insert(index, ActionManager.Instance.unitActions.inventory);
+            _unitActions.Insert(index, ActionManager.Instance.unitActions.inventory);
             index += 1;
         }
 
         // Always add "Wait" action
-        unitActions.Insert(index, ActionManager.Instance.unitActions.wait);
+        _unitActions.Insert(index, ActionManager.Instance.unitActions.wait);
 
-        for (index = 0; index < unitActions.Count; index++)
+        for (index = 0; index < _unitActions.Count; index++)
         {
-            Transform actionsContainer = transform.Find("Actions");
-            unitActions[index] = Instantiate(unitActions[index], actionsContainer);
+            _unitActions[index] = Instantiate(_unitActions[index], _unitActionsContainer);
         }
     }
 
-        //TODO: Should add additional events to specifically play a sound
+    //TODO: Should add additional events to specifically play a sound
     //These ones probably aren't good places for that 
     public void Event_OnAnimationStart(CharacterAnimator.AnimationEventContext context)
     {
@@ -285,7 +276,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
         // Resets all actions back to starting point
         // Called at the beginning of the turn
 
-        foreach (UnitAction unitAction in unitActions)
+        foreach (UnitAction unitAction in _unitActions)
             unitAction.OnTurnStart();
     }
 

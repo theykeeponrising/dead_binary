@@ -8,31 +8,23 @@ public class Weapon : MonoBehaviour
     [SerializeField] GameObject shellPrefab;
     Transform shellEject;
 
-    public enum WeaponType { Gun, Melee, Shield }
-    public WeaponType weaponType;
-
-    public enum WeaponHeld { Onehand, Offhand, Twohand }
-    public WeaponHeld weaponHeld;
-    public int weaponLayer;
-
-    public enum WeaponFamily { MELEE, PISTOL, SMG, SHOTGUN, RIFLE, AR, LMG, SHIELD, LAUNCHER }
-    public WeaponFamily weaponFamily;
-    public enum WeaponImpact { LIGHT, MEDIUM, HEAVY }
-    public WeaponImpact weaponImpact;
-    public enum WeaponSound { FIRE, RELOAD };
-
+    public UnitAction WeaponAction;
     [SerializeField] AudioClip[] fireSound;
     [SerializeField] AudioClip[] reloadSound;
 
     [SerializeField] Vector3 offset;
 
-    ParticleSystem gunParticles;
-    Light gunLight;
+    ParticleSystem[] gunParticles;
+    Light[] gunLights;
 
     [System.Serializable]
     public class Attributes
     {
-        public float animSpeed = 1.0f;
+        public int animationLayer;
+        public float animationSpeed = 1.0f;
+        public WeaponType weaponType;
+        public WeaponFamily weaponFamily;
+        public WeaponImpact weaponImpact;
     }
     public Attributes attributes;
 
@@ -49,6 +41,7 @@ public class Weapon : MonoBehaviour
         public float baseAccuracyModifier;
         public float overRangeAccuracyPenalty;
         public float underRangeAccuracyPenalty;
+        public float areaOfEffect = 1;
     }
     public Stats stats;
 
@@ -60,8 +53,8 @@ public class Weapon : MonoBehaviour
 
     private void Awake()
     {
-        gunParticles = GetComponentInChildren<ParticleSystem>();
-        gunLight = GetComponentInChildren<Light>();
+        gunParticles = GetComponentsInChildren<ParticleSystem>();
+        gunLights = GetComponentsInChildren<Light>();
         shellEject = transform.Find("ShellEject");
     }
 
@@ -73,7 +66,7 @@ public class Weapon : MonoBehaviour
         transform.position = transform.parent.position;
         transform.localPosition = transform.localPosition + offset;
 
-        if (weaponType == WeaponType.Gun)
+        if (attributes.weaponType == WeaponType.Gun)
             transform.rotation = transform.parent.transform.rotation;
     }
 
@@ -84,20 +77,23 @@ public class Weapon : MonoBehaviour
         StartCoroutine(ShootEffect());
     }
 
+    public int GetAnimationLayer()
+    { return attributes.animationLayer; }
+
+    public WeaponImpact GetImpact()
+    { return attributes.weaponImpact; }
+
     public int GetDamage()
-    {
-        return stats.damage;
-    }
+    { return stats.damage; }
+
+    public float GetAreaOfEffect()
+    { return stats.areaOfEffect; }
 
     public int GetMinimumRange()
-    {
-        return stats.minRangeNoPenalty;
-    }
+    { return stats.minRangeNoPenalty; }
 
     public int GetMaximumRange()
-    {
-        return stats.maxRangeNoPenalty;
-    }
+    { return stats.maxRangeNoPenalty; }
 
     public float GetAccuracyPenalty(int range)
     {
@@ -121,17 +117,23 @@ public class Weapon : MonoBehaviour
     public IEnumerator ShootEffect()
     {
         // Display gun flash
-        gunLight.enabled = true;
+        foreach (Light gunLight in gunLights)
+            gunLight.enabled = true;
 
         // Stop the particles from playing if they were, then start the particles.
-        gunParticles.Stop();
-        gunParticles.Play();
+        foreach (ParticleSystem gunParticle in gunParticles)
+            gunParticle.Stop();
+
+        foreach (ParticleSystem gunParticle in gunParticles)
+            gunParticle.Play();
+
         PlaySound(WeaponSound.FIRE);
 
-        if (shellEject) EjectShell();
+        if (shellEject.gameObject.activeSelf) EjectShell();
 
-        yield return new WaitForSecondsRealtime(gunParticles.main.duration);
-        gunLight.enabled = false;
+        yield return new WaitForSecondsRealtime(gunParticles[0].main.duration);
+        foreach (Light gunLight in gunLights)
+            gunLight.enabled = false;
     }
 
     public void ReloadEffect()
@@ -201,3 +203,11 @@ public class Weapon : MonoBehaviour
         stats.ammoCurrent -= amount;
     }
 }
+
+public enum WeaponType { Gun, Melee, Shield }
+
+public enum WeaponFamily { MELEE, PISTOL, SMG, SHOTGUN, RIFLE, AR, LMG, SHIELD, LAUNCHER }
+
+public enum WeaponImpact { LIGHT, MEDIUM, HEAVY }
+
+public enum WeaponSound { FIRE, RELOAD };

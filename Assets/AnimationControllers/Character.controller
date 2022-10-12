@@ -345,6 +345,53 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
+--- !u!206 &-6289564942704436788
+BlendTree:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Blend Tree
+  m_Childs:
+  - serializedVersion: 2
+    m_Motion: {fileID: 7400000, guid: ae833398b7883c04fb020708eaf81c5a, type: 2}
+    m_Threshold: 0
+    m_Position: {x: 0, y: 0}
+    m_TimeScale: 1
+    m_CycleOffset: 0
+    m_DirectBlendParameter: velocityX
+    m_Mirror: 0
+  - serializedVersion: 2
+    m_Motion: {fileID: 7400000, guid: 1e5784b7fef48a347b2b6b48f002a275, type: 2}
+    m_Threshold: 0.33333334
+    m_Position: {x: 0, y: 0.25}
+    m_TimeScale: 1
+    m_CycleOffset: 0
+    m_DirectBlendParameter: velocityX
+    m_Mirror: 0
+  - serializedVersion: 2
+    m_Motion: {fileID: 7400000, guid: 78f737a5582840048b113576f24edcd3, type: 2}
+    m_Threshold: 0.6666667
+    m_Position: {x: 0, y: 0.5}
+    m_TimeScale: 1
+    m_CycleOffset: 0
+    m_DirectBlendParameter: velocityX
+    m_Mirror: 0
+  - serializedVersion: 2
+    m_Motion: {fileID: 7400000, guid: 6e30dfc4bcb17f54ba8a680ca2c40164, type: 2}
+    m_Threshold: 1
+    m_Position: {x: 0, y: 1}
+    m_TimeScale: 1
+    m_CycleOffset: 0
+    m_DirectBlendParameter: velocityX
+    m_Mirror: 0
+  m_BlendParameter: velocityX
+  m_BlendParameterY: velocityZ
+  m_MinThreshold: 0
+  m_MaxThreshold: 1
+  m_UseAutomaticThresholds: 1
+  m_NormalizedBlendValues: 0
+  m_BlendType: 2
 --- !u!1101 &-6204603969877601345
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -588,6 +635,25 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
+--- !u!1107 &-4760238959114539352
+AnimatorStateMachine:
+  serializedVersion: 6
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Bazooka
+  m_ChildStates: []
+  m_ChildStateMachines: []
+  m_AnyStateTransitions: []
+  m_EntryTransitions: []
+  m_StateMachineTransitions: {}
+  m_StateMachineBehaviours: []
+  m_AnyStatePosition: {x: 50, y: 20, z: 0}
+  m_EntryPosition: {x: 50, y: 120, z: 0}
+  m_ExitPosition: {x: 800, y: 120, z: 0}
+  m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
+  m_DefaultState: {fileID: 0}
 --- !u!1101 &-4604974733669017529
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -1606,6 +1672,66 @@ AnimatorController:
     - serializedVersion: 2
       m_State: {fileID: 6384354229348817597}
       m_Motion: {fileID: 7400000, guid: 088cd3b35698b51459f485366a810971, type: 2}
+    m_Behaviours: []
+    m_BlendingMode: 0
+    m_SyncedLayerIndex: 0
+    m_DefaultWeight: 0
+    m_IKPass: 1
+    m_SyncedLayerAffectsTiming: 0
+    m_Controller: {fileID: 9100000}
+  - serializedVersion: 5
+    m_Name: Bazooka
+    m_StateMachine: {fileID: -4760238959114539352}
+    m_Mask: {fileID: 31900000, guid: 7ab6a40fabef0344692353c8ddacf509, type: 2}
+    m_Motions:
+    - serializedVersion: 2
+      m_State: {fileID: 209787764013070270}
+      m_Motion: {fileID: 7400000, guid: 6e0d9718202862c438afde8729945c41, type: 2}
+    - serializedVersion: 2
+      m_State: {fileID: 6834921068575309905}
+      m_Motion: {fileID: 7400000, guid: bfece44eb6aecde42a143c8c94c13a9f, type: 2}
+    - serializedVersion: 2
+      m_State: {fileID: 8395596494535082937}
+      m_Motion: {fileID: 7400000, guid: 8b8e18293e01c7a4aa7cebfa56cf5ba3, type: 2}
+    - serializedVersion: 2
+      m_State: {fileID: 3750416850209133813}
+      m_Motion: {fileID: 7400000, guid: 99b37234c0d588b46a2085e57c8396dd, type: 2}
+    - serializedVersion: 2
+      m_State: {fileID: -5745225666569011600}
+      m_Motion: {fileID: 7400000, guid: b8370b3efc293254dbbcc9f07ddcf46a, type: 2}
+    - serializedVersion: 2
+      m_State: {fileID: -3498179986524416183}
+      m_Motion: {fileID: 7400000, guid: 4f4833331ab60b445b2cb0e032a983c1, type: 2}
+    - serializedVersion: 2
+      m_State: {fileID: -7511011192582793867}
+      m_Motion: {fileID: 7400000, guid: 34fded93a8f9e6a4f92c09ef717a8f77, type: 2}
+    - serializedVersion: 2
+      m_State: {fileID: -196895633477425169}
+      m_Motion: {fileID: 7400000, guid: 96de393177b2d9347a45b7d2e57750bf, type: 2}
+    - serializedVersion: 2
+      m_State: {fileID: 76915776733311580}
+      m_Motion: {fileID: 7400000, guid: f2c388804e3fc2e499316246a48d557a, type: 2}
+    - serializedVersion: 2
+      m_State: {fileID: 6384354229348817597}
+      m_Motion: {fileID: 7400000, guid: 2b443195a55408842b2df198173d708e, type: 2}
+    - serializedVersion: 2
+      m_State: {fileID: 2746522939135852909}
+      m_Motion: {fileID: 7400000, guid: 374f104999af3b348bb0dc0bfa7c3a40, type: 2}
+    - serializedVersion: 2
+      m_State: {fileID: 8893268438798112340}
+      m_Motion: {fileID: 7400000, guid: d688206c796bc53408f929f362bb3649, type: 2}
+    - serializedVersion: 2
+      m_State: {fileID: -7383512061295843753}
+      m_Motion: {fileID: 7400000, guid: 229982ceb58535d4d9b981a7ba2b22c6, type: 2}
+    - serializedVersion: 2
+      m_State: {fileID: 7511557447118168899}
+      m_Motion: {fileID: 7400000, guid: 7ce32d28b7e863c4ea77d9af0b6b5872, type: 2}
+    - serializedVersion: 2
+      m_State: {fileID: -1131337257321636459}
+      m_Motion: {fileID: 7400000, guid: 29df08716d5a55845a10c40aab2c996a, type: 2}
+    - serializedVersion: 2
+      m_State: {fileID: 8912946990368426314}
+      m_Motion: {fileID: -6289564942704436788}
     m_Behaviours: []
     m_BlendingMode: 0
     m_SyncedLayerIndex: 0

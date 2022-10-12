@@ -15,7 +15,7 @@ public class UnitActionReload : UnitAction
             return;
 
         unit.SpendActionPoints(actionCost);
-        weapon = unit.GetEquippedWeapon();
+        weapon = unit.EquippedWeapon;
         weapon.ReloadEffect();
         StartPerformance("Reload");
     }

@@ -167,6 +167,11 @@ public class StateTarget : StateCancel
         indicatorAOE.SetActive(true);
     }
 
+    public void SetStoredAction(UnitTargetAction newAction)
+    {
+        storedAction = newAction;
+    }
+
     public override void InputPrimary(InCombatPlayerAction t)
     {
         if (!IsPointerOverUIElement(t))

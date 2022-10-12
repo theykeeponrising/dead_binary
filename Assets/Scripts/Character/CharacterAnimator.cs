@@ -15,6 +15,7 @@ public class CharacterAnimator
     [Header("--Animation")]
     Transform[] boneTransforms;
     Unit unit;
+    int _animationLayer => unit.EquippedWeapon.GetAnimationLayer();
 
     [HideInInspector] Quaternion aimTowards = Quaternion.identity;
 
@@ -133,8 +134,8 @@ public class CharacterAnimator
         // Should always be called during a LateUpdate
         // Note -- lengthy transitions will not work
 
-        if (animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName(animationName))
-            return animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).length > animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).normalizedTime;
+        if (animator.GetCurrentAnimatorStateInfo(_animationLayer).IsName(animationName))
+            return animator.GetCurrentAnimatorStateInfo(_animationLayer).length > animator.GetCurrentAnimatorStateInfo(_animationLayer).normalizedTime;
         return false;
     }
 
@@ -206,7 +207,7 @@ public class CharacterAnimator
         switch (context)
         {
             case (AnimationEventContext.TAKE_DAMAGE):
-                unit.GetActor().targetCharacter.GetAnimator().TakeDamageEffect(unit.GetEquippedWeapon());
+                unit.GetActor().targetCharacter.GetAnimator().TakeDamageEffect(unit.EquippedWeapon);
                 break;
         }
     }
@@ -254,11 +255,11 @@ public class CharacterAnimator
         // Returns true if any crouch animation is playing
 
         bool[] crouchingAnims = {
-            animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Crouch-Down"),
-            animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Crouch-Up"),
-            animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Crouch"),
-            animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Crouch-Dodge"),
-            animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Crouch-Damage")};
+            animator.GetCurrentAnimatorStateInfo(_animationLayer).IsName("Crouch-Down"),
+            animator.GetCurrentAnimatorStateInfo(_animationLayer).IsName("Crouch-Up"),
+            animator.GetCurrentAnimatorStateInfo(_animationLayer).IsName("Crouch"),
+            animator.GetCurrentAnimatorStateInfo(_animationLayer).IsName("Crouch-Dodge"),
+            animator.GetCurrentAnimatorStateInfo(_animationLayer).IsName("Crouch-Damage")};
         return crouchingAnims.Any(x => x == true);
     }
 
@@ -288,8 +289,8 @@ public class CharacterAnimator
             return;
 
         // If we are not aiming or shooting, then skip the bone rotations
-        if (!animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Aiming") 
-            && !animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Shoot"))
+        if (!animator.GetCurrentAnimatorStateInfo(_animationLayer).IsName("Aiming") 
+            && !animator.GetCurrentAnimatorStateInfo(_animationLayer).IsName("Shoot"))
             return;
         
         // Iterations improve accuracy of aim position
@@ -351,15 +352,15 @@ public class CharacterAnimator
         unit.GetSFX().PlayRandomImpactSound();
 
         // Effect shown when character is hit
-        if (animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Crouch"))
+        if (animator.GetCurrentAnimatorStateInfo(_animationLayer).IsName("Crouch"))
             animator.Play("Crouch-Damage");
-        else if (animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Crouch-Damage"))
+        else if (animator.GetCurrentAnimatorStateInfo(_animationLayer).IsName("Crouch-Damage"))
             animator.Play("Crouch-Damage", 0, normalizedTime: .1f);
-        else if (animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Damage2"))
+        else if (animator.GetCurrentAnimatorStateInfo(_animationLayer).IsName("Damage2"))
             animator.Play("Damage3", 0, normalizedTime: .1f);
-        else if (weapon && weapon.weaponImpact == Weapon.WeaponImpact.HEAVY)
+        else if (weapon && weapon.GetImpact() == WeaponImpact.HEAVY)
             animator.Play("Damage1");
-        else if (item && item.itemImpact == Weapon.WeaponImpact.HEAVY)
+        else if (item && item.itemImpact == WeaponImpact.HEAVY)
             animator.Play("Damage1");
         else
             animator.Play("Damage2");

@@ -7080,7 +7080,7 @@ PrefabInstance:
     - target: {fileID: 8738440626404315806, guid: ea476ecfb6a9eee40b55f34525edde96, type: 3}
       propertyPath: weapons.Array.data[0]
       value: 
-      objectReference: {fileID: -4286811643612619385, guid: 20fac855fc6f6184a93851ff222fc0c7, type: 3}
+      objectReference: {fileID: 5609646081035275099, guid: eddd741d78b48e547966f3455f31f217, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ea476ecfb6a9eee40b55f34525edde96, type: 3}
 --- !u!1001 &266582295
@@ -8715,17 +8715,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapObjects: {fileID: 0}
   weapon:
-    noWeapon: {fileID: 877797045781911332, guid: a8ac60ec5d89ecf41b7cbf082062a7d9, type: 3}
+    noWeapon: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
     fist: {fileID: 0}
     fistBig: {fileID: 0}
     pipe: {fileID: 0}
-    pistol: {fileID: 877797045781911332, guid: 074955a812631f44b88f9cb1f37ff1be, type: 3}
+    pistol: {fileID: 5609646081035275099, guid: af5f01db1b146354ca1980b3ecc6772a, type: 3}
     autoPistol: {fileID: 0}
     sawedOff: {fileID: 0}
     smg: {fileID: 0}
     shotgun: {fileID: 0}
-    ar: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
-    rifle: {fileID: 0}
+    ar: {fileID: 5609646081035275099, guid: f2cc325da79e8f745b9376f985a2c06a, type: 3}
+    rifle: {fileID: 5609646081035275099, guid: eddd741d78b48e547966f3455f31f217, type: 3}
     carbine: {fileID: 0}
     revolver: {fileID: 0}
     lmg: {fileID: 0}
@@ -17567,7 +17567,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8738440626404315806, guid: ea476ecfb6a9eee40b55f34525edde96, type: 3}
       propertyPath: weapons.Array.size
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8738440626404315806, guid: ea476ecfb6a9eee40b55f34525edde96, type: 3}
       propertyPath: items.Array.data[0]
@@ -17580,7 +17580,11 @@ PrefabInstance:
     - target: {fileID: 8738440626404315806, guid: ea476ecfb6a9eee40b55f34525edde96, type: 3}
       propertyPath: weapons.Array.data[0]
       value: 
-      objectReference: {fileID: 877797045781911332, guid: 074955a812631f44b88f9cb1f37ff1be, type: 3}
+      objectReference: {fileID: 5609646081035275099, guid: d730b01cbbe81bf4ba322dd6a17371ce, type: 3}
+    - target: {fileID: 8738440626404315806, guid: ea476ecfb6a9eee40b55f34525edde96, type: 3}
+      propertyPath: weapons.Array.data[1]
+      value: 
+      objectReference: {fileID: 5609646081035275099, guid: af5f01db1b146354ca1980b3ecc6772a, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ea476ecfb6a9eee40b55f34525edde96, type: 3}
 --- !u!1001 &695304691

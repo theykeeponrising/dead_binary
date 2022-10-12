@@ -92,7 +92,7 @@ public class CharacterActor
     {
         // Finds an action by type from the unit's current action list
 
-        foreach (UnitAction unitAction in unit.unitActions)
+        foreach (UnitAction unitAction in unit.GetUnitActions())
             if (unitAction.GetType() == actionType)
                 return unitAction;
         return null;

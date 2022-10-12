@@ -11,7 +11,7 @@ public abstract class DamageItem : Item
     [Tooltip("HP amount change from use. Positive amounts will heal.")]
     public int hpAmount;
     [Tooltip("Circular effect area in tiles.")]
-    public Weapon.WeaponImpact itemImpact;
+    public WeaponImpact itemImpact;
     [Tooltip("Item prop displayed when item is used.")]
     public ItemProp itemProp;
     [Tooltip("Effect shown when item is triggered.")]

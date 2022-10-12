@@ -55,8 +55,8 @@ public class Inventory : MonoBehaviour
         // Equip first slotted weapon
         equippedWeapon = weapons[0];
         equippedWeapon.gameObject.SetActive(true);
-        unit.GetComponent<Animator>().SetLayerWeight(equippedWeapon.weaponLayer, 1);
-        unit.GetComponent<Animator>().SetFloat("animSpeed", equippedWeapon.attributes.animSpeed);
+        unit.GetComponent<Animator>().SetLayerWeight(equippedWeapon.GetAnimationLayer(), 1);
+        unit.GetComponent<Animator>().SetFloat("animSpeed", equippedWeapon.attributes.animationSpeed);
 
         // Init starting items from inspector
         for (int index = 0; index < items.Count; index++)
@@ -85,8 +85,8 @@ public class Inventory : MonoBehaviour
         {
             equippedWeapon = weapon;
             weapon.gameObject.SetActive(true);
-            unit.GetComponent<Animator>().SetLayerWeight(weapon.weaponLayer, 1);
-            unit.GetComponent<Animator>().SetFloat("animSpeed", weapon.attributes.animSpeed);
+            unit.GetComponent<Animator>().SetLayerWeight(weapon.GetAnimationLayer(), 1);
+            unit.GetComponent<Animator>().SetFloat("animSpeed", weapon.attributes.animationSpeed);
         }
         return true;
     }
@@ -110,8 +110,8 @@ public class Inventory : MonoBehaviour
         {
             equippedWeapon = weapon;
             weapon.gameObject.SetActive(true);
-            unit.GetComponent<Animator>().SetLayerWeight(weapon.weaponLayer, 1);
-            unit.GetComponent<Animator>().SetFloat("animSpeed", weapon.attributes.animSpeed);
+            unit.GetComponent<Animator>().SetLayerWeight(weapon.GetAnimationLayer(), 1);
+            unit.GetComponent<Animator>().SetFloat("animSpeed", weapon.attributes.animationSpeed);
         }
         return true;
     }
