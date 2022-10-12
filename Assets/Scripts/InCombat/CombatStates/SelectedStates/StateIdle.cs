@@ -89,6 +89,9 @@ public class StateIdle : FiniteState<InCombatPlayerAction>
     {
         UnitAction action = t.GetBindings(index);
 
+        if (!action)
+            return;
+
         // If requirements aren't met, ignore button press
         bool requirementsMet = action.CheckRequirements();
         if (!requirementsMet) return;

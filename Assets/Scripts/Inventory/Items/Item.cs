@@ -7,7 +7,7 @@ public abstract class Item : MonoBehaviour
     protected Unit unit;
     public ItemType itemType;
     public TargetType targetType;
-    public TargetFaction targetFaction;
+    public FactionAffinity targetFaction;
     public List<UnitType> immuneUnitTypes;
 
     public UnitAction itemAction;
@@ -38,44 +38,6 @@ public abstract class Item : MonoBehaviour
             if (itemInfoName != "") itemAction.actionName = itemInfoName;
             if (itemInfoDescription != "") itemAction.actionDescription = itemInfoDescription;
         }
-    }
-
-    public bool CheckAffinity(Unit sourceUnit, Unit targetedUnit)
-    {
-        // Compares target factions to expected targets
-
-        Faction sourceFaction = sourceUnit.attributes.faction;
-        Faction targetedFaction = targetedUnit.attributes.faction;
-
-        switch (targetFaction) {
-            case TargetFaction.FRIENDLY:
-                if (sourceFaction == targetedFaction) return true;
-                break;
-            case TargetFaction.ENEMY:
-                if (sourceFaction == Faction.Good && targetedFaction == Faction.Bad) return true;
-                if (sourceFaction == Faction.Bad && targetedFaction == Faction.Good) return true;
-                break;
-            case TargetFaction.NEUTRAL:
-                if (targetedFaction == Faction.Neutral) return true;
-                break;
-        }
-        return false;
-    }
-
-    public Faction GetAffinity(Unit sourceUnit)
-    {
-        // Returns the target faction based on relative affinity to source unit
-
-        if (targetFaction == TargetFaction.FRIENDLY) 
-            return sourceUnit.attributes.faction;
-        else if (targetFaction == TargetFaction.ENEMY)
-        {
-            if (sourceUnit.attributes.faction == Faction.Good)
-                return Faction.Bad;
-            else
-                return Faction.Good;
-        }
-        else return Faction.Any;
     }
 
     public virtual void UseItem()
@@ -127,7 +89,7 @@ public abstract class Item : MonoBehaviour
 
 public enum ItemType { ATTACHMENT, EQUIPMENT, CONSUMABLE, QUEST }
 public enum TargetType { CHARACTER, COVER, WEAPON }
-public enum TargetFaction { FRIENDLY, ENEMY, NEUTRAL, ANY, NONE }
+
 // ATTACHMENT - Not usable item, passive effect ... ex scopes, grips, implants
 // EQUIPMENT - Usable unlimited item, immediate effect ... ex jammer, taser, radio
 // CONSUMABLE - Usable limited item, immediate effect ... ex grenades, medkits, stimpacks

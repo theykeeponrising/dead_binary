@@ -30,7 +30,7 @@ public class InCombatPlayerAction
     private PlayerTurnState playerTurnState; 
     InCombatPlayerActionUI playerActionUI;
 
-    public Faction playerFaction = Faction.Good;
+    public Faction playerFaction = FactionManager.Instance.PV;
 
     private TextMeshProUGUI stateDebugText;
 
@@ -51,7 +51,7 @@ public class InCombatPlayerAction
         playerActionUI = UIManager.GetPlayerAction();
         stateDebugText = GameObject.Find("StateDebugText").GetComponent<TextMeshProUGUI>();
 
-        playerUnits = activeMap.FindUnits(Faction.Good);
+        playerUnits = activeMap.FindUnits(FactionManager.Instance.PV);
     }
 
     public void EnablePlayerInput()
@@ -216,10 +216,10 @@ public class InCombatPlayerAction
         if (targetCharacter)
         {
             if (selectedCharacter)
-                selectedCharacter.GetActor().SelectUnit(false);
+                selectedCharacter.GetActor().SelectUnit(SelectionType.DESELECT);
 
             selectedCharacter = targetCharacter;
-            selectedCharacter.GetActor().SelectUnit(true);
+            selectedCharacter.GetActor().SelectUnit(SelectionType.SELECT);
             selectedCharacter.GetActor().SetWaiting(false);
         }
 
@@ -229,7 +229,7 @@ public class InCombatPlayerAction
         {
             if (selectedCharacter)
             {
-                selectedCharacter.GetActor().SelectUnit(false);
+                selectedCharacter.GetActor().SelectUnit(SelectionType.DESELECT);
                 selectedCharacter = null;
                 PathPreviewClear();
             }
@@ -279,7 +279,8 @@ public class InCombatPlayerAction
                     previewPath.Add(selectedCharacter.currentTile);
                     if (previewPath.Count > 1)
                         foreach (Tile tile in previewPath)
-                            tile.Highlighted(true, "preview");
+                            if (tile != selectedCharacter.currentTile)
+                                tile.Highlighted(true, "preview");
                 }       
             }
         }

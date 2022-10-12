@@ -25,14 +25,14 @@ public class Map : MonoBehaviour
         unitMap = tilemaps[3];
     }
 
-    public List<Unit> FindUnits(Faction faction = Faction.Any)
+    public List<Unit> FindUnits(Faction faction = null)
     {
         // Returns units on the active map filtered by faction
         // If no faction is provided, returns all units
 
         List<Unit> unitsFound = new List<Unit>();
 
-        if (faction != Faction.Any)
+        if (faction != null)
         {
             foreach (Unit unit in unitMap.GetComponentsInChildren<Unit>())
                 if (unit.attributes.faction == faction)

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using TMPro;
 
@@ -18,7 +19,8 @@ public class EndTurnPanelScript : MonoBehaviour, IPointerEnterHandler, IPointerE
     enum ButtonState { ACTIVE, PASSIVE, DISABLED };
     ButtonState currentButtonState = ButtonState.PASSIVE;
 
-    bool requirementsMet => playerAction.CheckTurnEnd() && StateHandler.Instance.GetStateObject(StateHandler.State.PlayerTurnState).isActive();
+    bool _requirementsMet => CheckRequirementsMet();
+    bool _playerTurn => StateHandler.Instance.GetStateObject(StateHandler.State.PlayerTurnState).isActive();
 
     // Colors for the icon and frame
     Dictionary<ButtonState, Color32> IconColors = new Dictionary<ButtonState, Color32>() {
@@ -34,7 +36,7 @@ public class EndTurnPanelScript : MonoBehaviour, IPointerEnterHandler, IPointerE
         { ButtonState.DISABLED, new Color32(0, 0, 0, 255) },
     };
 
-    void Awake()
+    private void Awake()
     {
         audioSource = GetComponentInParent<AudioSource>();
         label = GetComponentInChildren<TextMeshProUGUI>();
@@ -49,7 +51,7 @@ public class EndTurnPanelScript : MonoBehaviour, IPointerEnterHandler, IPointerE
     }
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         button = GetComponentInChildren<Button>();
         button.onClick.AddListener(ButtonPress);
@@ -58,28 +60,16 @@ public class EndTurnPanelScript : MonoBehaviour, IPointerEnterHandler, IPointerE
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        CheckRequirements();
-    }
-
-    void CheckRequirements()
-    {
-        if (!requirementsMet) currentButtonState = ButtonState.DISABLED;
-        else if (requirementsMet && currentButtonState == ButtonState.DISABLED) currentButtonState = ButtonState.PASSIVE;
-
-        label.color = IconColors[currentButtonState];
-        foreach (Image image in buttonFrames)
-            image.color = IconColors[currentButtonState];
-        foreach (Image image in buttonBackgrounds)
-            image.color = BackgroundColors[currentButtonState];
+        SetButtonState();
     }
 
     void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
     {
         // Highlights icon on mouse over
 
-        if (!requirementsMet) return;
+        if (!_requirementsMet) return;
         currentButtonState = ButtonState.ACTIVE;
         AudioClip audioClip = AudioManager.GetSound(InterfaceType.MOUSE_OVER, 0);
         audioSource.PlayOneShot(audioClip);
@@ -89,22 +79,45 @@ public class EndTurnPanelScript : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         // Clears unit highlight on mouse leave
 
-        if (!requirementsMet) return; 
+        if (!_requirementsMet) return; 
         currentButtonState = ButtonState.PASSIVE;
     }
 
-    void ButtonPress()
+    private void SetButtonState()
     {
-#if UNITY_DEBUG
-        if (true)
-#else 
-        if (requirementsMet)
-#endif
+        // Changes button state based on if requirements are met
+
+        if (!_requirementsMet) currentButtonState = ButtonState.DISABLED;
+        else if (_requirementsMet && currentButtonState == ButtonState.DISABLED) currentButtonState = ButtonState.PASSIVE;
+
+        label.color = IconColors[currentButtonState];
+        foreach (Image image in buttonFrames)
+            image.color = IconColors[currentButtonState];
+        foreach (Image image in buttonBackgrounds)
+            image.color = BackgroundColors[currentButtonState];
+    }
+
+    private bool CheckRequirementsMet()
+    {
+        if (!_playerTurn)
+            return false;
+
+        if (!playerAction.CheckTurnEnd() && !Keyboard.current.shiftKey.isPressed)
+            return false;
+
+        return true;
+    }
+
+    private void ButtonPress()
+    {
+        if (!_playerTurn)
+            return;
+
+        if (!_requirementsMet)
         {
             playerAction.SelectRemainingUnit();
             return;
         }
-
 
         AudioClip audioClip = AudioManager.GetSound(InterfaceType.MOUSE_CLICK, 0);
         audioSource.PlayOneShot(audioClip);

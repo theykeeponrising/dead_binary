@@ -6,7 +6,8 @@ using UnityEngine.UI;
 
 public class Healthbar : MonoBehaviour
 {
-    Unit unit;
+    Unit _unit;
+    Color32 _factionColor => _unit.attributes.faction.FactionColor;
 
     ///////////////////
     // Health points //
@@ -16,26 +17,15 @@ public class Healthbar : MonoBehaviour
     List<Transform> pointsBackground = new List<Transform>();
     int containerLength = 5;
 
-    int healthMax => unit.stats.healthMax;
-    int healthCurrent => unit.stats.healthCurrent;
+    int healthMax => _unit.stats.healthMax;
+    int healthCurrent => _unit.stats.healthCurrent;
     List<Image> healthPoints = new List<Image>();
     public GameObject HealthPointPrefab;
     enum HealthState { HEALTHY, INJURED };
-
-    // Colors for the health bar sprites
-    Dictionary<Faction, Dictionary<HealthState, Color32>> HealthPointColors = new Dictionary<Faction, Dictionary<HealthState, Color32>>() {
-        { Faction.Good, new Dictionary<HealthState, Color32>() {
-        { HealthState.HEALTHY, new Color32(37, 232, 232, 255) },
-        { HealthState.INJURED, new Color32(150, 150, 150, 255) },
-        }},
-        { Faction.Bad, new Dictionary<HealthState, Color32>() {
-        { HealthState.HEALTHY, new Color32(232, 37, 37, 255) },
-        { HealthState.INJURED, new Color32(150, 150, 150, 255) },
-        }},
-    };
+    Dictionary<HealthState, Color32> HealthPointColors;
 
     //////////////////////////
-    // Do Nothing Indicator //
+    // Wait indicator //
     //////////////////////////
 
     WaitIndicator waitIndicator;
@@ -48,27 +38,28 @@ public class Healthbar : MonoBehaviour
     Image coverHalf;
     Image coverFull;
     enum CoverState { ACTIVE, INACTIVE };
-
-    // Colors for the cover indicator sprites
-    Dictionary<Faction, Dictionary<CoverState, Color32>> CoverIndicatorColors = new Dictionary<Faction, Dictionary<CoverState, Color32>>() {
-        { Faction.Good, new Dictionary<CoverState, Color32>() {
-        { CoverState.ACTIVE, new Color32(37, 232, 232, 255) },
-        { CoverState.INACTIVE, new Color32(150, 150, 150, 0) },
-        }},
-        { Faction.Bad, new Dictionary<CoverState, Color32>() {
-        { CoverState.ACTIVE, new Color32(232, 37, 37, 255) },
-        { CoverState.INACTIVE, new Color32(150, 150, 150, 0) },
-        }},
-    };
+    Dictionary<CoverState, Color32> CoverIndicatorColors;
 
     void Awake()
     {
-        unit = GetComponentInParent<Unit>();
+        _unit = GetComponentInParent<Unit>();
+
+        HealthPointColors = new Dictionary<HealthState, Color32>()
+        {
+            { HealthState.HEALTHY, _factionColor },
+            { HealthState.INJURED, new Color32(150, 150, 150, 255) },
+        };
+        CoverIndicatorColors = new Dictionary<CoverState, Color32>()
+        {
+            { CoverState.ACTIVE, _factionColor },
+            { CoverState.INACTIVE, new Color32(150, 150, 150, 0) },
+        };
+
         pointsContainer.Add(transform.Find("Points"));
         pointsBackground.Add(pointsContainer[0].Find("Background"));
 
         waitIndicator = GetComponentInChildren<WaitIndicator>(); ;
-        waitIndicator.SetColor(CoverIndicatorColors[unit.attributes.faction][CoverState.ACTIVE]);
+        waitIndicator.SetColor(CoverIndicatorColors[CoverState.ACTIVE]);
         waitIndicator.ShowSprite(false);
 
         coverIndicator = transform.Find("CoverIndicator").GetComponent<Image>();
@@ -160,7 +151,7 @@ public class Healthbar : MonoBehaviour
             int index = healthPoints.IndexOf(newPoint);
 
             // Set the color to the correct faction color
-            newPoint.color = HealthPointColors[unit.attributes.faction][HealthState.HEALTHY];
+            newPoint.color = HealthPointColors[HealthState.HEALTHY];
 
             // Ensure we are treating the first health point of reach row the same way
             if (index >= containerLength) index = index - (containerLength * (pointsContainer.Count - 1));
@@ -211,9 +202,9 @@ public class Healthbar : MonoBehaviour
         while (i < healthMax)
         {
             if (i < healthCurrent)
-                healthPoints[i].color = HealthPointColors[unit.attributes.faction][HealthState.HEALTHY];
+                healthPoints[i].color = HealthPointColors[HealthState.HEALTHY];
             else
-                healthPoints[i].color = HealthPointColors[unit.attributes.faction][HealthState.INJURED];
+                healthPoints[i].color = HealthPointColors[HealthState.INJURED];
             i++;
         }
     }
@@ -222,26 +213,26 @@ public class Healthbar : MonoBehaviour
     void UpdateCover()
     {
         // If not behind cover, disable the frame and make the cover icons transparent
-        if (!unit.currentCover)
+        if (!_unit.currentCover)
         {
             coverIndicator.enabled = false;
-            coverHalf.color = CoverIndicatorColors[unit.attributes.faction][CoverState.INACTIVE];
-            coverFull.color = CoverIndicatorColors[unit.attributes.faction][CoverState.INACTIVE];
+            coverHalf.color = CoverIndicatorColors[CoverState.INACTIVE];
+            coverFull.color = CoverIndicatorColors[CoverState.INACTIVE];
         }
 
         // If behind cover, enable the frame and set the colors
-        else if (unit.currentCover.coverSize == CoverObject.CoverSize.full)
+        else if (_unit.currentCover.coverSize == CoverObject.CoverSize.full)
         {
             coverIndicator.enabled = true;
-            coverHalf.color = CoverIndicatorColors[unit.attributes.faction][CoverState.INACTIVE];
-            coverFull.color = CoverIndicatorColors[unit.attributes.faction][CoverState.ACTIVE];
+            coverHalf.color = CoverIndicatorColors[CoverState.INACTIVE];
+            coverFull.color = CoverIndicatorColors[CoverState.ACTIVE];
         }
 
         else
         {
             coverIndicator.enabled = true;
-            coverHalf.color = CoverIndicatorColors[unit.attributes.faction][CoverState.ACTIVE];
-            coverFull.color = CoverIndicatorColors[unit.attributes.faction][CoverState.INACTIVE];
+            coverHalf.color = CoverIndicatorColors[CoverState.ACTIVE];
+            coverFull.color = CoverIndicatorColors[CoverState.INACTIVE];
         }
     }
 
