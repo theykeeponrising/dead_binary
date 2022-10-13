@@ -17,6 +17,7 @@ public class EnemyTurnState : GameState
 
     public override void SetStateActive()
     {
+        FactionManager.ACS.PlayFactionSFX();
         enemyTurnProcess.ProcessTurn();   
     }
 

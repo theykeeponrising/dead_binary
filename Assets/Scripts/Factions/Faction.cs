@@ -7,20 +7,25 @@ public class Faction : MonoBehaviour
     public string FactionName;
     public Color32 FactionColor;
     public List<Unit> FactionUnits;
+
+    AudioSource _audioSource;
     Dictionary<Faction, FactionAffinity> _factionRelation = new Dictionary<Faction, FactionAffinity>();
 
-    [SerializeField] List<Faction> FriendlyTowards = new List<Faction>();
-    [SerializeField] List<Faction> HostileTowards = new List<Faction>();
+    [SerializeField] AudioClip _sfxFactionTurnStart;
+    [SerializeField] List<Faction> _friendlyTowards = new List<Faction>();
+    [SerializeField] List<Faction> _hostileTowards = new List<Faction>();
 
     public void Init()
     {
+        _audioSource = UIManager.Instance.GetComponent<AudioSource>();
+
         foreach (Faction faction in FactionManager.AllFactions)
             _factionRelation[faction] = FactionAffinity.NEUTRAL;
 
-        foreach (Faction faction in FriendlyTowards)
+        foreach (Faction faction in _friendlyTowards)
             _factionRelation[faction] = FactionAffinity.FRIENDLY;
 
-        foreach (Faction faction in HostileTowards)
+        foreach (Faction faction in _hostileTowards)
             _factionRelation[faction] = FactionAffinity.ENEMY;
 
         _factionRelation[this] = FactionAffinity.FRIENDLY;
@@ -53,6 +58,11 @@ public class Faction : MonoBehaviour
                 foundFactions.Add(faction);
         }
         return foundFactions;
+    }
+
+    public void PlayFactionSFX()
+    {
+        _audioSource.PlayOneShot(_sfxFactionTurnStart);
     }
 }
 

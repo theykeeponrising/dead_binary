@@ -10,13 +10,13 @@ using UnityEngine;
 [System.Serializable]
 public class SFXAmbience
 {
-    [SerializeField] AudioClip[] ambienceCityOutside;
+    [SerializeField] private AudioClip[] _ambienceCityOutside;
 
-    Dictionary<AmbienceType, AudioClip[]> GetDict()
+    private Dictionary<AmbienceType, AudioClip[]> GetDict()
     {
         var dict = new Dictionary<AmbienceType, AudioClip[]> 
         {
-            {AmbienceType.URBAN_OUTSIDE, ambienceCityOutside },
+            {AmbienceType.URBAN_OUTSIDE, _ambienceCityOutside },
         };
         return dict;
     }

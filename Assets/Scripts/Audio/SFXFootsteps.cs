@@ -10,15 +10,15 @@ using UnityEngine;
 [System.Serializable]
 public class SFXFootsteps
 {
-    [SerializeField] AudioClip[] footstepConcrete;
-    [SerializeField] AudioClip[] footstepScrapBot;
+    [SerializeField] private AudioClip[] _footstepConcrete;
+    [SerializeField] private AudioClip[] _footstepScrapBot;
 
-    Dictionary<FootstepMaterial, Dictionary<FootstepSource, AudioClip[]>> GetDict()
+    private Dictionary<FootstepMaterial, Dictionary<FootstepSource, AudioClip[]>> GetDict()
     {
         var footstepsType = new Dictionary<FootstepSource, AudioClip[]>
         {
-            {FootstepSource.HUMAN, footstepConcrete },
-            {FootstepSource.SCRAPBOT, footstepScrapBot },
+            {FootstepSource.HUMAN, _footstepConcrete },
+            {FootstepSource.SCRAPBOT, _footstepScrapBot },
         };
 
         var FootstepSounds = new Dictionary<FootstepMaterial, Dictionary<FootstepSource, AudioClip[]>>

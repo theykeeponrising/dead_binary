@@ -14,6 +14,7 @@ public class AudioManager : MonoBehaviour
     ////////////////
 
     public AudioClip musicGroundZero;
+    public bool playMusic = true; // USED UNTIL OPTIONS ARE MADE
 
     /////////////////
     // SFX Classes //
@@ -38,6 +39,8 @@ public class AudioManager : MonoBehaviour
     public void PlayMusic(AudioClip audioClip)
     {
         // Plays provided music clip
+
+        if (!playMusic) return;
 
         audioSource.clip = audioClip;
         audioSource.Play();

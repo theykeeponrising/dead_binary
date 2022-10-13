@@ -10,18 +10,18 @@ using UnityEngine;
 [System.Serializable]
 public class SFXImpact
 {
-    [SerializeField] AudioClip[] impactFlesh;
-    [SerializeField] AudioClip[] impactRobot;
-    [SerializeField] AudioClip[] impactConcrete;
-    [SerializeField] AudioClip[] impactMetal;
+    [SerializeField] private AudioClip[] _impactFlesh;
+    [SerializeField] private AudioClip[] _impactRobot;
+    [SerializeField] private AudioClip[] _impactConcrete;
+    [SerializeField] private AudioClip[] _impactMetal;
 
-    Dictionary<ImpactType, AudioClip[]> GetDict()
+    private Dictionary<ImpactType, AudioClip[]> GetDict()
     {
         var dict = new Dictionary<ImpactType, AudioClip[]> {
-            {ImpactType.FLESH, impactFlesh },
-            {ImpactType.ROBOT, impactRobot },
-            {ImpactType.CONCRETE, impactConcrete },
-            {ImpactType.METAL, impactMetal },
+            {ImpactType.FLESH, _impactFlesh },
+            {ImpactType.ROBOT, _impactRobot },
+            {ImpactType.CONCRETE, _impactConcrete },
+            {ImpactType.METAL, _impactMetal },
         };
 
         return dict;

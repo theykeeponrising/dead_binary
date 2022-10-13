@@ -115,8 +115,8 @@ public class StateTarget : StateCancel
                 return Vector2.Distance(t.selectedCharacter.transform.position, a.transform.position).CompareTo(Vector2.Distance(t.selectedCharacter.transform.position, b.transform.position));
             });
 
-            if (!targetedUnit) ChangeTarget(t, targets[0]);
-            else ChangeTarget(t, targetedUnit);
+            if (!targetedUnit) ChangeTarget(t, targets[0], initialTargets: true);
+            else ChangeTarget(t, targetedUnit, initialTargets: true);
         }
     }
 
@@ -134,25 +134,27 @@ public class StateTarget : StateCancel
         return Mathf.Round(Vector3.Distance(sourceUnit.transform.position, targetTile.transform.position) / GlobalManager.tileSpacing) <= targetRange;
     }
 
-    public virtual void ChangeTarget(InCombatPlayerAction t, Unit targetUnit)
+    public virtual void ChangeTarget(InCombatPlayerAction t, Unit targetUnit, bool initialTargets = false)
     {
         // Changes target to provided unit, clears tile target
 
         targetedUnit = targetUnit;
         targetedTile = null;
         t.selectedCharacter.GetActor().targetCharacter = targetedUnit;
-        infoPanel.CreateTargetButtons(targets);
+        if (initialTargets) infoPanel.CreateTargetButtons(targets);
+        else infoPanel.UpdateTargetButtons();
         ShowSelectionCircle(targetedUnit.transform.position);
     }
 
-    public virtual void ChangeTarget(InCombatPlayerAction t, Tile targetTile)
+    public virtual void ChangeTarget(InCombatPlayerAction t, Tile targetTile, bool initialTargets = false)
     {
         // Changes target to provided tile, clears unit target
 
         targetedUnit = null;
         targetedTile = targetTile;
         t.selectedCharacter.GetActor().targetCharacter = null;
-        infoPanel.CreateTargetButtons(targets);
+        if (initialTargets) infoPanel.CreateTargetButtons(targets);
+        else infoPanel.UpdateTargetButtons();
         ShowSelectionCircle(targetedTile.transform.position);
     }
 
