@@ -5,8 +5,8 @@ using UnityEngine;
 public class UnitActionShoot : UnitTargetAction
 {
     int distanceToTarget;
-    Timer bufferStartTimer;
-    Timer bufferEndTimer;
+    protected Timer bufferStartTimer;
+    protected Timer bufferEndTimer;
 
     public override void UseAction(Unit setTarget)
     {
@@ -45,8 +45,8 @@ public class UnitActionShoot : UnitTargetAction
         if (ActionStage(0))
         {
             unit.GetAnimator().Play("Shoot");
-            if (targetUnit) targetUnit.TakeDamage(unit, unit.inventory.equippedWeapon.stats.damage, distanceToTarget);
-            unit.GetEquippedWeapon().SpendAmmo();
+            if (targetUnit) targetUnit.TakeDamage(unit, unit.EquippedWeapon.GetDamage(), distanceToTarget);
+            unit.EquippedWeapon.SpendAmmo();
             NextStage();
         }
 

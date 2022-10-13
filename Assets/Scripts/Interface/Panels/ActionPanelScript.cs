@@ -29,12 +29,7 @@ public class ActionPanelScript : MonoBehaviour
     private void OnDisable()
     {
         // When action panel is disabled, destroy all buttons
-
-        foreach (ActionBarButton button in buttons)
-        {
-            Destroy(button.gameObject);
-        }
-        buttons = new List<ActionBarButton>();
+        DestroyButtons();
     }
 
     void BuildActions()
@@ -103,6 +98,13 @@ public class ActionPanelScript : MonoBehaviour
 
         // Bind buttons to inputs
         foreach (ActionBarButton button in buttons) button.BindIndex(buttons.IndexOf(button));
+    }
+
+    public virtual void DestroyButtons()
+    {
+        foreach (ActionBarButton button in buttons)
+            Destroy(button.gameObject);
+        buttons = new List<ActionBarButton>();
     }
 
     public List<ActionBarButton> GetButtons()

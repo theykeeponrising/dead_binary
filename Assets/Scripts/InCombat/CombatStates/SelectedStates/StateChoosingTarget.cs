@@ -24,6 +24,14 @@ public class StateChoosingTarget : StateTarget
             InputSpacebar(t);
         }
 
+        // If we are swapping weapons, change the stored action to the new shoot action
+        else if (action.GetType() == (typeof(UnitActionSwap)))
+        {
+            ButtonPress(index);
+            action.UseAction(this);
+            ChangeState(new StateWaitForAction(Machine, action, this));
+        }
+
         // An action that will not interrupt aiming is pressed
         else if (compatibleActions.Contains(action.GetType()))
         {

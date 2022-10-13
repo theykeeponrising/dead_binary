@@ -72,7 +72,7 @@ public class CharacterSFX
                 PlayFootstepSound(AnimationType.FOOTSTEP_RIGHT);
                 break;
             case (AnimationType.SHOOT):
-                unit.GetEquippedWeapon().Shoot();
+                unit.EquippedWeapon.Shoot();
                 break;
             case (AnimationType.THROW): case (AnimationType.PRIME): case (AnimationType.SWAP):
                 PlayRandomAnimationSound(sound);
