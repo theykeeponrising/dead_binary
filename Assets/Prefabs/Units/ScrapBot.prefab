@@ -1583,14 +1583,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2443760893380450056}
-  m_LocalRotation: {x: 0.022946123, y: 0.6411179, z: 0.75653845, w: -0.1268501}
-  m_LocalPosition: {x: 0.00029107492, y: 0.000079107995, z: -0.00047497958}
+  m_LocalRotation: {x: 0.01463304, y: 0.6682549, z: 0.73335546, w: -0.12414171}
+  m_LocalPosition: {x: 0.000251, y: 0.0009, z: -0.000017}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5501423181006076524}
   m_RootOrder: 6
-  m_LocalEulerAnglesHint: {x: -77.391, y: -35.877, z: 228.112}
+  m_LocalEulerAnglesHint: {x: -79.663, y: -53.615, z: 244.92401}
 --- !u!1 &2545857785233796906
 GameObject:
   m_ObjectHideFlags: 0
@@ -4574,7 +4574,7 @@ PrefabInstance:
     - target: {fileID: 4984933978760455573, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
       propertyPath: weapons.Array.data[0]
       value: 
-      objectReference: {fileID: 5609646081035275099, guid: f2cc325da79e8f745b9376f985a2c06a, type: 3}
+      objectReference: {fileID: 5609646081035275099, guid: 3d0d4ace4bdcb75499b30ca459cd24f4, type: 3}
     - target: {fileID: 7274816835234447552, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
       propertyPath: m_Avatar
       value: 
@@ -4696,7 +4696,7 @@ MonoBehaviour:
   flags: 
   inventory: {fileID: 0}
   healthbar: {fileID: 0}
-  unitActions: []
+  _unitActions: []
   stats:
     healthCurrent: 10
     healthMax: 10

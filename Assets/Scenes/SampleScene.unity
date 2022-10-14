@@ -44543,6 +44543,10 @@ PrefabInstance:
       propertyPath: items.Array.data[1]
       value: 
       objectReference: {fileID: -8518260373924283274, guid: 98946c2f933e53443a14dc6914f5c469, type: 3}
+    - target: {fileID: 8738440626404315806, guid: ea476ecfb6a9eee40b55f34525edde96, type: 3}
+      propertyPath: weapons.Array.data[1]
+      value: 
+      objectReference: {fileID: 5609646081035275099, guid: ecb84120811433e4ebcb17df484ef128, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ea476ecfb6a9eee40b55f34525edde96, type: 3}
 --- !u!1 &1621361801
