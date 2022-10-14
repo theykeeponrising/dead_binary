@@ -30,7 +30,7 @@ public class InCombatPlayerAction
     private PlayerTurnState playerTurnState; 
     InCombatPlayerActionUI playerActionUI;
 
-    public Faction playerFaction = FactionManager.Instance.PV;
+    public Faction playerFaction = FactionManager.PV;
 
     private TextMeshProUGUI stateDebugText;
 
@@ -51,7 +51,7 @@ public class InCombatPlayerAction
         playerActionUI = UIManager.GetPlayerAction();
         stateDebugText = GameObject.Find("StateDebugText").GetComponent<TextMeshProUGUI>();
 
-        playerUnits = activeMap.FindUnits(FactionManager.Instance.PV);
+        playerUnits = activeMap.FindUnits(FactionManager.PV);
     }
 
     public void EnablePlayerInput()

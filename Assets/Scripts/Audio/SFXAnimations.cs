@@ -10,17 +10,17 @@ using UnityEngine;
 [System.Serializable]
 public class SFXAnimations
 {
-    [SerializeField] AudioClip[] animationSwap;
-    [SerializeField] AudioClip[] animationThrow;
-    [SerializeField] AudioClip[] animationPrime;
+    [SerializeField] private AudioClip[] _animationSwap;
+    [SerializeField] private AudioClip[] _animationThrow;
+    [SerializeField] private AudioClip[] _animationPrime;
 
-    Dictionary<AnimationType, AudioClip[]> GetDict()
+    private Dictionary<AnimationType, AudioClip[]> GetDict()
     {
         var dict = new Dictionary<AnimationType, AudioClip[]>
         {
-            {AnimationType.SWAP, animationSwap },
-            {AnimationType.THROW, animationThrow },
-            {AnimationType.PRIME, animationPrime },
+            {AnimationType.SWAP, _animationSwap },
+            {AnimationType.THROW, _animationThrow },
+            {AnimationType.PRIME, _animationPrime },
         };
         return dict;
     }

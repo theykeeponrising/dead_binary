@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: -2440561951816178751}
   - component: {fileID: -4376706497563292962}
   m_Layer: 5
-  m_Name: Target
+  m_Name: InfoPanelTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

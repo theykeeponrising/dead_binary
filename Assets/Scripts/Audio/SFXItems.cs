@@ -10,15 +10,15 @@ using UnityEngine;
 [System.Serializable]
 public class SFXItems
 {
-    [SerializeField] AudioClip[] itemEffectExplosion;
-    [SerializeField] AudioClip[] itemEffectMedkit;
+    [SerializeField] private AudioClip[] _itemEffectExplosion;
+    [SerializeField] private AudioClip[] _itemEffectMedkit;
 
-    Dictionary<ItemEffectType, AudioClip[]> GetDict()
+    private Dictionary<ItemEffectType, AudioClip[]> GetDict()
     {
         var dict = new Dictionary<ItemEffectType, AudioClip[]>
         {
-            {ItemEffectType.EXPLOSION, itemEffectExplosion },
-            {ItemEffectType.MEDKIT_SPRAY, itemEffectMedkit },
+            {ItemEffectType.EXPLOSION, _itemEffectExplosion },
+            {ItemEffectType.MEDKIT_SPRAY, _itemEffectMedkit },
         };
         return dict;
     }

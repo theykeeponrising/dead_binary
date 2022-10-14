@@ -76,6 +76,7 @@ public class PlayerTurnState : GameState
 
     public override void SetStateActive()
     {
+        FactionManager.PV.PlayFactionSFX();
         base.SetStateActive();
         playerAction.EnablePlayerInput();
         playerAction.StartTurn();

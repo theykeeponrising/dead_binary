@@ -10,15 +10,19 @@ using UnityEngine;
 [System.Serializable]
 public class SFXInterface
 {
-    [SerializeField] AudioClip[] interfaceMouseClick;
-    [SerializeField] AudioClip[] interfaceMouseOver;
+    [SerializeField] private AudioClip[] _interfaceMouseClick;
+    [SerializeField] private AudioClip[] _interfaceMouseOver;
+    [SerializeField] private AudioClip[] _interfaceTargeting;
+    [SerializeField] private AudioClip[] _interfaceSwitchTarget;
 
-    Dictionary<InterfaceType, AudioClip[]> GetDict()
+    private Dictionary<InterfaceType, AudioClip[]> GetDict()
     {
         var interfaceSounds = new Dictionary<InterfaceType, AudioClip[]> 
         {
-            {InterfaceType.MOUSE_CLICK, interfaceMouseClick },
-            {InterfaceType.MOUSE_OVER, interfaceMouseOver },
+            {InterfaceType.MOUSE_CLICK, _interfaceMouseClick },
+            {InterfaceType.MOUSE_OVER, _interfaceMouseOver },
+            {InterfaceType.TARGETING, _interfaceTargeting },
+            {InterfaceType.SWITCH_TARGET, _interfaceSwitchTarget },
         };
 
         return interfaceSounds;
@@ -42,4 +46,4 @@ public class SFXInterface
     }
 }
 
-public enum InterfaceType { MOUSE_OVER, MOUSE_CLICK }; 
+public enum InterfaceType { MOUSE_OVER, MOUSE_CLICK, TARGETING, SWITCH_TARGET }; 

@@ -16,11 +16,27 @@ PrefabInstance:
       value: 4280624616
       objectReference: {fileID: 0}
     - target: {fileID: -3291543261510902153, guid: 578fe840f130acf4ab13a91ebba20317, type: 3}
+      propertyPath: SFXFactionTurnStart
+      value: 
+      objectReference: {fileID: 8300000, guid: 900507f14609d0546a1d64670a8d4d90, type: 3}
+    - target: {fileID: -3291543261510902153, guid: 578fe840f130acf4ab13a91ebba20317, type: 3}
+      propertyPath: _sfxFactionTurnStart
+      value: 
+      objectReference: {fileID: 8300000, guid: 900507f14609d0546a1d64670a8d4d90, type: 3}
+    - target: {fileID: -3291543261510902153, guid: 578fe840f130acf4ab13a91ebba20317, type: 3}
       propertyPath: HostileTowards.Array.size
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -3291543261510902153, guid: 578fe840f130acf4ab13a91ebba20317, type: 3}
+      propertyPath: _hostileTowards.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -3291543261510902153, guid: 578fe840f130acf4ab13a91ebba20317, type: 3}
       propertyPath: HostileTowards.Array.data[0]
+      value: 
+      objectReference: {fileID: 4617512284383335714, guid: aa42e248da1bda5478eecc62b886959c, type: 3}
+    - target: {fileID: -3291543261510902153, guid: 578fe840f130acf4ab13a91ebba20317, type: 3}
+      propertyPath: _hostileTowards.Array.data[0]
       value: 
       objectReference: {fileID: 4617512284383335714, guid: aa42e248da1bda5478eecc62b886959c, type: 3}
     - target: {fileID: 5747458395897132171, guid: 578fe840f130acf4ab13a91ebba20317, type: 3}

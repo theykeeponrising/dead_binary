@@ -47,18 +47,17 @@ MonoBehaviour:
   itemType: 2
   targetType: 0
   targetFaction: 1
-  itemName: Dud Grenade
+  immuneUnitTypes: 
   itemAction: {fileID: 3652251968811846348, guid: 377566d31a1fa644d9c71d42d954a6df, type: 3}
   itemUsesCurrent: 1
   itemUsesMax: 1
   itemInfoName: Throw Dud Grenade
   itemInfoDescription: A grenade that won't explode. It's worthless, unless...
-  hpAmount: -5
   areaOfEffect: 1
   range: 7
+  itemSFX: 0
+  hpAmount: -3
   itemImpact: 0
   itemProp: {fileID: -1962813526457966920, guid: e55834e73ebdfa24c99779a557416511, type: 3}
   itemEffect: {fileID: 0}
-  sourceUnit: {fileID: 0}
-  targetedUnit: {fileID: 0}
-  triggerPosition: {x: 0, y: 0, z: 0}
+  flashTime: 5
