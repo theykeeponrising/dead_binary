@@ -259,7 +259,7 @@ public class CharacterActor
     public void UpdateHitStats()
     {
         infoPanel.UpdateHit(unit.GetCurrentHitChance());
-        infoPanel.UpdateDamage(-unit.inventory.equippedWeapon.GetDamage());
+        infoPanel.UpdateDamage(-unit.EquippedWeapon.GetDamage());
     }
 
     public void ClearTarget()
