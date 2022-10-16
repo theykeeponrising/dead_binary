@@ -454,6 +454,37 @@ public class EnemyUnit : Unit
         else unitAction.UseAction();
 
     }
+
+    public override void TakeDamage(Unit attacker, int damage, int distanceToTarget, MessageType damageType = MessageType.DMG_CONVENTIONAL)
+    {
+        // Called by an attacking source when taking damage
+        // TO DO: More complex damage reduction will be added here
+
+        // If attacked missed, do not take damage
+        if (!RollForHit(attacker, distanceToTarget))
+        {
+            if (currentCover) currentCover.Impact();
+            GetAnimator().SetTrigger("dodge");
+            Debug.Log(string.Format("{0} missed target {1}!", attacker.attributes.name, attributes.name));
+            return;
+        }
+
+        UIManager.GetTurnIndicator().SetTurnIndicatorMessage(damageType);
+        Vector3 direction = (transform.position - attacker.transform.position);
+        float distance = (transform.position - attacker.transform.position).magnitude;
+        CheckDeath(attacker, direction, distance, damage);
+    }
+
+    public override void TakeDamage(Unit attacker, int damage, Vector3 attackPoint, MessageType damageType = MessageType.DMG_CONVENTIONAL)
+    {
+        // Called by an attacking item when taking damage
+        // TO DO: More complex damage reduction will be added here
+
+        UIManager.GetTurnIndicator().SetTurnIndicatorMessage(damageType);
+        Vector3 direction = (transform.position - attackPoint);
+        float distance = (transform.position - attackPoint).magnitude;
+        CheckDeath(attacker, direction, distance, damage, 50f);
+    }
 }
 
 //Recursively determines best actions. Shelved for now.
