@@ -56815,30 +56815,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 199113895, guid: 3b0dcb06d7729234c850f8280ff35856, type: 3}
-      propertyPath: _targetButtonPrefab
-      value: 
-      objectReference: {fileID: -4376706497563292962, guid: c0036a31ea26d5746b3ce1aebfaf5d7c, type: 3}
-    - target: {fileID: 1417260809996562184, guid: 3b0dcb06d7729234c850f8280ff35856, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1417260809996562184, guid: 3b0dcb06d7729234c850f8280ff35856, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 480
-      objectReference: {fileID: 0}
-    - target: {fileID: 1429267611494830319, guid: 3b0dcb06d7729234c850f8280ff35856, type: 3}
-      propertyPath: m_text
-      value: --- PEACEKEEPING OPERATION UNDERWAY::PLEASE REMAIN CALM ---
-      objectReference: {fileID: 0}
-    - target: {fileID: 1618450812927033438, guid: 3b0dcb06d7729234c850f8280ff35856, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1926217058822356557, guid: 3b0dcb06d7729234c850f8280ff35856, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 3699802338143857867, guid: 3b0dcb06d7729234c850f8280ff35856, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -56927,37 +56903,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: UI
       objectReference: {fileID: 0}
-    - target: {fileID: 3743798887992620232, guid: 3b0dcb06d7729234c850f8280ff35856, type: 3}
-      propertyPath: _scrollSpeed
-      value: 0.015
-      objectReference: {fileID: 0}
-    - target: {fileID: 4692620845870472811, guid: 3b0dcb06d7729234c850f8280ff35856, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4978648681691798997, guid: 3b0dcb06d7729234c850f8280ff35856, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 4978648681691798997, guid: 3b0dcb06d7729234c850f8280ff35856, type: 3}
-      propertyPath: m_AnchorMin.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 4978648681691798997, guid: 3b0dcb06d7729234c850f8280ff35856, type: 3}
+    - target: {fileID: 6141474806712389679, guid: 3b0dcb06d7729234c850f8280ff35856, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 300
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5674675389068050218, guid: 3b0dcb06d7729234c850f8280ff35856, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -37.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6013342191820365739, guid: 3b0dcb06d7729234c850f8280ff35856, type: 3}
-      propertyPath: buttonPrefab
-      value: 
-      objectReference: {fileID: 2731226593703120154, guid: 5591a73ec7672bc4481c2702fa644e76, type: 3}
-    - target: {fileID: 7445192284031046996, guid: 3b0dcb06d7729234c850f8280ff35856, type: 3}
-      propertyPath: m_sharedMaterial
-      value: 
-      objectReference: {fileID: 2100000, guid: e73a58f6e2794ae7b1b7e50b7fb811b0, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3b0dcb06d7729234c850f8280ff35856, type: 3}
