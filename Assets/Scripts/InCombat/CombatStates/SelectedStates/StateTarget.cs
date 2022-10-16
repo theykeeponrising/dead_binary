@@ -141,6 +141,7 @@ public class StateTarget : StateCancel
         targetedUnit = targetUnit;
         targetedTile = null;
         t.selectedCharacter.GetActor().targetCharacter = targetedUnit;
+        t.selectedCharacter.GetActor().UpdateHitStats();
         if (initialTargets) infoPanel.CreateTargetButtons(targets);
         else infoPanel.UpdateTargetButtons();
         ShowSelectionCircle(targetedUnit.transform.position);

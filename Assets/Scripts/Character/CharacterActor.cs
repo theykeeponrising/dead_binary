@@ -253,6 +253,11 @@ public class CharacterActor
         if (IsCrouching()) ToggleCrouch();
 
         infoPanel.gameObject.SetActive(true);
+        UpdateHitStats();
+    }
+
+    public void UpdateHitStats()
+    {
         infoPanel.UpdateHit(unit.GetCurrentHitChance());
         infoPanel.UpdateDamage(-unit.inventory.equippedWeapon.GetDamage());
     }
