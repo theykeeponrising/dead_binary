@@ -38,7 +38,7 @@ public struct MessageData
     // Message string displayed
     public string Message;
 
-    // Message is only used is priority is higher than current message
+    // Message is only used if priority is higher than current message
     public int Priority;
 }
 
