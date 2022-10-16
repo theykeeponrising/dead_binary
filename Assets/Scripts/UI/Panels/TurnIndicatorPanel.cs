@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public sealed class TurnIndicatorPanel : MonoBehaviour
@@ -7,21 +8,20 @@ public sealed class TurnIndicatorPanel : MonoBehaviour
     private RectTransform _textObject;
     private TextMeshProUGUI _textMeshComponent;
 
-    private string _defaultMessage = "--- PEACEKEEPING OPERATION UNDERWAY::PLEASE REMAIN CALM ---";
-    private string _tempMessage;
-    private int _messagePriority = 0;
+    private MessageData _nextMessage = Messages.GetMessage(MessageType.DEFAULT);
     private float _length = 765f;
+    private float _bufferSize = 0.80f;
 
     [Tooltip("The speed at which the text scrolls. Lower is faster.")]
     [SerializeField] private float _scrollSpeed = 1f;
 
     private Vector2 _currentPosition { get { return _textObject.transform.localPosition; } set { _textObject.transform.localPosition = value; } }
-    private bool _displayPanel => FactionManager.ACS.TurnInProgress;
+    private bool _isVisible => FactionManager.ACS.TurnInProgress;
 
     private void Start()
     {
-        _objectsContainer = transform.Find("ObjectsContainer");
-        _textObject = _objectsContainer.Find("ScrollingTextMask").GetComponentsInChildren<RectTransform>()[1];
+        _objectsContainer = transform.GetChild(0);
+        _textObject = _objectsContainer.GetComponentInChildren<RectMask2D>().GetComponentsInChildren<RectTransform>()[1];
         _textMeshComponent = _textObject.GetComponentInChildren<TextMeshProUGUI>();
     }
 
@@ -34,7 +34,7 @@ public sealed class TurnIndicatorPanel : MonoBehaviour
 
     private void SetPanelActive()
     {
-        _objectsContainer.gameObject.SetActive(_displayPanel);
+        _objectsContainer.gameObject.SetActive(_isVisible);
     }
 
     private void MoveTextObject()
@@ -46,79 +46,52 @@ public sealed class TurnIndicatorPanel : MonoBehaviour
     private void MoveToStartPosition()
     {
         // When disabled, send the text back to the right
-        if (!_displayPanel)
+        if (!_isVisible)
         {
-            _currentPosition = new Vector2(-_length * 0.75f, _currentPosition.y);
+            _currentPosition = new Vector2(-_length * _bufferSize, _currentPosition.y);
             return;
         }
 
         // Reset text back to the right side
-        else if (_currentPosition.x <= -_length * 0.75f)
+        else if (_currentPosition.x <= -_length * _bufferSize)
         {
-            SetDisplayMessage(_defaultMessage);
-            if (CheckTempMessage())
-            {
-                SetDisplayMessage(_tempMessage);
-                ResetTempMessage();
-            }
+            SetDisplayedMessage(_nextMessage);
+            ClearNextMessage();
 
             // Get the new length of the object so we can position it correctly
             if (_textObject.sizeDelta.x != 0)
                 _length = _textObject.sizeDelta.x;
 
             // Change text object position to the right side using current length
-            _currentPosition = new Vector2(_length * 0.75f, _currentPosition.y);
+            _currentPosition = new Vector2(_length * _bufferSize, _currentPosition.y);
         }
     }
 
-    public void SetTurnIndicatorMessage(MessageType damageType = MessageType.NONE)
+    public void SetTurnIndicatorMessage(MessageType messageType = MessageType.DEFAULT)
     {
-        switch (damageType)
-        {
-            case (MessageType.DMG_CONVENTIONAL):
-                UIManager.GetTurnIndicator().SetTempMessage("--- WARNING::UNAUTHORIZED USE OF FORCE DETECTED ---", 1);
-                break;
-
-            case (MessageType.DMG_EXPLOSIVE):
-                UIManager.GetTurnIndicator().SetTempMessage("--- DANGER::HIGH EXPLOSIVE MUNITIONS DETECTED ---", 2);
-                break;
-
-            case (MessageType.PV_DEATH):
-                UIManager.GetTurnIndicator().SetTempMessage("--- HOSTILE TARGET EXPIRED::THANK YOU FOR YOUR COMPLIANCE ---", 3);
-                break;
-
-            case (MessageType.ACS_DEATH):
-                int randomInt = Random.Range(0, 9999);
-                string randomName = string.Format("ACSPU_{0}@ACS.LIMURA.GOV", randomInt);
-                UIManager.GetTurnIndicator().SetTempMessage(string.Format("--- UNABLE TO RESOLVE HOST {0}::PLEASE CONTACT AN ADMINISTRATOR ---", randomName), 4);
-                break;
-        }
+        MessageData messageData = Messages.GetMessage(messageType);
+        SetNextMessage(messageData);
     }
 
-    private void SetTempMessage(string message, int priorty)
+    private void SetNextMessage(MessageData messageData)
     {
-        if (_tempMessage == null)
+        if (_nextMessage.Message == null)
         {
-            _tempMessage = message;
+            _nextMessage = messageData;
         }
-        else if (priorty > _messagePriority)
+        else if (messageData.Priority > _nextMessage.Priority)
         {
-            _messagePriority = priorty;
-            _tempMessage = message;
+            _nextMessage = messageData;
         }
     }
 
-    public bool CheckTempMessage()
-    { return _tempMessage != null; }
-
-    public void ResetTempMessage()
+    public void ClearNextMessage()
     {
-        _messagePriority = 0;
-        _tempMessage = null; 
+        _nextMessage = Messages.GetMessage(MessageType.DEFAULT);
     }
 
-    private void SetDisplayMessage(string value)
-    { _textMeshComponent.text = value; }
+    private void SetDisplayedMessage(MessageData messageData)
+    {
+        _textMeshComponent.text = string.Format(">> {0} <<", messageData.Message);
+    }
 }
-
-public enum MessageType { NONE, DMG_CONVENTIONAL, DMG_EXPLOSIVE, PV_DEATH, ACS_DEATH };
