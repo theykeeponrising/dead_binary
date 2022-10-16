@@ -56947,6 +56947,10 @@ PrefabInstance:
       propertyPath: m_SizeDelta.x
       value: 300
       objectReference: {fileID: 0}
+    - target: {fileID: 5674675389068050218, guid: 3b0dcb06d7729234c850f8280ff35856, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -37.5
+      objectReference: {fileID: 0}
     - target: {fileID: 6013342191820365739, guid: 3b0dcb06d7729234c850f8280ff35856, type: 3}
       propertyPath: buttonPrefab
       value: 
