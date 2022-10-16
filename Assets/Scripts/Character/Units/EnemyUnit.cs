@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //Handles all unit logic that is enemy-specific
-public class EnemyUnit: Unit
+public class EnemyUnit : Unit
 {
     private Queue<EnemyAction> _actionsQueue;
 
@@ -55,7 +55,7 @@ public class EnemyUnit: Unit
     {
         Debug.Log(string.Format("Beginning Unit turn: {0}", gameObject.name));
 
-        if(GetFlag(FlagType.DEAD))
+        if (GetFlag(FlagType.DEAD))
             return;
 
         OnTurnStart();
@@ -71,14 +71,14 @@ public class EnemyUnit: Unit
     {
         base.Update();
 
-        if(GetActor().IsActing() || !IsProcessingTurn())
+        if (GetActor().IsActing() || !IsProcessingTurn())
             return;
 
-        if(_actionsQueue.Count == 0 && stats.actionPointsCurrent == 0)
+        if (_actionsQueue.Count == 0 && stats.actionPointsCurrent == 0)
         {
             _isProcessingTurn = false;
         }
-        else if(_actionsQueue.Count > 0)
+        else if (_actionsQueue.Count > 0)
         {
             //Process queued actions
             EnemyAction nextAction = _actionsQueue.Dequeue();
@@ -89,7 +89,7 @@ public class EnemyUnit: Unit
             //If no actions queued up, get more
             List<EnemyAction> enemyActions = GetNextEnemyActions();
 
-            foreach(EnemyAction action in enemyActions)
+            foreach (EnemyAction action in enemyActions)
                 _actionsQueue.Enqueue(action);
         }
     }
@@ -108,26 +108,26 @@ public class EnemyUnit: Unit
         bool isCover = false;
         Tile unitTile = currentTile;
 
-        foreach(EnemyAction enemyAction in actions)
+        foreach (EnemyAction enemyAction in actions)
         {
             UnitAction unitAction = enemyAction.UnitAction;
 
             //The last tile we move to will determine the cover value
-            if(unitAction.IsType(typeof(UnitActionMove)))
+            if (unitAction.IsType(typeof(UnitActionMove)))
             {
                 isCover = grid.CheckIfCovered(GetNearestTarget(enemyAction.Tile, oppFactionUnits).currentTile, enemyAction.Tile);
                 //Update the tile we do calculations with
                 unitTile = enemyAction.Tile;
             }
 
-            if(unitAction.IsType(typeof(UnitActionShoot)))
+            if (unitAction.IsType(typeof(UnitActionShoot)))
             {
                 numShots++;
                 //Calculated expected damage, if it would kill, etc.
                 float damage = CalculateExpectedDamage(this, enemyAction.ContextChar, unitTile);
 
                 //TODO: Make this probabilistic (i.e. numKill += prob(kill))
-                if(damage > enemyAction.ContextChar.GetHealth())
+                if (damage > enemyAction.ContextChar.GetHealth())
                     numKill += 1.0f;
 
                 totalExpectedDamage += Mathf.Min(enemyAction.ContextChar.GetHealth(), damage);
@@ -142,7 +142,7 @@ public class EnemyUnit: Unit
 
         int oldDist, newDist = 0;
 
-        if(shootTarget)
+        if (shootTarget)
         {
             oldDist = grid.GetTileDistance(currentTile, shootTarget.currentTile);
             newDist = grid.GetTileDistance(unitTile, shootTarget.currentTile);
@@ -151,7 +151,7 @@ public class EnemyUnit: Unit
 
         float actionValue = 0;
 
-        if(actions.Count > 0)
+        if (actions.Count > 0)
         {
             float shootActionValue = (totalExpectedDamage * _damageWeight) + numKill * _killWeight - numShots * _conserveAmmoWeight;
             float coverActionValue = System.Convert.ToSingle(isCover) * _coverWeight * GetCoverWeightScaling(newDist, CoverScalingType.LINEAR);
@@ -197,15 +197,15 @@ public class EnemyUnit: Unit
         float bestActionVal = 0;
         tile = null;
 
-        foreach(Tile nextTile in tilesInRange)
+        foreach (Tile nextTile in tilesInRange)
         {
-            if(nextTile == currentTile)
+            if (nextTile == currentTile)
                 continue;
 
             EnemyAction action = CreateMoveAction(nextTile);
             float actionVal = CalculateActionValue(action);
 
-            if(actionVal > bestActionVal)
+            if (actionVal > bestActionVal)
             {
                 tile = nextTile;
                 bestActionVal = actionVal;
@@ -223,7 +223,7 @@ public class EnemyUnit: Unit
     {
         highestExpectedDamage = 0;
 
-        if(oppFactionUnits.Count == 0)
+        if (oppFactionUnits.Count == 0)
         {
             currentTarget = null;
             return;
@@ -232,27 +232,27 @@ public class EnemyUnit: Unit
         currentTarget = oppFactionUnits[0];
         bool wouldKill = false;
 
-        foreach(Unit other in oppFactionUnits)
+        foreach (Unit other in oppFactionUnits)
         {
             float expectedDamage = CalculateExpectedDamage(this, other, tile);
             expectedDamage = Mathf.Min(expectedDamage, other.stats.healthCurrent);
 
             //Determine whether shooting the unit would kill
             //Always favor shots that would kill
-            if(!wouldKill && expectedDamage == other.stats.healthCurrent)
+            if (!wouldKill && expectedDamage == other.stats.healthCurrent)
             {
                 wouldKill = true;
                 highestExpectedDamage = expectedDamage;
                 currentTarget = other;
                 //Continue if shot wouldn't kill (and another shot would)
             }
-            else if(wouldKill && expectedDamage < other.stats.healthCurrent)
+            else if (wouldKill && expectedDamage < other.stats.healthCurrent)
             {
                 continue;
             }
 
             //If this shot would do more damage, choose it
-            if(expectedDamage > highestExpectedDamage)
+            if (expectedDamage > highestExpectedDamage)
             {
                 highestExpectedDamage = expectedDamage;
                 currentTarget = other;
@@ -281,14 +281,14 @@ public class EnemyUnit: Unit
         List<EnemyAction> enemyActions = new();
 
         //If no ammo, either reload or switch weapon
-        if(inventory.equippedWeapon.stats.ammoCurrent == 0)
+        if (inventory.equippedWeapon.stats.ammoCurrent == 0)
         {
             enemyActions.Add(CreateReloadAction(currentTile));
             return enemyActions;
         }
 
         //If there's no tiles we can move to, or no enemies, do nothing
-        if(tilesInRange.Count == 0 || oppFactionUnits.Count == 0)
+        if (tilesInRange.Count == 0 || oppFactionUnits.Count == 0)
         {
             enemyActions.Add(CreateNoneAction(currentTile));
             return enemyActions;
@@ -303,19 +303,19 @@ public class EnemyUnit: Unit
         //Get Best 1AP Movement Action
         List<EnemyAction> moveActions = MoveActionStrategy(tilesInRange);
 
-        if(CalculateActionsValue(moveActions) > CalculateActionsValue(bestActions))
+        if (CalculateActionsValue(moveActions) > CalculateActionsValue(bestActions))
         {
             bestActions = moveActions;
         }
 
         //Get Best 2AP Move + Shoot actions
         //Note: Action values for 2AP actions are averaged
-        if(stats.actionPointsCurrent >= 2)
+        if (stats.actionPointsCurrent >= 2)
         {
             List<EnemyAction> moveAndShootActions = MoveAndShoot(oppFactionUnits, tilesInRange);
             float moveAndShootValue = CalculateActionsValue(moveAndShootActions);
 
-            if(moveAndShootValue > CalculateActionsValue(bestActions))
+            if (moveAndShootValue > CalculateActionsValue(bestActions))
             {
                 bestActions = moveAndShootActions;
             }
@@ -323,7 +323,7 @@ public class EnemyUnit: Unit
 
         enemyActions.AddRange(bestActions);
 
-        if(enemyActions.Count == 0)
+        if (enemyActions.Count == 0)
             enemyActions.Add(CreateNoneAction(currentTile));
 
         return enemyActions;
@@ -336,7 +336,7 @@ public class EnemyUnit: Unit
 
         GetBestMoveTile(tilesInRange, out Tile bestMoveTile);
 
-        if(bestMoveTile != null)
+        if (bestMoveTile != null)
         {
             EnemyAction moveAction = CreateMoveAction(bestMoveTile);
             actions.Add(moveAction);
@@ -354,9 +354,9 @@ public class EnemyUnit: Unit
         Unit currentTarget = oppFactionUnits[0];
         List<EnemyAction> bestActions = new();
 
-        foreach(Tile tile in tilesInRange)
+        foreach (Tile tile in tilesInRange)
         {
-            if(tile == currentTile)
+            if (tile == currentTile)
                 continue;
 
             GetBestShootTarget(oppFactionUnits, tile, out Unit bestTarget, out float expectedDamage);
@@ -365,7 +365,7 @@ public class EnemyUnit: Unit
             EnemyAction shootAction = CreateShootAction(currentTarget, tile);
             List<EnemyAction> enemyActions = new() { moveAction, shootAction };
 
-            if(CalculateActionsValue(enemyActions) > CalculateActionsValue(bestActions))
+            if (CalculateActionsValue(enemyActions) > CalculateActionsValue(bestActions))
                 bestActions = enemyActions;
         }
 
@@ -394,42 +394,76 @@ public class EnemyUnit: Unit
 
     private void SetUnitStrategy(Strategy strategy)
     {
-        switch(strategy)
+        switch (strategy)
         {
             case Strategy.Aggressive:
-            {
-                _killWeight = 10.0f;
-                _damageWeight = 1.2f;
-                _coverWeight = 2.0f;
-                _conserveAmmoWeight = 0.5f;
-                _approachWeight = 0.4f;
-                _leaveCoverPenalty = 0.5f;
-                break;
-            }
+                {
+                    _killWeight = 10.0f;
+                    _damageWeight = 1.2f;
+                    _coverWeight = 2.0f;
+                    _conserveAmmoWeight = 0.5f;
+                    _approachWeight = 0.4f;
+                    _leaveCoverPenalty = 0.5f;
+                    break;
+                }
             case Strategy.Defensive:
-            {
-                _killWeight = 5.0f;
-                _damageWeight = 1.0f;
-                _coverWeight = 3.0f;
-                _conserveAmmoWeight = 1.0f;
-                _approachWeight = 0.2f;
-                _leaveCoverPenalty = 0.5f;
-                break;
-            }
+                {
+                    _killWeight = 5.0f;
+                    _damageWeight = 1.0f;
+                    _coverWeight = 3.0f;
+                    _conserveAmmoWeight = 1.0f;
+                    _approachWeight = 0.2f;
+                    _leaveCoverPenalty = 0.5f;
+                    break;
+                }
             case Strategy.Default:
-            {
-                _killWeight = 7.0f;
-                _damageWeight = 1.0f;
-                _coverWeight = 2.0f;
-                _conserveAmmoWeight = 0.5f;
-                _approachWeight = 0.3f;
-                _leaveCoverPenalty = 0.5f;
-                break;
-            }
+                {
+                    _killWeight = 7.0f;
+                    _damageWeight = 1.0f;
+                    _coverWeight = 2.0f;
+                    _conserveAmmoWeight = 0.5f;
+                    _approachWeight = 0.3f;
+                    _leaveCoverPenalty = 0.5f;
+                    break;
+                }
         }
     }
 
-public override void TakeDamage(Unit attacker, int damage, int distanceToTarget, MessageType damageType = MessageType.DMG_CONVENTIONAL)
+    //Decide what to do with action points
+    //Calculate best target to shoot, using 1 AP
+    private List<EnemyAction> ShootActionStrategy(List<Unit> oppFactionUnits)
+    {
+        //Get Shoot Action value
+        List<EnemyAction> actions = new();
+
+        GetBestShootTarget(oppFactionUnits, currentTile, out Unit shootTarget, out _);
+
+        if (shootTarget != null)
+        {
+            EnemyAction shootAction = CreateShootAction(shootTarget, currentTile);
+            actions.Add(shootAction);
+        }
+
+        return actions;
+    }
+
+    private struct EnemyAction
+    {
+        public EnemyAction(UnitAction unitAction, Tile tile, List<Tile> path, Unit contextChar)
+        {
+            UnitAction = unitAction;
+            Tile = tile;
+            Path = path;
+            ContextChar = contextChar;
+        }
+
+        public Unit ContextChar { get; }
+        public List<Tile> Path { get; }
+        public Tile Tile { get; }
+        public UnitAction UnitAction { get; }
+    };
+
+    public override void TakeDamage(Unit attacker, int damage, int distanceToTarget, MessageType damageType = MessageType.DMG_CONVENTIONAL)
     {
         // Called by an attacking source when taking damage
         // TO DO: More complex damage reduction will be added here
