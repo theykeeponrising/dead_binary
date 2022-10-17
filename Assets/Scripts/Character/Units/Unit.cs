@@ -370,7 +370,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
         return CalculateHitChance(this, charActor.targetCharacter);
     }
 
-    bool RollForHit(Unit attacker, int distanceToTarget)
+    protected bool RollForHit(Unit attacker, int distanceToTarget)
     {
         // Dodge change for character vs. attacker's aim
 
@@ -386,7 +386,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
         return (baseChance  >= randomChance);
     }
 
-    public void TakeDamage(Unit attacker, int damage, int distanceToTarget)
+    public virtual void TakeDamage(Unit attacker, int damage, int distanceToTarget, MessageType damageType = MessageType.DMG_CONVENTIONAL)
     {
         // Called by an attacking source when taking damage
         // TO DO: More complex damage reduction will be added here
@@ -406,7 +406,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
         CheckDeath(attacker, direction, distance, damage);
     }
 
-    public void TakeDamage(Unit attacker, int damage, Vector3 attackPoint)
+    public virtual void TakeDamage(Unit attacker, int damage, Vector3 attackPoint, MessageType damageType = MessageType.DMG_CONVENTIONAL)
     {
         // Called by an attacking item when taking damage
         // TO DO: More complex damage reduction will be added here
@@ -416,7 +416,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
         CheckDeath(attacker, direction, distance, damage, 50f);
     }
 
-    void CheckDeath(Unit attacker, Vector3 direction, float distance, int damage, float impactForce = 2f)
+    protected void CheckDeath(Unit attacker, Vector3 direction, float distance, int damage, float impactForce = 2f)
     {
         // Inflict damage on character
         Debug.Log(string.Format("{0} has attacked {1} for {2} damage!", attacker.attributes.name, attributes.name, damage)); // This will eventually be shown visually instead of told
@@ -445,6 +445,8 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
         GetComponent<CapsuleCollider>().enabled = false;
         healthbar.gameObject.SetActive(false);
 
+        if (distance == 0) distance = 1;
+
         // Disable animator and top rigidbody
         GetAnimator().OnDeath(attackDirection * impactForce/distance, ForceMode.Impulse);
 
@@ -464,6 +466,13 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
 
         if (inventory.equippedWeapon)
             inventory.equippedWeapon.DropGun();
+
+        // Display message
+        if (attacker.attributes.faction == FactionManager.ACS)
+            UIManager.GetTurnIndicator().SetTurnIndicatorMessage(MessageType.PV_DEATH);
+
+        else if (attributes.faction == FactionManager.ACS)
+            UIManager.GetTurnIndicator().SetTurnIndicatorMessage(MessageType.ACS_DEATH);
     }
 
     public Unit GetNearestTarget(Tile unitTile, List<Unit> targets)

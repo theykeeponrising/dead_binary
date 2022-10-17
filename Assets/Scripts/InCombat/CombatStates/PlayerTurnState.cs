@@ -58,7 +58,7 @@ public class PlayerTurnState : GameState
 
     public void EndTurn()
     {
-        Debug.Log("Enemy turn!");
+        FactionManager.ACS.EndTurn();
         this.ChangeState(StateHandler.State.EnemyTurnState);
     }
     
@@ -76,7 +76,7 @@ public class PlayerTurnState : GameState
 
     public override void SetStateActive()
     {
-        FactionManager.PV.PlayFactionSFX();
+        FactionManager.PV.StartTurn();
         base.SetStateActive();
         playerAction.EnablePlayerInput();
         playerAction.StartTurn();

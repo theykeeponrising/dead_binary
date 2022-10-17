@@ -8,6 +8,9 @@ public class Faction : MonoBehaviour
     public Color32 FactionColor;
     public List<Unit> FactionUnits;
 
+    private bool _turnInProgress = false;
+    public bool TurnInProgress { get { return _turnInProgress; } }
+
     AudioSource _audioSource;
     Dictionary<Faction, FactionAffinity> _factionRelation = new Dictionary<Faction, FactionAffinity>();
 
@@ -29,6 +32,21 @@ public class Faction : MonoBehaviour
             _factionRelation[faction] = FactionAffinity.ENEMY;
 
         _factionRelation[this] = FactionAffinity.FRIENDLY;
+
+        _turnInProgress = false;
+    }
+
+    public void StartTurn()
+    {
+        Debug.Log(string.Format("{0} turn start called", FactionName));
+        PlayFactionSFX();
+        _turnInProgress = true;
+    }
+
+    public void EndTurn()
+    {
+        PlayFactionSFX();
+        _turnInProgress = false;
     }
 
     public void SetFactionRelation(Faction faction, FactionAffinity factionAffinity)

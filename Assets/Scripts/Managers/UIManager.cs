@@ -12,6 +12,7 @@ public class UIManager : MonoBehaviour
     static InCombatPlayerActionUI inCombatPlayerActionUI;
     static InventoryPanelScript inventoryPanel;
     static InfoPanelScript infoPanel;
+    static TurnIndicatorPanel turnIndicator;
 
     private void Awake()
     {
@@ -46,5 +47,11 @@ public class UIManager : MonoBehaviour
     {
         if (!inventoryPanel) inventoryPanel = Instance.GetComponentInChildren<InventoryPanelScript>();
         return inventoryPanel;
+    }
+
+    public static TurnIndicatorPanel GetTurnIndicator()
+    {
+        if (!turnIndicator) turnIndicator = Instance.GetComponentInChildren<TurnIndicatorPanel>();
+        return turnIndicator;
     }
 }

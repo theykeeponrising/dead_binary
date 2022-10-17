@@ -71,7 +71,7 @@ public abstract class DamageItem : Item
         else
         {
             Debug.Log(string.Format("Damaged {0} for {1} health!", targetedUnit.attributes.name, Mathf.Abs(hpAmount)));
-            targetedUnit.TakeDamage(sourceUnit, Mathf.Abs(hpAmount), triggerPosition);
+            targetedUnit.TakeDamage(sourceUnit, Mathf.Abs(hpAmount), triggerPosition, MessageType.DMG_EXPLOSIVE);
             targetedUnit.GetAnimator().TakeDamageEffect(item: this);
         }
     }

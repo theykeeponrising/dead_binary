@@ -45,7 +45,7 @@ public class UnitActionShoot : UnitTargetAction
         if (ActionStage(0))
         {
             unit.GetAnimator().Play("Shoot");
-            if (targetUnit) targetUnit.TakeDamage(unit, unit.EquippedWeapon.GetDamage(), distanceToTarget);
+            if (targetUnit) targetUnit.TakeDamage(unit, unit.EquippedWeapon.GetDamage(), distanceToTarget, MessageType.DMG_CONVENTIONAL);
             unit.EquippedWeapon.SpendAmmo();
             NextStage();
         }

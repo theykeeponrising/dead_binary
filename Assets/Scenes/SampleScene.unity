@@ -56815,10 +56815,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 199113895, guid: 3b0dcb06d7729234c850f8280ff35856, type: 3}
-      propertyPath: _targetButtonPrefab
-      value: 
-      objectReference: {fileID: -4376706497563292962, guid: c0036a31ea26d5746b3ce1aebfaf5d7c, type: 3}
     - target: {fileID: 3699802338143857867, guid: 3b0dcb06d7729234c850f8280ff35856, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -56907,21 +56903,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: UI
       objectReference: {fileID: 0}
-    - target: {fileID: 4978648681691798997, guid: 3b0dcb06d7729234c850f8280ff35856, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 4978648681691798997, guid: 3b0dcb06d7729234c850f8280ff35856, type: 3}
-      propertyPath: m_AnchorMin.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 4978648681691798997, guid: 3b0dcb06d7729234c850f8280ff35856, type: 3}
+    - target: {fileID: 6141474806712389679, guid: 3b0dcb06d7729234c850f8280ff35856, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 300
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6013342191820365739, guid: 3b0dcb06d7729234c850f8280ff35856, type: 3}
-      propertyPath: buttonPrefab
-      value: 
-      objectReference: {fileID: 2731226593703120154, guid: 5591a73ec7672bc4481c2702fa644e76, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3b0dcb06d7729234c850f8280ff35856, type: 3}
