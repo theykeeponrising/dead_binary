@@ -11,52 +11,50 @@ public abstract class DamageItem : Item
     [Tooltip("HP amount change from use. Positive amounts will heal.")]
     public int hpAmount;
     [Tooltip("Circular effect area in tiles.")]
-    public float areaOfEffect;
-    [Tooltip("Usable tile range for the item.")]
-    public int range;
-    [Tooltip("Impact effect of the item.")]
-    public Weapon.WeaponImpact itemImpact;
+    public WeaponImpact itemImpact;
     [Tooltip("Item prop displayed when item is used.")]
     public ItemProp itemProp;
     [Tooltip("Effect shown when item is triggered.")]
     public ParticleSystem itemEffect;
 
-    [HideInInspector] public Unit sourceUnit;
-    [HideInInspector] public Unit targetedUnit;
-    [HideInInspector] public Vector3 triggerPosition;
+    protected Unit sourceUnit;
+    protected Unit targetedUnit;
+    protected Vector3 targetPosition;
+    protected Vector3 triggerPosition;
 
     public override void TriggerItem()
     {
         // Callback function for props, initiates the item effect
 
-        triggerPosition = transform.position;
+        if (triggerPosition == Vector3.zero)
+            triggerPosition = transform.position;
+
         if (itemType == ItemType.CONSUMABLE) itemUsesCurrent -= 1;
 
-        if (itemEffect)
+        CreateItemEffect();
+        
+        // Use on unit if possible, otherwise on empty tile
+        Tile targetedTile = targetedUnit ? targetedUnit.currentTile : sourceUnit.grid.GetTile(targetPosition);
+
+        foreach (Unit unit in Tile.GetTileOccupants(Tile.AreaOfEffect(targetedTile, areaOfEffect)))
         {
-            GameObject spawnEffect = GlobalManager.Instance.activeMap.CreateTimedEffect(itemEffect.gameObject, triggerPosition, itemEffect.transform.rotation, 3f);
-            spawnEffect.transform.localScale = Vector3.one * (areaOfEffect / 2);
+            if (!immuneUnitTypes.Contains(unit.attributes.unitType)) 
+                ItemEffect(sourceUnit, unit);
         }
 
-        foreach (Unit unit in Tile.GetTileOccupants(Tile.AreaOfEffect(targetedUnit, areaOfEffect)))
-            ItemEffect(sourceUnit, unit);
+        itemAction.EndPerformance();
     }
 
     public override void TriggerItem(Vector3 setTriggerPosition)
     {
-        // Callback function for props, initiates the item effect
-
         triggerPosition = setTriggerPosition;
-        if (itemType == ItemType.CONSUMABLE) itemUsesCurrent -= 1;
+        TriggerItem();
+    }
 
-        if (itemEffect)
-        {
-            GameObject spawnEffect = GlobalManager.Instance.activeMap.CreateTimedEffect(itemEffect.gameObject, triggerPosition, itemEffect.transform.rotation, 3f);
-            spawnEffect.transform.localScale = Vector3.one * (areaOfEffect / 2);
-        }   
-
-        foreach (Unit unit in Tile.GetTileOccupants(Tile.AreaOfEffect(targetedUnit, areaOfEffect)))
-            ItemEffect(sourceUnit, unit);
+    public override void TriggerItem(Unit triggerTarget)
+    {
+        triggerPosition = triggerTarget.transform.position;
+        TriggerItem();
     }
 
     public override void ItemEffect(Unit sourceUnit, Unit targetedUnit)
@@ -73,8 +71,32 @@ public abstract class DamageItem : Item
         else
         {
             Debug.Log(string.Format("Damaged {0} for {1} health!", targetedUnit.attributes.name, Mathf.Abs(hpAmount)));
-            targetedUnit.TakeDamage(sourceUnit, Mathf.Abs(hpAmount), triggerPosition);
+            targetedUnit.TakeDamage(sourceUnit, Mathf.Abs(hpAmount), triggerPosition, MessageType.DMG_EXPLOSIVE);
             targetedUnit.GetAnimator().TakeDamageEffect(item: this);
         }
+    }
+
+    void CreateItemEffect()
+    {
+        // Creates the item effect object at the trigger position
+
+        if (!itemEffect) 
+            return;
+
+        GameObject spawnEffect = GlobalManager.Instance.activeMap.CreateTimedEffect(itemEffect.gameObject, triggerPosition, itemEffect.transform.rotation, 3f);
+        spawnEffect.transform.localScale = Vector3.one * (areaOfEffect / 2);
+        PlayItemSFX(spawnEffect);
+    }
+
+    void PlayItemSFX(GameObject itemEffect)
+    {
+        // Plays the item effect sound (if any)
+
+        if (itemSFX == ItemEffectType.NONE)
+            return;
+
+        AudioSource audioSource = itemEffect.GetComponent<AudioSource>();
+        AudioClip audioClip = AudioManager.GetSound(itemSFX);
+        audioSource.PlayOneShot(audioClip);
     }
 }

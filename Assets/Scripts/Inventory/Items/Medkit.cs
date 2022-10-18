@@ -6,15 +6,15 @@ public class Medkit : DamageItem
 {
     public override void UseItem(Unit setSourceUnit, Unit setTargetedUnit)
     {
-        // Gets unit information, creates grenade prop, and plays throwing animation
+        // Gets unit information, heals unit
 
         sourceUnit = setSourceUnit;
         targetedUnit = setTargetedUnit;
 
         sourceUnit.GetActor().ClearTarget();
 
-        base.TriggerItem();
+        base.TriggerItem(targetedUnit);
     }
 
-    // TO-DO : Medkit SFX, animations
+    // TO-DO : Medkit animations
 }

@@ -28,7 +28,7 @@ public class PlayerTurnState : GameState
         playerAction = new InCombatPlayerAction();
         playerAction.Init(this);
         playerActionStateMachine = new StateMachine<InCombatPlayerAction>();
-        playerActionStateMachine.Configure(playerAction, new SelectedStates.NoTargetSelected(playerActionStateMachine));   
+        playerActionStateMachine.Configure(playerAction, new StateNoSelection(playerActionStateMachine));   
         playerAction.SetStateMachine(playerActionStateMachine);
     }
 
@@ -58,6 +58,7 @@ public class PlayerTurnState : GameState
 
     public void EndTurn()
     {
+        FactionManager.ACS.EndTurn();
         this.ChangeState(StateHandler.State.EnemyTurnState);
     }
     
@@ -75,6 +76,7 @@ public class PlayerTurnState : GameState
 
     public override void SetStateActive()
     {
+        FactionManager.PV.StartTurn();
         base.SetStateActive();
         playerAction.EnablePlayerInput();
         playerAction.StartTurn();

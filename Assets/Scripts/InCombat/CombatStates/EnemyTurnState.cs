@@ -17,6 +17,7 @@ public class EnemyTurnState : GameState
 
     public override void SetStateActive()
     {
+        FactionManager.ACS.StartTurn();
         enemyTurnProcess.ProcessTurn();   
     }
 
@@ -26,6 +27,8 @@ public class EnemyTurnState : GameState
 
     public void EndTurn()
     {
+        Debug.Log("End of enemy turn!");
+        FactionManager.ACS.EndTurn();
         this.ChangeState(StateHandler.State.PlayerTurnState);
     }
 }

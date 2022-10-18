@@ -12,42 +12,45 @@ public enum FlagType {
     SHOOT,
     RELOAD,
     VAULT,
-    DODGE,
     AIM,
     STOW,
     DRAW,
     DEAD
 };
 
-public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHandler
+public enum UnitType {
+    HUMAN,
+    ROBOTIC
+}
+
+public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
 {
     //List of units on opposing faction that are alive
     protected List<Unit> oppFactionUnits;
     public MapGrid grid;
-    // lol
+
     protected CharacterActor charActor;
     protected CharacterAnimator charAnim;
     protected CharacterSFX charSFX;
 
     public List<FlagType> flags = new List<FlagType>();
     
-    public int numActionsInFlight = 0;
-    
     [HideInInspector] public Inventory inventory;
     [HideInInspector] public Healthbar healthbar;
-    public IFaction ifaction;
-    Faction IFaction.faction { get { return attributes.faction; } set { attributes.faction = value; } }
-    GameState gameState;
+    [HideInInspector] public Weapon EquippedWeapon => GetEquippedWeapon();
 
-    [HideInInspector] public CoverObject currentCover;
-    public List<ActionList> availableActions;
+    [HideInInspector] public CoverObject currentCover => currentTile.cover;
+    [SerializeField] private List<UnitAction> _unitActions;
+    private Transform _unitActionsContainer;
 
     // Attributes are mosty permanent descriptors about the character
     [System.Serializable] public class Attributes
     {
         public string name;
         public Faction faction;
-        public AudioManager.FootstepSource footstepSource;
+        public UnitType unitType;
+        public UnitIconEnum unitIcon;
+        public FootstepSource footstepSource;
     }
 
     // Stats are values that will be referenced and changed frequently during combat
@@ -81,15 +84,16 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         stats.actionPointsCurrent = stats.actionPointsMax;
 
         SetupUnit();
+        GenerateActions();
     }
 
     protected override void Awake()
     {
         base.Awake();
         this.name = string.Format("{0} (Character)", attributes.name);
-        inventory = GetComponent<Inventory>();
-        ifaction = this;
-        
+        inventory = GetComponentInChildren<Inventory>();
+        _unitActionsContainer = transform.Find("Actions");
+
         if (objectTiles.Count > 0) currentTile = objectTiles[0];
         
         // Initialize the character actor
@@ -129,40 +133,47 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         GetActor().OnPointerExit(eventData);
     }
 
-    public void SetGameState(GameState gameState)
-    {
-        this.gameState = gameState;
-    }
-
     public virtual void OnTurnStart()
     {
-        RefreshActionPoints();
+        ResetActions(); 
+        ResetActionPoints();
+        GetActor()?.SetWaiting(false);
+    }
+
+    public bool HasTurnEnded()
+    {
+        if (stats.actionPointsCurrent == 0)
+            return true;
+
+        if (GetActor().FindActionOfType(typeof(UnitActionWait)).Performed())
+            return true;
+
+        return false;
     }
 
     public CharacterActor GetActor()
-    {
-        return charActor;
-    }
+    { return charActor; }
 
     public CharacterAnimator GetAnimator()
-    {
-        return charAnim;
-    }
+    { return charAnim; }
 
     public CharacterSFX GetSFX()
-    {
-        return charSFX;
-    }
+    { return charSFX; }
 
-    public List<ActionList> GetAvailableActions()
-    {
-        return availableActions;
-    }
+    public List<UnitAction> GetUnitActions()
+    { return _unitActions; }
+
+    public Transform GetUnitActionsContainer()
+    { return _unitActionsContainer; }
+
+    public Weapon GetEquippedWeapon()
+    { return inventory.equippedWeapon; }
+
+    public void SetEquippedWeapon(Weapon weapon)
+    { inventory.equippedWeapon = weapon; }
 
     public List<Item> GetItems()
-    {
-        return inventory.items;
-    }
+    { return inventory.items; }
 
     public void SetupUnit()
     {
@@ -170,9 +181,60 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
 
         InCombatPlayerAction playerAction = playerTurnState.GetPlayerAction();
         charActor.SetPlayerAction(playerAction);
+        inventory.Init(this);
     }
 
-        //TODO: Should add additional events to specifically play a sound
+    void GenerateActions()
+    {
+        // Adds actions to the character based on its current equipment
+
+        int index = 0;
+
+        // If we have movement, add move action
+        if (stats.movement > 0)
+        {
+            _unitActions.Insert(index, ActionManager.Instance.unitActions.move);
+            index += 1;
+        }
+
+        // If we have an equipped weapon, add shoot action
+        if (EquippedWeapon)
+        {
+            _unitActions.Insert(index, EquippedWeapon.WeaponAction);
+            index += 1;
+        }
+
+        // If we have an equipped weapon, add reload action
+        if (EquippedWeapon)
+        {
+            _unitActions.Insert(index, ActionManager.Instance.unitActions.reload);
+            index += 1;
+        }
+
+        // If we have multiple weapons, add swap action
+        if (inventory.weapons.Count > 1)
+        {
+            _unitActions.Insert(index, ActionManager.Instance.unitActions.swap);
+            index += 1;
+        }
+
+        // If we have items, add inventory action
+        if (GetItems().Count > 0)
+        {
+            _unitActions.Insert(index, ActionManager.Instance.unitActions.inventory);
+            index += 1;
+        }
+
+        // Always add "Wait" action
+        _unitActions.Insert(index, ActionManager.Instance.unitActions.wait);
+
+        for (index = 0; index < _unitActions.Count; index++)
+        {
+            _unitActions[index] = Instantiate(_unitActions[index], _unitActionsContainer);
+        }
+    }
+
+    //TODO: Should add additional events to specifically play a sound
     //These ones probably aren't good places for that 
     public void Event_OnAnimationStart(CharacterAnimator.AnimationEventContext context)
     {
@@ -189,73 +251,33 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         GetAnimator().Event_PlayAnimation(context);
     }
 
-    public void Event_PlaySound(CharacterSFX.AnimationEventSound sound)
+    public void Event_PlaySound(AnimationType sound)
     {
         GetSFX().Event_PlaySound(sound);
     }
-
-    public void RefreshActionPoints()
+    
+    public void SpendActionPoints(int amount)
     {
-        // Used to refresh character action points to max.
+        // Reduces action points by amount provided
+
+        stats.actionPointsCurrent -= amount;
+    }
+
+    public void ResetActionPoints()
+    {
+        // Used to refresh character action points to max
+        // TO-DO -- Add AP penalties here from debuffs
+
         stats.actionPointsCurrent = stats.actionPointsMax;
     }
 
-    //TODO: Move this to the individual action classes, and add delegates/inherited method
-    public void ActionStart(Action action)
+    public void ResetActions()
     {
-        switch (action.context)
-        {
-            case ActionList.MOVE:
-                numActionsInFlight++;
-                break;
-            case ActionList.SHOOT:
-                numActionsInFlight++;
-                break;
-            case ActionList.RELOAD:
-                numActionsInFlight++;
-                break;
-            case ActionList.SWAP:
-                numActionsInFlight++;
-                break;
-            case ActionList.USEITEM:
-                numActionsInFlight++;
-                break;
-            default:
-                break; 
-        }
-    }
+        // Resets all actions back to starting point
+        // Called at the beginning of the turn
 
-    //TODO: Move this to the individual action classes, and add delegates/inherited method
-    public void ActionComplete(Action action)
-    {
-        switch (action.context)
-        {
-            case ActionList.MOVE:
-                numActionsInFlight--;
-                break;
-            case ActionList.SHOOT:
-                numActionsInFlight--;
-                break;
-            case ActionList.RELOAD:
-                numActionsInFlight--;
-                break;
-            case ActionList.SWAP:
-                numActionsInFlight--;
-                break;
-            case ActionList.USEITEM:
-                numActionsInFlight--;
-                break;
-            default:
-                break; 
-        }
-        if (numActionsInFlight < 0) Debug.LogError(string.Format("Number of actions in flight: {0}", numActionsInFlight));
-    }
-
-    //Basic action callback
-    //TODO: Move this to action classes
-    public void ActionCompleteCallback()
-    {
-
+        foreach (UnitAction unitAction in _unitActions)
+            unitAction.OnTurnStart();
     }
 
     public int GetHealth()
@@ -286,10 +308,9 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
 
         foreach (var v in gos)
         {
-            if (v.GetComponent<IFaction>() != null)
-                if (attributes.faction != v.attributes.faction)
-                    if (v.stats.healthCurrent > 0)
-                        oppFactionUnits.Add(v);
+            if (attributes.faction != v.attributes.faction)
+                if (v.stats.healthCurrent > 0)
+                    oppFactionUnits.Add(v);
         }
 
         //Sort list by distance to current unit
@@ -311,7 +332,6 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         return grid.GetTilesInRange(pos, stats.movement);
     }
 
-
     protected float CalculateExpectedDamage(Unit attacker, Unit defender, Tile attackerTile, bool debug=false)
     {
         float weaponDamange = attacker.inventory.equippedWeapon.GetDamage();
@@ -321,13 +341,13 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         return weaponDamange * hitChance;
     }
 
-    //Overload for simplicity
+    // Overload for simplicity
     public float CalculateHitChance(Unit attacker, Unit defender)
     {
         return CalculateHitChance(attacker, defender, attacker.currentTile);
     }
 
-    //Calculate Hit Chance
+    // Calculate Hit Chance
     public float CalculateHitChance(Unit attacker, Unit defender, Tile attackerTile)
     {
         int distance = grid.GetTileDistance(attackerTile, defender.currentTile);
@@ -350,7 +370,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         return CalculateHitChance(this, charActor.targetCharacter);
     }
 
-    bool RollForHit(Unit attacker, int distanceToTarget)
+    protected bool RollForHit(Unit attacker, int distanceToTarget)
     {
         // Dodge change for character vs. attacker's aim
 
@@ -366,7 +386,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         return (baseChance  >= randomChance);
     }
 
-    public void TakeDamage(Unit attacker, int damage, int distanceToTarget)
+    public virtual void TakeDamage(Unit attacker, int damage, int distanceToTarget, MessageType damageType = MessageType.DMG_CONVENTIONAL)
     {
         // Called by an attacking source when taking damage
         // TO DO: More complex damage reduction will be added here
@@ -375,9 +395,9 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         if (!RollForHit(attacker, distanceToTarget))
         {
             if (currentCover) currentCover.Impact();
-            AddFlag(FlagType.DODGE);
+            GetAnimator().SetTrigger("dodge");
             Debug.Log(string.Format("{0} missed target {1}!", attacker.attributes.name, attributes.name));
-            GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.DODGE, true);
+            
             return;
         }
 
@@ -386,7 +406,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         CheckDeath(attacker, direction, distance, damage);
     }
 
-    public void TakeDamage(Unit attacker, int damage, Vector3 attackPoint)
+    public virtual void TakeDamage(Unit attacker, int damage, Vector3 attackPoint, MessageType damageType = MessageType.DMG_CONVENTIONAL)
     {
         // Called by an attacking item when taking damage
         // TO DO: More complex damage reduction will be added here
@@ -396,7 +416,7 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         CheckDeath(attacker, direction, distance, damage, 50f);
     }
 
-    void CheckDeath(Unit attacker, Vector3 direction, float distance, int damage, float impactForce = 2f)
+    protected void CheckDeath(Unit attacker, Vector3 direction, float distance, int damage, float impactForce = 2f)
     {
         // Inflict damage on character
         Debug.Log(string.Format("{0} has attacked {1} for {2} damage!", attacker.attributes.name, attributes.name, damage)); // This will eventually be shown visually instead of told
@@ -425,6 +445,8 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
         GetComponent<CapsuleCollider>().enabled = false;
         healthbar.gameObject.SetActive(false);
 
+        if (distance == 0) distance = 1;
+
         // Disable animator and top rigidbody
         GetAnimator().OnDeath(attackDirection * impactForce/distance, ForceMode.Impulse);
 
@@ -444,6 +466,13 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
 
         if (inventory.equippedWeapon)
             inventory.equippedWeapon.DropGun();
+
+        // Display message
+        if (attacker.attributes.faction == FactionManager.ACS)
+            UIManager.GetTurnIndicator().SetTurnIndicatorMessage(MessageType.PV_DEATH);
+
+        else if (attributes.faction == FactionManager.ACS)
+            UIManager.GetTurnIndicator().SetTurnIndicatorMessage(MessageType.ACS_DEATH);
     }
 
     public Unit GetNearestTarget(Tile unitTile, List<Unit> targets)
@@ -484,11 +513,5 @@ public class Unit : GridObject, IFaction, IPointerEnterHandler, IPointerExitHand
     public bool GetFlag(FlagType flag)
     {
         return flags.Contains(flag);
-    }
-
-    //Used by EnemyUnit to determine when to move on to the next unit
-    public bool IsActing()
-    {
-        return numActionsInFlight > 0;
     }
 }

@@ -8,7 +8,7 @@ public class GridObject : MonoBehaviour
     [Header("-GridObject Attributes")]
     [HideInInspector] public List<Tile> objectTiles;
     public bool isTraversable = false;
-    public AudioManager.ImpactType impactType;
+    public ImpactType impactType;
     public Tile currentTile;
 
     protected virtual void Awake()

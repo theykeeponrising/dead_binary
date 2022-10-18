@@ -6,6 +6,8 @@ using UnityEngine.EventSystems;
 
 public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
+    const float colorIncrement = 1.0f/255.0f;
+
     // Main script for Tile behavior, such as pathing and cover objects
     [HideInInspector]
     public string choice;
@@ -19,8 +21,9 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     [HideInInspector]
     public Vector3 standPoint;
     InCombatPlayerAction playerAction;
-    public AudioManager.FootstepMaterial footstepMaterial;
+    public FootstepMaterial footstepMaterial;
     MapGrid grid;
+    public float selectionCircleColorIntensity = 120.0f;
     
     // Use this for initialization
     void Start()
@@ -71,12 +74,12 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
             if (highlightType == "preview")
             {
                 if (eval == "movement" && !occupant)
-                    tileGlow.color = new Color(0, 0, 150, 0.50f);
+                    tileGlow.color = new Color(0, 0, colorIncrement, 1.0f) * selectionCircleColorIntensity;
                 else
-                    tileGlow.color = new Color(150, 0, 0, 0.50f);
+                    tileGlow.color = new Color(colorIncrement, 0, 0, 1.0f) * selectionCircleColorIntensity;
             }
             else if (highlightType == "moving")
-                tileGlow.color = new Color(0, 150, 0, 0.50f);
+                tileGlow.color = new Color(0, colorIncrement, 0, 1.0f)  * selectionCircleColorIntensity;
             else if (highlightType == "error")
                 tileGlow.color = Color.red;
         }
@@ -256,7 +259,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     }
 
 
-    public static List<Tile> AreaOfEffect(GridObject target, float areaOfEffect)
+    public static List<Tile> AreaOfEffect(Tile targetTile, float areaOfEffect)
     {
         // Gets affected tiles from target position based on "areaOfEffect" stat
         // Every odd number of range adds horizontal and vertical neighbor tiles
@@ -265,11 +268,11 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         Tile[] tiles = GameObject.FindObjectsOfType<Tile>();
         List<Tile> impactedTiles = new List<Tile>();
 
-        impactedTiles.Add(target.currentTile);
+        impactedTiles.Add(targetTile);
 
         foreach (Tile tile in tiles)
         {
-            float distance = Vector3.Distance(target.transform.position, tile.gameObject.transform.position);
+            float distance = Vector3.Distance(targetTile.transform.position, tile.transform.position);
             if (distance <= areaOfEffect && !impactedTiles.Contains(tile)) impactedTiles.Add(tile);
         }
 

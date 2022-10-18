@@ -40,14 +40,9 @@ public class Inventory : MonoBehaviour
     [Range(0, 10)]
     int weaponsMax = 2; // If we eventually want to allow some characters to equip more weapons
 
-    // [SerializeField]
-    // [Range(0, 10)]
-    // int itemsMax = 2;
-
-    // Start is called before the first frame update
-    void Start()
+    public void Init(Unit unit)
     {
-        unit = GetComponent<Unit>();
+        this.unit = unit;
 
         // Init starting weapons from inspector
         for (int index = 0; index < weapons.Count; index++)
@@ -60,8 +55,8 @@ public class Inventory : MonoBehaviour
         // Equip first slotted weapon
         equippedWeapon = weapons[0];
         equippedWeapon.gameObject.SetActive(true);
-        unit.GetComponent<Animator>().SetLayerWeight(equippedWeapon.weaponLayer, 1);
-        unit.GetComponent<Animator>().SetFloat("animSpeed", equippedWeapon.attributes.animSpeed);
+        unit.GetComponent<Animator>().SetLayerWeight(equippedWeapon.GetAnimationLayer(), 1);
+        unit.GetComponent<Animator>().SetFloat("animSpeed", equippedWeapon.attributes.animationSpeed);
 
         // Init starting items from inspector
         for (int index = 0; index < items.Count; index++)
@@ -90,8 +85,8 @@ public class Inventory : MonoBehaviour
         {
             equippedWeapon = weapon;
             weapon.gameObject.SetActive(true);
-            unit.GetComponent<Animator>().SetLayerWeight(weapon.weaponLayer, 1);
-            unit.GetComponent<Animator>().SetFloat("animSpeed", weapon.attributes.animSpeed);
+            unit.GetComponent<Animator>().SetLayerWeight(weapon.GetAnimationLayer(), 1);
+            unit.GetComponent<Animator>().SetFloat("animSpeed", weapon.attributes.animationSpeed);
         }
         return true;
     }
@@ -115,8 +110,8 @@ public class Inventory : MonoBehaviour
         {
             equippedWeapon = weapon;
             weapon.gameObject.SetActive(true);
-            unit.GetComponent<Animator>().SetLayerWeight(weapon.weaponLayer, 1);
-            unit.GetComponent<Animator>().SetFloat("animSpeed", weapon.attributes.animSpeed);
+            unit.GetComponent<Animator>().SetLayerWeight(weapon.GetAnimationLayer(), 1);
+            unit.GetComponent<Animator>().SetFloat("animSpeed", weapon.attributes.animationSpeed);
         }
         return true;
     }

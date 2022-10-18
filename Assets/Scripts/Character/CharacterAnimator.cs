@@ -15,6 +15,7 @@ public class CharacterAnimator
     [Header("--Animation")]
     Transform[] boneTransforms;
     Unit unit;
+    int _animationLayer => unit.EquippedWeapon.GetAnimationLayer();
 
     [HideInInspector] Quaternion aimTowards = Quaternion.identity;
 
@@ -27,7 +28,7 @@ public class CharacterAnimator
         }
     }
 
-    public enum AnimationEventContext { SHOOT, TAKE_DAMAGE, AIMING, RELOAD, STOW, DRAW, DODGE, VAULT, FOOTSTEP_LEFT, FOOTSTEP_RIGHT, IDLE, MOVE, THROW };
+    public enum AnimationEventContext { SHOOT, TAKE_DAMAGE, AIMING, RELOAD, STOW, DRAW, DODGE, VAULT, FOOTSTEP_LEFT, FOOTSTEP_RIGHT, IDLE, THROW };
     HumanBone[] humanBones;
     Animator animator;
     public class Body
@@ -99,14 +100,14 @@ public class CharacterAnimator
     {
         // Changes movement animation based on flags
 
-        if (unit.GetFlag(FlagType.MOVE))
+        if (unit.GetActor().FindActionOfType(typeof(UnitActionMove)).Performing())
         {
             animator.SetFloat("velocityX", unit.velocityX / GlobalManager.gameSpeed);
             animator.SetFloat("velocityZ", unit.velocityZ / GlobalManager.gameSpeed);
         }
         else
         {
-            animator.SetBool("moving", false);
+            //animator.SetBool("moving", false);
             animator.SetFloat("velocityX", 0);
             animator.SetFloat("velocityZ", 0);
         }
@@ -127,25 +128,15 @@ public class CharacterAnimator
         return body.chest.transform.position;
     }
 
-    public bool AnimatorIsPlaying()
+    public bool AnimatorIsPlaying(string animationName)
     {
         // True/False whether an animation is currently playing on the equipped weapon layer.
+        // Should always be called during a LateUpdate
         // Note -- lengthy transitions will not work
 
-        return animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).length > animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).normalizedTime;
-    }
-
-    public bool AnimationPause()
-    {
-        // True/False if any of the listed animations are playing
-
-        bool[] uninterruptibleAnims = { 
-            animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Aiming"), 
-            animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Shoot"), 
-            animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Crouch-Up"),
-            animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Crouch-Down"),
-            animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Crouch")};
-        return uninterruptibleAnims.Any(x => x == true);
+        if (animator.GetCurrentAnimatorStateInfo(_animationLayer).IsName(animationName))
+            return animator.GetCurrentAnimatorStateInfo(_animationLayer).length > animator.GetCurrentAnimatorStateInfo(_animationLayer).normalizedTime;
+        return false;
     }
 
     public void ProcessAnimationEvent(AnimationEventContext context, bool state)
@@ -165,46 +156,12 @@ public class CharacterAnimator
                 animator.Play("Default");
                 animator.SetTrigger("vaulting");
                 break;
-
-            // Fire weapon effect
-            case (AnimationEventContext.SHOOT):
-                unit.AddFlag(FlagType.SHOOT);
-                animator.Play("Shoot");
-                break;
-            
-            case (AnimationEventContext.RELOAD):
-                unit.AddFlag(FlagType.RELOAD);
-                animator.Play("Reload");
-                break;
             
             case (AnimationEventContext.AIMING):
                 animator.SetBool("aiming", true);
-                animator.updateMode = AnimatorUpdateMode.AnimatePhysics;
 
                 //Non-monobehaviour, so coroutine called through Character
                 unit.StartCoroutine(WaitForAiming());
-                break;
-            
-            case (AnimationEventContext.DODGE):
-                unit.AddFlag(FlagType.DODGE);
-                animator.SetTrigger("dodge");
-                break;
-
-            // Stow weapon animation is completed
-            case (AnimationEventContext.STOW):
-                unit.AddFlag(FlagType.STOW);
-                animator.Play("Stow");
-                break;
-
-            // Draw weapon animation is completed
-            case (AnimationEventContext.DRAW):
-                unit.AddFlag(FlagType.DRAW);
-                break;
-
-            // Move
-            case (AnimationEventContext.MOVE):
-                unit.AddFlag(FlagType.MOVE);
-                SetBool("moving", true);
                 break;
 
             // Idle
@@ -227,54 +184,16 @@ public class CharacterAnimator
             case (AnimationEventContext.VAULT):
                 unit.RemoveFlag(FlagType.VAULT);
                 break;
-
-            // Fire weapon effect
-            case (AnimationEventContext.SHOOT):
-                ClearShootingFlags();
-                unit.ActionComplete(Action.action_shoot);
-                break;
-            
-            case (AnimationEventContext.RELOAD):
-                // Reload weapon animation is completed
-                CoverCrouch();
-                unit.RemoveFlag(FlagType.RELOAD);
-                unit.ActionComplete(Action.action_reload);
-                break;
             
             case (AnimationEventContext.AIMING):
                 animator.SetBool("aiming", false);
                 animator.updateMode = AnimatorUpdateMode.Normal;
                 unit.RemoveFlag(FlagType.AIM);
                 break;
-            
-            case (AnimationEventContext.DODGE):
-                unit.RemoveFlag(FlagType.DODGE);
-                break;
-
-            // Stow weapon animation is completed
-            case (AnimationEventContext.STOW):
-                unit.inventory.equippedWeapon.gameObject.SetActive(false);
-                animator.SetLayerWeight(unit.inventory.equippedWeapon.weaponLayer, 0);
-                unit.RemoveFlag(FlagType.STOW);
-                break;
-
-            // Draw weapon animation is completed
-            case (AnimationEventContext.DRAW):
-                unit.RemoveFlag(FlagType.DRAW);
-                unit.ActionComplete(Action.action_swap);
-                break;
-
-            // Move
-            case (AnimationEventContext.MOVE):
-                SetBool("moving", false);
-                unit.RemoveFlag(FlagType.MOVE);
-                unit.ActionComplete(Action.action_move);
-                break;
 
             // Throw
             case (AnimationEventContext.THROW):
                 ThrowItem();
-                unit.ActionComplete(Action.action_useItem);
                 break;
 
             default:
@@ -288,14 +207,30 @@ public class CharacterAnimator
         switch (context)
         {
             case (AnimationEventContext.TAKE_DAMAGE):
-                unit.GetActor().targetCharacter.GetAnimator().TakeDamageEffect(unit.inventory.equippedWeapon);
+                unit.GetActor().targetCharacter.GetAnimator().TakeDamageEffect(unit.EquippedWeapon);
                 break;
         }
     }
 
     public void SetBool(string flag, bool state)
     {
+        // Sets animator bool
+
         animator.SetBool(flag, state);
+    }
+
+    public void SetTrigger(string flag)
+    {
+        // Sets animator trigger
+
+        animator.SetTrigger(flag);
+    }
+
+    public void SetUpdateMode(AnimatorUpdateMode updateMode = AnimatorUpdateMode.Normal)
+    {
+        // Sets animator update mode, defaults to normal
+
+        animator.updateMode = updateMode;
     }
 
     IEnumerator WaitForAiming()
@@ -320,11 +255,11 @@ public class CharacterAnimator
         // Returns true if any crouch animation is playing
 
         bool[] crouchingAnims = {
-            animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Crouch-Down"),
-            animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Crouch-Up"),
-            animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Crouch"),
-            animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Crouch-Dodge"),
-            animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Crouch-Damage")};
+            animator.GetCurrentAnimatorStateInfo(_animationLayer).IsName("Crouch-Down"),
+            animator.GetCurrentAnimatorStateInfo(_animationLayer).IsName("Crouch-Up"),
+            animator.GetCurrentAnimatorStateInfo(_animationLayer).IsName("Crouch"),
+            animator.GetCurrentAnimatorStateInfo(_animationLayer).IsName("Crouch-Dodge"),
+            animator.GetCurrentAnimatorStateInfo(_animationLayer).IsName("Crouch-Damage")};
         return crouchingAnims.Any(x => x == true);
     }
 
@@ -354,8 +289,8 @@ public class CharacterAnimator
             return;
 
         // If we are not aiming or shooting, then skip the bone rotations
-        if (!animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Aiming") 
-            && !animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Shoot"))
+        if (!animator.GetCurrentAnimatorStateInfo(_animationLayer).IsName("Aiming") 
+            && !animator.GetCurrentAnimatorStateInfo(_animationLayer).IsName("Shoot"))
             return;
         
         // Iterations improve accuracy of aim position
@@ -390,14 +325,6 @@ public class CharacterAnimator
         }
     }
 
-    void ClearShootingFlags()
-    {
-        // Removes flags after shoot animation completes
-        if (unit.GetActor().targetCharacter)
-            unit.GetActor().targetCharacter.RemoveFlag(FlagType.DODGE);
-        unit.RemoveFlag(FlagType.SHOOT);
-    }
-
     public Transform GetBoneTransform(HumanBodyBones bone) 
     {
         return animator.GetBoneTransform(bone);
@@ -419,21 +346,21 @@ public class CharacterAnimator
         // Damage is not actually applied in this function
 
         // If unit is dodging, skip damage effect
-        if (unit.GetFlag(FlagType.DODGE)) return;
+        if (AnimatorIsPlaying("Dodge") || AnimatorIsPlaying("Crouch-Dodge")) return;
 
         // Play impact sound
         unit.GetSFX().PlayRandomImpactSound();
 
         // Effect shown when character is hit
-        if (animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Crouch"))
+        if (animator.GetCurrentAnimatorStateInfo(_animationLayer).IsName("Crouch"))
             animator.Play("Crouch-Damage");
-        else if (animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Crouch-Damage"))
+        else if (animator.GetCurrentAnimatorStateInfo(_animationLayer).IsName("Crouch-Damage"))
             animator.Play("Crouch-Damage", 0, normalizedTime: .1f);
-        else if (animator.GetCurrentAnimatorStateInfo(unit.inventory.equippedWeapon.weaponLayer).IsName("Damage2"))
+        else if (animator.GetCurrentAnimatorStateInfo(_animationLayer).IsName("Damage2"))
             animator.Play("Damage3", 0, normalizedTime: .1f);
-        else if (weapon && weapon.weaponImpact == Weapon.WeaponImpact.HEAVY)
+        else if (weapon && weapon.GetImpact() == WeaponImpact.HEAVY)
             animator.Play("Damage1");
-        else if (item && item.itemImpact == Weapon.WeaponImpact.HEAVY)
+        else if (item && item.itemImpact == WeaponImpact.HEAVY)
             animator.Play("Damage1");
         else
             animator.Play("Damage2");
@@ -466,5 +393,12 @@ public class CharacterAnimator
     public void SetAnimationSpeed(float animSpeed)
     {
         animator.SetFloat("animSpeed", animSpeed);
+    }
+
+    public void Play(string animation)
+    {
+        // Quick reference to play animation
+
+        animator.Play(animation);
     }
 }

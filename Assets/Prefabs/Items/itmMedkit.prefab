@@ -47,10 +47,16 @@ MonoBehaviour:
   itemType: 2
   targetType: 0
   targetFaction: 0
-  itemName: Medkit
-  itemAction: 8
+  immuneUnitTypes: 01000000
+  itemAction: {fileID: 57096388351021912, guid: 5f2152e6e0a445b42b738daa07df58a4, type: 3}
   itemUsesCurrent: 1
   itemUsesMax: 1
-  hpAmount: 5
+  itemInfoName: Use Medkit
+  itemInfoDescription: Heals a target friendly unit
   areaOfEffect: 1
   range: 1
+  itemSFX: 2
+  hpAmount: 5
+  itemImpact: 0
+  itemProp: {fileID: 0}
+  itemEffect: {fileID: 5915368302288556678, guid: ce8a36562d5f1c749862c97d2b8c8fba, type: 3}
