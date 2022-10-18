@@ -28,7 +28,7 @@ public class PlayerTurnState : GameState
         playerAction = new InCombatPlayerAction();
         playerAction.Init(this);
         playerActionStateMachine = new StateMachine<InCombatPlayerAction>();
-        playerActionStateMachine.Configure(playerAction, new StateNoSelection(playerActionStateMachine));   
+        playerActionStateMachine.Configure(playerAction, new StateNoSelection(playerActionStateMachine));
         playerAction.SetStateMachine(playerActionStateMachine);
     }
 
@@ -40,14 +40,7 @@ public class PlayerTurnState : GameState
 
     public override void Update() {
         base.Update();
-        HandleInput();
-        playerAction.Update();
-        
-        if (playerActionStateMachine != null)
-        {
-            playerActionStateMachine.Update();
-            playerAction.GetPlayerActionUI().GetStateText().text = playerActionStateMachine.GetCurrentState().GetType().Name;
-        }
+        UpdatePlayerTurnState();
     }
 
     public override void FixedUpdate()
@@ -58,6 +51,8 @@ public class PlayerTurnState : GameState
 
     public void EndTurn()
     {
+        playerActionStateMachine.ChangeState(new StateNoSelection(playerActionStateMachine));
+        UpdatePlayerTurnState();
         FactionManager.ACS.EndTurn();
         this.ChangeState(StateHandler.State.EnemyTurnState);
     }
@@ -88,4 +83,15 @@ public class PlayerTurnState : GameState
         playerAction.DisablePlayerInput();
     }
 
+    private void UpdatePlayerTurnState()
+    {
+        HandleInput();
+        playerAction.Update();
+        
+        if (playerActionStateMachine != null)
+        {
+            playerActionStateMachine.Update();
+            playerAction.GetPlayerActionUI().GetStateText().text = playerActionStateMachine.GetCurrentState().GetType().Name;
+        }
+    }
 }
