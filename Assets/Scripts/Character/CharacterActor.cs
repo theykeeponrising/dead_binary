@@ -193,7 +193,7 @@ public class CharacterActor
         // If vaultable object detected, play vaulting animation
         if (Physics.Raycast(ray, out hit, direction.magnitude * distance, layerMask))
         {
-            if (hit.collider.GetComponent<CoverObject>().canVaultOver)
+            if (hit.collider.GetComponentInParent<CoverObject>().IsVaultable)
             {
                 unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.VAULT, true);
                 return true;

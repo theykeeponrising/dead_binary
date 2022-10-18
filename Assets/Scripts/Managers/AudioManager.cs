@@ -68,10 +68,10 @@ public class AudioManager : MonoBehaviour
     { return Instance.Footstep.GetSound(soundType, index); }
 
     // Impact
-    public static AudioClip GetSound(ImpactType soundType)
+    public static AudioClip GetSound(ImpactTypes soundType)
     { return Instance.Impact.GetSound(soundType); }
 
-    public static AudioClip GetSound(ImpactType soundType, int index)
+    public static AudioClip GetSound(ImpactTypes soundType, int index)
     { return Instance.Impact.GetSound(soundType, index); }
 
     // Interface

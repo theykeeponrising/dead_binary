@@ -283,7 +283,8 @@ namespace UnityEditor.Tilemaps
 
         private void PickCell(Vector3Int position, Vector3Int brushPosition, GridLayout grid, Transform parent)
         {
-            Vector3 cellCenter = grid.LocalToWorld(grid.CellToLocalInterpolated(position + m_Anchor));
+            Vector3 offset = new Vector3(0f, 0.25f, 0f);
+            Vector3 cellCenter = grid.LocalToWorld(grid.CellToLocalInterpolated(position + m_Anchor - offset));
             GameObject go = GetObjectInCell(grid, parent, position);
 
             if (go != null)
