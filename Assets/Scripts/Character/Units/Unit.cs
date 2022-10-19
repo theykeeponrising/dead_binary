@@ -358,7 +358,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
         // Calculate chance to be hit
         float hitModifier = GlobalManager.globalHit + attacker.stats.aim - stats.dodge - weaponAccuracyPenalty;
         // Add cover bonus if not being flanked
-        if (defender.currentCover && grid.CheckIfCovered(attackerTile, defender.currentTile)) hitModifier -= defender.currentCover.CoverBonus();
+        if (defender.currentCover && grid.CheckIfCovered(attackerTile, defender.currentTile)) hitModifier -= defender.currentCover.GetCoverBonus();
         
         float hitChance = weaponAccuracyModifier * hitModifier;
         return hitChance / 100.0f;
@@ -394,7 +394,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
         // If attacked missed, do not take damage
         if (!RollForHit(attacker, distanceToTarget))
         {
-            if (currentCover) currentCover.Impact();
+            if (currentCover) currentCover.PlayImpactSFX();
             GetAnimator().SetTrigger("dodge");
             Debug.Log(string.Format("{0} missed target {1}!", attacker.attributes.name, attributes.name));
             

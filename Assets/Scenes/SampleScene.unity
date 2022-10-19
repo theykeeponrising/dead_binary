@@ -15852,12 +15852,8 @@ PrefabInstance:
     m_TransformParent: {fileID: 730792869}
     m_Modifications:
     - target: {fileID: 6858889560412213118, guid: d36d2d9d17c511941bf49ad7b8fefbcf, type: 3}
-      propertyPath: cover
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 6858889560412213118, guid: d36d2d9d17c511941bf49ad7b8fefbcf, type: 3}
       propertyPath: choice
-      value: Full Wall
+      value: Half Wall
       objectReference: {fileID: 0}
     - target: {fileID: 9013263080144921958, guid: d36d2d9d17c511941bf49ad7b8fefbcf, type: 3}
       propertyPath: m_Name

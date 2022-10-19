@@ -1,17 +1,21 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CoverObject : MonoBehaviour
+public sealed class CoverObject : MonoBehaviour
 {
     // Used by parent Tile script to locate any appplicable cover objects
 
     AudioSource _audioSource;
     CoverObject[] _childrenCoverObjects;
     Rigidbody[] _rigidbodies;
-    List<Tile> _coveredTiles = new();
+    readonly List<Tile> _coveredTiles = new();
+
     [Tooltip("Stand Points should designate a collider via the inspector.")]
     [SerializeField] Collider _mainCollider;
+
+    // Move these to an appropriate dict once difficulty settings are added
+    private const int _coverBonusFull = 60;
+    private const int _coverBonusHalf = 45;
 
     public CoverSizes CoverSize;
     public ImpactTypes ImpactType;
@@ -19,7 +23,7 @@ public class CoverObject : MonoBehaviour
     public bool IsDestructible = false;
     public bool IsDestroyed = false;
 
-    Timer _debugTimer = new(10f); // Temp to test destruction physics
+    readonly Timer _debugTimer = new(10f); // Temp to test destruction physics
    
 
     private void Awake()
@@ -34,6 +38,8 @@ public class CoverObject : MonoBehaviour
     private void Update()
     {
         // Temp timer to test destruction physics
+        // Destruction will normally be called externally and not performed via Update
+
         if (_debugTimer.CheckTimer() && !IsDestroyed && IsDestructible)
         {
             DestroyObject();
@@ -42,23 +48,24 @@ public class CoverObject : MonoBehaviour
 
     private void InitCollider()
     {
-        // We already have a collider provided by the inspector, ignore change
-        if (_mainCollider)
-            return;
+        // If no collider was provided by the inspector, use first found collider
 
-        // Use first found collider
-        else
+        if (!_mainCollider) 
             _mainCollider = GetComponentInChildren<Collider>();
     }
 
     public void RegisterTile(Tile tile)
     {
+        // Register tiles for use when cover is destroyed
+
         if (!_coveredTiles.Contains(tile))
             _coveredTiles.Add(tile);
     }
 
     public Vector3 GetStandPoint(Tile tile)
     {
+        // Calculates a stand position based on the cover object's collider size
+
         Vector3 tilePosition = tile.transform.position;
         Vector3 coverPosition = transform.position;
 
@@ -69,7 +76,7 @@ public class CoverObject : MonoBehaviour
         return new Vector3(standPoint.x, 0, standPoint.z) + direction * offset;
     }
 
-    public void Impact()
+    public void PlayImpactSFX()
     {
         // Impact noise that is played when character is protected by cover
 
@@ -77,15 +84,14 @@ public class CoverObject : MonoBehaviour
         _audioSource.PlayOneShot(audioClip);
     }
 
-    public int CoverBonus()
+    public int GetCoverBonus()
     {
         // Returns dodge chance percent bonus provided by cover
 
-        if (CoverSize == CoverSizes.half)
-            return 30;
-        else if (CoverSize == CoverSizes.full)
-            return 60;
-        return 0;
+        if (CoverSize == CoverSizes.full) 
+            return _coverBonusFull;
+        else 
+            return _coverBonusHalf;
     }
 
     public void DestroyObject()
