@@ -267,7 +267,7 @@ public class CharacterAnimator
     {
         // Makes character crouch if they should be crouching behind cover
 
-        if (unit.currentCover && unit.currentCover.coverSize == CoverObject.CoverSize.half)
+        if (unit.currentCover && unit.currentCover.CoverSize == CoverSizes.half)
             if (!IsCrouching()) ToggleCrouch();
     }
 

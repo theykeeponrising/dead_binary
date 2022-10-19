@@ -15,18 +15,18 @@ public class SFXImpact
     [SerializeField] private AudioClip[] _impactConcrete;
     [SerializeField] private AudioClip[] _impactMetal;
 
-    private Dictionary<ImpactType, AudioClip[]> GetDict()
+    private Dictionary<ImpactTypes, AudioClip[]> GetDict()
     {
-        var dict = new Dictionary<ImpactType, AudioClip[]> {
-            {ImpactType.FLESH, _impactFlesh },
-            {ImpactType.ROBOT, _impactRobot },
-            {ImpactType.CONCRETE, _impactConcrete },
-            {ImpactType.METAL, _impactMetal },
+        var dict = new Dictionary<ImpactTypes, AudioClip[]> {
+            {ImpactTypes.FLESH, _impactFlesh },
+            {ImpactTypes.ROBOT, _impactRobot },
+            {ImpactTypes.CONCRETE, _impactConcrete },
+            {ImpactTypes.METAL, _impactMetal },
         };
 
         return dict;
     }
-    public AudioClip GetSound(ImpactType impactType, int index)
+    public AudioClip GetSound(ImpactTypes impactType, int index)
     {
         // Returns a specific sound for the provided type and index
 
@@ -34,7 +34,7 @@ public class SFXImpact
         return dict[impactType][index];
     }
 
-    public AudioClip GetSound(ImpactType impactType)
+    public AudioClip GetSound(ImpactTypes impactType)
     {
         // Returns a random sound for the provided type
 
@@ -44,4 +44,4 @@ public class SFXImpact
     }
 }
 
-public enum ImpactType { FLESH, ROBOT, CONCRETE, METAL };
+public enum ImpactTypes { FLESH, ROBOT, CONCRETE, METAL };

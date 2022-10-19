@@ -155,7 +155,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                 }
 
                 // If tile path is obstructed, remove it from the list and allow it to be found by alternative paths
-                if (tile.nearestTile == this && grid.isTilePathObstructed(this, tile))
+                if (tile.nearestTile == this && grid.IsTilePathObstructed(this, tile))
                 {
                     tile.nearestTile = null;
                     continue;
@@ -167,7 +167,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                 {
                     if (!tile2.isTileTraversable() && tile2 != findTile)
                         continue;
-                    if (grid.isTilePathObstructed(tile, tile2))
+                    if (grid.IsTilePathObstructed(tile, tile2))
                         continue;
                     if (tile2.nearestTile == null)
                         tile2.nearestTile = tile;
@@ -232,6 +232,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
                 if (distance <= MapGrid.tileSpacing) 
                 {
                     cover = coverObj;
+                    cover.RegisterTile(this);
                     break;
                 }
             }
@@ -240,15 +241,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     void GetStandPoint()
     {
         if (cover)
-        {
-            Collider collider = cover.GetComponent<Collider>();
-            if (!collider)
-                collider = cover.GetComponentInParent<Collider>();
-            float offset = collider.bounds.size.z / 2;
-            Vector3 direction = transform.position - cover.transform.position;
-            standPoint = (transform.position + cover.transform.position) / 2;
-            standPoint = new Vector3(standPoint.x, 0, standPoint.z) + direction*offset;
-        }
+            standPoint = cover.GetStandPoint(this);
         else
             standPoint = transform.position;
     }

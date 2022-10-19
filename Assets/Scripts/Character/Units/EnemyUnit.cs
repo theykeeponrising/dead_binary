@@ -471,7 +471,7 @@ public class EnemyUnit : Unit
         // If attacked missed, do not take damage
         if (!RollForHit(attacker, distanceToTarget))
         {
-            if (currentCover) currentCover.Impact();
+            if (currentCover) currentCover.PlayImpactSFX();
             GetAnimator().SetTrigger("dodge");
             Debug.Log(string.Format("{0} missed target {1}!", attacker.attributes.name, attributes.name));
             return;

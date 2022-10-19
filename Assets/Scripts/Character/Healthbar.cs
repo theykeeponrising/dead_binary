@@ -221,7 +221,7 @@ public class Healthbar : MonoBehaviour
         }
 
         // If behind cover, enable the frame and set the colors
-        else if (_unit.currentCover.coverSize == CoverObject.CoverSize.full)
+        else if (_unit.currentCover.CoverSize == CoverSizes.full)
         {
             coverIndicator.enabled = true;
             coverHalf.color = CoverIndicatorColors[CoverState.INACTIVE];

@@ -123,7 +123,7 @@ public class MapGrid : MonoBehaviour
                 }
 
                 // If tile path is obstructed, remove it from the list and allow it to be found by alternative paths
-                if (tile.nearestTile == currentTile && isTilePathObstructed(currentTile, tile))
+                if (tile.nearestTile == currentTile && IsTilePathObstructed(currentTile, tile))
                 {
                     tile.nearestTile = null;
                     continue;
@@ -135,7 +135,7 @@ public class MapGrid : MonoBehaviour
                 {
                     if (!tile2.isTileTraversable())
                         continue;
-                    if (isTilePathObstructed(tile, tile2))
+                    if (IsTilePathObstructed(tile, tile2))
                         continue;
                     if (tile2.nearestTile == null)
                         tile2.nearestTile = tile;
@@ -149,7 +149,7 @@ public class MapGrid : MonoBehaviour
         return tilesInRange;
     }
 
-    public bool isTilePathObstructed(Tile tileStart, Tile tileDest)
+    public bool IsTilePathObstructed(Tile tileStart, Tile tileDest)
     {
         // Returns True/False if any obstructions are blocking the path
 
@@ -161,11 +161,18 @@ public class MapGrid : MonoBehaviour
             return false;
 
         // Then, check if the cover object is full sized or vaultable
-        if (tileDest.cover.coverSize != CoverObject.CoverSize.full && tileDest.cover.canVaultOver)
+        if (tileDest.cover.CoverSize != CoverSizes.full && tileDest.cover.IsVaultable)
             return false;
 
-        // Lastly, check if both tiles share the same cover object
-        return tileStart.cover == tileDest.cover;
+        // Check if both tiles share the same cover object
+        if (tileStart.cover != tileDest.cover)
+            return false;
+
+        // Check if the obstructing cover object has been destroyed
+        if (tileStart.cover.IsDestroyed)
+            return false;
+
+        return true;
     }
 
     
