@@ -83,7 +83,7 @@ public abstract class DamageItem : Item
         if (!itemEffect) 
             return;
 
-        GameObject spawnEffect = GlobalManager.Instance.activeMap.CreateTimedEffect(itemEffect.gameObject, triggerPosition, itemEffect.transform.rotation, 3f);
+        GameObject spawnEffect = GlobalManager.ActiveMap.CreateTimedEffect(itemEffect.gameObject, triggerPosition, itemEffect.transform.rotation, 3f);
         spawnEffect.transform.localScale = Vector3.one * (areaOfEffect / 2);
         PlayItemSFX(spawnEffect);
     }

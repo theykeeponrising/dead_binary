@@ -335,7 +335,7 @@ public class CharacterAnimator
         // Releases item from hand and starts item movement
 
         ItemProp itemProp = body.handLeft.GetComponentInChildren<ItemProp>();
-        GlobalManager.Instance.activeMap.AddEffect(itemProp);
+        GlobalManager.ActiveMap.AddEffect(itemProp);
         itemProp.SetItemMovement(true);
         CoverCrouch();
     }

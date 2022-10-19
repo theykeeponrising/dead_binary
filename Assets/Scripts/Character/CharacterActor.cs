@@ -132,7 +132,7 @@ public class CharacterActor
         if (moveData.immediate)
         {
             Vector3 relativePos;
-            Vector3 moveTargetPoint = moveData.destination.standPoint;
+            Vector3 moveTargetPoint = moveData.destination.StandPoint;
             float distance = Vector3.Distance(unit.transform.position, moveTargetPoint);
             unit.velocityZ = distance / 2;
 

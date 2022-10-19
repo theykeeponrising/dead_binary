@@ -39,7 +39,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     [HideInInspector] public Healthbar healthbar;
     [HideInInspector] public Weapon EquippedWeapon => GetEquippedWeapon();
 
-    [HideInInspector] public CoverObject currentCover => currentTile.cover;
+    [HideInInspector] public CoverObject currentCover => currentTile.Cover;
     [SerializeField] private List<UnitAction> _unitActions;
     private Transform _unitActionsContainer;
 
@@ -77,7 +77,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     {
         
         // character = gameObject.GetComponent<Character>();
-        grid = currentTile.GetGrid();
+        grid = currentTile.Grid;
 
         // Characters start with full health and action points
         stats.healthCurrent = stats.healthMax;
@@ -461,7 +461,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
             light.enabled = false;
 
         // Remove character as a obstacle on the map
-        currentTile.occupant = null;
+        currentTile.Occupant = null;
         enabled = false;
 
         if (inventory.equippedWeapon)

@@ -8,6 +8,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 241171489602707141, guid: c8b4bac8a0e022847bb1bdb68c977477, type: 3}
+      propertyPath: _impactType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 241171489602707141, guid: c8b4bac8a0e022847bb1bdb68c977477, type: 3}
       propertyPath: selectionCircleColorIntensity
       value: 120
       objectReference: {fileID: 0}

@@ -96,7 +96,7 @@ public class UnitActionShootRocket : UnitActionShoot
         if (!rocketEffect)
             return;
 
-        GameObject spawnEffect = GlobalManager.Instance.activeMap.CreateTimedEffect(rocketEffect.gameObject, _triggerPosition, rocketEffect.transform.rotation, 3f);
+        GameObject spawnEffect = GlobalManager.ActiveMap.CreateTimedEffect(rocketEffect.gameObject, _triggerPosition, rocketEffect.transform.rotation, 3f);
         spawnEffect.transform.localScale = Vector3.one * (_areaOfEffect / 2);
         PlayRocketSFX(spawnEffect);
     }
