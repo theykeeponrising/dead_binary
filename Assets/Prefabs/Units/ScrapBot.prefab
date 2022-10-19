@@ -3188,7 +3188,7 @@ GameObject:
   - component: {fileID: 2219161628402928927}
   - component: {fileID: 2584257583564178048}
   m_Layer: 8
-  m_Name: Sparks Effect Launcher
+  m_Name: Sparks Effect Controller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3222,7 +3222,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 358e617ae21d0254dab6dba3d27f694a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _sparksEffect: {fileID: 8116903197944713749}
+  _sparksEffectSystem: {fileID: 4835108083766617792}
+  _snappingTarget: {fileID: 2440977246367276013}
 --- !u!1 &5079067330646698389
 GameObject:
   m_ObjectHideFlags: 0
@@ -4615,7 +4616,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6700188839810621053, guid: 5e5df6a637a619042a4e6d33aa97b076, type: 3}
       propertyPath: m_Name
-      value: Sparks
+      value: Sparks Effect
       objectReference: {fileID: 0}
     - target: {fileID: 6700188839810621053, guid: 5e5df6a637a619042a4e6d33aa97b076, type: 3}
       propertyPath: m_IsActive
@@ -4667,14 +4668,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5e5df6a637a619042a4e6d33aa97b076, type: 3}
+--- !u!198 &4835108083766617792 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 8018398669966387880, guid: 5e5df6a637a619042a4e6d33aa97b076, type: 3}
+  m_PrefabInstance: {fileID: 3197223906818182248}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5378949906193624116 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7420538301347684444, guid: 5e5df6a637a619042a4e6d33aa97b076, type: 3}
-  m_PrefabInstance: {fileID: 3197223906818182248}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &8116903197944713749 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6700188839810621053, guid: 5e5df6a637a619042a4e6d33aa97b076, type: 3}
   m_PrefabInstance: {fileID: 3197223906818182248}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &4448798933625467346

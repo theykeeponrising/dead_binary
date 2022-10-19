@@ -74,6 +74,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     public float velocityZ = 0f;
 
     public event System.Action OnHealthModified;
+    public event System.Action OnUnitDied;
     
     void Start() 
     {
@@ -438,6 +439,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
         // Character death
         if (stats.healthCurrent <= 0) 
         {
+            OnUnitDied?.Invoke();
             AddFlag(FlagType.DEAD);
             StartCoroutine(Death(attacker, direction, distance, impactForce));
         }
