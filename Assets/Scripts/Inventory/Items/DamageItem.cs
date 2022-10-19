@@ -36,7 +36,7 @@ public abstract class DamageItem : Item
         // Use on unit if possible, otherwise on empty tile
         Tile targetedTile = targetedUnit ? targetedUnit.currentTile : sourceUnit.grid.GetTile(targetPosition);
 
-        foreach (Unit unit in Tile.GetTileOccupants(Tile.AreaOfEffect(targetedTile, areaOfEffect)))
+        foreach (Unit unit in Tile.GetTileOccupants(Tile.GetAreaOfEffect(targetedTile, areaOfEffect)))
         {
             if (!immuneUnitTypes.Contains(unit.attributes.unitType)) 
                 ItemEffect(sourceUnit, unit);

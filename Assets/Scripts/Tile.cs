@@ -1,13 +1,9 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public sealed class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    const float colorIncrement = 1.0f/255.0f;
-
     // Main script for Tile behavior, such as pathing and cover objects
 
     private InCombatPlayerAction _playerAction;
@@ -16,32 +12,28 @@ public sealed class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     // Grid objects
     private GridObject _occupant;
     private CoverObject _cover;
-    private Vector3 _standPoint;
 
     // Pathing
-    private List<Tile> _adjacentTiles = new();
+    private readonly List<Tile> _adjacentTiles = new();
     private Tile _nearestTile;
 
     // Visual and sound effects
     private Material _tileGlowMaterial;
     private Color _tileDefaultColor;
+    private const float _colorIncrement = 1.0f / 255.0f;
+    private const float _selectionCircleColorIntensity = 120.0f;
     [SerializeField] private ImpactTypes _impactType;
-
 
     public MapGrid Grid { get { return _grid; } set { _grid = value; } }
     public List<Tile> AdjacentTiles { get { return _adjacentTiles; } }
     public Tile NearestTile { get { return _nearestTile; } set { _nearestTile = value; } }
     public GridObject Occupant { get { return _occupant; } set { _occupant = value; } }
     public CoverObject Cover { get { return _cover; } set { _cover = value; } }
-    public Vector3 StandPoint { get { return _standPoint; } }
+    public Vector3 StandPoint => (Cover) ? Cover.GetStandPoint(this) : transform.position;
     public ImpactTypes ImpactType { get { return _impactType; } }
     public bool IsTraversable => !_occupant || _occupant.isTraversable;
-
-    
-    public float selectionCircleColorIntensity = 120.0f;
-   
-    // Use this for initialization
-    void Start()
+       
+    private void Start()
     {
         PlayerTurnState playerTurnState = (PlayerTurnState) StateHandler.Instance.GetStateObject(StateHandler.State.PlayerTurnState);
         _playerAction = playerTurnState.GetPlayerAction();
@@ -52,12 +44,11 @@ public sealed class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
         FindAdjacentTiles();
         FindCoverObjects();
-        GetStandPoint();
     }
 
     void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
     {
-        // Updates targeted tile on mouse over
+        // Highlight targeted tile on mouse over
 
         _playerAction.targetTile = this;
 
@@ -66,7 +57,7 @@ public sealed class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     void IPointerExitHandler.OnPointerExit(PointerEventData eventData)
     {
-        // Clears targeted tile on mouse leave if currently target
+        // Clears tile highlight on mouse leave if currently target
 
         if (_playerAction.targetTile == this)
             _playerAction.targetTile = null;
@@ -74,33 +65,35 @@ public sealed class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         HighlightTile(TileHighlightType.PREVIEW, false);
     }
 
-    public void HighlightTile(TileHighlightType highlightType = TileHighlightType.ERROR, bool showHighlight = true, string eval = "movement")
+    public void HighlightTile(TileHighlightType highlightType = TileHighlightType.ERROR, bool showHighlight = true)
     {
         // Changes tile highlight based on context
+
+        Color newColor = _tileDefaultColor;
 
         if (showHighlight)
         {
             switch (highlightType)
             {
                 case (TileHighlightType.PREVIEW):
-                    if (eval == "movement" && !_occupant)
-                        _tileGlowMaterial.color = new Color(0, 0, colorIncrement, 1.0f) * selectionCircleColorIntensity;
+                    if (!_occupant)
+                        newColor = new Color(0, 0, _colorIncrement, 1.0f) * _selectionCircleColorIntensity;
                     else
-                        _tileGlowMaterial.color = new Color(colorIncrement, 0, 0, 1.0f) * selectionCircleColorIntensity;
+                        newColor = new Color(_colorIncrement, 0, 0, 1.0f) * _selectionCircleColorIntensity;
                     break;
                 case (TileHighlightType.MOVEMENT):
-                    _tileGlowMaterial.color = new Color(0, colorIncrement, 0, 1.0f) * selectionCircleColorIntensity;
+                    newColor = new Color(0, _colorIncrement, 0, 1.0f) * _selectionCircleColorIntensity;
                     break;
                 case (TileHighlightType.ERROR):
-                    _tileGlowMaterial.color = Color.red;
+                    newColor = Color.red;
                     break;
             }
         }
-        else
-            _tileGlowMaterial.color = _tileDefaultColor;
+        
+        _tileGlowMaterial.color = newColor;
     }
 
-    void FindAdjacentTiles()
+    private void FindAdjacentTiles()
     {
         // Gets all immediate vertical and horizontal neighbors
 
@@ -114,7 +107,23 @@ public sealed class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
             }
     }
 
-    //TODO: Move this to grid.cs, and simplify
+    private void FindCoverObjects()
+    {
+        List<CoverObject> coverObjs = Map.FindCoverObjects();
+
+        foreach (CoverObject coverObj in coverObjs)
+            if (coverObj.gameObject.GetInstanceID() != gameObject.GetInstanceID())
+            {
+                float distance = Vector3.Distance(this.gameObject.transform.position, coverObj.gameObject.transform.position);
+                if (distance <= MapGrid.tileSpacing)
+                {
+                    Cover = coverObj;
+                    Cover.RegisterTile(this);
+                    break;
+                }
+            }
+    }
+
     public List<Tile> GetMovementCost(Tile findTile, int maxDist = 10)
     {
         // Finds the nearest path to the destination tile
@@ -136,7 +145,7 @@ public sealed class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         int currentIteration = 0;
 
         // Create a list to keep track of all tiles found during iteration
-        List<Tile> foundTiles = new List<Tile> { this };
+        List<Tile> foundTiles = new() { this };
 
         // To randomize path movement
         //var rnd = new System.Random();
@@ -146,7 +155,7 @@ public sealed class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         {
             currentIteration++;
 
-            List<Tile> nextTiles = new List<Tile>();
+            List<Tile> nextTiles = new();
             foreach (Tile tile in new List<Tile>(foundTiles))
             {
                 // Ensures tiles only use the closest path if found by multiple tiles
@@ -209,32 +218,7 @@ public sealed class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         return false;
     }
 
-    void FindCoverObjects()
-    {
-        List<CoverObject> coverObjs = Map.FindCoverObjects();
-
-        foreach (CoverObject coverObj in coverObjs)
-            if (coverObj.gameObject.GetInstanceID() != gameObject.GetInstanceID())
-            {
-                float distance = Vector3.Distance(this.gameObject.transform.position, coverObj.gameObject.transform.position);
-                if (distance <= MapGrid.tileSpacing) 
-                {
-                    Cover = coverObj;
-                    Cover.RegisterTile(this);
-                    break;
-                }
-            }
-    }
-
-    void GetStandPoint()
-    {
-        if (Cover)
-            _standPoint = Cover.GetStandPoint(this);
-        else
-            _standPoint = transform.position;
-    }
-
-    public static List<Tile> AreaOfEffect(Tile targetTile, float areaOfEffect)
+    public static List<Tile> GetAreaOfEffect(Tile targetTile, float areaOfEffect)
     {
         // Gets affected tiles from target position based on "areaOfEffect" stat
         // Every odd number of range adds horizontal and vertical neighbor tiles

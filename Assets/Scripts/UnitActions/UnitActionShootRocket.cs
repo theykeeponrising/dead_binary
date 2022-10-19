@@ -82,7 +82,7 @@ public class UnitActionShootRocket : UnitActionShoot
         // Use on unit if possible, otherwise on empty tile
         _targetTile = targetUnit ? targetUnit.currentTile : unit.grid.GetTile(targetPosition);
 
-        foreach (Unit impactedUnit in Tile.GetTileOccupants(Tile.AreaOfEffect(_targetTile, _areaOfEffect)))
+        foreach (Unit impactedUnit in Tile.GetTileOccupants(Tile.GetAreaOfEffect(_targetTile, _areaOfEffect)))
         {
             impactedUnit.GetAnimator().TakeDamageEffect(unit.EquippedWeapon);
             impactedUnit.TakeDamage(unit, unit.EquippedWeapon.GetDamage(), _triggerPosition);

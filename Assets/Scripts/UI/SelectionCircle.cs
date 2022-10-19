@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -20,7 +19,7 @@ public class SelectionCircle : MonoBehaviour
         // Changes selection circle color based on selection type
 
         // Used to prevent selection circle from disappearing while a unit is still selected
-        List<SelectionType> conflictingTypes = new List<SelectionType>() { SelectionType.HIGHLIGHT, SelectionType.TARGET_POTENTIAL, SelectionType.CLEAR };
+        List<SelectionType> conflictingTypes = new() { SelectionType.HIGHLIGHT, SelectionType.TARGET_POTENTIAL, SelectionType.CLEAR };
         if (_unitSelected && conflictingTypes.Contains(selectionType))
             return;
 
