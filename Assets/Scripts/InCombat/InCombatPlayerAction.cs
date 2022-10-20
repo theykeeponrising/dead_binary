@@ -5,13 +5,10 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
-using UnityEngine.InputSystem;
 
 
 public class InCombatPlayerAction
 {
-    public Map activeMap = GlobalManager.Instance.activeMap;
-
     // Used to manage user inputs
     public PlayerInput playerInput;
     public Unit selectedCharacter;
@@ -51,7 +48,7 @@ public class InCombatPlayerAction
         playerActionUI = UIManager.GetPlayerAction();
         stateDebugText = GameObject.Find("StateDebugText").GetComponent<TextMeshProUGUI>();
 
-        playerUnits = activeMap.FindUnits(FactionManager.PV);
+        playerUnits = Map.FindUnits(FactionManager.PV);
     }
 
     public void EnablePlayerInput()
@@ -269,10 +266,10 @@ public class InCombatPlayerAction
             //    == typeof(SelectedStates.ChoosingMoveDestination))
             {
                 PathPreviewClear();
-                previewPath = selectedCharacter.currentTile.FindCost(targetTile, selectedCharacter.stats.movement);
+                previewPath = selectedCharacter.currentTile.GetMovementCost(targetTile, selectedCharacter.stats.movement);
 
                 // If target tile has an object on it, can't move there
-                if (targetTile.occupant) previewPath = null;
+                if (targetTile.Occupant) previewPath = null;
 
                 if (previewPath != null)
                 {
@@ -280,7 +277,7 @@ public class InCombatPlayerAction
                     if (previewPath.Count > 1)
                         foreach (Tile tile in previewPath)
                             if (tile != selectedCharacter.currentTile)
-                                tile.Highlighted(true, "preview");
+                                tile.HighlightTile(TileHighlightType.PREVIEW, true);
                 }       
             }
         }
@@ -292,7 +289,7 @@ public class InCombatPlayerAction
         
         if (previewPath != null)
             foreach (Tile tile in previewPath)
-                tile.Highlighted(false);
+                tile.HighlightTile(showHighlight: false);
     }
 
     public void StartTurn()

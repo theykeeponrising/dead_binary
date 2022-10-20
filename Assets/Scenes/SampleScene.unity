@@ -2546,7 +2546,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stateHandler: {fileID: 969107684}
-  activeMap: {fileID: 920186845}
+  _activeMap: {fileID: 920186845}
 --- !u!4 &339635957
 Transform:
   m_ObjectHideFlags: 0
@@ -7942,10 +7942,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mapGrid: {fileID: 0}
-  detailMap: {fileID: 0}
-  tileMap: {fileID: 0}
-  coverMap: {fileID: 0}
-  unitMap: {fileID: 0}
 --- !u!114 &920186846
 MonoBehaviour:
   m_ObjectHideFlags: 0

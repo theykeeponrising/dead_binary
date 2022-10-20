@@ -14,7 +14,7 @@ public class GridObject : MonoBehaviour
     protected virtual void Awake()
     {
         this.objectTiles = FindCurrentTiles();
-        foreach (Tile tile in objectTiles) tile.ChangeTileOccupant(this);
+        foreach (Tile tile in objectTiles) tile.Occupant = this;
     }
 
     protected virtual List<Tile> FindCurrentTiles()

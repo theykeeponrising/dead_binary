@@ -24,9 +24,9 @@ public class UnitActionMove : UnitAction
         if ((CheckTileMove(tile)))
         {
             // If tile is occupied, we can't move there
-            if (tile.occupant)
+            if (tile.Occupant)
                 movePath = null;
-            else movePath = unit.currentTile.FindCost(tile, unit.stats.movement);
+            else movePath = unit.currentTile.GetMovementCost(tile, unit.stats.movement);
 
             if (movePath.Count > 0)
             {
@@ -47,7 +47,7 @@ public class UnitActionMove : UnitAction
         if (ActionStage(0))
         {
             unit.GetActor().moveData.destination = movePath[movePath.Count - 1];
-            unit.currentTile.ChangeTileOccupant();
+            unit.currentTile.Occupant = null;
             unit.GetAnimator().SetBool("moving", true);
             NextStage();
         }
@@ -65,7 +65,7 @@ public class UnitActionMove : UnitAction
             // If we are at destination, set occupant and wrap-up the action
             if (unit.grid.GetTile(unit.transform.position) == movePath[movePath.Count - 1])
             {
-                movePath[movePath.Count - 1].ChangeTileOccupant(unit);
+                movePath[movePath.Count - 1].Occupant = unit;
                 NextStage();
             }
         }
@@ -73,7 +73,7 @@ public class UnitActionMove : UnitAction
         // Stage 2 -- Allow unit to reach stand position, and then set tile attribute
         else if (ActionStage(2))
         {
-            if (Vector3.Distance(unit.transform.position, unit.GetActor().moveData.immediate.standPoint) <= 0.01)
+            if (Vector3.Distance(unit.transform.position, unit.GetActor().moveData.immediate.StandPoint) <= 0.01)
             {
                 unit.currentTile = unit.GetActor().moveData.immediate;
                 NextStage();
@@ -84,7 +84,7 @@ public class UnitActionMove : UnitAction
         else if (ActionStage(3))
         {
             unit.GetActor().moveData.immediate = null;
-            unit.GetActor().moveData.destination.Highlighted(false);
+            unit.GetActor().moveData.destination.HighlightTile(showHighlight: false);
             unit.GetActor().moveData.destination = null;
             unit.GetAnimator().SetBool("moving", false);
             EndPerformance();
@@ -97,8 +97,8 @@ public class UnitActionMove : UnitAction
         // If destination is too far, abort move action
 
 
-        movePath = unit.currentTile.FindCost(newTile);
-        if (movePath.Count == 0 || !newTile.isTileTraversable())
+        movePath = unit.currentTile.GetMovementCost(newTile);
+        if (movePath.Count == 0 || !newTile.IsTraversable)
         {
             Debug.Log("No move path."); // Replace this with UI eventually
             return false;

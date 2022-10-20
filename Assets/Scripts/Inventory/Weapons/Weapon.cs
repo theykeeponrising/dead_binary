@@ -190,7 +190,7 @@ public class Weapon : MonoBehaviour
         // Generate a shell as an effect and eject it with force
 
         float randomForce = (Random.Range(3, 5));
-        GameObject shell = GlobalManager.Instance.activeMap.CreateEffect(shellPrefab, shellEject.position, Quaternion.Euler(Random.Range(5, 15), 0, Random.Range(-10, -15)));
+        GameObject shell = GlobalManager.ActiveMap.CreateEffect(shellPrefab, shellEject.position, Quaternion.Euler(Random.Range(5, 15), 0, Random.Range(-10, -15)));
         shell.GetComponent<Rigidbody>().AddForce(shellEject.forward * randomForce, ForceMode.VelocityChange);
         shell.GetComponent<Rigidbody>().AddForce(-shellEject.right * randomForce/2, ForceMode.VelocityChange);
 

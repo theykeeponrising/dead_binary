@@ -107,7 +107,7 @@ public sealed class CoverObject : MonoBehaviour
 
         // Remove this object as a valid cover piece for tiles
         foreach (Tile tile in _coveredTiles)
-            tile.cover = null;
+            tile.Cover = null;
 
         foreach (CoverObject cover in _childrenCoverObjects)
         {

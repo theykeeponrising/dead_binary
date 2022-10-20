@@ -36,7 +36,7 @@ public abstract class DamageItem : Item
         // Use on unit if possible, otherwise on empty tile
         Tile targetedTile = targetedUnit ? targetedUnit.currentTile : sourceUnit.grid.GetTile(targetPosition);
 
-        foreach (Unit unit in Tile.GetTileOccupants(Tile.AreaOfEffect(targetedTile, areaOfEffect)))
+        foreach (Unit unit in Tile.GetTileOccupants(Tile.GetAreaOfEffect(targetedTile, areaOfEffect)))
         {
             if (!immuneUnitTypes.Contains(unit.attributes.unitType)) 
                 ItemEffect(sourceUnit, unit);
@@ -83,7 +83,7 @@ public abstract class DamageItem : Item
         if (!itemEffect) 
             return;
 
-        GameObject spawnEffect = GlobalManager.Instance.activeMap.CreateTimedEffect(itemEffect.gameObject, triggerPosition, itemEffect.transform.rotation, 3f);
+        GameObject spawnEffect = GlobalManager.ActiveMap.CreateTimedEffect(itemEffect.gameObject, triggerPosition, itemEffect.transform.rotation, 3f);
         spawnEffect.transform.localScale = Vector3.one * (areaOfEffect / 2);
         PlayItemSFX(spawnEffect);
     }

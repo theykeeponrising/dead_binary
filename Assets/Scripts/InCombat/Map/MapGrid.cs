@@ -69,7 +69,7 @@ public class MapGrid : MonoBehaviour
             Debug.LogError(s, tile);
         } else {
             grid[flattened_xz] = tile;
-            tile.SetGrid(this);
+            tile.Grid = this;
         }
     }
 
@@ -104,7 +104,7 @@ public class MapGrid : MonoBehaviour
 
         // Reset path for tiles
         foreach (Tile tile in grid)
-            tile.nearestTile = null;
+            tile.NearestTile = null;
 
         // Prevent finding our current tile again
         Tile currentTile = tilesInRange[0];
@@ -117,28 +117,28 @@ public class MapGrid : MonoBehaviour
             foreach (Tile tile in new List<Tile>(foundTiles))
             {
                 // Ensures tiles only use the closest path if found by multiple tiles
-                if (tile.nearestTile == null)
+                if (tile.NearestTile == null)
                 {
-                    tile.nearestTile = currentTile;
+                    tile.NearestTile = currentTile;
                 }
 
                 // If tile path is obstructed, remove it from the list and allow it to be found by alternative paths
-                if (tile.nearestTile == currentTile && IsTilePathObstructed(currentTile, tile))
+                if (tile.NearestTile == currentTile && IsTilePathObstructed(currentTile, tile))
                 {
-                    tile.nearestTile = null;
+                    tile.NearestTile = null;
                     continue;
                 }
 
                 // Expands to next row of neighboring tiles, and returns path if destination tile is found
-                //foreach (Tile tile2 in tile.neighbours.OrderBy(item => rnd.Next()))
-                foreach (Tile tile2 in tile.neighbours)
+
+                foreach (Tile tile2 in tile.AdjacentTiles)
                 {
-                    if (!tile2.isTileTraversable())
+                    if (!tile2.IsTraversable)
                         continue;
                     if (IsTilePathObstructed(tile, tile2))
                         continue;
-                    if (tile2.nearestTile == null)
-                        tile2.nearestTile = tile;
+                    if (tile2.NearestTile == null)
+                        tile2.NearestTile = tile;
                     if (!nextTiles.Contains(tile2) && !tilesInRange.Contains(tile2))
                         nextTiles.Add(tile2);
                 }
@@ -157,19 +157,19 @@ public class MapGrid : MonoBehaviour
         if (tileStart == tileDest) return false;
 
         // First, check if both tiles have any cover object
-        if (!tileStart.cover || !tileDest.cover)
+        if (!tileStart.Cover || !tileDest.Cover)
             return false;
 
         // Then, check if the cover object is full sized or vaultable
-        if (tileDest.cover.CoverSize != CoverSizes.full && tileDest.cover.IsVaultable)
+        if (tileDest.Cover.CoverSize != CoverSizes.full && tileDest.Cover.IsVaultable)
             return false;
 
         // Check if both tiles share the same cover object
-        if (tileStart.cover != tileDest.cover)
+        if (tileStart.Cover != tileDest.Cover)
             return false;
 
         // Check if the obstructing cover object has been destroyed
-        if (tileStart.cover.IsDestroyed)
+        if (tileStart.Cover.IsDestroyed)
             return false;
 
         return true;
@@ -221,7 +221,7 @@ public class MapGrid : MonoBehaviour
         // If cover object detected, and is the target character's current cover, return true
         if (Physics.Raycast(ray, out hit, direction.magnitude * Mathf.Infinity, layerMask))
         {
-            if (hit.collider.GetComponent<CoverObject>() && hit.collider.GetComponent<CoverObject>() == defenderTile.cover)
+            if (hit.collider.GetComponent<CoverObject>() && hit.collider.GetComponent<CoverObject>() == defenderTile.Cover)
                 return true;
         }
         return false;

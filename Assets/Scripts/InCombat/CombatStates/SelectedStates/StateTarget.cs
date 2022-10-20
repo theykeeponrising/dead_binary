@@ -47,7 +47,7 @@ public class StateTarget : StateCancel
         }
 
         // Instantiate tile selection circle
-        indicatorAOE = GlobalManager.Instance.activeMap.mapGrid.InstantiateIndicatorAOE(Vector3.zero);
+        indicatorAOE = GlobalManager.ActiveMap.mapGrid.InstantiateIndicatorAOE(Vector3.zero);
 
         //Find Targets
         switch (targetType)
@@ -73,7 +73,7 @@ public class StateTarget : StateCancel
             c.GetActor().IsTargetUX(false, false);
         }
 
-        GlobalManager.Instance.activeMap.mapGrid.DestroyIndicatorAOE(indicatorAOE);
+        GlobalManager.ActiveMap.mapGrid.DestroyIndicatorAOE(indicatorAOE);
 
         base.Exit(t);
     }
@@ -100,7 +100,7 @@ public class StateTarget : StateCancel
     {
         if (typeof(TargetType) == typeof(Unit))
         {
-            List<Unit> units = t.activeMap.FindUnits(targetFaction);
+            List<Unit> units = Map.FindUnits(targetFaction);
 
             foreach (Unit unit in units)
                 if (unit.stats.healthCurrent > 0 && TargetInRange(t.selectedCharacter, unit))

@@ -82,7 +82,7 @@ public class UnitActionShootRocket : UnitActionShoot
         // Use on unit if possible, otherwise on empty tile
         _targetTile = targetUnit ? targetUnit.currentTile : unit.grid.GetTile(targetPosition);
 
-        foreach (Unit impactedUnit in Tile.GetTileOccupants(Tile.AreaOfEffect(_targetTile, _areaOfEffect)))
+        foreach (Unit impactedUnit in Tile.GetTileOccupants(Tile.GetAreaOfEffect(_targetTile, _areaOfEffect)))
         {
             impactedUnit.GetAnimator().TakeDamageEffect(unit.EquippedWeapon);
             impactedUnit.TakeDamage(unit, unit.EquippedWeapon.GetDamage(), _triggerPosition);
@@ -96,7 +96,7 @@ public class UnitActionShootRocket : UnitActionShoot
         if (!rocketEffect)
             return;
 
-        GameObject spawnEffect = GlobalManager.Instance.activeMap.CreateTimedEffect(rocketEffect.gameObject, _triggerPosition, rocketEffect.transform.rotation, 3f);
+        GameObject spawnEffect = GlobalManager.ActiveMap.CreateTimedEffect(rocketEffect.gameObject, _triggerPosition, rocketEffect.transform.rotation, 3f);
         spawnEffect.transform.localScale = Vector3.one * (_areaOfEffect / 2);
         PlayRocketSFX(spawnEffect);
     }

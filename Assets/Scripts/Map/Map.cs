@@ -8,10 +8,11 @@ public class Map : MonoBehaviour
 {
     MapEffects mapEffects;
     public MapGrid mapGrid;
-    public Tilemap detailMap;
-    public Tilemap tileMap;
-    public Tilemap coverMap;
-    public Tilemap unitMap;
+
+    public static Tilemap DetailMap;
+    public static Tilemap TileMap;
+    public static Tilemap CoverMap;
+    public static Tilemap UnitMap;
 
     void Awake()
     {
@@ -19,13 +20,13 @@ public class Map : MonoBehaviour
         mapGrid = GetComponentInChildren<MapGrid>();
         Tilemap[] tilemaps = GetComponentsInChildren<Tilemap>();
 
-        detailMap = tilemaps[0];
-        tileMap = tilemaps[1];
-        coverMap = tilemaps[2];
-        unitMap = tilemaps[3];
+        DetailMap = tilemaps[0];
+        TileMap = tilemaps[1];
+        CoverMap = tilemaps[2];
+        UnitMap = tilemaps[3];
     }
 
-    public List<Unit> FindUnits(Faction faction = null)
+    public static List<Unit> FindUnits(Faction faction = null)
     {
         // Returns units on the active map filtered by faction
         // If no faction is provided, returns all units
@@ -34,21 +35,28 @@ public class Map : MonoBehaviour
 
         if (faction != null)
         {
-            foreach (Unit unit in unitMap.GetComponentsInChildren<Unit>())
+            foreach (Unit unit in UnitMap.GetComponentsInChildren<Unit>())
                 if (unit.attributes.faction == faction)
                     unitsFound.Add(unit);
         }
         else
-            unitsFound = unitMap.GetComponentsInChildren<Unit>().ToList();
+            unitsFound = UnitMap.GetComponentsInChildren<Unit>().ToList();
 
         return unitsFound;
     }
 
-    public List<Tile> FindTiles()
+    public static List<Tile> FindTiles()
     {
         // Returns all tiles on the active map
 
-        return tileMap.GetComponentsInChildren<Tile>().ToList();
+        return TileMap.GetComponentsInChildren<Tile>().ToList();
+    }
+
+    public static List<CoverObject> FindCoverObjects()
+    {
+        // Returns all tiles on the active map
+
+        return CoverMap.GetComponentsInChildren<CoverObject>().ToList();
     }
 
     public GameObject CreateEffect(GameObject efxPrefab, Vector3 efxPosition, Quaternion efxRotation)
