@@ -72,10 +72,12 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
 
     public float velocityX = 0f;
     public float velocityZ = 0f;
+
+    public event System.Action OnHealthModified;
+    public event System.Action OnUnitDied;
     
     void Start() 
     {
-        
         // character = gameObject.GetComponent<Character>();
         grid = currentTile.Grid;
 
@@ -411,22 +413,33 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
         // Called by an attacking item when taking damage
         // TO DO: More complex damage reduction will be added here
 
-        Vector3 direction = (transform.position - attackPoint);
-        float distance = (transform.position - attackPoint).magnitude;
+        Vector3 direction = transform.position - attackPoint;
+        float distance = direction.magnitude;
+
         CheckDeath(attacker, direction, distance, damage, 50f);
     }
 
-    protected void CheckDeath(Unit attacker, Vector3 direction, float distance, int damage, float impactForce = 2f)
+    // caution: the unit is actually taking damage in this method!
+    public void CheckDeath(
+        Unit attacker,
+        Vector3 direction,
+        float distance,
+        int damage,
+        float impactForce = 2f)
     {
+        //todo: show visually instead of told.
         // Inflict damage on character
-        Debug.Log(string.Format("{0} has attacked {1} for {2} damage!", attacker.attributes.name, attributes.name, damage)); // This will eventually be shown visually instead of told
+        Debug.Log($"{attacker.attributes.name} has attacked {attributes.name} for {damage} damage!");
 
         stats.healthCurrent -= Mathf.Min(damage, stats.healthCurrent);
+
+        OnHealthModified?.Invoke();
         GetComponentInChildren<Healthbar>().UpdateHealthPoints();
 
         // Character death
         if (stats.healthCurrent <= 0) 
         {
+            OnUnitDied?.Invoke();
             AddFlag(FlagType.DEAD);
             StartCoroutine(Death(attacker, direction, distance, impactForce));
         }
