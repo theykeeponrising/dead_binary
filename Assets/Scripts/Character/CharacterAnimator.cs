@@ -1,79 +1,27 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
-
-
-
 
 //Handles all the animations+animation logic for a particular character
-//Currently includes flags, though maybe that should be moved elsewhere
+
 public class CharacterAnimator
 {
-    [Header("--Animation")]
-    Transform[] boneTransforms;
-    Unit unit;
-    int _animationLayer => unit.EquippedWeapon.GetAnimationLayer();
+    private readonly Unit _unit;
+    private readonly Animator _animator;
+    private readonly UnitRig _unitRig;
 
-    [HideInInspector] Quaternion aimTowards = Quaternion.identity;
+    private Quaternion _aimTowards = Quaternion.identity;
+    [SerializeField] private bool _useTorsoTwist = true;
 
-    class HumanBone
-    {
-        public HumanBodyBones bone;
-        public HumanBone(HumanBodyBones setBone)
-        {
-            bone = setBone;
-        }
-    }
+    private int AnimationLayer => _unit.EquippedWeapon.GetAnimationLayer();
+    private Transform[] BoneTransforms => _unitRig.BoneTransforms;
 
     public enum AnimationEventContext { SHOOT, TAKE_DAMAGE, AIMING, RELOAD, STOW, DRAW, DODGE, VAULT, FOOTSTEP_LEFT, FOOTSTEP_RIGHT, IDLE, THROW };
-    HumanBone[] humanBones;
-    Animator animator;
-    public class Body
-    {
-        public Transform handLeft;
-        public Transform handRight;
-        public Transform chest;
-        public Transform head;
-        public Transform shoulder;
-        public Transform arm;
-        public Transform hand;
-        public Transform leg;
-        public Transform shin;
-        public Transform foot;
-        public Transform mask;
-    }
-    public Body body = new Body();
-    Rigidbody[] ragdoll;
-    [SerializeField] bool useTorsoTwist = true;
 
     public CharacterAnimator(Unit unit)
     {
-        this.unit = unit;
-
-        // Animator, bones, and body transforms
-        animator = unit.GetComponent<Animator>();
-        ragdoll = unit.GetComponentsInChildren<Rigidbody>();
-
-        // These bones are used for torso rotation
-        humanBones = new HumanBone[]
-        {
-            new HumanBone(HumanBodyBones.Chest),
-            new HumanBone(HumanBodyBones.UpperChest),
-            new HumanBone(HumanBodyBones.Spine)
-        };
-
-        boneTransforms = new Transform[humanBones.Length];
-        for (int i = 0; i < humanBones.Length; i++)
-            boneTransforms[i] = animator.GetBoneTransform(humanBones[i].bone);
-
-        // These are used for attach points
-        body.chest = animator.GetBoneTransform(HumanBodyBones.Chest);
-        body.head = animator.GetBoneTransform(HumanBodyBones.Head);
-        body.handRight = animator.GetBoneTransform(HumanBodyBones.RightHand);
-        body.handLeft = animator.GetBoneTransform(HumanBodyBones.LeftHand);
+        _unit = unit;
+        _unitRig = unit.GetComponentInChildren<UnitRig>();
+        _animator = unit.GetComponent<Animator>();
     }
 
     public void Update()
@@ -88,44 +36,44 @@ public class CharacterAnimator
 
     public void SetEnabled(bool enabled)
     {
-        animator.enabled = enabled;
+        _animator.enabled = enabled;
     }
 
     public bool GetEnabled()
     {
-        return animator.enabled;
+        return _animator.enabled;
     }
 
     void SetAnimation()
     {
         // Changes movement animation based on flags
 
-        if (unit.GetActor().FindActionOfType(typeof(UnitActionMove)).Performing())
+        if (_unit.GetActor().FindActionOfType(typeof(UnitActionMove)).Performing())
         {
-            animator.SetFloat("velocityX", unit.velocityX / GlobalManager.gameSpeed);
-            animator.SetFloat("velocityZ", unit.velocityZ / GlobalManager.gameSpeed);
+            _animator.SetFloat("velocityX", _unit.velocityX / GlobalManager.gameSpeed);
+            _animator.SetFloat("velocityZ", _unit.velocityZ / GlobalManager.gameSpeed);
         }
         else
         {
             //animator.SetBool("moving", false);
-            animator.SetFloat("velocityX", 0);
-            animator.SetFloat("velocityZ", 0);
+            _animator.SetFloat("velocityX", 0);
+            _animator.SetFloat("velocityZ", 0);
         }
-    }
-
-    public void SetRagdoll(Rigidbody[] ragdoll)
-    {
-        this.ragdoll = ragdoll;
     }
 
     public Transform GetWeaponDefaultPosition()
     {
-        return body.handRight.Find("AttachPoint");
+        return _unitRig.GetBoneTransform(HumanBodyBones.RightHand).Find("AttachPoint");
     }
 
     public Vector3 GetCharacterChestPosition()
     {
-        return body.chest.transform.position;
+        return _unitRig.GetBoneTransform(HumanBodyBones.Chest).position;
+    }
+
+    public Transform GetBoneTransform(HumanBodyBones bone)
+    {
+        return _animator.GetBoneTransform(bone);
     }
 
     public bool AnimatorIsPlaying(string animationName)
@@ -134,8 +82,8 @@ public class CharacterAnimator
         // Should always be called during a LateUpdate
         // Note -- lengthy transitions will not work
 
-        if (animator.GetCurrentAnimatorStateInfo(_animationLayer).IsName(animationName))
-            return animator.GetCurrentAnimatorStateInfo(_animationLayer).length > animator.GetCurrentAnimatorStateInfo(_animationLayer).normalizedTime;
+        if (_animator.GetCurrentAnimatorStateInfo(AnimationLayer).IsName(animationName))
+            return _animator.GetCurrentAnimatorStateInfo(AnimationLayer).length > _animator.GetCurrentAnimatorStateInfo(AnimationLayer).normalizedTime;
         return false;
     }
 
@@ -152,21 +100,19 @@ public class CharacterAnimator
         {
             //TODO: Vault sound in middle of animation?
             case (AnimationEventContext.VAULT):
-                unit.AddFlag(FlagType.VAULT);
-                animator.Play("Default");
-                animator.SetTrigger("vaulting");
+                _unit.AddFlag(FlagType.VAULT);
+                _animator.Play("Default");
+                _animator.SetTrigger("vaulting");
                 break;
             
             case (AnimationEventContext.AIMING):
-                animator.SetBool("aiming", true);
-
-                //Non-monobehaviour, so coroutine called through Character
-                unit.StartCoroutine(WaitForAiming());
+                _unit.AddFlag(FlagType.AIM);
+                _animator.SetBool("aiming", true);
                 break;
 
             // Idle
             case (AnimationEventContext.IDLE):
-                animator.updateMode = AnimatorUpdateMode.Normal;
+                _animator.updateMode = AnimatorUpdateMode.Normal;
                 break;
             default:
                 break;
@@ -182,13 +128,13 @@ public class CharacterAnimator
         switch (context)
         {
             case (AnimationEventContext.VAULT):
-                unit.RemoveFlag(FlagType.VAULT);
+                _unit.RemoveFlag(FlagType.VAULT);
                 break;
             
             case (AnimationEventContext.AIMING):
-                animator.SetBool("aiming", false);
-                animator.updateMode = AnimatorUpdateMode.Normal;
-                unit.RemoveFlag(FlagType.AIM);
+                _animator.SetBool("aiming", false);
+                _animator.updateMode = AnimatorUpdateMode.Normal;
+                _unit.RemoveFlag(FlagType.AIM);
                 break;
 
             // Throw
@@ -207,7 +153,7 @@ public class CharacterAnimator
         switch (context)
         {
             case (AnimationEventContext.TAKE_DAMAGE):
-                unit.GetActor().targetCharacter.GetAnimator().TakeDamageEffect(unit.EquippedWeapon);
+                _unit.GetActor().targetCharacter.GetAnimator().TakeDamageEffect(_unit.EquippedWeapon);
                 break;
         }
     }
@@ -216,38 +162,29 @@ public class CharacterAnimator
     {
         // Sets animator bool
 
-        animator.SetBool(flag, state);
+        _animator.SetBool(flag, state);
     }
 
     public void SetTrigger(string flag)
     {
         // Sets animator trigger
 
-        animator.SetTrigger(flag);
+        _animator.SetTrigger(flag);
     }
 
     public void SetUpdateMode(AnimatorUpdateMode updateMode = AnimatorUpdateMode.Normal)
     {
         // Sets animator update mode, defaults to normal
 
-        animator.updateMode = updateMode;
-    }
-
-    IEnumerator WaitForAiming()
-    {
-        // Small buffer to prevent janky torso twist
-
-        while (IsCrouching()) yield return new WaitForSeconds(0.01f);
-        yield return new WaitForSeconds(0.25f);
-        unit.AddFlag(FlagType.AIM);
+        _animator.updateMode = updateMode;
     }
 
     public void ToggleCrouch(bool instant=false)
     {
         if (instant)
-            animator.Play("Crouch");
+            _animator.Play("Crouch");
         else
-            animator.SetTrigger("toggleCrouch");
+            _animator.SetTrigger("toggleCrouch");
     }
 
     public bool IsCrouching()
@@ -255,11 +192,11 @@ public class CharacterAnimator
         // Returns true if any crouch animation is playing
 
         bool[] crouchingAnims = {
-            animator.GetCurrentAnimatorStateInfo(_animationLayer).IsName("Crouch-Down"),
-            animator.GetCurrentAnimatorStateInfo(_animationLayer).IsName("Crouch-Up"),
-            animator.GetCurrentAnimatorStateInfo(_animationLayer).IsName("Crouch"),
-            animator.GetCurrentAnimatorStateInfo(_animationLayer).IsName("Crouch-Dodge"),
-            animator.GetCurrentAnimatorStateInfo(_animationLayer).IsName("Crouch-Damage")};
+            _animator.GetCurrentAnimatorStateInfo(AnimationLayer).IsName("Crouch-Down"),
+            _animator.GetCurrentAnimatorStateInfo(AnimationLayer).IsName("Crouch-Up"),
+            _animator.GetCurrentAnimatorStateInfo(AnimationLayer).IsName("Crouch"),
+            _animator.GetCurrentAnimatorStateInfo(AnimationLayer).IsName("Crouch-Dodge"),
+            _animator.GetCurrentAnimatorStateInfo(AnimationLayer).IsName("Crouch-Damage")};
         return crouchingAnims.Any(x => x == true);
     }
 
@@ -267,7 +204,7 @@ public class CharacterAnimator
     {
         // Makes character crouch if they should be crouching behind cover
 
-        if (unit.currentCover && unit.currentCover.CoverSize == CoverSizes.half)
+        if (_unit.currentCover && _unit.currentCover.CoverSize == CoverSizes.half)
             if (!IsCrouching()) ToggleCrouch();
     }
 
@@ -276,21 +213,21 @@ public class CharacterAnimator
         // Twists characters torso to aim gun at target
 
         // Only continue if we have a valid target
-        if (!unit.GetActor().targetCharacter)
+        if (!_unit.GetActor().targetCharacter)
             return;
 
         // Initial camera position should snap immediately
-        Vector3 targetPosition = unit.GetActor().GetTargetPosition(true);
-        Vector3 targetDirection = targetPosition - unit.inventory.equippedWeapon.transform.position;
-        unit.GetComponentInChildren<CharacterCamera>().AdjustAngle(targetDirection.x, targetPosition);
+        Vector3 targetPosition = _unit.GetActor().GetTargetPosition(true);
+        Vector3 targetDirection = targetPosition - _unit.inventory.equippedWeapon.transform.position;
+        _unit.GetComponentInChildren<CharacterCamera>().AdjustAngle(targetDirection.x, targetPosition);
 
         // If we are crouching or not using torso twist, then skip the bone rotations
-        if (IsCrouching() || !useTorsoTwist)
+        if (IsCrouching() || !_useTorsoTwist)
             return;
 
         // If we are not aiming or shooting, then skip the bone rotations
-        if (!animator.GetCurrentAnimatorStateInfo(_animationLayer).IsName("Aiming") 
-            && !animator.GetCurrentAnimatorStateInfo(_animationLayer).IsName("Shoot"))
+        if (!_animator.GetCurrentAnimatorStateInfo(AnimationLayer).IsName("Aiming") 
+            && !_animator.GetCurrentAnimatorStateInfo(AnimationLayer).IsName("Shoot"))
             return;
         
         // Iterations improve accuracy of aim position
@@ -298,43 +235,38 @@ public class CharacterAnimator
 
         for (int i = 0; i < iterations; i++)
         {
-            targetPosition = unit.GetActor().GetTargetPosition();
-            targetDirection = targetPosition - unit.inventory.equippedWeapon.transform.position;
-            unit.GetComponentInChildren<CharacterCamera>().AdjustAngle(targetDirection.x, targetPosition);
+            targetPosition = _unit.GetActor().GetTargetPosition();
+            targetDirection = targetPosition - _unit.inventory.equippedWeapon.transform.position;
+            _unit.GetComponentInChildren<CharacterCamera>().AdjustAngle(targetDirection.x, targetPosition);
 
-            for (int b = 0; b < boneTransforms.Length; b++)
+            for (int b = 0; b < BoneTransforms.Length; b++)
             {
                 // Gets the rotation needed to point weapon at enemy
-                Transform bone = boneTransforms[b];
-                Vector3 aimDirection = unit.inventory.equippedWeapon.transform.forward;
+                Transform bone = BoneTransforms[b];
+                Vector3 aimDirection = _unit.inventory.equippedWeapon.transform.forward;
                 
                 // Updates rotation up until the actual shoot animation happens
-                if (unit.GetFlag(FlagType.AIM))
-                    aimTowards = Quaternion.FromToRotation(aimDirection, targetDirection);
+                if (_unit.GetFlag(FlagType.AIM))
+                    _aimTowards = Quaternion.FromToRotation(aimDirection, targetDirection);
 
                 // Gets absolute angle
-                float dot = Vector3.Dot(targetDirection.normalized, unit.transform.forward);
+                float dot = Vector3.Dot(targetDirection.normalized, _unit.transform.forward);
                 float angle = Mathf.Acos(dot) * Mathf.Rad2Deg;
 
                 // Rotates the character to face the target
-                if (Mathf.Abs(angle) > 70f) unit.transform.LookAt(new Vector3(targetPosition.x, 0f, targetPosition.z));
-                bone.rotation = (aimTowards * bone.rotation).normalized;
+                if (Mathf.Abs(angle) > 70f) _unit.transform.LookAt(new Vector3(targetPosition.x, 0f, targetPosition.z));
+                bone.rotation = (_aimTowards * bone.rotation).normalized;
 
                 // TO DO -- Fix weirdness during shoot animation
             }
         }
     }
 
-    public Transform GetBoneTransform(HumanBodyBones bone) 
-    {
-        return animator.GetBoneTransform(bone);
-    }
-
     void ThrowItem()
     {
         // Releases item from hand and starts item movement
 
-        ItemProp itemProp = body.handLeft.GetComponentInChildren<ItemProp>();
+        ItemProp itemProp = _unitRig.GetBoneTransform(HumanBodyBones.LeftHand).GetComponentInChildren<ItemProp>();
         GlobalManager.Instance.activeMap.AddEffect(itemProp);
         itemProp.SetItemMovement(true);
         CoverCrouch();
@@ -349,21 +281,21 @@ public class CharacterAnimator
         if (AnimatorIsPlaying("Dodge") || AnimatorIsPlaying("Crouch-Dodge")) return;
 
         // Play impact sound
-        unit.GetSFX().PlayRandomImpactSound();
+        _unit.GetSFX().PlayRandomImpactSound();
 
         // Effect shown when character is hit
-        if (animator.GetCurrentAnimatorStateInfo(_animationLayer).IsName("Crouch"))
-            animator.Play("Crouch-Damage");
-        else if (animator.GetCurrentAnimatorStateInfo(_animationLayer).IsName("Crouch-Damage"))
-            animator.Play("Crouch-Damage", 0, normalizedTime: .1f);
-        else if (animator.GetCurrentAnimatorStateInfo(_animationLayer).IsName("Damage2"))
-            animator.Play("Damage3", 0, normalizedTime: .1f);
+        if (_animator.GetCurrentAnimatorStateInfo(AnimationLayer).IsName("Crouch"))
+            _animator.Play("Crouch-Damage");
+        else if (_animator.GetCurrentAnimatorStateInfo(AnimationLayer).IsName("Crouch-Damage"))
+            _animator.Play("Crouch-Damage", 0, normalizedTime: .1f);
+        else if (_animator.GetCurrentAnimatorStateInfo(AnimationLayer).IsName("Damage2"))
+            _animator.Play("Damage3", 0, normalizedTime: .1f);
         else if (weapon && weapon.GetImpact() == WeaponImpact.HEAVY)
-            animator.Play("Damage1");
+            _animator.Play("Damage1");
         else if (item && item.itemImpact == WeaponImpact.HEAVY)
-            animator.Play("Damage1");
+            _animator.Play("Damage1");
         else
-            animator.Play("Damage2");
+            _animator.Play("Damage2");
 
         CoverCrouch();
     }
@@ -371,34 +303,28 @@ public class CharacterAnimator
     public void OnDeath(Vector3 force, ForceMode mode)
     {
         SetEnabled(false);
-        
+
         // Enable bodypart physics for the ragdoll effect
-        foreach (Rigidbody rag in ragdoll)
-        {
-            if (!rag) continue;
-            rag.isKinematic = false;
-            rag.GetComponent<Collider>().isTrigger = false;
-        }
+        _unitRig.SetRagdoll(true);
 
         // Apply impact force to center of mass
-        GameObject.Destroy(ragdoll[0]);
-        body.chest.GetComponent<Rigidbody>().AddForce(force, mode);
+        _unitRig.GetBoneTransform(HumanBodyBones.Chest).GetComponent<Rigidbody>().AddForce(force, mode);
     }
 
     public void SetLayerWeight(int layerIndex, float weight)
     {
-        animator.SetLayerWeight(layerIndex, weight);
+        _animator.SetLayerWeight(layerIndex, weight);
     }
 
     public void SetAnimationSpeed(float animSpeed)
     {
-        animator.SetFloat("animSpeed", animSpeed);
+        _animator.SetFloat("animSpeed", animSpeed);
     }
 
     public void Play(string animation)
     {
         // Quick reference to play animation
 
-        animator.Play(animation);
+        _animator.Play(animation);
     }
 }

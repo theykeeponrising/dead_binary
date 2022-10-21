@@ -8,7 +8,7 @@ public class CharacterSFX
 {
     Unit unit;
     AudioSource audioSource;
-    Dictionary<AnimationType, AudioSource> bodyAudioSources;
+    Dictionary<AnimationType, AudioSource> bodyAudioSources = new();
     FootstepData footstepData;
 
     public CharacterSFX(Unit unit)

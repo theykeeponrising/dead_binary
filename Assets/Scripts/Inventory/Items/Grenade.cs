@@ -42,7 +42,7 @@ public class Grenade : DamageItem
         // Instantiates grenade prop and sets up the callback
 
         flashTimer = new Timer(flashTime);
-        grenade = Instantiate(itemProp, sourceUnit.GetAnimator().body.handLeft);
+        grenade = Instantiate(itemProp, sourceUnit.GetAnimator().GetBoneTransform(HumanBodyBones.LeftHand));
         grenade.SetItemEffect(this);
         grenade.SetItemDestination(targetPosition);
 
