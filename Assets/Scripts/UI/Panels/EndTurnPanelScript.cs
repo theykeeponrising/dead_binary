@@ -101,11 +101,12 @@ public class EndTurnPanelScript : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         if (!_playerTurn)
             return false;
+        
+        var playerTurnState = (PlayerTurnState) StateHandler.Instance.GetStateObject(StateHandler.State.PlayerTurnState);
+        var currentState = playerTurnState.GetPlayerAction().stateMachine.GetCurrentState();
 
-        if (!playerAction.CheckTurnEnd() && !Keyboard.current.shiftKey.isPressed)
-            return false;
-
-        return true;
+        return (playerAction.CheckTurnEnd() || Keyboard.current.shiftKey.isPressed) && 
+               (currentState.GetType() == typeof(StateNoSelection) || currentState.GetType() == typeof(StateIdle));
     }
 
     private void ButtonPress()
