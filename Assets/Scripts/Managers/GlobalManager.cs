@@ -18,11 +18,13 @@ public class GlobalManager : MonoBehaviour
 
     [Range(10f, 100f)] public static float maxEffects = 20f;
 
-    public Map activeMap;
+    public static Map ActiveMap;
+    [SerializeField] Map _activeMap;
 
     private void Awake() 
     {
         Instance = this;
+        ActiveMap = _activeMap;
     }
 
     private void Update()

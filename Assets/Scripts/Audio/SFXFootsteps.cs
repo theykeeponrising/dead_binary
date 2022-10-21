@@ -13,7 +13,7 @@ public class SFXFootsteps
     [SerializeField] private AudioClip[] _footstepConcrete;
     [SerializeField] private AudioClip[] _footstepScrapBot;
 
-    private Dictionary<FootstepMaterial, Dictionary<FootstepSource, AudioClip[]>> GetDict()
+    private Dictionary<ImpactTypes, Dictionary<FootstepSource, AudioClip[]>> GetDict()
     {
         var footstepsType = new Dictionary<FootstepSource, AudioClip[]>
         {
@@ -21,9 +21,9 @@ public class SFXFootsteps
             {FootstepSource.SCRAPBOT, _footstepScrapBot },
         };
 
-        var FootstepSounds = new Dictionary<FootstepMaterial, Dictionary<FootstepSource, AudioClip[]>>
+        var FootstepSounds = new Dictionary<ImpactTypes, Dictionary<FootstepSource, AudioClip[]>>
         {
-            {FootstepMaterial.CONCRETE, footstepsType },
+            {ImpactTypes.CONCRETE, footstepsType },
         };
 
         return FootstepSounds;
@@ -33,34 +33,33 @@ public class SFXFootsteps
     {
         // Returns a specific sound for the provided type and index
 
-        FootstepMaterial footstepMaterial = footstepData.footstepMaterial;
+        ImpactTypes impactType = footstepData.impactType;
         FootstepSource footstepSource = footstepData.footstepSource;
 
         var dict = GetDict();
-        return dict[footstepMaterial][footstepSource][index];
+        return dict[impactType][footstepSource][index];
     }
 
     public AudioClip GetSound(FootstepData footstepData)
     {
         // Returns a random sound for the provided type
 
-        FootstepMaterial footstepMaterial = footstepData.footstepMaterial;
+        ImpactTypes impactType = footstepData.impactType;
         FootstepSource footstepSource = footstepData.footstepSource;
 
         var dict = GetDict();
-        int range = dict[footstepMaterial][footstepSource].Length;
-        return dict[footstepMaterial][footstepSource][Random.Range(0, range)];
+        int range = dict[impactType][footstepSource].Length;
+        return dict[impactType][footstepSource][Random.Range(0, range)];
     }
 }
 
 public class FootstepData
 {
     Unit unit;
-    public FootstepMaterial footstepMaterial => unit.currentTile.footstepMaterial;
+    public ImpactTypes impactType => unit.currentTile.ImpactType;
     public FootstepSource footstepSource => unit.attributes.footstepSource;
 
     public FootstepData(Unit unit) { this.unit = unit; }
 }
 
 public enum FootstepSource { HUMAN, SCRAPBOT }
-public enum FootstepMaterial { CONCRETE }; // METAL, DIRT, WATER

@@ -23,7 +23,7 @@ public class UnitActionShoot : UnitTargetAction
         }
 
         targetUnit = setTarget;
-        distanceToTarget = unit.currentTile.FindCost(targetUnit.currentTile, 15).Count;
+        distanceToTarget = unit.currentTile.GetMovementCost(targetUnit.currentTile, 15).Count;
         unit.AddFlag(FlagType.AIM);
 
         unit.GetActor().targetCharacter = setTarget;
