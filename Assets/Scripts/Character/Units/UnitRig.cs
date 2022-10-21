@@ -5,19 +5,49 @@ public sealed class UnitRig : MonoBehaviour
 {
     private Unit _unit;
     private Animator _animator;
-    private HumanBone[] _humanBones;
+    private HumanBodyBones[] _humanBones;
     private Transform[] _boneTransforms;
-    private readonly List<Ragdoll> _ragdoll = new();
+    private readonly List<Ragdoll> _ragdolls = new();
 
     private Rigidbody UnitRigidbody => _unit.UnitRigidBody;
     private Collider[] UnitColliders => _unit.UnitColliders;
+    public Transform[] BoneTransforms=> _boneTransforms;
 
-    public Transform[] BoneTransforms { get { return _boneTransforms; } }
-
-    private class HumanBone
+    private void Awake()
     {
-        public HumanBodyBones Bone;
-        public HumanBone(HumanBodyBones bone) { Bone = bone; }
+        _unit = GetComponentInParent<Unit>();
+        _animator = _unit.GetComponent<Animator>();
+
+        _humanBones = new HumanBodyBones[]
+        {
+            HumanBodyBones.Chest,
+            HumanBodyBones.UpperChest,
+            HumanBodyBones.Spine
+        };
+
+        // These bones are used for torso rotation
+        _boneTransforms = new Transform[_humanBones.Length];
+        for (int i = 0; i < _humanBones.Length; i++)
+            _boneTransforms[i] = _animator.GetBoneTransform(_humanBones[i]);
+
+        foreach (Rigidbody rigidbody in GetComponentsInChildren<Rigidbody>())
+            _ragdolls.Add(new Ragdoll(rigidbody));
+    }
+
+    public Transform GetBoneTransform(HumanBodyBones bone)
+    {
+        return _animator.GetBoneTransform(bone);
+    }
+
+    public void SetRagdollActive(bool isActive)
+    {
+        foreach (Collider collider in UnitColliders)
+            collider.enabled = false;
+
+        UnitRigidbody.isKinematic = true;
+
+        foreach (Ragdoll ragdoll in _ragdolls)
+            ragdoll.SetActive(isActive);
     }
 
     private class Ragdoll
@@ -37,43 +67,5 @@ public sealed class UnitRig : MonoBehaviour
             foreach (Collider collider in _colliders)
                 collider.isTrigger = !isActive;
         }
-    }
-
-    private void Awake()
-    {
-        _unit = GetComponentInParent<Unit>();
-        _animator = _unit.GetComponent<Animator>();
-
-        _humanBones = new HumanBone[]
-        {
-            new HumanBone(HumanBodyBones.Chest),
-            new HumanBone(HumanBodyBones.UpperChest),
-            new HumanBone(HumanBodyBones.Spine)
-        };
-
-        // These bones are used for torso rotation
-        _boneTransforms = new Transform[_humanBones.Length];
-        for (int i = 0; i < _humanBones.Length; i++)
-            _boneTransforms[i] = _animator.GetBoneTransform(_humanBones[i].Bone);
-
-
-        foreach (Rigidbody rigidbody in GetComponentsInChildren<Rigidbody>())
-            _ragdoll.Add(new Ragdoll(rigidbody));
-    }
-
-    public Transform GetBoneTransform(HumanBodyBones bone)
-    {
-        return _animator.GetBoneTransform(bone);
-    }
-
-    public void SetRagdoll(bool isActive)
-    {
-        foreach (Collider collider in UnitColliders)
-            collider.enabled = false;
-
-        UnitRigidbody.isKinematic = true;
-
-        foreach (Ragdoll ragdoll in _ragdoll)
-            ragdoll.SetActive(isActive);
     }
 }

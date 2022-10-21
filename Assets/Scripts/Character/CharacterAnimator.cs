@@ -305,7 +305,7 @@ public class CharacterAnimator
         SetEnabled(false);
 
         // Enable bodypart physics for the ragdoll effect
-        _unitRig.SetRagdoll(true);
+        _unitRig.SetRagdollActive(true);
 
         // Apply impact force to center of mass
         _unitRig.GetBoneTransform(HumanBodyBones.Chest).GetComponent<Rigidbody>().AddForce(force, mode);
