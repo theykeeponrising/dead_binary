@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2258509963431223535}
   - component: {fileID: 2466481427828270666}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Rig
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -293,7 +293,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7701717047765211340}
   - component: {fileID: 9077078067502702405}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -378,7 +378,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8591957299038561422}
   - component: {fileID: 4984933978760455573}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Inventory
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -601,7 +601,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3591376873847124216}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Actions
   m_TagString: Untagged
   m_Icon: {fileID: 0}

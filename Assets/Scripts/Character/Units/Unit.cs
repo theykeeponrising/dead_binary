@@ -109,9 +109,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
 
     private void Start() 
     {
-        
-        // character = gameObject.GetComponent<Character>();
-        grid = currentTile.GetGrid();
+        grid = currentTile.Grid;
 
         // Characters start with full health and action points
         stats.healthCurrent = stats.healthMax;
