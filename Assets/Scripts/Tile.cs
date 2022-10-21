@@ -248,6 +248,7 @@ public sealed class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         {
             if (!tile.Occupant) continue;
             if (!tile.Occupant.GetComponent<Unit>()) continue;
+            if (impactedUnits.Contains(tile.Occupant.GetComponent<Unit>())) continue;
             impactedUnits.Add(tile.Occupant.GetComponent<Unit>());
         }
 

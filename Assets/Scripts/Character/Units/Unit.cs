@@ -32,8 +32,10 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     protected CharacterActor charActor;
     protected CharacterAnimator charAnim;
     protected CharacterSFX charSFX;
+    private Rigidbody _unitRigidbody;
+    private Collider[] _unitColliders;
 
-    public List<FlagType> flags = new List<FlagType>();
+    public List<FlagType> flags = new();
     
     [HideInInspector] public Inventory inventory;
     [HideInInspector] public Healthbar healthbar;
@@ -72,13 +74,41 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
 
     public float velocityX = 0f;
     public float velocityZ = 0f;
-
+    
     public event System.Action OnHealthModified;
     public event System.Action OnUnitDied;
-    
-    void Start() 
+
+    public Rigidbody UnitRigidBody { get { return _unitRigidbody; } }
+    public Collider[] UnitColliders { get { return _unitColliders; } }
+
+    protected override void Awake()
     {
-        // character = gameObject.GetComponent<Character>();
+        base.Awake();
+        this.name = string.Format("{0} (Character)", attributes.name);
+        _unitRigidbody = GetComponent<Rigidbody>();
+        _unitColliders = GetComponents<Collider>();
+
+        inventory = GetComponentInChildren<Inventory>();
+        _unitActionsContainer = transform.Find("Actions");
+
+        if (objectTiles.Count > 0) currentTile = objectTiles[0];
+
+        // Initialize the character actor
+        charActor = new CharacterActor(this);
+
+        // Init character animator
+        charAnim = new CharacterAnimator(this);
+
+        // Init character SFX
+        charSFX = new CharacterSFX(this);
+        charSFX.SetAudioSource(GetComponent<AudioSource>());
+
+        // Init health bar
+        healthbar = transform.Find("Healthbar").GetComponent<Healthbar>();
+    }
+
+    private void Start() 
+    {
         grid = currentTile.Grid;
 
         // Characters start with full health and action points
@@ -87,30 +117,6 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
 
         SetupUnit();
         GenerateActions();
-    }
-
-    protected override void Awake()
-    {
-        base.Awake();
-        this.name = string.Format("{0} (Character)", attributes.name);
-        inventory = GetComponentInChildren<Inventory>();
-        _unitActionsContainer = transform.Find("Actions");
-
-        if (objectTiles.Count > 0) currentTile = objectTiles[0];
-        
-        // Initialize the character actor
-        charActor = new CharacterActor(this);
-
-        // Init character animator
-        charAnim = new CharacterAnimator(this);
-        charAnim.SetRagdoll(GetComponentsInChildren<Rigidbody>());
-        
-        // Init character SFX
-        charSFX = new CharacterSFX(this);
-        charSFX.SetAudioSource(GetComponent<AudioSource>());
-
-        // Init health bar
-        healthbar = transform.Find("Healthbar").GetComponent<Healthbar>();
     }
 
     // Update is called once per frame

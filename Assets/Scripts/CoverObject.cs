@@ -23,7 +23,7 @@ public sealed class CoverObject : MonoBehaviour
     public bool IsDestructible = false;
     public bool IsDestroyed = false;
 
-    readonly Timer _debugTimer = new(10f); // Temp to test destruction physics
+    readonly Timer _debugTimer = new(3f); // Temp to test destruction physics
    
 
     private void Awake()
@@ -98,6 +98,7 @@ public sealed class CoverObject : MonoBehaviour
     {
         // For each physics child found, enable collider and physics
         IsDestroyed = true;
+        _mainCollider.enabled = false;
 
         foreach (Rigidbody rigidbody in _rigidbodies)
         {
