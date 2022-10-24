@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.17159179, g: 0.1787852, b: 0.16957104, a: 1}
+  m_IndirectSpecularColor: {r: 0.17163052, g: 0.17873544, b: 0.16954231, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -19736,6 +19736,10 @@ PrefabInstance:
     - target: {fileID: 1250626675813322495, guid: 5a40edad8545d744490590559685c18f, type: 3}
       propertyPath: m_Name
       value: CityGateLarge
+      objectReference: {fileID: 0}
+    - target: {fileID: 4285991641451261090, guid: 5a40edad8545d744490590559685c18f, type: 3}
+      propertyPath: IsDestructible
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5a40edad8545d744490590559685c18f, type: 3}
