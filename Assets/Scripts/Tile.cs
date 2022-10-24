@@ -11,7 +11,7 @@ public sealed class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     // Grid objects
     private GridObject _occupant;
-    private CoverObject _cover;
+    [SerializeField] private CoverObject _cover;
 
     // Pathing
     private readonly List<Tile> _adjacentTiles = new();
@@ -52,7 +52,7 @@ public sealed class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
         _playerAction.targetTile = this;
 
-        HighlightTile(TileHighlightType.PREVIEW, true);
+        //HighlightTile(TileHighlightType.PREVIEW, true);
     }
 
     void IPointerExitHandler.OnPointerExit(PointerEventData eventData)
@@ -62,7 +62,7 @@ public sealed class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         if (_playerAction.targetTile == this)
             _playerAction.targetTile = null;
 
-        HighlightTile(TileHighlightType.PREVIEW, false);
+        //HighlightTile(TileHighlightType.PREVIEW, false);
     }
 
     public void HighlightTile(TileHighlightType highlightType = TileHighlightType.ERROR, bool showHighlight = true)
