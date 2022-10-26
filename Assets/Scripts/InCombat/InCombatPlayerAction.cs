@@ -95,7 +95,7 @@ public class InCombatPlayerAction
                 targetCharacter = hit.collider.GetComponent<Unit>();
         }
 
-        SelectAction(targetCharacter);        
+        SelectAction(targetCharacter);
     }
 
     public void SelectNextUnit(bool reverseOrder = false)
@@ -218,6 +218,7 @@ public class InCombatPlayerAction
             selectedCharacter = targetCharacter;
             selectedCharacter.GetActor().SelectUnit(SelectionType.SELECT);
             selectedCharacter.GetActor().SetWaiting(false);
+            Camera.main.GetComponent<CameraHandler>().SetCameraSnap(targetCharacter);
         }
 
         // Select action, character selected, no previous selection

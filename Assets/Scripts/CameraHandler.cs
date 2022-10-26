@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -10,95 +9,80 @@ public class CameraHandler : MonoBehaviour
 {
     // Used for Camera controls
 
-    [SerializeField] List<Camera> sceneCameras = new List<Camera>();
-    CameraInput cameraInput;
-    PhysicsRaycaster raycaster;
-    AudioListener audioListener;
-    InputAction movement;
-    InputAction rotation;
-    public Transform parent;
+    private readonly List<Camera> _sceneCameras = new();
+    private CameraInput _cameraInput;
+    private PhysicsRaycaster _raycaster;
+    private AudioListener _audioListener;
+    private Player _player;
 
-    // horizontal motion
-    [SerializeField]
-    [Range(5f, 50f)]
-    float maxSpeed = 10f;
-    float speed;
-    [SerializeField]
-    float acceleration = 10f;
+    InputAction _inputMovement;
+    InputAction _inputRotation;
 
-    // vertical motion - zooming
-    [SerializeField]
-    [Range(0.5f, 3f)]
-    float stepSize = 2f;
-    [SerializeField]
-    float zoomDampening = 7.5f;
-    [SerializeField]
-    float minHeight = 5f;
-    [SerializeField]
-    float maxHeight = 50f;
-    [SerializeField]
-    [Range(0.5f, 2f)]
-    float zoomSpeed = 2f;
+    // Horizontal Motion
+    [SerializeField] [Range(5f, 50f)] private float _panSpeedMax = 10f;
+    [SerializeField] private float _panAcceleration = 10f;
+    private float _panSpeed;
+    private Vector3 _panNextPosition;
+    private Vector3 _panLastPosition;
+    private Vector3 _panSnapPosition;
+    private Vector3 _panVelocity;
 
-    // rotation
-    [SerializeField]
-    [Range(0.1f, 1f)]
-    float maxRotationSpeed = 0.25f;
+    // Vertical Motion
+    [SerializeField] [Range(0.5f, 3f)] private float _zoomStepSize = 2f;
+    [SerializeField] [Range(0.5f, 2f)] private float _zoomZoomSpeed = 2f;
+    [SerializeField] private float _zoomDampening = 7.5f;
+    [SerializeField] private float _zoomHeightMin = 5f;
+    [SerializeField] private float _zoomHeightMax = 50f;
+    private float _zoomHeight;
 
-    // screen edge motion
-    // [SerializeField]
-    // [Range(0f, 0.1f)]
-    // float edgeTolerance = 0.05f; // TO DO -- For use with camera boundaries
-    // [SerializeField]
-    // bool useScreenEdge = true; // TO DO -- For use with camera boundaries
+    // Rotation
+    [SerializeField] [Range(0.1f, 1f)] private float _rotationSpeedMax = 0.25f;
 
-    // value set in various functions
+    // screen edge motion -- NOT IMPLEMENTED
+    // [SerializeField] [Range(0f, 0.1f)] float edgeTolerance = 0.05f; // TO DO -- For use with camera boundaries
+    // [SerializeField] bool useScreenEdge = true; // TO DO -- For use with camera boundaries
 
-    Vector3 targetPosition;
+    public Tuple<float, float> Zoom { get { return new Tuple<float, float>(_zoomHeight, _zoomDampening); } }
+    private Vector3 PlayerPosition { get { return _player.transform.position; } set { _player.transform.position = value; } }
+    private Quaternion PlayerRotation { get { return _player.transform.rotation; } set { _player.transform.rotation = value; } }
+    private Vector3 LocalPosition { get { return transform.localPosition; } set { transform.localPosition = value; } }
 
-    float zoomHeight;
-
-    Vector3 horizontalVelocity;
-    Vector3 lastPosition;
-
-    // Vector3 startDrag;
-
-
-    void Awake()
+    private void Awake()
     {
-        cameraInput = new CameraInput();
-        raycaster = GetComponent<PhysicsRaycaster>();
-        audioListener = GetComponent<AudioListener>();
-        zoomHeight = transform.position.y;
-        parent = transform.parent;
+        _cameraInput = new CameraInput();
+        _raycaster = GetComponent<PhysicsRaycaster>();
+        _audioListener = GetComponent<AudioListener>();
+        _zoomHeight = transform.position.y;
+        _player = GetComponentInParent<Player>();
     }
 
-    void OnEnable()
+    private void OnEnable()
     {
         // Add bindings when enabled and begin tracking position
 
-        lastPosition = transform.position;
-        movement = cameraInput.Controls.Movement;
-        rotation = cameraInput.Controls.Rotation;
-        cameraInput.Controls.ZoomCamera.performed += ZoomCamera;
-        cameraInput.Enable();
+        _panLastPosition = transform.position;
+        _inputMovement = _cameraInput.Controls.Movement;
+        _inputRotation = _cameraInput.Controls.Rotation;
+        _cameraInput.Controls.ZoomCamera.performed += ZoomCamera;
+        _cameraInput.Enable();
     }
 
-    void OnDisable()
+    private void OnDisable()
     {
         // Remove bindings when disabled
 
-        cameraInput.Controls.ZoomCamera.performed -= ZoomCamera;
-        cameraInput.Disable();
+        _cameraInput.Controls.ZoomCamera.performed -= ZoomCamera;
+        _cameraInput.Disable();
     }
 
-    void Update()
+    private void Update()
     {
-        GetKeyboardMovement();
+        UpdateKeyboardMovement();
         UpdateVelocity();
         UpdateCameraPosition();
         UpdateBasePosition();
         UpdateCameraRotation();
+        UpdateCameraSnap();
         CheckActiveCamera();
     }
 
@@ -106,27 +90,27 @@ public class CameraHandler : MonoBehaviour
     {
         // Adds camera from the current scene to be tracked
 
-        if (!sceneCameras.Contains(addCamera))
-            sceneCameras.Add(addCamera);
+        if (!_sceneCameras.Contains(addCamera))
+            _sceneCameras.Add(addCamera);
     }
 
-    void CheckActiveCamera()
+    private void CheckActiveCamera()
     {
-        // Ensures physics raycaster is only active if no other camera is in use
+        // Ensures physics _raycaster is only active if no other camera is in use
 
-        // If there are any scene cameras currently active, disable raycaster on this camera
-        if (sceneCameras.Any() && sceneCameras.Any(checkCamera => checkCamera.enabled))
+        // If there are any scene cameras currently active, disable _raycaster on this camera
+        if (_sceneCameras.Any() && _sceneCameras.Any(checkCamera => checkCamera.enabled))
         {
-            raycaster.enabled = false;
-            audioListener.enabled = false;
+            _raycaster.enabled = false;
+            _audioListener.enabled = false;
             return;
         }
 
-        // If this is the only camera active, ensure raycaster and audio listener are turned back on
-        if (!raycaster.enabled || !audioListener.enabled)
+        // If this is the only camera active, ensure _raycaster and audio listener are turned back on
+        if (!_raycaster.enabled || !_audioListener.enabled)
         {
-            raycaster.enabled = true;
-            audioListener.enabled = true;
+            _raycaster.enabled = true;
+            _audioListener.enabled = true;
         }
     }
 
@@ -134,37 +118,36 @@ public class CameraHandler : MonoBehaviour
     {
         // Returns currently active camera
 
-        foreach (Camera camera in sceneCameras)
+        foreach (Camera camera in _sceneCameras)
             if (camera.enabled)
                 return camera;
 
         return Camera.main;
     }
 
-
-    void UpdateVelocity()
+    private void UpdateVelocity()
     {
-        // Tracks velocity of camera movement
+        // Tracks velocity of camera _inputMovement
 
-        horizontalVelocity = (parent.transform.position - lastPosition) / Time.deltaTime;
-        horizontalVelocity.y = 0;
-        lastPosition = parent.transform.position;
+        _panVelocity = (PlayerPosition - _panLastPosition) / Time.deltaTime;
+        _panVelocity.y = 0;
+        _panLastPosition = PlayerPosition;
     }
 
-    void GetKeyboardMovement()
+    private void UpdateKeyboardMovement()
     {
-        // Translates keyboard input into camera movement values
+        // Translates keyboard input into camera _inputMovement values
 
-        Vector3 inputValue = movement.ReadValue<Vector2>().x * GetCameraRight()
-            + movement.ReadValue<Vector2>().y * GetCameraForward();
+        Vector2 readValue = _inputMovement.ReadValue<Vector2>();
+        Vector3 inputValue = readValue.x * GetCameraRight() + readValue.y * GetCameraForward();
 
         inputValue = inputValue.normalized;
 
         if (inputValue.sqrMagnitude > 0.1f)
-            targetPosition += inputValue;
+            _panNextPosition += inputValue;
     }
 
-    Vector3 GetCameraRight()
+    private Vector3 GetCameraRight()
     {
         // Returns camera right with a flattened y axis
 
@@ -173,7 +156,7 @@ public class CameraHandler : MonoBehaviour
         return right;
     }
 
-    Vector3 GetCameraForward()
+    private Vector3 GetCameraForward()
     {
         // Returns camera forward with a flattened y axis
 
@@ -182,28 +165,28 @@ public class CameraHandler : MonoBehaviour
         return forward;
     }
 
-    void UpdateBasePosition()
+    private void UpdateBasePosition()
     {
         // Moves camera parent (Player) to new position
 
-        if (targetPosition.sqrMagnitude > 0.1f)
+        if (_panNextPosition.sqrMagnitude > 0.1f)
         {
-            speed = Mathf.Lerp(speed, maxSpeed, Time.deltaTime * acceleration);
-            parent.transform.position += targetPosition * speed * Time.deltaTime;
+            _panSpeed = Mathf.Lerp(_panSpeed, _panSpeedMax, Time.deltaTime * _panAcceleration);
+            PlayerPosition += _panSpeed * Time.deltaTime * _panNextPosition;
         }
 
-        targetPosition = Vector3.zero;
+        _panNextPosition = Vector3.zero;
     }
 
-    void UpdateCameraRotation()
+    private void UpdateCameraRotation()
     {
         // Rotate camera parent (Player) while holding middle mouse button or pressing Q/E
 
-        float value = rotation.ReadValue<Vector2>().x;
-        parent.rotation = Quaternion.Euler(parent.rotation.eulerAngles.x, value * maxRotationSpeed + parent.rotation.eulerAngles.y, parent.rotation.eulerAngles.z);
+        float value = _inputRotation.ReadValue<Vector2>().x;
+        PlayerRotation = Quaternion.Euler(PlayerRotation.eulerAngles.x, value * _rotationSpeedMax + PlayerRotation.eulerAngles.y, PlayerRotation.eulerAngles.z);
     }
 
-    void ZoomCamera(InputAction.CallbackContext inputValue)
+    private void ZoomCamera(InputAction.CallbackContext inputValue)
     {
         // Sets the expected zoom height based on input
 
@@ -211,33 +194,56 @@ public class CameraHandler : MonoBehaviour
 
         if (Mathf.Abs(value) > 0.1f)
         {
-            zoomHeight = transform.localPosition.y + value * stepSize;
-            if (zoomHeight < minHeight)
-                zoomHeight = minHeight;
-            else if (zoomHeight > maxHeight)
-                zoomHeight = maxHeight;
+            _zoomHeight = LocalPosition.y + value * _zoomStepSize;
+            if (_zoomHeight < _zoomHeightMin)
+                _zoomHeight = _zoomHeightMin;
+            else if (_zoomHeight > _zoomHeightMax)
+                _zoomHeight = _zoomHeightMax;
         }
     }
 
-    public float GetCameraZoomHeight()
-    {
-        return zoomHeight;
-    }   
-
-    public float GetCameraZoomDampening()
-    {
-        return zoomDampening;
-    }
-
-    void UpdateCameraPosition()
+    private void UpdateCameraPosition()
     {
         // Pulls camera backwards, giving a "zooming out" feel
 
-        Vector3 zoomTarget = new Vector3(transform.localPosition.x, zoomHeight, transform.localPosition.z);
-        Vector3 moveVector = new Vector3(-0.5f, 0f, 0.5f); // Keep x and z inverted to center camera
-        zoomTarget -= zoomSpeed * (zoomHeight - transform.localPosition.y) * moveVector;
+        Vector3 zoomTarget = new(LocalPosition.x, _zoomHeight, LocalPosition.z);
+        Vector3 moveVector = new(-0.5f, 0f, 0.5f); // Keep x and z inverted to center camera
+        zoomTarget -= _zoomZoomSpeed * (_zoomHeight - LocalPosition.y) * moveVector;
 
-        transform.localPosition = Vector3.Lerp(transform.localPosition, zoomTarget, Time.deltaTime * zoomDampening);
+        LocalPosition = Vector3.Lerp(LocalPosition, zoomTarget, Time.deltaTime * _zoomDampening);
     }
 
+    public void SetCameraSnap(Unit unit)
+    {
+        if (!unit)
+            return;
+
+        _panSnapPosition = unit.transform.position;
+    }
+
+    public void SetCameraSnap(Vector3 position)
+    {
+        if (position == Vector3.zero)
+            return;
+
+        _panSnapPosition = position;
+    }
+
+    private void UpdateCameraSnap()
+    {
+        // If no snap target is set, exit
+        if (_panSnapPosition == Vector3.zero)
+            return;
+
+        // Set new target position and pan speed
+        Vector3 newPosition = new(_panSnapPosition.x, PlayerPosition.y, _panSnapPosition.z);
+        _panSpeed = Mathf.Lerp(_panSpeed, _panSpeedMax, Time.deltaTime * _panAcceleration);
+
+        // Move the camera focus target
+        PlayerPosition = Vector3.Lerp(PlayerPosition, newPosition, 0.01f * _panSpeed);
+
+        // Once position is reached, clear snap target
+        if (Vector3.Distance(PlayerPosition, newPosition) <= 0.25f) 
+            _panSnapPosition = Vector3.zero;
+    }
 }
