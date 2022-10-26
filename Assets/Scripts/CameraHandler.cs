@@ -15,6 +15,7 @@ public class CameraHandler : MonoBehaviour
     PhysicsRaycaster raycaster;
     AudioListener audioListener;
     InputAction movement;
+    InputAction rotation;
     public Transform parent;
 
     // horizontal motion
@@ -78,7 +79,7 @@ public class CameraHandler : MonoBehaviour
 
         lastPosition = transform.position;
         movement = cameraInput.Controls.Movement;
-        cameraInput.Controls.RotateCamera.performed += RotateCamera;
+        rotation = cameraInput.Controls.Rotation;
         cameraInput.Controls.ZoomCamera.performed += ZoomCamera;
         cameraInput.Enable();
     }
@@ -87,7 +88,6 @@ public class CameraHandler : MonoBehaviour
     {
         // Remove bindings when disabled
 
-        cameraInput.Controls.RotateCamera.performed -= RotateCamera;
         cameraInput.Controls.ZoomCamera.performed -= ZoomCamera;
         cameraInput.Disable();
     }
@@ -98,6 +98,7 @@ public class CameraHandler : MonoBehaviour
         UpdateVelocity();
         UpdateCameraPosition();
         UpdateBasePosition();
+        UpdateCameraRotation();
         CheckActiveCamera();
     }
 
@@ -194,15 +195,11 @@ public class CameraHandler : MonoBehaviour
         targetPosition = Vector3.zero;
     }
 
-    void RotateCamera(InputAction.CallbackContext inputValue)
+    void UpdateCameraRotation()
     {
-        // Rotate camera parent (Player) while holding middle mouse button
-        // TO DO -- Add keyboard rotation
+        // Rotate camera parent (Player) while holding middle mouse button or pressing Q/E
 
-        if (!Mouse.current.middleButton.isPressed)
-            return;
-
-        float value = inputValue.ReadValue<Vector2>().x;
+        float value = rotation.ReadValue<Vector2>().x;
         parent.rotation = Quaternion.Euler(parent.rotation.eulerAngles.x, value * maxRotationSpeed + parent.rotation.eulerAngles.y, parent.rotation.eulerAngles.z);
     }
 

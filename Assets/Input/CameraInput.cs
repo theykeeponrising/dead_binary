@@ -37,7 +37,7 @@ public partial class @CameraInput : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""RotateCamera"",
+                    ""name"": ""Rotation"",
                     ""type"": ""Value"",
                     ""id"": ""4617b249-bd94-4ac8-bfc0-9210df36bbd3"",
                     ""expectedControlType"": ""Vector2"",
@@ -112,15 +112,70 @@ public partial class @CameraInput : IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": """",
-                    ""id"": ""b9c14dd8-9832-40d3-bc32-44d55e0b6dbd"",
+                    ""name"": ""2D Vector"",
+                    ""id"": ""7289cda6-7f6a-4ce1-8b65-e67e119f6211"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": ""ScaleVector2(x=5,y=5)"",
+                    ""groups"": """",
+                    ""action"": ""Rotation"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""cb525634-bd89-4b12-80d2-200f81195065"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Rotation"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""c213ea59-35c7-4e58-a8ac-e75cbe9b8022"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Rotation"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""One Modifier"",
+                    ""id"": ""e01f92ce-a357-4c12-9b74-35ddeff36db2"",
+                    ""path"": ""OneModifier"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Rotation"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""modifier"",
+                    ""id"": ""4562589a-4e7a-4b48-81f8-7aa5d1135bfb"",
+                    ""path"": ""<Mouse>/middleButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Rotation"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""binding"",
+                    ""id"": ""b7f78288-633e-452f-8ca3-07cbdd451a4f"",
                     ""path"": ""<Mouse>/delta"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""RotateCamera"",
+                    ""action"": ""Rotation"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": false
+                    ""isPartOfComposite"": true
                 },
                 {
                     ""name"": """",
@@ -141,7 +196,7 @@ public partial class @CameraInput : IInputActionCollection2, IDisposable
         // Controls
         m_Controls = asset.FindActionMap("Controls", throwIfNotFound: true);
         m_Controls_Movement = m_Controls.FindAction("Movement", throwIfNotFound: true);
-        m_Controls_RotateCamera = m_Controls.FindAction("RotateCamera", throwIfNotFound: true);
+        m_Controls_Rotation = m_Controls.FindAction("Rotation", throwIfNotFound: true);
         m_Controls_ZoomCamera = m_Controls.FindAction("ZoomCamera", throwIfNotFound: true);
     }
 
@@ -203,14 +258,14 @@ public partial class @CameraInput : IInputActionCollection2, IDisposable
     private readonly InputActionMap m_Controls;
     private IControlsActions m_ControlsActionsCallbackInterface;
     private readonly InputAction m_Controls_Movement;
-    private readonly InputAction m_Controls_RotateCamera;
+    private readonly InputAction m_Controls_Rotation;
     private readonly InputAction m_Controls_ZoomCamera;
     public struct ControlsActions
     {
         private @CameraInput m_Wrapper;
         public ControlsActions(@CameraInput wrapper) { m_Wrapper = wrapper; }
         public InputAction @Movement => m_Wrapper.m_Controls_Movement;
-        public InputAction @RotateCamera => m_Wrapper.m_Controls_RotateCamera;
+        public InputAction @Rotation => m_Wrapper.m_Controls_Rotation;
         public InputAction @ZoomCamera => m_Wrapper.m_Controls_ZoomCamera;
         public InputActionMap Get() { return m_Wrapper.m_Controls; }
         public void Enable() { Get().Enable(); }
@@ -224,9 +279,9 @@ public partial class @CameraInput : IInputActionCollection2, IDisposable
                 @Movement.started -= m_Wrapper.m_ControlsActionsCallbackInterface.OnMovement;
                 @Movement.performed -= m_Wrapper.m_ControlsActionsCallbackInterface.OnMovement;
                 @Movement.canceled -= m_Wrapper.m_ControlsActionsCallbackInterface.OnMovement;
-                @RotateCamera.started -= m_Wrapper.m_ControlsActionsCallbackInterface.OnRotateCamera;
-                @RotateCamera.performed -= m_Wrapper.m_ControlsActionsCallbackInterface.OnRotateCamera;
-                @RotateCamera.canceled -= m_Wrapper.m_ControlsActionsCallbackInterface.OnRotateCamera;
+                @Rotation.started -= m_Wrapper.m_ControlsActionsCallbackInterface.OnRotation;
+                @Rotation.performed -= m_Wrapper.m_ControlsActionsCallbackInterface.OnRotation;
+                @Rotation.canceled -= m_Wrapper.m_ControlsActionsCallbackInterface.OnRotation;
                 @ZoomCamera.started -= m_Wrapper.m_ControlsActionsCallbackInterface.OnZoomCamera;
                 @ZoomCamera.performed -= m_Wrapper.m_ControlsActionsCallbackInterface.OnZoomCamera;
                 @ZoomCamera.canceled -= m_Wrapper.m_ControlsActionsCallbackInterface.OnZoomCamera;
@@ -237,9 +292,9 @@ public partial class @CameraInput : IInputActionCollection2, IDisposable
                 @Movement.started += instance.OnMovement;
                 @Movement.performed += instance.OnMovement;
                 @Movement.canceled += instance.OnMovement;
-                @RotateCamera.started += instance.OnRotateCamera;
-                @RotateCamera.performed += instance.OnRotateCamera;
-                @RotateCamera.canceled += instance.OnRotateCamera;
+                @Rotation.started += instance.OnRotation;
+                @Rotation.performed += instance.OnRotation;
+                @Rotation.canceled += instance.OnRotation;
                 @ZoomCamera.started += instance.OnZoomCamera;
                 @ZoomCamera.performed += instance.OnZoomCamera;
                 @ZoomCamera.canceled += instance.OnZoomCamera;
@@ -250,7 +305,7 @@ public partial class @CameraInput : IInputActionCollection2, IDisposable
     public interface IControlsActions
     {
         void OnMovement(InputAction.CallbackContext context);
-        void OnRotateCamera(InputAction.CallbackContext context);
+        void OnRotation(InputAction.CallbackContext context);
         void OnZoomCamera(InputAction.CallbackContext context);
     }
 }
