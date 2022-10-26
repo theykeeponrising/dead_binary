@@ -71,6 +71,9 @@ public class StateTarget : StateCancel
         {
             v.TryGetComponent(out Unit c);
             c.GetActor().IsTargetUX(false, false);
+
+            // Show healthbar
+            v.healthbar.gameObject.SetActive(true);
         }
 
         GlobalManager.ActiveMap.mapGrid.DestroyIndicatorAOE(indicatorAOE);
@@ -145,6 +148,7 @@ public class StateTarget : StateCancel
         if (initialTargets) infoPanel.CreateTargetButtons(targets);
         else infoPanel.UpdateTargetButtons();
         ShowSelectionCircle(targetedUnit.transform.position);
+        ShowHealtbar(targetedUnit);
     }
 
     public virtual void ChangeTarget(InCombatPlayerAction t, Tile targetTile, bool initialTargets = false)
@@ -168,6 +172,12 @@ public class StateTarget : StateCancel
         float itemAreaOfEffect = areaOfEffect * GlobalManager.tileSpacing;
         indicatorAOE.transform.localScale = new Vector3(itemAreaOfEffect, itemAreaOfEffect, itemAreaOfEffect);
         indicatorAOE.SetActive(true);
+    }
+
+    public void ShowHealtbar(Unit targetedUnit)
+    {
+        foreach (Unit target in targets) target.healthbar.gameObject.SetActive(false);
+        targetedUnit.healthbar.gameObject.SetActive(true);
     }
 
     public void SetStoredAction(UnitTargetAction newAction)
