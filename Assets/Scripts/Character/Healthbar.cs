@@ -110,8 +110,7 @@ public class Healthbar : MonoBehaviour
         // Scales the healthbar UI so that it is visible regardless of camera zoom
         if (activeCamera == Camera.main)
         {
-            float zoomHeight = Camera.main.GetComponent<CameraHandler>().GetCameraZoomHeight();
-            float zoomDampening = Camera.main.GetComponent<CameraHandler>().GetCameraZoomDampening();
+            (float zoomHeight, float zoomDampening) = Camera.main.GetComponent<CameraHandler>().Zoom;
             float scaleDampening = 0.3f;
 
             transform.localScale = Vector3.Lerp(transform.localScale, Vector3.one * zoomHeight * scaleDampening, Time.deltaTime * zoomDampening);
