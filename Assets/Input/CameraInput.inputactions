@@ -15,6 +15,15 @@
                     "initialStateCheck": true
                 },
                 {
+                    "name": "Position",
+                    "type": "Value",
+                    "id": "bae4f008-5515-4fe1-978f-8dbcb5eff791",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
                     "name": "Rotation",
                     "type": "Value",
                     "id": "4617b249-bd94-4ac8-bfc0-9210df36bbd3",
@@ -31,6 +40,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "InputPan",
+                    "type": "Button",
+                    "id": "4411bfef-ae75-48e2-a6b2-4246f46832cf",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -163,6 +181,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "ZoomCamera",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "bd70847a-972b-44b2-b03f-31377f2bdb1d",
+                    "path": "<Mouse>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Position",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "786fb8c5-d4c4-44bf-8622-77acec8f3f14",
+                    "path": "<Keyboard>/ctrl",
+                    "interactions": "Hold",
+                    "processors": "",
+                    "groups": "",
+                    "action": "InputPan",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

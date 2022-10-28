@@ -15,9 +15,6 @@ public class CameraHandler : MonoBehaviour
     private AudioListener _audioListener;
     private Player _player;
 
-    InputAction _inputMovement;
-    InputAction _inputRotation;
-
     // Horizontal Motion
     [SerializeField] [Range(5f, 50f)] private float _panSpeedMax = 10f;
     [SerializeField] private float _panAcceleration = 10f;
@@ -46,6 +43,10 @@ public class CameraHandler : MonoBehaviour
     private Vector3 PlayerPosition { get { return _player.transform.position; } set { _player.transform.position = value; } }
     private Quaternion PlayerRotation { get { return _player.transform.rotation; } set { _player.transform.rotation = value; } }
     private Vector3 LocalPosition { get { return transform.localPosition; } set { transform.localPosition = value; } }
+    private bool InputPan { get { return _cameraInput.Controls.InputPan.IsPressed(); } }
+    private Vector2 InputMovement { get { return _cameraInput.Controls.Movement.ReadValue<Vector2>(); } }
+    private Vector2 InputRotation { get { return _cameraInput.Controls.Rotation.ReadValue<Vector2>(); } }
+    private Vector2 MousePosition { get { return _cameraInput.Controls.Position.ReadValue<Vector2>(); } }
 
     private void Awake()
     {
@@ -61,8 +62,6 @@ public class CameraHandler : MonoBehaviour
         // Add bindings when enabled and begin tracking position
 
         _panLastPosition = transform.position;
-        _inputMovement = _cameraInput.Controls.Movement;
-        _inputRotation = _cameraInput.Controls.Rotation;
         _cameraInput.Controls.ZoomCamera.performed += ZoomCamera;
         _cameraInput.Enable();
     }
@@ -136,12 +135,10 @@ public class CameraHandler : MonoBehaviour
 
     private void UpdateKeyboardMovement()
     {
-        // Translates keyboard input into camera _inputMovement values
+        // Translates keyboard input or mouse position into camera position values
 
-        Vector2 readValue = _inputMovement.ReadValue<Vector2>();
-        Vector3 inputValue = readValue.x * GetCameraRight() + readValue.y * GetCameraForward();
-
-        inputValue = inputValue.normalized;
+        Vector2 readValue = InputPan ? Camera.main.ScreenToViewportPoint(MousePosition) - new Vector3(0.5f, 0.5f, 0f) : InputMovement;
+        Vector3 inputValue = (readValue.x * GetCameraRight() + readValue.y * GetCameraForward()).normalized;
 
         if (inputValue.sqrMagnitude > 0.1f)
             _panNextPosition += inputValue;
@@ -182,7 +179,7 @@ public class CameraHandler : MonoBehaviour
     {
         // Rotate camera parent (Player) while holding middle mouse button or pressing Q/E
 
-        float value = _inputRotation.ReadValue<Vector2>().x;
+        float value = InputRotation.x;
         PlayerRotation = Quaternion.Euler(PlayerRotation.eulerAngles.x, value * _rotationSpeedMax + PlayerRotation.eulerAngles.y, PlayerRotation.eulerAngles.z);
     }
 
