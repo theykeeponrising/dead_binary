@@ -5131,6 +5131,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
+      propertyPath: fireSound.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: reloadSound.Array.size
       value: 4
       objectReference: {fileID: 0}
@@ -5145,7 +5149,19 @@ PrefabInstance:
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: fireSound.Array.data[0]
       value: 
-      objectReference: {fileID: 8300000, guid: 4161c0cedab3a4f499dd169695ff8d8f, type: 3}
+      objectReference: {fileID: 8300000, guid: b7db0fed5a3873e479863e35d95c6f6f, type: 3}
+    - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
+      propertyPath: fireSound.Array.data[1]
+      value: 
+      objectReference: {fileID: 8300000, guid: ef4585fcacc5d484e8d6119fdd324b19, type: 3}
+    - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
+      propertyPath: fireSound.Array.data[2]
+      value: 
+      objectReference: {fileID: 8300000, guid: e38e8e677fa01314d827677d6a546271, type: 3}
+    - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
+      propertyPath: fireSound.Array.data[3]
+      value: 
+      objectReference: {fileID: 8300000, guid: 363ef0b8d64d19041aa6628fb518201d, type: 3}
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: stats.maxRangeNoPenalty
       value: 7
@@ -5161,19 +5177,19 @@ PrefabInstance:
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: reloadSound.Array.data[0]
       value: 
-      objectReference: {fileID: 8300000, guid: 4d53eba16aec35f4480621801d2d2397, type: 3}
+      objectReference: {fileID: 8300000, guid: 5eabb9c484e9d29488ade01c7a90ad74, type: 3}
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: reloadSound.Array.data[1]
       value: 
-      objectReference: {fileID: 8300000, guid: b01b47d173d0c18468fbb0ecb159e5be, type: 3}
+      objectReference: {fileID: 8300000, guid: f79d895d50b6ab34d92d509815da9194, type: 3}
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: reloadSound.Array.data[2]
       value: 
-      objectReference: {fileID: 8300000, guid: 56bfebf9a44c1bf4a8ee2de6de6fb0c6, type: 3}
+      objectReference: {fileID: 8300000, guid: e7fb52f364cf67848b4fecf7d6e3a097, type: 3}
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: reloadSound.Array.data[3]
       value: 
-      objectReference: {fileID: 8300000, guid: 2d447e571f11ff0478ca0dbf02e94442, type: 3}
+      objectReference: {fileID: 8300000, guid: ae1d32a272f7bca43a598059ccd450f5, type: 3}
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: stats.baseAccuracyModifier
       value: 10

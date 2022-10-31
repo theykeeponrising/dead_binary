@@ -104,6 +104,7 @@ public sealed class CoverObject : MonoBehaviour
         {
             rigidbody.GetComponent<Collider>().enabled = true;
             rigidbody.isKinematic = false;
+            Destroy(rigidbody.gameObject, 10);
         }
 
         // Remove this object as a valid cover piece for tiles
