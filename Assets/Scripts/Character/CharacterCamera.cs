@@ -27,6 +27,7 @@ public class CharacterCamera : MonoBehaviour
         characterCamera.enabled = true;
         raycaster.enabled = true;
         unit.healthbar.Hide();
+        Map.ClearTileHighlights();
     }
 
     private void OnDisable()

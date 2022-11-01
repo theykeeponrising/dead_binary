@@ -14,7 +14,10 @@ public class Map : MonoBehaviour
     public static Tilemap CoverMap;
     public static Tilemap UnitMap;
 
-    void Awake()
+    private static List<Tile> _tileMapResults;
+    private static List<CoverObject> _coverMapResults;
+
+    private void Awake()
     {
         mapEffects = GetComponent<MapEffects>();
         mapGrid = GetComponentInChildren<MapGrid>();
@@ -24,6 +27,9 @@ public class Map : MonoBehaviour
         TileMap = tilemaps[1];
         CoverMap = tilemaps[2];
         UnitMap = tilemaps[3];
+
+        _tileMapResults = TileMap.GetComponentsInChildren<Tile>().ToList();
+        _coverMapResults = CoverMap.GetComponentsInChildren<CoverObject>().ToList();
     }
 
     public static List<Unit> FindUnits(Faction faction = null)
@@ -49,14 +55,14 @@ public class Map : MonoBehaviour
     {
         // Returns all tiles on the active map
 
-        return TileMap.GetComponentsInChildren<Tile>().ToList();
+        return _tileMapResults;
     }
 
     public static List<CoverObject> FindCoverObjects()
     {
         // Returns all tiles on the active map
 
-        return CoverMap.GetComponentsInChildren<CoverObject>().ToList();
+        return _coverMapResults;
     }
 
     public GameObject CreateEffect(GameObject efxPrefab, Vector3 efxPosition, Quaternion efxRotation)
@@ -92,5 +98,13 @@ public class Map : MonoBehaviour
         // Add an existing effect to the effects list
 
         mapEffects.AddEffect(efxPrefab.transform);
+    }
+
+    public static void ClearTileHighlights()
+    {
+        // Removes all tile highlights
+
+        foreach (Tile tile in _tileMapResults)
+            tile.HighlightTile(showHighlight:false);
     }
 }
