@@ -196,7 +196,7 @@ public class StateTarget : StateCancel
     {
         if (!IsPointerOverUIElement(t))
         {
-            Camera camera = Camera.main.GetComponent<CameraHandler>().GetActiveCamera();
+            Camera camera = CameraHandler.ActiveCamera;
             Ray ray = camera.ScreenPointToRay(t.playerInput.Controls.InputPosition.ReadValue<Vector2>());
 
             if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity))

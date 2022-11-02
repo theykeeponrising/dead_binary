@@ -8,7 +8,6 @@ using UnityEngine.EventSystems;
 public class CameraHandler : MonoBehaviour
 {
     // Used for Camera controls
-
     private readonly List<Camera> _sceneCameras = new();
     private CameraInput _cameraInput;
     private PhysicsRaycaster _raycaster;
@@ -39,6 +38,7 @@ public class CameraHandler : MonoBehaviour
     // [SerializeField] [Range(0f, 0.1f)] float edgeTolerance = 0.05f; // TO DO -- For use with camera boundaries
     // [SerializeField] bool useScreenEdge = true; // TO DO -- For use with camera boundaries
 
+    public static Camera ActiveCamera { get { return Camera.main.GetComponent<CameraHandler>().GetActiveCamera(); } }
     public Tuple<float, float> Zoom { get { return new Tuple<float, float>(_zoomHeight, _zoomDampening); } }
     private Vector3 PlayerPosition { get { return _player.transform.position; } set { _player.transform.position = value; } }
     private Quaternion PlayerRotation { get { return _player.transform.rotation; } set { _player.transform.rotation = value; } }
@@ -113,7 +113,7 @@ public class CameraHandler : MonoBehaviour
         }
     }
 
-    public Camera GetActiveCamera()
+    private Camera GetActiveCamera()
     {
         // Returns currently active camera
 

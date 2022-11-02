@@ -256,8 +256,7 @@ public class InCombatPlayerAction
         }
 
         // Don't show if we are not currently using the main camera
-        Camera activeCamera = Camera.main.GetComponent<CameraHandler>().GetActiveCamera();
-        if (activeCamera != Camera.main)
+        if (CameraHandler.ActiveCamera != Camera.main)
             return;
 
         // Previews move path on mouse over
