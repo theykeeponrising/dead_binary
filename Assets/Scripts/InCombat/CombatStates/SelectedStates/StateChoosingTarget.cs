@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class StateChoosingTarget : StateTarget
 {
     public StateChoosingTarget(StateMachine<InCombatPlayerAction> machine, UnitTargetAction storedAction) : base(machine, storedAction) { Machine = machine; this.storedAction = storedAction; }
@@ -9,7 +5,7 @@ public class StateChoosingTarget : StateTarget
     public override void FindTargets<TargetType>(InCombatPlayerAction t)
     {
         base.FindTargets<TargetType>(t);
-        t.selectedCharacter.GetActor().GetTarget();
+        t.selectedCharacter.GetActor().GetTarget(storedAction.UseCharacterCamera);
     }
 
     public override void InputActionBtn(InCombatPlayerAction t, int index)

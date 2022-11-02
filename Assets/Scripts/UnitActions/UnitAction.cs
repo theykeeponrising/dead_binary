@@ -73,7 +73,7 @@ public abstract class UnitAction : MonoBehaviour
 
                 // Check that unit meets Ammo cost
                 if (requirement == UnitActionRequirement.AMMO)
-                    if (!unit || unit.inventory.equippedWeapon.stats.ammoCurrent <= 0)
+                    if (!unit || unit.inventory.equippedWeapon.Stats.AmmoCurrent <= 0)
                     {
                         if (printDebug) Debug.Log("failed requirement ammo");
                         return false;
@@ -81,7 +81,7 @@ public abstract class UnitAction : MonoBehaviour
 
                 // Check that unit's ammo isn't full
                 if (requirement == UnitActionRequirement.RELOAD)
-                    if (!unit || unit.inventory.equippedWeapon.stats.ammoCurrent >= unit.inventory.equippedWeapon.stats.ammoMax)
+                    if (!unit || unit.inventory.equippedWeapon.Stats.AmmoCurrent >= unit.inventory.equippedWeapon.Stats.AmmoMax)
                     {
                         if (printDebug) Debug.Log("failed requirement reload");
                         return false;

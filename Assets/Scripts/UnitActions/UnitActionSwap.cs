@@ -81,7 +81,7 @@ public class UnitActionSwap : UnitAction
             // Set animator values, play animation
             unit.GetAnimator().Play("Draw");
             unit.GetAnimator().SetLayerWeight(unit.EquippedWeapon.GetAnimationLayer(), 1);
-            unit.GetAnimator().SetAnimationSpeed(unit.EquippedWeapon.attributes.animationSpeed);
+            unit.GetAnimator().SetAnimationSpeed(unit.EquippedWeapon.Attributes.AnimationSpeed);
             unit.GetSFX().Event_PlaySound(AnimationType.SWAP);
 
             ActionPanelScript actionPanel = UIManager.GetActionPanel();

@@ -21,19 +21,18 @@ public class MapGrid : MonoBehaviour
     
     void Awake() 
     {
-        GameObject[] gameObjects = GameObject.FindGameObjectsWithTag("Tile");
+        List<Tile> tiles = Map.FindTiles();
         float minX = float.MaxValue;
         float maxX = float.MinValue;
         float minZ = float.MaxValue;
         float maxZ = float.MinValue;
 
-        if (gameObjects.Length == 0) Debug.LogError("No objects with tag 'Tile' found!");
+        if (tiles.Count == 0) Debug.LogError("No objects with tag 'Tile' found!");
 
-        foreach (GameObject go in gameObjects)
+        foreach (Tile tile in tiles)
         {
-            Tile tile = go.GetComponent<Tile>();
             //Get position of tile
-            Vector3 pos = go.transform.position;
+            Vector3 pos = tile.transform.position;
             float x = pos.x;
             float z = pos.z;
             if (x < minX) minX = x;
@@ -51,9 +50,8 @@ public class MapGrid : MonoBehaviour
         Debug.Log(string.Format("Grid Width: {0}, Grid Height: {1}", width, height));
         grid = new Tile[width * height];
 
-        foreach (GameObject go in gameObjects)
+        foreach (Tile tile in tiles)
         {
-            Tile tile = go.GetComponent<Tile>();
             AddTile(tile);
         }
     }

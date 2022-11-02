@@ -359,7 +359,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     public float CalculateHitChance(Unit attacker, Unit defender, Tile attackerTile)
     {
         int distance = grid.GetTileDistance(attackerTile, defender.currentTile);
-        float weaponAccuracyModifier = attacker.inventory.equippedWeapon.stats.baseAccuracyModifier;
+        float weaponAccuracyModifier = attacker.inventory.equippedWeapon.Stats.BaseAccuracyModifier;
 
         float weaponAccuracyPenalty = attacker.inventory.equippedWeapon.GetAccuracyPenalty(distance);
 

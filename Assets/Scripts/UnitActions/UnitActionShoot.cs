@@ -1,12 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class UnitActionShoot : UnitTargetAction
 {
-    int distanceToTarget;
-    protected Timer bufferStartTimer;
-    protected Timer bufferEndTimer;
+    private int _distanceToTarget;
+    protected Timer _bufferStartTimer;
+    protected Timer _bufferEndTimer;
 
     public override void UseAction(Unit setTarget)
     {
@@ -22,15 +20,15 @@ public class UnitActionShoot : UnitTargetAction
             return;
         }
 
-        targetUnit = setTarget;
-        distanceToTarget = unit.currentTile.GetMovementCost(targetUnit.currentTile, 15).Count;
+        TargetUnit = setTarget;
+        _distanceToTarget = unit.currentTile.GetMovementCost(TargetUnit.currentTile, 15).Count;
         unit.AddFlag(FlagType.AIM);
 
         unit.GetActor().targetCharacter = setTarget;
         unit.SpendActionPoints(actionCost);
 
-        bufferStartTimer = new Timer(bufferStart);
-        bufferEndTimer = new Timer(bufferEnd);
+        _bufferStartTimer = new(bufferStart);
+        _bufferEndTimer = new(bufferEnd);
 
         StartPerformance();
     }
@@ -38,15 +36,14 @@ public class UnitActionShoot : UnitTargetAction
     public override void CheckAction()
     {
         // Wait for the start buffer
-        while (!bufferStartTimer.CheckTimer())
+        while (!_bufferStartTimer.CheckTimer())
             return;
 
         // Perform shoot animation, inflict damage, spend ammo and AP
         if (ActionStage(0))
         {
-            unit.GetAnimator().Play("Shoot");
-            if (targetUnit) targetUnit.TakeDamage(unit, unit.EquippedWeapon.GetDamage(), distanceToTarget, MessageType.DMG_CONVENTIONAL);
-            unit.EquippedWeapon.SpendAmmo();
+            PerformShot();
+            DamageTarget();
             NextStage();
         }
 
@@ -55,11 +52,25 @@ public class UnitActionShoot : UnitTargetAction
             return;
 
         // Wait for the end buffer
-        while (!bufferEndTimer.CheckTimer())
+        while (!_bufferEndTimer.CheckTimer())
             return;
 
         // Revert to idle state
         unit.GetActor().ClearTarget();
         EndPerformance();
+    }
+
+    private void DamageTarget()
+    {
+        if (!TargetUnit)
+            return;
+
+        TargetUnit.TakeDamage(unit, unit.EquippedWeapon.GetDamage(), _distanceToTarget, MessageType.DMG_CONVENTIONAL);
+    }
+
+    private void PerformShot()
+    {
+        unit.GetAnimator().Play("Shoot");
+        unit.EquippedWeapon.SpendAmmo();
     }
 }

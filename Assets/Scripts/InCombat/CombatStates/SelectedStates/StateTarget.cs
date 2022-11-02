@@ -30,7 +30,7 @@ public class StateTarget : StateCancel
         infoPanel.UpdateHit(-1);
 
         targets = new List<Unit>();
-        targetFaction = t.selectedCharacter.attributes.faction.GetFactionsByRelation(storedAction.targetFaction)[0];
+        targetFaction = t.selectedCharacter.attributes.faction.GetFactionsByRelation(storedAction.TargetFaction)[0];
 
         if (storedAction.GetType().IsSubclassOf(typeof(UnitActionItem)))
         {

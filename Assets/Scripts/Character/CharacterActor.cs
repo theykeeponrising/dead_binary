@@ -243,12 +243,12 @@ public class CharacterActor
         unit.GetAnimator().CoverCrouch();
     }
 
-    public void GetTarget()
+    public void GetTarget(bool useCharacterCamera = false)
     {
         // Character it put into "targeting" mode
         // Target selected with left-click will have action done to it (such as attack action)
 
-        unit.GetComponentInChildren<CharacterCamera>().enabled = true;
+        unit.GetComponentInChildren<CharacterCamera>().enabled = useCharacterCamera;
         unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.AIMING, true);
         if (IsCrouching()) ToggleCrouch();
 

@@ -1,14 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class UnitActionShootRocket : UnitActionShoot
 {
-    float _areaOfEffect;
-    Tile _targetTile;
-    Vector3 _triggerPosition => _targetTile.transform.position;
-    Timer _impactTimer;
-    [SerializeField] ParticleSystem rocketEffect;
+    private float _areaOfEffect;
+    private Tile _targetTile;
+    private Timer _impactTimer;
+    [SerializeField] private ParticleSystem rocketEffect;
+
+    private Vector3 TriggerPosition => _targetTile.transform.position;
 
     public override void UseAction(Unit setTarget)
     {
@@ -24,15 +23,15 @@ public class UnitActionShootRocket : UnitActionShoot
             return;
         }
 
-        targetUnit = setTarget;
+        TargetUnit = setTarget;
         _areaOfEffect = unit.EquippedWeapon.GetAreaOfEffect();
         unit.AddFlag(FlagType.AIM);
 
         unit.GetActor().targetCharacter = setTarget;
         unit.SpendActionPoints(actionCost);
 
-        bufferStartTimer = new Timer(bufferStart);
-        bufferEndTimer = new Timer(bufferEnd);
+        _bufferStartTimer = new Timer(bufferStart);
+        _bufferEndTimer = new Timer(bufferEnd);
         _impactTimer = new Timer(0.75f);
 
         StartPerformance();
@@ -41,7 +40,7 @@ public class UnitActionShootRocket : UnitActionShoot
     public override void CheckAction()
     {
         // Wait for the start buffer
-        while (!bufferStartTimer.CheckTimer())
+        while (!_bufferStartTimer.CheckTimer())
             return;
 
         // Perform shoot animation, inflict damage, spend ammo and AP
@@ -69,7 +68,7 @@ public class UnitActionShootRocket : UnitActionShoot
             return;
 
         // Wait for the end buffer
-        while (!bufferEndTimer.CheckTimer())
+        while (!_bufferEndTimer.CheckTimer())
             return;
 
         // Revert to idle state
@@ -77,31 +76,31 @@ public class UnitActionShootRocket : UnitActionShoot
         EndPerformance();
     }
 
-    void DamageTargets()
+    private void DamageTargets()
     {
         // Use on unit if possible, otherwise on empty tile
-        _targetTile = targetUnit ? targetUnit.currentTile : unit.grid.GetTile(targetPosition);
+        _targetTile = TargetUnit ? TargetUnit.currentTile : unit.grid.GetTile(TargetPosition);
 
         foreach (Unit impactedUnit in Tile.GetTileOccupants(Tile.GetAreaOfEffect(_targetTile, _areaOfEffect)))
         {
             impactedUnit.GetAnimator().TakeDamageEffect(unit.EquippedWeapon);
-            impactedUnit.TakeDamage(unit, unit.EquippedWeapon.GetDamage(), _triggerPosition);
+            impactedUnit.TakeDamage(unit, unit.EquippedWeapon.GetDamage(), TriggerPosition);
         }
     }
 
-    void ShowRocketEffect()
+    private void ShowRocketEffect()
     {
         // Creates the item effect object at the trigger position
 
         if (!rocketEffect)
             return;
 
-        GameObject spawnEffect = GlobalManager.ActiveMap.CreateTimedEffect(rocketEffect.gameObject, _triggerPosition, rocketEffect.transform.rotation, 3f);
+        GameObject spawnEffect = GlobalManager.ActiveMap.CreateTimedEffect(rocketEffect.gameObject, TriggerPosition, rocketEffect.transform.rotation, 3f);
         spawnEffect.transform.localScale = Vector3.one * (_areaOfEffect / 2);
         PlayRocketSFX(spawnEffect);
     }
 
-    void PlayRocketSFX(GameObject spawnEffect)
+    private void PlayRocketSFX(GameObject spawnEffect)
     {
         // Plays the rocket effect sound
         

@@ -56,7 +56,5 @@ MonoBehaviour:
   actionStage: 0
   bufferStart: 1
   bufferEnd: 1
-  targetUnit: {fileID: 0}
-  targetPosition: {x: 0, y: 0, z: 0}
-  targetFaction: 1
+  TargetFaction: 1
   rocketEffect: {fileID: 5915368302288556678, guid: f2e00e6df90e601409040714dbb5e4c1, type: 3}

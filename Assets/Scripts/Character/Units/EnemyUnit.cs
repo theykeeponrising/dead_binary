@@ -281,7 +281,7 @@ public class EnemyUnit : Unit
         List<EnemyAction> enemyActions = new();
 
         //If no ammo, either reload or switch weapon
-        if (inventory.equippedWeapon.stats.ammoCurrent == 0)
+        if (inventory.equippedWeapon.Stats.AmmoCurrent == 0)
         {
             enemyActions.Add(CreateReloadAction(currentTile));
             return enemyActions;

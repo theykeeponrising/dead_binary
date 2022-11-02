@@ -1,61 +1,35 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Weapon : MonoBehaviour
 {
     // Main class used for weapon objects
-    [SerializeField] GameObject shellPrefab;
-    Transform shellEject;
+    private Transform _shellEject;
+    private ParticleSystem[] _gunParticles;
+    private Light[] _gunLights;
 
-    public UnitAction WeaponAction;
-    [SerializeField] AudioClip[] fireSound;
-    [SerializeField] AudioClip[] reloadSound;
+    [SerializeField] private Vector3 _offset;
+    [SerializeField] private GameObject _shellPrefab;
+    [SerializeField] private UnitAction _weaponAction;
+    [SerializeField] private AudioClip[] _fireSound;
+    [SerializeField] private AudioClip[] _reloadSound;
 
-    [SerializeField] Vector3 offset;
+    public WeaponStats Stats;
+    public WeaponAttributes Attributes;
 
-    ParticleSystem[] gunParticles;
-    Light[] gunLights;
-
-    [System.Serializable]
-    public class Attributes
-    {
-        public int animationLayer;
-        public float animationSpeed = 1.0f;
-        public WeaponType weaponType;
-        public WeaponFamily weaponFamily;
-        public WeaponImpact weaponImpact;
-    }
-    public Attributes attributes;
-
-    [System.Serializable]
-    public class Stats
-    {
-        public int damage;
-        public int minRangeNoPenalty;
-        public int maxRangeNoPenalty;
-        public int ammoMax;
-        public int ammoCurrent;
-        public float reloadSpeed;
-        //Note: Not capped at 1.
-        public float baseAccuracyModifier;
-        public float overRangeAccuracyPenalty;
-        public float underRangeAccuracyPenalty;
-        public float areaOfEffect = 1;
-    }
-    public Stats stats;
+    public UnitAction WeaponAction { get { return _weaponAction; } }
 
     private void Start()
     {
         // Weapon always starts with full ammo
-        stats.ammoCurrent = stats.ammoMax;
+        Stats.AmmoCurrent = Stats.AmmoMax;
     }
 
     private void Awake()
     {
-        gunParticles = GetComponentsInChildren<ParticleSystem>();
-        gunLights = GetComponentsInChildren<Light>();
-        shellEject = transform.Find("ShellEject");
+        _gunParticles = GetComponentsInChildren<ParticleSystem>();
+        _gunLights = GetComponentsInChildren<Light>();
+        _shellEject = transform.Find("ShellEject");
     }
 
     public void DefaultPosition(Unit parent)
@@ -64,10 +38,8 @@ public class Weapon : MonoBehaviour
 
         transform.parent = parent.GetAnimator().GetWeaponDefaultPosition();
         transform.position = transform.parent.position;
-        transform.localPosition = transform.localPosition + offset;
-
-        if (attributes.weaponType == WeaponType.Gun)
-            transform.rotation = transform.parent.transform.rotation;
+        transform.localPosition = transform.localPosition + _offset;
+        transform.rotation = transform.parent.transform.rotation;
     }
 
     public void Shoot()
@@ -78,22 +50,22 @@ public class Weapon : MonoBehaviour
     }
 
     public int GetAnimationLayer()
-    { return attributes.animationLayer; }
+    { return Attributes.AnimationLayer; }
 
     public WeaponImpact GetImpact()
-    { return attributes.weaponImpact; }
+    { return Attributes.Impact; }
 
     public int GetDamage()
-    { return stats.damage; }
+    { return Stats.Damage; }
 
     public float GetAreaOfEffect()
-    { return stats.areaOfEffect; }
+    { return Stats.AreaOfEffect; }
 
     public int GetMinimumRange()
-    { return stats.minRangeNoPenalty; }
+    { return Stats.RangeMin; }
 
     public int GetMaximumRange()
-    { return stats.maxRangeNoPenalty; }
+    { return Stats.RangeMax; }
 
     public float GetAccuracyPenalty(int range)
     {
@@ -104,11 +76,11 @@ public class Weapon : MonoBehaviour
 
         if (maxRangeDiff > 0) 
         {
-            penalty = maxRangeDiff * stats.overRangeAccuracyPenalty;
+            penalty = maxRangeDiff * Stats.OverRangeAccuracyPenalty;
         }
         else if (minRangeDiff > 0)
         {
-            penalty = minRangeDiff * stats.underRangeAccuracyPenalty;
+            penalty = minRangeDiff * Stats.UnderRangeAccuracyPenalty;
         }
 
         return penalty;
@@ -117,22 +89,22 @@ public class Weapon : MonoBehaviour
     public IEnumerator ShootEffect()
     {
         // Display gun flash
-        foreach (Light gunLight in gunLights)
+        foreach (Light gunLight in _gunLights)
             gunLight.enabled = true;
 
         // Stop the particles from playing if they were, then start the particles.
-        foreach (ParticleSystem gunParticle in gunParticles)
+        foreach (ParticleSystem gunParticle in _gunParticles)
             gunParticle.Stop();
 
-        foreach (ParticleSystem gunParticle in gunParticles)
+        foreach (ParticleSystem gunParticle in _gunParticles)
             gunParticle.Play();
 
         PlaySound(WeaponSound.FIRE);
 
-        if (shellEject.gameObject.activeSelf) EjectShell();
+        if (_shellEject.gameObject.activeSelf) EjectShell();
 
-        yield return new WaitForSecondsRealtime(gunParticles[0].main.duration);
-        foreach (Light gunLight in gunLights)
+        yield return new WaitForSecondsRealtime(_gunParticles[0].main.duration);
+        foreach (Light gunLight in _gunLights)
             gunLight.enabled = false;
     }
 
@@ -141,14 +113,14 @@ public class Weapon : MonoBehaviour
         // Reload sound effect
 
         PlaySound(WeaponSound.RELOAD);
-        stats.ammoCurrent = stats.ammoMax;
+        Stats.AmmoCurrent = Stats.AmmoMax;
     }
 
     public void Reload()
     {
         // Sets current ammo to weapon's maximum
 
-        stats.ammoCurrent = stats.ammoMax;
+        Stats.AmmoCurrent = Stats.AmmoMax;
     }
 
     public void DropGun()
@@ -174,10 +146,10 @@ public class Weapon : MonoBehaviour
         switch (weaponSound)
         {
             case (WeaponSound.FIRE):
-                audioClip = fireSound[Random.Range(0, fireSound.Length)];
+                audioClip = _fireSound[Random.Range(0, _fireSound.Length)];
                 break;
             case (WeaponSound.RELOAD):
-                audioClip = reloadSound[Random.Range(0, reloadSound.Length)];
+                audioClip = _reloadSound[Random.Range(0, _reloadSound.Length)];
                 break;
         }
 
@@ -190,9 +162,9 @@ public class Weapon : MonoBehaviour
         // Generate a shell as an effect and eject it with force
 
         float randomForce = (Random.Range(3, 5));
-        GameObject shell = GlobalManager.ActiveMap.CreateEffect(shellPrefab, shellEject.position, Quaternion.Euler(Random.Range(5, 15), 0, Random.Range(-10, -15)));
-        shell.GetComponent<Rigidbody>().AddForce(shellEject.forward * randomForce, ForceMode.VelocityChange);
-        shell.GetComponent<Rigidbody>().AddForce(-shellEject.right * randomForce/2, ForceMode.VelocityChange);
+        GameObject shell = GlobalManager.ActiveMap.CreateEffect(_shellPrefab, _shellEject.position, Quaternion.Euler(Random.Range(5, 15), 0, Random.Range(-10, -15)));
+        shell.GetComponent<Rigidbody>().AddForce(_shellEject.forward * randomForce, ForceMode.VelocityChange);
+        shell.GetComponent<Rigidbody>().AddForce(-_shellEject.right * randomForce/2, ForceMode.VelocityChange);
 
     }
 
@@ -200,13 +172,32 @@ public class Weapon : MonoBehaviour
     {
         // Spends a shot from the current ammo, defaults to 1 shot
 
-        stats.ammoCurrent -= amount;
+        Stats.AmmoCurrent -= amount;
+    }
+
+    [System.Serializable]
+    public struct WeaponAttributes
+    {
+        public int AnimationLayer;
+        public float AnimationSpeed;
+        public WeaponImpact Impact;
+    }
+
+    [System.Serializable]
+    public struct WeaponStats
+    {
+        public int Damage;
+        public float AreaOfEffect;
+        public int RangeMin;
+        public int RangeMax;
+        public int AmmoMax;
+        public int AmmoCurrent;
+        //Note: Not capped at 1.
+        public float BaseAccuracyModifier;
+        public float OverRangeAccuracyPenalty;
+        public float UnderRangeAccuracyPenalty;
     }
 }
-
-public enum WeaponType { Gun, Melee, Shield }
-
-public enum WeaponFamily { MELEE, PISTOL, SMG, SHOTGUN, RIFLE, AR, LMG, SHIELD, LAUNCHER }
 
 public enum WeaponImpact { LIGHT, MEDIUM, HEAVY }
 
