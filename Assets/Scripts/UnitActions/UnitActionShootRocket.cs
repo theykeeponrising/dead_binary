@@ -9,7 +9,16 @@ public class UnitActionShootRocket : UnitActionShoot
 
     private Vector3 TriggerPosition => _targetTile.transform.position;
 
-    public override void UseAction(Unit setTarget)
+    public override void UseAction(Unit target)
+    {
+        // Override for convenience
+
+        TargetUnit = target;
+        unit.GetActor().targetCharacter = target;
+        UseAction(target.currentTile);
+    }
+
+    public override void UseAction(Tile target)
     {
         // Locks in target information and begins shoot sequence
         // Sets action to "performing" state
@@ -17,25 +26,24 @@ public class UnitActionShootRocket : UnitActionShoot
         if (unit.GetActor().IsActing())
             return;
 
-        if (!setTarget)
+        if (!target)
         {
             Debug.Log(string.Format("{0} was called with no target by {1}", this, unit.gameObject));
             return;
         }
 
-        TargetUnit = setTarget;
+        TargetPosition = target.transform.position;
         _areaOfEffect = unit.EquippedWeapon.GetAreaOfEffect();
         unit.AddFlag(FlagType.AIM);
-
-        unit.GetActor().targetCharacter = setTarget;
         unit.SpendActionPoints(actionCost);
 
-        _bufferStartTimer = new Timer(bufferStart);
-        _bufferEndTimer = new Timer(bufferEnd);
-        _impactTimer = new Timer(0.75f);
+        _bufferStartTimer = new(bufferStart);
+        _bufferEndTimer = new(bufferEnd);
+        _impactTimer = new(0.75f);
 
         StartPerformance();
     }
+
 
     public override void CheckAction()
     {

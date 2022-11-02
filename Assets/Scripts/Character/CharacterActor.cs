@@ -249,6 +249,7 @@ public class CharacterActor
         // Target selected with left-click will have action done to it (such as attack action)
 
         unit.GetComponentInChildren<CharacterCamera>().enabled = useCharacterCamera;
+        unit.GetComponent<Collider>().enabled = !useCharacterCamera;
         unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.AIMING, true);
         if (IsCrouching()) ToggleCrouch();
 
@@ -267,6 +268,7 @@ public class CharacterActor
         // Cleans up targeting-related objects
 
         unit.GetComponentInChildren<CharacterCamera>().enabled = false;
+        unit.GetComponent<Collider>().enabled = true;
         infoPanel.gameObject.SetActive(false);
 
         unit.GetAnimator().SetBool("aiming", false);

@@ -48,6 +48,7 @@ MonoBehaviour:
   actionDescription: Heals target friendly unit
   actionCost: 1
   actionCooldown: 0
+  actionCooldownRemaining: 0
   actionRequirements: 0100000004000000
   actionSprite: 6
   unit: {fileID: 0}
@@ -55,3 +56,6 @@ MonoBehaviour:
   actionStage: 0
   bufferStart: 0
   bufferEnd: 0
+  _useCharacterCamera: 0
+  TargetFaction: 0
+  TargetTypes: 00000000

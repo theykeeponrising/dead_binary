@@ -58,3 +58,4 @@ MonoBehaviour:
   bufferEnd: 1
   _useCharacterCamera: 1
   TargetFaction: 1
+  TargetTypes: 00000000
