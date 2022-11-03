@@ -463,7 +463,7 @@ public class EnemyUnit : Unit
         public UnitAction UnitAction { get; }
     };
 
-    public override void TakeDamage(Unit attacker, int damage, int distanceToTarget, MessageType damageType = MessageType.DMG_CONVENTIONAL)
+    public override bool TakeDamage(Unit attacker, int damage, int distanceToTarget, MessageType damageType = MessageType.DMG_CONVENTIONAL)
     {
         // Called by an attacking source when taking damage
         // TO DO: More complex damage reduction will be added here
@@ -474,13 +474,14 @@ public class EnemyUnit : Unit
             if (currentCover) currentCover.PlayImpactSFX();
             GetAnimator().SetTrigger("dodge");
             Debug.Log(string.Format("{0} missed target {1}!", attacker.attributes.name, attributes.name));
-            return;
+            return false;
         }
 
         UIManager.GetTurnIndicator().SetTurnIndicatorMessage(damageType);
         Vector3 direction = (transform.position - attacker.transform.position);
         float distance = (transform.position - attacker.transform.position).magnitude;
         CheckDeath(attacker, direction, distance, damage);
+        return true;
     }
 
     public override void TakeDamage(Unit attacker, int damage, Vector3 attackPoint, MessageType damageType = MessageType.DMG_CONVENTIONAL)

@@ -188,7 +188,7 @@ PrefabInstance:
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: _shellPrefab
       value: 
-      objectReference: {fileID: 1288402221867282, guid: dbd52bdcc0a4cea47919205e4d0d6c9d, type: 3}
+      objectReference: {fileID: 8859182398174158793, guid: dbd52bdcc0a4cea47919205e4d0d6c9d, type: 3}
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: stats.damage
       value: 4
@@ -221,6 +221,10 @@ PrefabInstance:
       propertyPath: Stats.ammoCurrent
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
+      propertyPath: _projectilePrefab
+      value: 
+      objectReference: {fileID: -4645023944297487310, guid: 930226be19b12434381c1959cd63d8ff, type: 3}
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: Stats.AreaOfEffect
       value: 1
@@ -272,6 +276,10 @@ PrefabInstance:
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: attributes.animationSpeed
       value: 1.25
+      objectReference: {fileID: 0}
+    - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
+      propertyPath: Attributes.ProjectileSpeed
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: Stats.BaseAccuracyModifier

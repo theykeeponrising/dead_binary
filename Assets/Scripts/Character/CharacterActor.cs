@@ -88,13 +88,16 @@ public class CharacterActor
         }
     }
 
-    public UnitAction FindActionOfType(System.Type actionType)
+    public UnitAction FindActionOfType(System.Type actionType, bool printDebug = false)
     {
         // Finds an action by type from the unit's current action list
 
         foreach (UnitAction unitAction in unit.GetUnitActions())
+        {
+            if (printDebug) Debug.Log(unitAction.GetType());
             if (unitAction.GetType() == actionType)
                 return unitAction;
+        }
         return null;
     }
 

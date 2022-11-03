@@ -4,7 +4,6 @@ public class UnitActionShootRocket : UnitActionShoot
 {
     private float _areaOfEffect;
     private Tile _targetTile;
-    private Timer _impactTimer;
     [SerializeField] private ParticleSystem rocketEffect;
 
     private Vector3 TriggerPosition => _targetTile.transform.position;
@@ -37,9 +36,10 @@ public class UnitActionShootRocket : UnitActionShoot
         unit.AddFlag(FlagType.AIM);
         unit.SpendActionPoints(actionCost);
 
+        _targetDamaged = false;
+        _targetHit = false;
         _bufferStartTimer = new(bufferStart);
         _bufferEndTimer = new(bufferEnd);
-        _impactTimer = new(0.75f);
 
         StartPerformance();
     }
@@ -54,20 +54,7 @@ public class UnitActionShootRocket : UnitActionShoot
         // Perform shoot animation, inflict damage, spend ammo and AP
         if (ActionStage(0))
         {
-            unit.GetAnimator().Play("Shoot");
-            NextStage();
-        }
-
-        while (!_impactTimer.CheckTimer())
-        {
-            return;
-        }
-
-        if (ActionStage(1))
-        {
-            DamageTargets();
-            ShowRocketEffect();
-            unit.EquippedWeapon.SpendAmmo();
+            PerformShot();
             NextStage();
         }
 
@@ -81,19 +68,48 @@ public class UnitActionShootRocket : UnitActionShoot
 
         // Revert to idle state
         unit.GetActor().ClearTarget();
+        TargetUnit = null;
         EndPerformance();
     }
 
-    private void DamageTargets()
+    public override void TriggerAction(Projectile projectile = null)
+    {
+        if (projectile)
+            Map.MapEffects.DestroyEffect(projectile);
+
+        DamageTargets();
+        HitTargets();
+        ShowRocketEffect();
+    }
+    protected override void HitTargets()
+    {
+        if (_targetHit)
+            foreach (Unit impactedUnit in Tile.GetTileOccupants(Tile.GetAreaOfEffect(_targetTile, _areaOfEffect)))
+                impactedUnit.GetAnimator().TakeDamageEffect(unit.EquippedWeapon);
+    }
+
+    protected override void DamageTargets()
     {
         // Use on unit if possible, otherwise on empty tile
         _targetTile = TargetUnit ? TargetUnit.currentTile : unit.grid.GetTile(TargetPosition);
 
-        foreach (Unit impactedUnit in Tile.GetTileOccupants(Tile.GetAreaOfEffect(_targetTile, _areaOfEffect)))
+        if (!_targetDamaged)
         {
-            impactedUnit.GetAnimator().TakeDamageEffect(unit.EquippedWeapon);
-            impactedUnit.TakeDamage(unit, unit.EquippedWeapon.GetDamage(), TriggerPosition);
+            foreach (Unit impactedUnit in Tile.GetTileOccupants(Tile.GetAreaOfEffect(_targetTile, _areaOfEffect)))
+                impactedUnit.TakeDamage(unit, unit.EquippedWeapon.GetDamage(), TriggerPosition);
+            _targetHit = true;
+            _targetDamaged = true;
         }
+    }
+
+    public override void SpawnProjectile(Projectile projectile, Transform barrelEnd, float speed)
+    {
+        if (!projectile)
+            TriggerAction();
+
+        Vector3 destination = TargetUnit ? TargetUnit.GetAnimator().GetBoneTransform(HumanBodyBones.Chest).transform.position : TargetPosition;
+        projectile = Map.MapEffects.CreateEffect(projectile, barrelEnd.position, barrelEnd.rotation);
+        projectile.Init(this, destination, speed);
     }
 
     private void ShowRocketEffect()

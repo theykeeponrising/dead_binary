@@ -236,6 +236,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
         // Always add "Wait" action
         _unitActions.Insert(index, ActionManager.Instance.unitActions.wait);
 
+        // Clone the prefabs
         for (index = 0; index < _unitActions.Count; index++)
         {
             _unitActions[index] = Instantiate(_unitActions[index], _unitActionsContainer);
@@ -252,11 +253,6 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     public void Event_OnAnimationEnd(CharacterAnimator.AnimationEventContext context)
     {
         GetAnimator().Event_OnAnimationEnd(context);
-    }
-
-    public void Event_PlayAnimation(CharacterAnimator.AnimationEventContext context)
-    {
-        GetAnimator().Event_PlayAnimation(context);
     }
 
     public void Event_PlaySound(AnimationType sound)
@@ -394,7 +390,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
         return (baseChance  >= randomChance);
     }
 
-    public virtual void TakeDamage(Unit attacker, int damage, int distanceToTarget, MessageType damageType = MessageType.DMG_CONVENTIONAL)
+    public virtual bool TakeDamage(Unit attacker, int damage, int distanceToTarget, MessageType damageType = MessageType.DMG_CONVENTIONAL)
     {
         // Called by an attacking source when taking damage
         // TO DO: More complex damage reduction will be added here
@@ -406,12 +402,13 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
             GetAnimator().SetTrigger("dodge");
             Debug.Log(string.Format("{0} missed target {1}!", attacker.attributes.name, attributes.name));
             
-            return;
+            return false;
         }
 
         Vector3 direction =  (transform.position - attacker.transform.position);
         float distance = (transform.position - attacker.transform.position).magnitude;
         CheckDeath(attacker, direction, distance, damage);
+        return true;
     }
 
     public virtual void TakeDamage(Unit attacker, int damage, Vector3 attackPoint, MessageType damageType = MessageType.DMG_CONVENTIONAL)

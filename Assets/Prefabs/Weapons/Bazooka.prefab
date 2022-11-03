@@ -5095,6 +5095,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
+      propertyPath: _projectile
+      value: 
+      objectReference: {fileID: -4645023944297487310, guid: 3f1a91434d89fbd4580cbacf7b0d07cb, type: 3}
+    - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: weaponLayer
       value: 4
       objectReference: {fileID: 0}
@@ -5142,6 +5146,10 @@ PrefabInstance:
       propertyPath: Stats.AmmoCurrent
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
+      propertyPath: _projectilePrefab
+      value: 
+      objectReference: {fileID: -4645023944297487310, guid: 3f1a91434d89fbd4580cbacf7b0d07cb, type: 3}
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: stats.ammoCurrent
       value: 1
@@ -5250,6 +5258,10 @@ PrefabInstance:
       propertyPath: reloadSound.Array.data[3]
       value: 
       objectReference: {fileID: 8300000, guid: ae1d32a272f7bca43a598059ccd450f5, type: 3}
+    - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
+      propertyPath: Attributes.ProjectileSpeed
+      value: 0.15
+      objectReference: {fileID: 0}
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: Stats.BaseAccuracyModifier
       value: 0.9

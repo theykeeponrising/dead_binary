@@ -4,13 +4,16 @@ using UnityEngine;
 public class Weapon : MonoBehaviour
 {
     // Main class used for weapon objects
+    private Unit _unit;
+    private Transform _barrelEnd;
     private Transform _shellEject;
     private ParticleSystem[] _gunParticles;
     private Light[] _gunLights;
 
     [SerializeField] private Vector3 _offset;
-    [SerializeField] private GameObject _shellPrefab;
-    [SerializeField] private UnitAction _weaponAction;
+    [SerializeField] private Projectile _projectilePrefab;
+    [SerializeField] private Shell _shellPrefab;
+    [SerializeField] private UnitActionShoot _weaponAction;
     [SerializeField] private AudioClip[] _fireSound;
     [SerializeField] private AudioClip[] _reloadSound;
 
@@ -28,15 +31,17 @@ public class Weapon : MonoBehaviour
     private void Awake()
     {
         _gunParticles = GetComponentsInChildren<ParticleSystem>();
+        _barrelEnd = _gunParticles[0].transform;
         _gunLights = GetComponentsInChildren<Light>();
         _shellEject = transform.Find("ShellEject");
     }
 
-    public void DefaultPosition(Unit parent)
+    public void DefaultPosition(Unit unit)
     {
         // Used to place newly-created weapon objects into the default position
 
-        transform.parent = parent.GetAnimator().GetWeaponDefaultPosition();
+        _unit = unit;
+        transform.parent = unit.GetAnimator().GetWeaponDefaultPosition();
         transform.position = transform.parent.position;
         transform.localPosition = transform.localPosition + _offset;
         transform.rotation = transform.parent.transform.rotation;
@@ -46,7 +51,10 @@ public class Weapon : MonoBehaviour
     {
         // Used by animation to kick off shoot effect
 
-        StartCoroutine(ShootEffect());
+        StartCoroutine(MuzzleFlash());
+        PlaySound(WeaponSound.FIRE);
+        SpawnProjectile();
+        EjectShell();
     }
 
     public int GetAnimationLayer()
@@ -86,34 +94,13 @@ public class Weapon : MonoBehaviour
         return penalty;
     }
 
-    public IEnumerator ShootEffect()
+    private void SpawnProjectile()
     {
-        // Display gun flash
-        foreach (Light gunLight in _gunLights)
-            gunLight.enabled = true;
+        // Spawns projectile and sets its trajectory
 
-        // Stop the particles from playing if they were, then start the particles.
-        foreach (ParticleSystem gunParticle in _gunParticles)
-            gunParticle.Stop();
-
-        foreach (ParticleSystem gunParticle in _gunParticles)
-            gunParticle.Play();
-
-        PlaySound(WeaponSound.FIRE);
-
-        if (_shellEject.gameObject.activeSelf) EjectShell();
-
-        yield return new WaitForSecondsRealtime(_gunParticles[0].main.duration);
-        foreach (Light gunLight in _gunLights)
-            gunLight.enabled = false;
-    }
-
-    public void ReloadEffect()
-    {
-        // Reload sound effect
-
-        PlaySound(WeaponSound.RELOAD);
-        Stats.AmmoCurrent = Stats.AmmoMax;
+        System.Type actionType = _weaponAction.GetType();
+        UnitActionShoot action = (UnitActionShoot)_unit.GetActor().FindActionOfType(actionType);
+        action.SpawnProjectile(_projectilePrefab, _barrelEnd, Attributes.ProjectileSpeed);
     }
 
     public void Reload()
@@ -161,11 +148,32 @@ public class Weapon : MonoBehaviour
     {
         // Generate a shell as an effect and eject it with force
 
-        float randomForce = (Random.Range(3, 5));
-        GameObject shell = GlobalManager.ActiveMap.CreateEffect(_shellPrefab, _shellEject.position, Quaternion.Euler(Random.Range(5, 15), 0, Random.Range(-10, -15)));
-        shell.GetComponent<Rigidbody>().AddForce(_shellEject.forward * randomForce, ForceMode.VelocityChange);
-        shell.GetComponent<Rigidbody>().AddForce(-_shellEject.right * randomForce/2, ForceMode.VelocityChange);
+        if (!_shellEject.gameObject.activeSelf)
+            return;
 
+        float randomForce = (Random.Range(3, 5));
+        GameObject shell = GlobalManager.ActiveMap.CreateEffect(_shellPrefab.gameObject, _shellEject.position, Quaternion.Euler(Random.Range(5, 15), 0, Random.Range(-10, -15)));
+        Rigidbody rigidbody = shell.GetComponent<Rigidbody>();
+        rigidbody.AddForce(_shellEject.forward * randomForce, ForceMode.VelocityChange);
+        rigidbody.AddForce(-_shellEject.right * randomForce/2, ForceMode.VelocityChange);
+    }
+
+    private IEnumerator MuzzleFlash()
+    {
+        // Display gun flash
+        foreach (Light gunLight in _gunLights)
+            gunLight.enabled = true;
+
+        // Stop the particles from playing if they were, then start the particles.
+        foreach (ParticleSystem gunParticle in _gunParticles)
+            gunParticle.Stop();
+
+        foreach (ParticleSystem gunParticle in _gunParticles)
+            gunParticle.Play();
+
+        yield return new WaitForSecondsRealtime(_gunParticles[0].main.duration);
+        foreach (Light gunLight in _gunLights)
+            gunLight.enabled = false;
     }
 
     public void SpendAmmo(int amount = 1)
@@ -181,6 +189,7 @@ public class Weapon : MonoBehaviour
         public int AnimationLayer;
         public float AnimationSpeed;
         public WeaponImpact Impact;
+        public float ProjectileSpeed;
     }
 
     [System.Serializable]

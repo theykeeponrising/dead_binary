@@ -224,10 +224,7 @@ public class StateTarget : StateCancel
                 }
                 else
                 {
-                    Debug.Log(hit.collider.gameObject);
                     return;
-                    //indicatorAOE.SetActive(false);
-                    //ChangeState(new StateIdle(Machine));
                 }
             }
         }

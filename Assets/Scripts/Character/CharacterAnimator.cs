@@ -147,17 +147,6 @@ public class CharacterAnimator
         }
     }
 
-    public void Event_PlayAnimation(AnimationEventContext context)
-    {
-        // Weapon impact effect on target
-        switch (context)
-        {
-            case (AnimationEventContext.TAKE_DAMAGE):
-                _unit.GetActor().targetCharacter.GetAnimator().TakeDamageEffect(_unit.EquippedWeapon);
-                break;
-        }
-    }
-
     public void SetBool(string flag, bool state)
     {
         // Sets animator bool

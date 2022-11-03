@@ -2,9 +2,10 @@ using UnityEngine;
 
 public class UnitActionShoot : UnitTargetAction
 {
-    private int _distanceToTarget;
     protected Timer _bufferStartTimer;
     protected Timer _bufferEndTimer;
+    protected bool _targetDamaged;
+    protected bool _targetHit;
 
     public override void UseAction(Unit setTarget)
     {
@@ -21,12 +22,13 @@ public class UnitActionShoot : UnitTargetAction
         }
 
         TargetUnit = setTarget;
-        _distanceToTarget = unit.currentTile.GetMovementCost(TargetUnit.currentTile, 15).Count;
         unit.AddFlag(FlagType.AIM);
 
         unit.GetActor().targetCharacter = setTarget;
         unit.SpendActionPoints(actionCost);
 
+        _targetDamaged = false;
+        _targetHit = false;
         _bufferStartTimer = new(bufferStart);
         _bufferEndTimer = new(bufferEnd);
 
@@ -43,7 +45,6 @@ public class UnitActionShoot : UnitTargetAction
         if (ActionStage(0))
         {
             PerformShot();
-            DamageTarget();
             NextStage();
         }
 
@@ -60,17 +61,47 @@ public class UnitActionShoot : UnitTargetAction
         EndPerformance();
     }
 
-    private void DamageTarget()
+    public virtual void TriggerAction(Projectile projectile = null)
     {
+        if (projectile)
+            Map.MapEffects.DestroyEffect(projectile);
+
         if (!TargetUnit)
             return;
 
-        TargetUnit.TakeDamage(unit, unit.EquippedWeapon.GetDamage(), _distanceToTarget, MessageType.DMG_CONVENTIONAL);
+        DamageTargets();
+        HitTargets();
     }
 
-    private void PerformShot()
+    protected virtual void HitTargets()
+    {
+        if (_targetHit)
+            TargetUnit.GetAnimator().TakeDamageEffect(unit.EquippedWeapon);
+    }
+
+    protected virtual void DamageTargets()
+    {
+        if (!_targetDamaged)
+        {
+            int distanceToTarget = unit.currentTile.GetMovementCost(TargetUnit.currentTile, 15).Count;
+            _targetHit = TargetUnit.TakeDamage(unit, unit.EquippedWeapon.GetDamage(), distanceToTarget, MessageType.DMG_CONVENTIONAL);
+            _targetDamaged = true;
+        }
+    }
+
+    protected void PerformShot()
     {
         unit.GetAnimator().Play("Shoot");
         unit.EquippedWeapon.SpendAmmo();
+    }
+
+    public virtual void SpawnProjectile(Projectile projectile, Transform barrelEnd, float speed)
+    {
+        if (!projectile)
+            TriggerAction();
+
+        Vector3 destination = TargetUnit.GetAnimator().GetBoneTransform(HumanBodyBones.Chest).transform.position;
+        projectile = Map.MapEffects.CreateEffect(projectile, barrelEnd.position, barrelEnd.rotation);
+        projectile.Init(this, destination, speed);
     }
 }

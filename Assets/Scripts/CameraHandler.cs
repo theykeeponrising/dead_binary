@@ -141,7 +141,10 @@ public class CameraHandler : MonoBehaviour
         Vector3 inputValue = (readValue.x * GetCameraRight() + readValue.y * GetCameraForward()).normalized;
 
         if (inputValue.sqrMagnitude > 0.1f)
+        {
             _panNextPosition += inputValue;
+            _panSnapPosition = Vector3.zero;
+        }
     }
 
     private Vector3 GetCameraRight()
