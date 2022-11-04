@@ -65,7 +65,7 @@ public class MapEffects : MonoBehaviour
         return effect;
     }
 
-    public void DestroyEffect(GameObject removeEffect)
+    public void DestroyEffect(GameObject removeEffect, float lifetime = 0)
     {
 
         if (!_activeEffects.Contains(removeEffect))
@@ -75,13 +75,14 @@ public class MapEffects : MonoBehaviour
         }
 
         _activeEffects.Remove(removeEffect);
-        Destroy(removeEffect);
+        Destroy(removeEffect, lifetime);
     }
 
     public void DestroyEffect(Projectile efx)
     {
         GameObject removeEffect = efx.gameObject;
-        DestroyEffect(removeEffect);
+        float lifetime = efx.Lifetime;
+        DestroyEffect(removeEffect, lifetime);
     }
 
     public void AddEffect(Transform efxPrefab)

@@ -1,33 +1,34 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    private LineRenderer _bulletLine;
-
     private UnitActionShoot _action;
-    private Vector3 _currentPosition;
-    private Vector3 _previousPosition;
-    private Vector3 _destination;
     private float _speed;
-    private bool _triggered;
 
-    private void Awake()
+    protected LineRenderer BulletLine;
+
+    protected Vector3 CurrentPosition;
+    protected Vector3 PreviousPosition;
+    protected Vector3 Destination;
+    protected bool Triggered;
+
+    public float Lifetime = 0f;
+
+    protected virtual void Awake()
     {
-        _bulletLine = GetComponent<LineRenderer>();
+        BulletLine = GetComponent<LineRenderer>();
     }
 
     private void Start()
     {
-        _currentPosition = transform.position;
+        CurrentPosition = transform.position;
     }
 
     public void Init(UnitActionShoot action, Vector3 destination, float speed)
     {
         _action = action;
-        _destination = destination;
         _speed = speed;
+        Destination = destination;
     }
 
     private void Update()
@@ -41,33 +42,33 @@ public class Projectile : MonoBehaviour
         UpdateBulletLine();
     }
 
-    private void UpdateBulletLine()
+    protected virtual void UpdateBulletLine()
     {
-        if (!_bulletLine)
+        if (!BulletLine)
             return;
 
-        _bulletLine.enabled = !_triggered;
-        _previousPosition = _currentPosition;
-        _currentPosition = transform.position;
+        BulletLine.enabled = !Triggered;
+        PreviousPosition = CurrentPosition;
+        CurrentPosition = transform.position;
 
-        _bulletLine.SetPosition(0, _previousPosition);
-        _bulletLine.SetPosition(1, _currentPosition);
+        BulletLine.SetPosition(0, PreviousPosition);
+        BulletLine.SetPosition(1, CurrentPosition);
     }
 
     private void MoveTowardsDestination()
     {
-        transform.position = Vector3.MoveTowards(transform.position, _destination, _speed);
+        transform.position = Vector3.MoveTowards(transform.position, Destination, _speed);
     }
 
     private void CheckDestinationReached()
     {
-        if (_triggered)
+        if (Triggered)
             return;
 
-        if (Vector3.Distance(transform.position, _destination) < 0.1f)
+        if (Vector3.Distance(transform.position, Destination) < 0.1f)
         {
             _action.TriggerAction(this);
-            _triggered = true;
+            Triggered = true;
         }
     }
 }

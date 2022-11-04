@@ -102,6 +102,7 @@ public class UnitActionShoot : UnitTargetAction
 
         Vector3 destination = TargetUnit.GetAnimator().GetBoneTransform(HumanBodyBones.Chest).transform.position;
         projectile = Map.MapEffects.CreateEffect(projectile, barrelEnd.position, barrelEnd.rotation);
-        projectile.Init(this, destination, speed);
+        Vector3 variation = new Vector3(Random.Range(0, 5), Random.Range(0, 5), Random.Range(0, 5)) * 0.1f;
+        projectile.Init(this, destination + variation, speed);
     }
 }
