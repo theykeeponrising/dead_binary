@@ -59,4 +59,4 @@ MonoBehaviour:
   _useCharacterCamera: 0
   TargetFaction: 1
   TargetTypes: 0000000002000000
-  rocketEffect: {fileID: 5915368302288556678, guid: f2e00e6df90e601409040714dbb5e4c1, type: 3}
+  _rocketEffect: {fileID: 5915368302288556678, guid: f2e00e6df90e601409040714dbb5e4c1, type: 3}

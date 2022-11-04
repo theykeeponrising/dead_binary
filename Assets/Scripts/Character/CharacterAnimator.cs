@@ -189,6 +189,16 @@ public class CharacterAnimator
         return crouchingAnims.Any(x => x == true);
     }
 
+    public bool IsDodging()
+    {
+        // Returns true if any dodge animation is playing
+
+        bool[] dodgingAnims = {
+            _animator.GetCurrentAnimatorStateInfo(AnimationLayer).IsName("Dodge"),
+            _animator.GetCurrentAnimatorStateInfo(AnimationLayer).IsName("Crouch-Dodge")};
+        return dodgingAnims.Any(x => x == true);
+    }
+
     public void CoverCrouch()
     {
         // Makes character crouch if they should be crouching behind cover

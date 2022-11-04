@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public sealed class CoverObject : MonoBehaviour
@@ -92,6 +93,14 @@ public sealed class CoverObject : MonoBehaviour
             return _coverBonusFull;
         else 
             return _coverBonusHalf;
+    }
+
+    public bool IsCoverInUse(CoverObject coverObject)
+    {
+        List<CoverObject> coverObjects = _childrenCoverObjects.ToList();
+        coverObjects.Add(this);
+
+        return coverObjects.Contains(coverObject);
     }
 
     public void DestroyObject()

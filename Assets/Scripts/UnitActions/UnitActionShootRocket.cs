@@ -4,7 +4,8 @@ public class UnitActionShootRocket : UnitActionShoot
 {
     private float _areaOfEffect;
     private Tile _targetTile;
-    [SerializeField] private ParticleSystem rocketEffect;
+
+    [SerializeField] private ParticleSystem _rocketEffect;
 
     private Vector3 TriggerPosition => _targetTile.transform.position;
 
@@ -116,10 +117,10 @@ public class UnitActionShootRocket : UnitActionShoot
     {
         // Creates the item effect object at the trigger position
 
-        if (!rocketEffect)
+        if (!_rocketEffect)
             return;
 
-        GameObject spawnEffect = GlobalManager.ActiveMap.CreateTimedEffect(rocketEffect.gameObject, TriggerPosition, rocketEffect.transform.rotation, 3f);
+        GameObject spawnEffect = GlobalManager.ActiveMap.CreateTimedEffect(_rocketEffect.gameObject, TriggerPosition, _rocketEffect.transform.rotation, 3f);
         spawnEffect.transform.localScale = Vector3.one * (_areaOfEffect / 2);
         PlayRocketSFX(spawnEffect);
     }

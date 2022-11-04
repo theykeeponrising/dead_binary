@@ -211,15 +211,18 @@ public class MapGrid : MonoBehaviour
         Vector3 attackerPosition = attackerTile.transform.position;
 
         Vector3 direction = (attackerPosition - defenderPosition);
-        RaycastHit hit;
-        Ray ray = new Ray(defenderPosition, direction);
-        // Debug.DrawRay(defenderPosition, direction, Color.red, 20, true); // For debug purposes
+        Ray ray = new(defenderPosition, direction);
         int layerMask = (1 << LayerMask.NameToLayer("CoverObject"));
 
         // If cover object detected, and is the target character's current cover, return true
-        if (Physics.Raycast(ray, out hit, direction.magnitude * Mathf.Infinity, layerMask))
+        if (Physics.Raycast(ray, out RaycastHit hit, direction.magnitude * Mathf.Infinity, layerMask))
         {
-            if (hit.collider.GetComponent<CoverObject>() && hit.collider.GetComponent<CoverObject>() == defenderTile.Cover)
+            CoverObject coverObject = hit.collider.GetComponentInParent<CoverObject>();
+
+            if (!coverObject)
+                return false;
+
+            if (coverObject.IsCoverInUse(defenderTile.Cover))
                 return true;
         }
         return false;
