@@ -4,9 +4,10 @@ public class Projectile : MonoBehaviour
 {
     private UnitActionShoot _action;
     private float _speed;
+    private Vector3 _rotateAxis = new(0f, 0f, 1f);
+    [SerializeField] [Range(0f, 100f)] private float _rotateSpeed = 20f;
 
     protected LineRenderer BulletLine;
-
     protected Vector3 CurrentPosition;
     protected Vector3 PreviousPosition;
     protected Vector3 Destination;
@@ -29,10 +30,12 @@ public class Projectile : MonoBehaviour
         _action = action;
         _speed = speed;
         Destination = destination;
+        transform.LookAt(Destination);
     }
 
     private void Update()
     {
+        RotateProjectile();
         MoveTowardsDestination();
         CheckDestinationReached();
     }
@@ -40,6 +43,11 @@ public class Projectile : MonoBehaviour
     private void LateUpdate()
     {
         UpdateBulletLine();
+    }
+
+    private void RotateProjectile()
+    {
+        transform.Rotate(_rotateAxis * _rotateSpeed / 10);
     }
 
     protected virtual void UpdateBulletLine()

@@ -49,6 +49,12 @@ public class UnitActionShoot : UnitTargetAction
             NextStage();
         }
 
+        if (ActionStage(1))
+        {
+            CheckDodge();
+            NextStage();
+        }
+
         // Waits until shoot animation completes
         while (unit.GetAnimator().AnimatorIsPlaying("Shoot"))
             return;
@@ -78,8 +84,6 @@ public class UnitActionShoot : UnitTargetAction
     {
         if (_targetHit)
             TargetUnit.GetAnimator().TakeDamageEffect(unit.EquippedWeapon);
-        else if (!TargetUnit.GetAnimator().IsDodging())
-            TargetUnit.DodgeAttack(unit);
     }
 
     protected virtual void DamageTargets()
@@ -104,6 +108,15 @@ public class UnitActionShoot : UnitTargetAction
     {
         int distanceToTarget = unit.currentTile.GetMovementCost(TargetUnit.currentTile, 15).Count;
         _targetHit = TargetUnit.RollForHit(unit, distanceToTarget);
+    }
+
+    private void CheckDodge()
+    {
+        if (_targetHit)
+            return;
+
+        else if (!TargetUnit.GetAnimator().IsDodging())
+            TargetUnit.DodgeAttack(unit);
     }
 
     private Vector3 ProjectileTrajectory()
