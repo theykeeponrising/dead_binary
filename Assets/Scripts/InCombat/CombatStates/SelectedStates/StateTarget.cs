@@ -125,8 +125,10 @@ public class StateTarget : StateCancel
                 return Vector2.Distance(t.selectedCharacter.transform.position, a.transform.position).CompareTo(Vector2.Distance(t.selectedCharacter.transform.position, b.transform.position));
             });
 
-            if (!targetedUnit) ChangeTarget(t, targets[0], initialTargets: true);
-            else ChangeTarget(t, targetedUnit, initialTargets: true);
+            if (!targetedUnit) 
+                ChangeTarget(t, targets[0], initialTargets: true);
+            else 
+                ChangeTarget(t, targetedUnit, initialTargets: true);
         }
     }
 
@@ -156,6 +158,9 @@ public class StateTarget : StateCancel
         else infoPanel.UpdateTargetButtons();
         ShowSelectionCircle(targetedUnit.transform.position);
         ShowHealtbar(targetedUnit);
+
+        if (!storedAction.UseCharacterCamera)
+            Camera.main.GetComponent<CameraHandler>().SetCameraSnap(targetedUnit);
     }
 
     public virtual void ChangeTarget(InCombatPlayerAction t, Tile targetTile, bool initialTargets = false)
