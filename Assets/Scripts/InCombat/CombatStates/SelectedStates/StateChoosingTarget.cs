@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class StateChoosingTarget : StateTarget
@@ -9,7 +7,7 @@ public class StateChoosingTarget : StateTarget
     public override void FindTargets<TargetType>(InCombatPlayerAction t)
     {
         base.FindTargets<TargetType>(t);
-        t.selectedCharacter.GetActor().GetTarget();
+        t.selectedCharacter.GetActor().GetTarget(storedAction.UseCharacterCamera);
     }
 
     public override void InputActionBtn(InCombatPlayerAction t, int index)
@@ -52,7 +50,7 @@ public class StateChoosingTarget : StateTarget
         else
         {
             t.selectedCharacter.GetActor().ClearTarget();
-            StateIdle stateIdle = new StateIdle(Machine);
+            StateIdle stateIdle = new(Machine);
             stateIdle.InputActionBtn(t, index);
             ChangeState(new StateWaitForAction(Machine, action, stateIdle));
         }
@@ -65,7 +63,13 @@ public class StateChoosingTarget : StateTarget
         int index = t.GetIndex(storedAction);
         infoPanel.gameObject.SetActive(false);
         ButtonPress(index);
-        storedAction.UseAction(t.selectedCharacter.GetActor().targetCharacter);
+
+        if (targetedUnit)
+            storedAction.UseAction(targetedUnit);
+        else if (targetedTile)
+            storedAction.UseAction(targetedTile);
+        else
+            Debug.Log("Action called with no target!");
         ChangeState(new StateWaitForAction(Machine, storedAction));
     }
 }

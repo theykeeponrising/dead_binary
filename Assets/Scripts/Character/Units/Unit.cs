@@ -236,6 +236,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
         // Always add "Wait" action
         _unitActions.Insert(index, ActionManager.Instance.unitActions.wait);
 
+        // Clone the prefabs
         for (index = 0; index < _unitActions.Count; index++)
         {
             _unitActions[index] = Instantiate(_unitActions[index], _unitActionsContainer);
@@ -252,11 +253,6 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     public void Event_OnAnimationEnd(CharacterAnimator.AnimationEventContext context)
     {
         GetAnimator().Event_OnAnimationEnd(context);
-    }
-
-    public void Event_PlayAnimation(CharacterAnimator.AnimationEventContext context)
-    {
-        GetAnimator().Event_PlayAnimation(context);
     }
 
     public void Event_PlaySound(AnimationType sound)
@@ -349,36 +345,37 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
         return weaponDamange * hitChance;
     }
 
-    // Overload for simplicity
     public float CalculateHitChance(Unit attacker, Unit defender)
     {
+        // Overload for simplicity
         return CalculateHitChance(attacker, defender, attacker.currentTile);
     }
 
-    // Calculate Hit Chance
     public float CalculateHitChance(Unit attacker, Unit defender, Tile attackerTile)
     {
+        // Calculate Hit Chance
         int distance = grid.GetTileDistance(attackerTile, defender.currentTile);
-        float weaponAccuracyModifier = attacker.inventory.equippedWeapon.stats.baseAccuracyModifier;
-
+        float weaponAccuracyModifier = attacker.inventory.equippedWeapon.Stats.BaseAccuracyModifier;
         float weaponAccuracyPenalty = attacker.inventory.equippedWeapon.GetAccuracyPenalty(distance);
 
         // Calculate chance to be hit
         float hitModifier = GlobalManager.globalHit + attacker.stats.aim - stats.dodge - weaponAccuracyPenalty;
+
         // Add cover bonus if not being flanked
-        if (defender.currentCover && grid.CheckIfCovered(attackerTile, defender.currentTile)) hitModifier -= defender.currentCover.GetCoverBonus();
+        if (defender.currentCover && grid.CheckIfCovered(attackerTile, defender.currentTile))
+            hitModifier -= defender.currentCover.GetCoverBonus();
         
         float hitChance = weaponAccuracyModifier * hitModifier;
         return hitChance / 100.0f;
     }
 
-    // Returns calculated hit chance for a given target
     public float GetCurrentHitChance()
     {
+        // Returns calculated hit chance for a given target
         return CalculateHitChance(this, charActor.targetCharacter);
     }
 
-    protected bool RollForHit(Unit attacker, int distanceToTarget)
+    public bool RollForHit(Unit attacker, int distanceToTarget)
     {
         // Dodge change for character vs. attacker's aim
 
@@ -394,23 +391,14 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
         return (baseChance  >= randomChance);
     }
 
-    public virtual void TakeDamage(Unit attacker, int damage, int distanceToTarget, MessageType damageType = MessageType.DMG_CONVENTIONAL)
+    public virtual void TakeDamage(Unit attacker, int damage, MessageType damageType = MessageType.DMG_CONVENTIONAL)
     {
         // Called by an attacking source when taking damage
         // TO DO: More complex damage reduction will be added here
 
-        // If attacked missed, do not take damage
-        if (!RollForHit(attacker, distanceToTarget))
-        {
-            if (currentCover) currentCover.PlayImpactSFX();
-            GetAnimator().SetTrigger("dodge");
-            Debug.Log(string.Format("{0} missed target {1}!", attacker.attributes.name, attributes.name));
-            
-            return;
-        }
-
         Vector3 direction =  (transform.position - attacker.transform.position);
         float distance = (transform.position - attacker.transform.position).magnitude;
+
         CheckDeath(attacker, direction, distance, damage);
     }
 
@@ -423,6 +411,13 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
         float distance = direction.magnitude;
 
         CheckDeath(attacker, direction, distance, damage, 50f);
+    }
+
+    public void DodgeAttack(Unit attacker)
+    {
+        if (currentCover) currentCover.PlayImpactSFX();
+        GetAnimator().SetTrigger("dodge");
+        Debug.Log(string.Format("{0} missed target {1}!", attacker.attributes.name, attributes.name));
     }
 
     // caution: the unit is actually taking damage in this method!

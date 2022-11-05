@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public sealed class CoverObject : MonoBehaviour
@@ -23,7 +24,7 @@ public sealed class CoverObject : MonoBehaviour
     public bool IsDestructible = false;
     public bool IsDestroyed = false;
 
-    readonly Timer _debugTimer = new(3f); // Temp to test destruction physics
+    readonly Timer _debugTimer = new(2f); // Temp to test destruction physics
    
 
     private void Awake()
@@ -94,6 +95,14 @@ public sealed class CoverObject : MonoBehaviour
             return _coverBonusHalf;
     }
 
+    public bool IsCoverInUse(CoverObject coverObject)
+    {
+        List<CoverObject> coverObjects = _childrenCoverObjects.ToList();
+        coverObjects.Add(this);
+
+        return coverObjects.Contains(coverObject);
+    }
+
     public void DestroyObject()
     {
         // For each physics child found, enable collider and physics
@@ -104,7 +113,7 @@ public sealed class CoverObject : MonoBehaviour
         {
             rigidbody.GetComponent<Collider>().enabled = true;
             rigidbody.isKinematic = false;
-            Destroy(rigidbody.gameObject, 10);
+            Destroy(rigidbody.gameObject, 3);
         }
 
         // Remove this object as a valid cover piece for tiles

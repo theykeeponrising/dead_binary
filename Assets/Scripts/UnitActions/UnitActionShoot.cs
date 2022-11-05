@@ -1,12 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class UnitActionShoot : UnitTargetAction
 {
-    int distanceToTarget;
-    protected Timer bufferStartTimer;
-    protected Timer bufferEndTimer;
+    protected Timer _bufferStartTimer;
+    protected Timer _bufferEndTimer;
+    protected bool _targetDamaged;
+    protected bool _targetHit;
 
     public override void UseAction(Unit setTarget)
     {
@@ -22,15 +21,16 @@ public class UnitActionShoot : UnitTargetAction
             return;
         }
 
-        targetUnit = setTarget;
-        distanceToTarget = unit.currentTile.GetMovementCost(targetUnit.currentTile, 15).Count;
+        TargetUnit = setTarget;
         unit.AddFlag(FlagType.AIM);
 
         unit.GetActor().targetCharacter = setTarget;
         unit.SpendActionPoints(actionCost);
 
-        bufferStartTimer = new Timer(bufferStart);
-        bufferEndTimer = new Timer(bufferEnd);
+        _targetDamaged = false;
+        _targetHit = false;
+        _bufferStartTimer = new(bufferStart);
+        _bufferEndTimer = new(bufferEnd);
 
         StartPerformance();
     }
@@ -38,15 +38,20 @@ public class UnitActionShoot : UnitTargetAction
     public override void CheckAction()
     {
         // Wait for the start buffer
-        while (!bufferStartTimer.CheckTimer())
+        while (!_bufferStartTimer.CheckTimer())
             return;
 
         // Perform shoot animation, inflict damage, spend ammo and AP
         if (ActionStage(0))
         {
-            unit.GetAnimator().Play("Shoot");
-            if (targetUnit) targetUnit.TakeDamage(unit, unit.EquippedWeapon.GetDamage(), distanceToTarget, MessageType.DMG_CONVENTIONAL);
-            unit.EquippedWeapon.SpendAmmo();
+            CheckTargetHit();
+            PerformShot();
+            NextStage();
+        }
+
+        if (ActionStage(1))
+        {
+            CheckDodge();
             NextStage();
         }
 
@@ -55,11 +60,98 @@ public class UnitActionShoot : UnitTargetAction
             return;
 
         // Wait for the end buffer
-        while (!bufferEndTimer.CheckTimer())
+        while (!_bufferEndTimer.CheckTimer())
             return;
 
         // Revert to idle state
         unit.GetActor().ClearTarget();
         EndPerformance();
+    }
+
+    public virtual void TriggerAction(Projectile projectile = null)
+    {
+        if (projectile)
+            Map.MapEffects.DestroyEffect(projectile);
+
+        if (!TargetUnit)
+            return;
+
+        DamageTargets();
+        HitTargets();
+    }
+
+    protected virtual void HitTargets()
+    {
+        if (_targetHit)
+            TargetUnit.GetAnimator().TakeDamageEffect(unit.EquippedWeapon);
+    }
+
+    protected virtual void DamageTargets()
+    {
+        if (!_targetHit)
+            return;
+
+        if (!_targetDamaged)
+        {
+            TargetUnit.TakeDamage(unit, unit.EquippedWeapon.GetDamage(),MessageType.DMG_CONVENTIONAL);
+            _targetDamaged = true;
+        }
+    }
+
+    protected void PerformShot()
+    {
+        unit.GetAnimator().Play("Shoot");
+        unit.EquippedWeapon.SpendAmmo();
+    }
+
+    private void CheckTargetHit()
+    {
+        int distanceToTarget = unit.currentTile.GetMovementCost(TargetUnit.currentTile, 15).Count;
+        _targetHit = TargetUnit.RollForHit(unit, distanceToTarget);
+    }
+
+    private void CheckDodge()
+    {
+        if (_targetHit)
+            return;
+
+        else if (!TargetUnit.GetAnimator().IsDodging())
+            TargetUnit.DodgeAttack(unit);
+    }
+
+    private Vector3 ProjectileTrajectory()
+    {
+        int lowRange = _targetHit ? 0 : 3;
+        int highRange = _targetHit ? lowRange + 2 : lowRange + 5;
+
+        Vector3 trajectory = new Vector3(GetRandomInt(lowRange, highRange), GetRandomInt(lowRange, highRange), GetRandomInt(lowRange, highRange)) * 0.1f;
+        Vector3 direction =  TargetUnit.transform.position - unit.transform.position;
+
+        if (!_targetHit)
+            trajectory += direction * 1.5f;
+
+        return trajectory;
+    }
+
+    private int GetRandomInt(int lowRange, int highRange)
+    {
+        int randomBool = Random.Range(0, 100);
+        bool negative = (randomBool % 2 == 0) ? true : false;
+        int modifier = negative ? -1 : 1;
+        int randomNumber = Random.Range(lowRange, highRange);
+
+        return randomNumber * modifier;
+    }
+
+    public virtual void SpawnProjectile(Projectile projectile, Transform barrelEnd, float speed)
+    {
+        if (!projectile)
+            TriggerAction();
+
+        Vector3 destination = TargetUnit.GetAnimator().GetBoneTransform(HumanBodyBones.Chest).transform.position;
+        Vector3 trajectory = ProjectileTrajectory();
+
+        projectile = Map.MapEffects.CreateEffect(projectile, barrelEnd.position, barrelEnd.rotation);     
+        projectile.Init(this, destination + trajectory, speed);
     }
 }

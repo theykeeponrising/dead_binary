@@ -1,10 +1,9 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class StateTarget : StateCancel
 {
-    protected List<System.Type> compatibleActions = new List<System.Type>() { typeof(UnitActionSwap) };
+    protected List<System.Type> compatibleActions = new() { typeof(UnitActionSwap) };
     protected UnitTargetAction storedAction;
     public StateTarget(StateMachine<InCombatPlayerAction> machine, UnitTargetAction storedAction) : base(machine) { Machine = machine; this.storedAction = storedAction; }
 
@@ -30,7 +29,7 @@ public class StateTarget : StateCancel
         infoPanel.UpdateHit(-1);
 
         targets = new List<Unit>();
-        targetFaction = t.selectedCharacter.attributes.faction.GetFactionsByRelation(storedAction.targetFaction)[0];
+        targetFaction = t.selectedCharacter.attributes.faction.GetFactionsByRelation(storedAction.TargetFaction)[0];
 
         if (storedAction.GetType().IsSubclassOf(typeof(UnitActionItem)))
         {
@@ -44,6 +43,14 @@ public class StateTarget : StateCancel
                 var itemType = (DamageItem)storedAction.item;
                 infoPanel.UpdateDamage(itemType.hpAmount);
             }
+        }
+        else if (storedAction.GetType() == typeof(UnitActionShootRocket))
+        {
+            Weapon weapon = t.selectedCharacter.EquippedWeapon;
+            targetFaction = t.selectedCharacter.attributes.faction.GetFactionsByRelation(storedAction.TargetFaction)[0];
+            areaOfEffect = weapon.Stats.AreaOfEffect;
+            targetType = TargetType.CHARACTER;
+            infoPanel.UpdateDamage(weapon.GetDamage());
         }
 
         // Instantiate tile selection circle
@@ -118,8 +125,10 @@ public class StateTarget : StateCancel
                 return Vector2.Distance(t.selectedCharacter.transform.position, a.transform.position).CompareTo(Vector2.Distance(t.selectedCharacter.transform.position, b.transform.position));
             });
 
-            if (!targetedUnit) ChangeTarget(t, targets[0], initialTargets: true);
-            else ChangeTarget(t, targetedUnit, initialTargets: true);
+            if (!targetedUnit) 
+                ChangeTarget(t, targets[0], initialTargets: true);
+            else 
+                ChangeTarget(t, targetedUnit, initialTargets: true);
         }
     }
 
@@ -149,6 +158,9 @@ public class StateTarget : StateCancel
         else infoPanel.UpdateTargetButtons();
         ShowSelectionCircle(targetedUnit.transform.position);
         ShowHealtbar(targetedUnit);
+
+        if (!storedAction.UseCharacterCamera)
+            Camera.main.GetComponent<CameraHandler>().SetCameraSnap(targetedUnit);
     }
 
     public virtual void ChangeTarget(InCombatPlayerAction t, Tile targetTile, bool initialTargets = false)
@@ -189,14 +201,13 @@ public class StateTarget : StateCancel
     {
         if (!IsPointerOverUIElement(t))
         {
-            RaycastHit hit;
-            Ray ray;
-            ray = Camera.main.ScreenPointToRay(t.playerInput.Controls.InputPosition.ReadValue<Vector2>());
+            Camera camera = CameraHandler.ActiveCamera;
+            Ray ray = camera.ScreenPointToRay(t.playerInput.Controls.InputPosition.ReadValue<Vector2>());
 
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity))
             {
                 // Directly targeting a valid unit with mouse primary
-                if (targets.Contains(hit.collider.GetComponent<Unit>()))
+                if (targets.Contains(hit.collider.GetComponent<Unit>()) && storedAction.TargetTypes.Contains(TargetType.CHARACTER))
                 {
                     if (targetedUnit != hit.collider.GetComponent<Unit>())
                     {
@@ -204,14 +215,8 @@ public class StateTarget : StateCancel
                     }
                 }
 
-                // Directly targeting an invalid unit with mouse primary
-                else if (hit.collider.gameObject.GetComponent<Unit>())
-                {
-                    Debug.Log("Not a target but don't want to revert to idle. Do nothing.");
-                }
-
                 // Directly targeting a tile with mouse primary
-                else if (hit.collider.gameObject.GetComponent<Tile>())
+                else if (hit.collider.gameObject.GetComponent<Tile>() && storedAction.TargetTypes.Contains(TargetType.TILE))
                 {
                     if (TargetInRange(t.selectedCharacter, hit.collider.gameObject.GetComponent<Tile>()))
                     {
@@ -224,8 +229,7 @@ public class StateTarget : StateCancel
                 }
                 else
                 {
-                    indicatorAOE.SetActive(false);
-                    ChangeState(new StateIdle(Machine));
+                    return;
                 }
             }
         }
@@ -242,7 +246,9 @@ public class StateTarget : StateCancel
             storedAction.UseAction(targetedTile);
         }
         else
+        {
             storedAction.UseAction();
+        }
 
         ChangeState(new StateWaitForAction(Machine, storedAction));
     }

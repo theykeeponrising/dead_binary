@@ -118,7 +118,7 @@ public class InCombatPlayerAction
             index = (index + 1 < validUnits.Count) ? index + 1 : 0;
 
         // If we are back to the same unit, do nothing
-        if (validUnits[index] == selectedCharacter)
+        if (validUnits.Count < 1 || validUnits[index] == selectedCharacter)
             return;
 
         // Select the next unit
@@ -256,8 +256,7 @@ public class InCombatPlayerAction
         }
 
         // Don't show if we are not currently using the main camera
-        Camera activeCamera = Camera.main.GetComponent<CameraHandler>().GetActiveCamera();
-        if (activeCamera != Camera.main)
+        if (CameraHandler.ActiveCamera != Camera.main)
             return;
 
         // Previews move path on mouse over

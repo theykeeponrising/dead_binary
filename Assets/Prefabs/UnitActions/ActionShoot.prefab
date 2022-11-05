@@ -56,6 +56,6 @@ MonoBehaviour:
   actionStage: 0
   bufferStart: 1
   bufferEnd: 1
-  targetUnit: {fileID: 0}
-  targetPosition: {x: 0, y: 0, z: 0}
-  targetFaction: 1
+  _useCharacterCamera: 1
+  TargetFaction: 1
+  TargetTypes: 00000000

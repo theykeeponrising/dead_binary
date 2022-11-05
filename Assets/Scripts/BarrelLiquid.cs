@@ -35,9 +35,6 @@ public class BarrelLiquid : MonoBehaviour
 
         materialColor.a = Mathf.Lerp(materialColor.a, targetGlow, Time.deltaTime);
         _material.color = materialColor;
-        Debug.Log(_material.color.a);
-
-        Debug.Log(_glowFade);
         if (SwitchGlow()) _glowFade = !_glowFade;
     }
 

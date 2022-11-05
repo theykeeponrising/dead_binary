@@ -1,12 +1,16 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class UnitTargetAction : UnitAction
 {
-    [HideInInspector] public Unit targetUnit;
-    [HideInInspector] public Vector3 targetPosition;
-    public FactionAffinity targetFaction;
+    [SerializeField] bool _useCharacterCamera = false;
+    
+    protected Unit TargetUnit;
+    protected Vector3 TargetPosition;
+    public FactionAffinity TargetFaction;
+    public List<TargetType> TargetTypes;
+
+    public bool UseCharacterCamera { get { return _useCharacterCamera; } }
 
     public override void UseAction(Unit unit)
     {

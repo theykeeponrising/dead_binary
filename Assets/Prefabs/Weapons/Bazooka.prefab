@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8855957653137438319}
-  - component: {fileID: 2535414087652992120}
   - component: {fileID: 4237401696635782300}
   - component: {fileID: 3287655850486405243}
   - component: {fileID: 1139300233091270407}
@@ -36,18 +35,6 @@ Transform:
   m_Father: {fileID: 809410280485434816}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2535414087652992120
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4220602312029608883}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 20629f7654e486546aadefedf05ea98a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!108 &4237401696635782300
 Light:
   m_ObjectHideFlags: 0
@@ -5095,8 +5082,16 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
+      propertyPath: _projectile
+      value: 
+      objectReference: {fileID: -4645023944297487310, guid: 3f1a91434d89fbd4580cbacf7b0d07cb, type: 3}
+    - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: weaponLayer
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
+      propertyPath: Stats.Damage
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: WeaponAction
@@ -5115,12 +5110,40 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
+      propertyPath: Stats.AmmoMax
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
+      propertyPath: _weaponAction
+      value: 
+      objectReference: {fileID: -4763375267091925915, guid: 70dd75952db192442be82b025b36f011, type: 3}
+    - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: stats.ammoMax
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
+      propertyPath: Stats.RangeMax
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
+      propertyPath: Stats.RangeMin
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
+      propertyPath: Stats.AmmoCurrent
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
+      propertyPath: _projectilePrefab
+      value: 
+      objectReference: {fileID: -4645023944297487310, guid: 3f1a91434d89fbd4580cbacf7b0d07cb, type: 3}
+    - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: stats.ammoCurrent
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
+      propertyPath: Stats.AreaOfEffect
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: stats.areaOfEffect
@@ -5135,7 +5158,15 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
+      propertyPath: _fireSound.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: reloadSound.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
+      propertyPath: _reloadSound.Array.size
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
@@ -5171,6 +5202,30 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
+      propertyPath: _fireSound.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: b7db0fed5a3873e479863e35d95c6f6f, type: 3}
+    - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
+      propertyPath: _fireSound.Array.data[1]
+      value: 
+      objectReference: {fileID: 8300000, guid: ef4585fcacc5d484e8d6119fdd324b19, type: 3}
+    - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
+      propertyPath: _fireSound.Array.data[2]
+      value: 
+      objectReference: {fileID: 8300000, guid: e38e8e677fa01314d827677d6a546271, type: 3}
+    - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
+      propertyPath: _fireSound.Array.data[3]
+      value: 
+      objectReference: {fileID: 8300000, guid: 363ef0b8d64d19041aa6628fb518201d, type: 3}
+    - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
+      propertyPath: Attributes.AnimationLayer
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
+      propertyPath: Attributes.AnimationSpeed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: attributes.animationLayer
       value: 4
       objectReference: {fileID: 0}
@@ -5191,7 +5246,39 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 8300000, guid: ae1d32a272f7bca43a598059ccd450f5, type: 3}
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
+      propertyPath: Attributes.ProjectileSpeed
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
+      propertyPath: Stats.BaseAccuracyModifier
+      value: 0.9
+      objectReference: {fileID: 0}
+    - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
+      propertyPath: _reloadSound.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: 5eabb9c484e9d29488ade01c7a90ad74, type: 3}
+    - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
+      propertyPath: _reloadSound.Array.data[1]
+      value: 
+      objectReference: {fileID: 8300000, guid: f79d895d50b6ab34d92d509815da9194, type: 3}
+    - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
+      propertyPath: _reloadSound.Array.data[2]
+      value: 
+      objectReference: {fileID: 8300000, guid: e7fb52f364cf67848b4fecf7d6e3a097, type: 3}
+    - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
+      propertyPath: _reloadSound.Array.data[3]
+      value: 
+      objectReference: {fileID: 8300000, guid: ae1d32a272f7bca43a598059ccd450f5, type: 3}
+    - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: stats.baseAccuracyModifier
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
+      propertyPath: Stats.OverRangeAccuracyPenalty
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
+      propertyPath: Stats.UnderRangeAccuracyPenalty
       value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 171350893874193170, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}

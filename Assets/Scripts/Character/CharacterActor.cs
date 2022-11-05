@@ -88,13 +88,16 @@ public class CharacterActor
         }
     }
 
-    public UnitAction FindActionOfType(System.Type actionType)
+    public UnitAction FindActionOfType(System.Type actionType, bool printDebug = false)
     {
         // Finds an action by type from the unit's current action list
 
         foreach (UnitAction unitAction in unit.GetUnitActions())
+        {
+            if (printDebug) Debug.Log(unitAction.GetType());
             if (unitAction.GetType() == actionType)
                 return unitAction;
+        }
         return null;
     }
 
@@ -243,12 +246,13 @@ public class CharacterActor
         unit.GetAnimator().CoverCrouch();
     }
 
-    public void GetTarget()
+    public void GetTarget(bool useCharacterCamera = false)
     {
         // Character it put into "targeting" mode
         // Target selected with left-click will have action done to it (such as attack action)
 
-        unit.GetComponentInChildren<CharacterCamera>().enabled = true;
+        unit.GetComponentInChildren<CharacterCamera>().enabled = useCharacterCamera;
+        unit.GetComponent<Collider>().enabled = !useCharacterCamera;
         unit.GetAnimator().ProcessAnimationEvent(CharacterAnimator.AnimationEventContext.AIMING, true);
         if (IsCrouching()) ToggleCrouch();
 
@@ -267,6 +271,7 @@ public class CharacterActor
         // Cleans up targeting-related objects
 
         unit.GetComponentInChildren<CharacterCamera>().enabled = false;
+        unit.GetComponent<Collider>().enabled = true;
         infoPanel.gameObject.SetActive(false);
 
         unit.GetAnimator().SetBool("aiming", false);

@@ -88,7 +88,7 @@ public abstract class Item : MonoBehaviour
 }
 
 public enum ItemType { ATTACHMENT, EQUIPMENT, CONSUMABLE, QUEST }
-public enum TargetType { CHARACTER, COVER, WEAPON }
+public enum TargetType { CHARACTER, COVER, TILE }
 
 // ATTACHMENT - Not usable item, passive effect ... ex scopes, grips, implants
 // EQUIPMENT - Usable unlimited item, immediate effect ... ex jammer, taser, radio

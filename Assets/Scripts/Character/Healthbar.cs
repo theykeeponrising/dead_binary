@@ -94,7 +94,7 @@ public class Healthbar : MonoBehaviour
     {
         // Points healthbar UI towards the active Camera
 
-        Camera activeCamera = Camera.main.GetComponent<CameraHandler>().GetActiveCamera();
+        Camera activeCamera = CameraHandler.ActiveCamera;
 
         // Main camera uses the Player game object as a proxy for rotation
         if (activeCamera == Camera.main)

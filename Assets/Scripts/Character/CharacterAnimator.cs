@@ -147,17 +147,6 @@ public class CharacterAnimator
         }
     }
 
-    public void Event_PlayAnimation(AnimationEventContext context)
-    {
-        // Weapon impact effect on target
-        switch (context)
-        {
-            case (AnimationEventContext.TAKE_DAMAGE):
-                _unit.GetActor().targetCharacter.GetAnimator().TakeDamageEffect(_unit.EquippedWeapon);
-                break;
-        }
-    }
-
     public void SetBool(string flag, bool state)
     {
         // Sets animator bool
@@ -198,6 +187,16 @@ public class CharacterAnimator
             _animator.GetCurrentAnimatorStateInfo(AnimationLayer).IsName("Crouch-Dodge"),
             _animator.GetCurrentAnimatorStateInfo(AnimationLayer).IsName("Crouch-Damage")};
         return crouchingAnims.Any(x => x == true);
+    }
+
+    public bool IsDodging()
+    {
+        // Returns true if any dodge animation is playing
+
+        bool[] dodgingAnims = {
+            _animator.GetCurrentAnimatorStateInfo(AnimationLayer).IsName("Dodge"),
+            _animator.GetCurrentAnimatorStateInfo(AnimationLayer).IsName("Crouch-Dodge")};
+        return dodgingAnims.Any(x => x == true);
     }
 
     public void CoverCrouch()

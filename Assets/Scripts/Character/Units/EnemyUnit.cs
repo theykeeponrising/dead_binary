@@ -281,7 +281,7 @@ public class EnemyUnit : Unit
         List<EnemyAction> enemyActions = new();
 
         //If no ammo, either reload or switch weapon
-        if (inventory.equippedWeapon.stats.ammoCurrent == 0)
+        if (inventory.equippedWeapon.Stats.AmmoCurrent == 0)
         {
             enemyActions.Add(CreateReloadAction(currentTile));
             return enemyActions;
@@ -463,19 +463,10 @@ public class EnemyUnit : Unit
         public UnitAction UnitAction { get; }
     };
 
-    public override void TakeDamage(Unit attacker, int damage, int distanceToTarget, MessageType damageType = MessageType.DMG_CONVENTIONAL)
+    public override void TakeDamage(Unit attacker, int damage, MessageType damageType = MessageType.DMG_CONVENTIONAL)
     {
         // Called by an attacking source when taking damage
         // TO DO: More complex damage reduction will be added here
-
-        // If attacked missed, do not take damage
-        if (!RollForHit(attacker, distanceToTarget))
-        {
-            if (currentCover) currentCover.PlayImpactSFX();
-            GetAnimator().SetTrigger("dodge");
-            Debug.Log(string.Format("{0} missed target {1}!", attacker.attributes.name, attributes.name));
-            return;
-        }
 
         UIManager.GetTurnIndicator().SetTurnIndicatorMessage(damageType);
         Vector3 direction = (transform.position - attacker.transform.position);

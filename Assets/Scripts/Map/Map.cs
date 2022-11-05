@@ -6,9 +6,9 @@ using UnityEngine.Tilemaps;
 
 public class Map : MonoBehaviour
 {
-    MapEffects mapEffects;
     public MapGrid mapGrid;
 
+    public static MapEffects MapEffects;
     public static Tilemap DetailMap;
     public static Tilemap TileMap;
     public static Tilemap CoverMap;
@@ -19,7 +19,7 @@ public class Map : MonoBehaviour
 
     private void Awake()
     {
-        mapEffects = GetComponent<MapEffects>();
+        MapEffects = GetComponent<MapEffects>();
         mapGrid = GetComponentInChildren<MapGrid>();
         Tilemap[] tilemaps = GetComponentsInChildren<Tilemap>();
 
@@ -69,35 +69,35 @@ public class Map : MonoBehaviour
     {
         // Used to track effects and remove oldest effects if we are above effects limit
 
-        return mapEffects.CreateEffect(efxPrefab, efxPosition, efxRotation);
+        return MapEffects.CreateEffect(efxPrefab, efxPosition, efxRotation);
     }
 
     public GameObject CreateTimedEffect(GameObject efxPrefab, Vector3 efxPosition, Quaternion efxRotation, float timer)
     {
         // Used to track effects and remove oldest effects if we are above effects limit
 
-        return mapEffects.CreateTimedEffect(efxPrefab, efxPosition, efxRotation, timer);
+        return MapEffects.CreateTimedEffect(efxPrefab, efxPosition, efxRotation, timer);
     }
 
     public void AddEffect(GameObject efxPrefab)
     {
         // Add an existing effect to the effects list
 
-        mapEffects.AddEffect(efxPrefab.transform);
+        MapEffects.AddEffect(efxPrefab.transform);
     }
 
     public void AddEffect(Transform efxPrefab)
     {
         // Add an existing effect to the effects list
 
-        mapEffects.AddEffect(efxPrefab.transform);
+        MapEffects.AddEffect(efxPrefab.transform);
     }
 
     public void AddEffect(ItemProp efxPrefab)
     {
         // Add an existing effect to the effects list
 
-        mapEffects.AddEffect(efxPrefab.transform);
+        MapEffects.AddEffect(efxPrefab.transform);
     }
 
     public static void ClearTileHighlights()
