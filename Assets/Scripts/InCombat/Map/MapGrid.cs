@@ -18,6 +18,7 @@ public class MapGrid : MonoBehaviour
     public static float tileSpacing = 2.0f;
 
     public GameObject indicatorAOEPrefab;
+    public GameObject emptyTile;
     
     void Awake() 
     {
@@ -50,6 +51,13 @@ public class MapGrid : MonoBehaviour
         Debug.Log(string.Format("Grid Width: {0}, Grid Height: {1}", width, height));
         grid = new Tile[width * height];
 
+        for (int i = 0; i < width * height; i++)
+        {
+            Vector3 pos = GetPositionFromIndex(i);
+            GameObject go = Instantiate(emptyTile, pos, Quaternion.identity);
+            grid[i] = go.GetComponent<Tile>();
+        }
+
         foreach (Tile tile in tiles)
         {
             AddTile(tile);
@@ -61,14 +69,26 @@ public class MapGrid : MonoBehaviour
         //Get position of tile
         Vector3 pos = NormalizePositionToGrid(tile.gameObject.transform.position);
         int flattened_xz = GetFlattenedIndex(pos);
+        
         if (grid[flattened_xz] != null)
         {
-            string s = string.Format("Tile at position {0}, {1} already exists! Index: {2}", pos.x, pos.z, flattened_xz);
-            Debug.LogError(s, tile);
-        } else {
-            grid[flattened_xz] = tile;
-            tile.Grid = this;
+            GameObject go = grid[flattened_xz].gameObject;
+            grid[flattened_xz] = null;
+            Destroy(go);
         }
+
+        grid[flattened_xz] = tile;
+        tile.Grid = this;
+        
+    }
+
+    public Vector3 GetPositionFromIndex(int flattened_xz)
+    {
+        float z = Mathf.Floor(((float)flattened_xz) / width);
+        float x = flattened_xz - (z * width);
+
+        Vector3 pos = new Vector3((x + gridOffsetX) * tileSpacing, 0.0f, (z + gridOffsetZ) * tileSpacing);
+        return pos;
     }
 
     //Convert the 2-D index to a 1-D flattened array index

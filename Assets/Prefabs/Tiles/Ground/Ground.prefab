@@ -234,8 +234,16 @@ PrefabInstance:
       propertyPath: m_DynamicOccludee
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5755940388939343253, guid: c8b4bac8a0e022847bb1bdb68c977477, type: 3}
+      propertyPath: m_LightProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6151756185518166924, guid: c8b4bac8a0e022847bb1bdb68c977477, type: 3}
       propertyPath: m_DynamicOccludee
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6151756185518166924, guid: c8b4bac8a0e022847bb1bdb68c977477, type: 3}
+      propertyPath: m_LightProbeUsage
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -252,9 +260,33 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5337129706768879124}
     m_Modifications:
+    - target: {fileID: 659801734300205623, guid: d36d2d9d17c511941bf49ad7b8fefbcf, type: 3}
+      propertyPath: m_DynamicOccludee
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 659801734300205623, guid: d36d2d9d17c511941bf49ad7b8fefbcf, type: 3}
+      propertyPath: m_LightProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1411402187056378926, guid: d36d2d9d17c511941bf49ad7b8fefbcf, type: 3}
+      propertyPath: m_DynamicOccludee
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1411402187056378926, guid: d36d2d9d17c511941bf49ad7b8fefbcf, type: 3}
+      propertyPath: m_LightProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8299820690282304537, guid: d36d2d9d17c511941bf49ad7b8fefbcf, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9013263080144921958, guid: d36d2d9d17c511941bf49ad7b8fefbcf, type: 3}
       propertyPath: m_Name
       value: TileConcrete
+      objectReference: {fileID: 0}
+    - target: {fileID: 9013263080144921958, guid: d36d2d9d17c511941bf49ad7b8fefbcf, type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9013263080144921959, guid: d36d2d9d17c511941bf49ad7b8fefbcf, type: 3}
       propertyPath: m_RootOrder
@@ -307,7 +339,7 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 9013263080144921959, guid: d36d2d9d17c511941bf49ad7b8fefbcf, type: 3}
   m_PrefabInstance: {fileID: 8712987140175928618}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &616491878392714719
+--- !u!114 &2485058873879404333
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
