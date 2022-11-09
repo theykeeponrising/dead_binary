@@ -55,7 +55,7 @@ MonoBehaviour:
   itemInfoDescription: A grenade that will heal non-robotic units in an area
   areaOfEffect: 3
   range: 7
-  itemSFX: 2
+  itemSFX: 3
   hpAmount: 5
   itemImpact: 2
   itemProp: {fileID: -1962813526457966920, guid: e55834e73ebdfa24c99779a557416511, type: 3}
