@@ -12,10 +12,10 @@ public class EnemyTurnProcess
     {
         this.enemyTurnState = enemyTurnState;
         enemyUnits = new List<EnemyUnit>();
-        GameObject[] gameObjects = GameObject.FindGameObjectsWithTag("Character");
-        foreach (GameObject go in gameObjects)
+        List<Unit> units = Map.FindUnits();
+        foreach (Unit unit in units)
         {
-            EnemyUnit enemyUnit = go.GetComponent<EnemyUnit>();
+            EnemyUnit enemyUnit = unit.GetComponent<EnemyUnit>();
             if (enemyUnit) enemyUnits.Add(enemyUnit);
         }
     }

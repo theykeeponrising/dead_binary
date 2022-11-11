@@ -54,7 +54,7 @@ public class StateTarget : StateCancel
         }
 
         // Instantiate tile selection circle
-        indicatorAOE = GlobalManager.ActiveMap.mapGrid.InstantiateIndicatorAOE(Vector3.zero);
+        indicatorAOE = Map.MapGrid.InstantiateIndicatorAOE(Vector3.zero);
 
         //Find Targets
         switch (targetType)
@@ -83,7 +83,7 @@ public class StateTarget : StateCancel
             v.healthbar.gameObject.SetActive(true);
         }
 
-        GlobalManager.ActiveMap.mapGrid.DestroyIndicatorAOE(indicatorAOE);
+        Map.MapGrid.DestroyIndicatorAOE(indicatorAOE);
 
         base.Exit(t);
     }

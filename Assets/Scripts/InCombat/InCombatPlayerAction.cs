@@ -46,7 +46,7 @@ public class InCombatPlayerAction
         infoPanelScript = UIManager.GetInfoPanel();
         infoPanelScript.gameObject.SetActive(false);
         playerActionUI = UIManager.GetPlayerAction();
-        stateDebugText = GameObject.Find("StateDebugText").GetComponent<TextMeshProUGUI>();
+        stateDebugText = UIManager.GetStateDebug();
 
         playerUnits = Map.FindUnits(FactionManager.PV);
     }

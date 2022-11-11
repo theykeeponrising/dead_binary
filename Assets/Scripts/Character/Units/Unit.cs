@@ -91,8 +91,6 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
         inventory = GetComponentInChildren<Inventory>();
         _unitActionsContainer = transform.Find("Actions");
 
-        if (objectTiles.Count > 0) currentTile = objectTiles[0];
-
         // Initialize the character actor
         charActor = new CharacterActor(this);
 
@@ -107,9 +105,11 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
         healthbar = transform.Find("Healthbar").GetComponent<Healthbar>();
     }
 
-    private void Start() 
+    protected override void Start() 
     {
-        grid = currentTile.Grid;
+        base.Start();
+        grid = Map.MapGrid;
+        if (objectTiles.Count > 0) currentTile = objectTiles[0];
 
         // Characters start with full health and action points
         stats.healthCurrent = stats.healthMax;
@@ -308,7 +308,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     public List<Unit> GetOppFactionUnits()
     {
         List<Unit> oppFactionUnits = new List<Unit>();
-        Unit[] gos = GameObject.FindObjectsOfType<Unit>();
+        List<Unit> gos = Map.FindUnits();
 
         foreach (var v in gos)
         {
