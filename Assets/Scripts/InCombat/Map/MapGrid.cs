@@ -53,20 +53,23 @@ public class MapGrid : MonoBehaviour
         Debug.Log(string.Format("Grid Width: {0}, Grid Height: {1}", width, height));
         grid = new Tile[width * height];
 
+        foreach (Tile tile in tiles)
+        {
+            AddTile(tile);
+        }
+
         //Create Empty tiles
         emptyTileParentGO = new GameObject("EmptyTiles"); 
         emptyTileParentGO.transform.parent = this.gameObject.transform;
         for (int i = 0; i < width * height; i++)
         {
-            Vector3 pos = GetPositionFromIndex(i);
-            GameObject go = Instantiate(emptyTile, pos, Quaternion.identity);
-            go.transform.parent = emptyTileParentGO.transform;
-            grid[i] = go.GetComponent<Tile>();
-        }
-
-        foreach (Tile tile in tiles)
-        {
-            AddTile(tile);
+            if (grid[i] == null)
+            {
+                Vector3 pos = GetPositionFromIndex(i);
+                GameObject go = Instantiate(emptyTile, pos, Quaternion.identity);
+                go.transform.parent = emptyTileParentGO.transform;
+                grid[i] = go.GetComponent<Tile>();
+            }
         }
     }
 
