@@ -13,6 +13,11 @@ public class GridObject : MonoBehaviour
 
     protected virtual void Awake()
     {
+
+    }
+
+    protected virtual void Start()
+    {
         this.objectTiles = FindCurrentTiles();
         foreach (Tile tile in objectTiles) tile.Occupant = this;
     }
@@ -22,8 +27,8 @@ public class GridObject : MonoBehaviour
         // Finds the tile the character is currently standing on
         // Called during start
 
-        Tile[] tiles = FindObjectsOfType<Tile>();
-        List<Tile> foundTiles = new List<Tile>();
+        List<Tile> tiles = Map.FindTiles();
+        List<Tile> foundTiles = new();
 
         foreach (Tile tile in tiles)
             if (tile.gameObject.GetInstanceID() != gameObject.GetInstanceID())
@@ -39,7 +44,7 @@ public class GridObject : MonoBehaviour
         // Finds the tile the character is currently standing on
         // Called during start
 
-        Tile[] tiles = FindObjectsOfType<Tile>();
+        List<Tile> tiles = Map.FindTiles();
 
         foreach (Tile tile in tiles)
             if (tile.gameObject.GetInstanceID() != gameObject.GetInstanceID())

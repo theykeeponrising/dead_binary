@@ -1,18 +1,17 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
+using TMPro;
 
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance;
 
-    static StatusMenuUI statusMenuUI;
-    static ActionPanelScript actionPanel;
-    static InCombatPlayerActionUI inCombatPlayerActionUI;
-    static InventoryPanelScript inventoryPanel;
-    static InfoPanelScript infoPanel;
-    static TurnIndicatorPanel turnIndicator;
+    static StatusMenuUI _statusMenuUI;
+    static ActionPanelScript _actionPanel;
+    static InCombatPlayerActionUI _inCombatPlayerActionUI;
+    static InventoryPanelScript _inventoryPanel;
+    static InfoPanelScript _infoPanel;
+    static TurnIndicatorPanel _turnIndicator;
+    static TextMeshProUGUI _stateDebugText;
 
     private void Awake()
     {
@@ -21,37 +20,43 @@ public class UIManager : MonoBehaviour
 
     public static InfoPanelScript GetInfoPanel()
     {
-        if (!infoPanel) infoPanel = Instance.GetComponentInChildren<InfoPanelScript>();
-        return infoPanel;
+        if (!_infoPanel) _infoPanel = Instance.GetComponentInChildren<InfoPanelScript>();
+        return _infoPanel;
     }
 
     public static StatusMenuUI GetStatusMenu()
     {
-        if (!statusMenuUI) statusMenuUI = Instance.GetComponentInChildren<StatusMenuUI>();
-        return statusMenuUI;
+        if (!_statusMenuUI) _statusMenuUI = Instance.GetComponentInChildren<StatusMenuUI>();
+        return _statusMenuUI;
     }
 
     public static ActionPanelScript GetActionPanel()
     {
-        if (!actionPanel) actionPanel = Instance.GetComponentInChildren<ActionPanelScript>();
-        return actionPanel;
+        if (!_actionPanel) _actionPanel = Instance.GetComponentInChildren<ActionPanelScript>();
+        return _actionPanel;
     }
 
     public static InCombatPlayerActionUI GetPlayerAction()
     {
-        if (!inCombatPlayerActionUI) inCombatPlayerActionUI = Instance.GetComponentInChildren<InCombatPlayerActionUI>();
-        return inCombatPlayerActionUI;
+        if (!_inCombatPlayerActionUI) _inCombatPlayerActionUI = Instance.GetComponentInChildren<InCombatPlayerActionUI>();
+        return _inCombatPlayerActionUI;
     }
 
     public static InventoryPanelScript GetInventoryPanel()
     {
-        if (!inventoryPanel) inventoryPanel = Instance.GetComponentInChildren<InventoryPanelScript>();
-        return inventoryPanel;
+        if (!_inventoryPanel) _inventoryPanel = Instance.GetComponentInChildren<InventoryPanelScript>();
+        return _inventoryPanel;
     }
 
     public static TurnIndicatorPanel GetTurnIndicator()
     {
-        if (!turnIndicator) turnIndicator = Instance.GetComponentInChildren<TurnIndicatorPanel>();
-        return turnIndicator;
+        if (!_turnIndicator) _turnIndicator = Instance.GetComponentInChildren<TurnIndicatorPanel>();
+        return _turnIndicator;
+    }
+
+    public static TextMeshProUGUI GetStateDebug()
+    {
+        if (!_stateDebugText) _stateDebugText = Instance.transform.Find("StateDebugText").GetComponent<TextMeshProUGUI>();
+        return _stateDebugText;
     }
 }
