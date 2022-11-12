@@ -6,21 +6,20 @@ using UnityEngine.Tilemaps;
 
 public class Map : MonoBehaviour
 {
-    public MapGrid mapGrid;
-
+    public static MapGrid MapGrid;
     public static MapEffects MapEffects;
     public static Tilemap DetailMap;
     public static Tilemap TileMap;
     public static Tilemap CoverMap;
     public static Tilemap UnitMap;
 
-    private static List<Tile> _tileMapResults;
-    private static List<CoverObject> _coverMapResults;
+    private static List<Tile> _tileMapResults = new();
+    private static List<CoverObject> _coverMapResults = new();
 
     private void Awake()
     {
         MapEffects = GetComponent<MapEffects>();
-        mapGrid = GetComponentInChildren<MapGrid>();
+        MapGrid = GetComponentInChildren<MapGrid>();
         Tilemap[] tilemaps = GetComponentsInChildren<Tilemap>();
 
         DetailMap = tilemaps[0];
@@ -28,8 +27,8 @@ public class Map : MonoBehaviour
         CoverMap = tilemaps[2];
         UnitMap = tilemaps[3];
 
-        _tileMapResults = TileMap.GetComponentsInChildren<Tile>().ToList();
-        _coverMapResults = CoverMap.GetComponentsInChildren<CoverObject>().ToList();
+        //_tileMapResults = TileMap.GetComponentsInChildren<Tile>().ToList();
+        //_coverMapResults = CoverMap.GetComponentsInChildren<CoverObject>().ToList();
     }
 
     public static List<Unit> FindUnits(Faction faction = null)
@@ -37,7 +36,7 @@ public class Map : MonoBehaviour
         // Returns units on the active map filtered by faction
         // If no faction is provided, returns all units
 
-        List<Unit> unitsFound = new List<Unit>();
+        List<Unit> unitsFound = new();
 
         if (faction != null)
         {
@@ -55,12 +54,18 @@ public class Map : MonoBehaviour
     {
         // Returns all tiles on the active map
 
+        if (_tileMapResults.Count == 0)
+            _tileMapResults = TileMap.GetComponentsInChildren<Tile>().ToList();
+
         return _tileMapResults;
     }
 
     public static List<CoverObject> FindCoverObjects()
     {
         // Returns all tiles on the active map
+
+        if (_coverMapResults.Count == 0)
+            _coverMapResults = CoverMap.GetComponentsInChildren<CoverObject>().ToList();
 
         return _coverMapResults;
     }

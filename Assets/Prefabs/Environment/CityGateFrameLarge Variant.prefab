@@ -29,7 +29,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6416031016520120321, guid: 2e940e34d50045e428add6cba6ece4b9, type: 3}
       propertyPath: m_Name
-      value: CityGateFrameLarge
+      value: CityGateFrameLarge Variant
       objectReference: {fileID: 0}
     - target: {fileID: 6416031016520120334, guid: 2e940e34d50045e428add6cba6ece4b9, type: 3}
       propertyPath: m_RootOrder
@@ -101,3 +101,26 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2e940e34d50045e428add6cba6ece4b9, type: 3}
+--- !u!1 &903498980292840766 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5054126178423537060, guid: 2e940e34d50045e428add6cba6ece4b9, type: 3}
+  m_PrefabInstance: {fileID: 5380116493640380570}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7713911789000132821
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 903498980292840766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f4fc0d1679c36f4aa13f5748ede3d72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _mainCollider: {fileID: 0}
+  CoverSize: 1
+  ImpactType: 3
+  IsVaultable: 0
+  IsDestructible: 0
+  IsDestroyed: 0
