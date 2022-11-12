@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,15 +9,19 @@ using UnityEngine;
 [System.Serializable]
 public class SFXItems
 {
-    [SerializeField] private AudioClip[] _itemEffectExplosion;
-    [SerializeField] private AudioClip[] _itemEffectMedkit;
+    [SerializeField] private AudioClip[] _itemEffectExplGrenade;
+    [SerializeField] private AudioClip[] _itemEffectExplRocket;
+    [SerializeField] private AudioClip[] _itemEffectMedkitSpray;
+    [SerializeField] private AudioClip[] _itemEffectMedkitBag;
 
     private Dictionary<ItemEffectType, AudioClip[]> GetDict()
     {
         var dict = new Dictionary<ItemEffectType, AudioClip[]>
         {
-            {ItemEffectType.EXPLOSION, _itemEffectExplosion },
-            {ItemEffectType.MEDKIT_SPRAY, _itemEffectMedkit },
+            {ItemEffectType.EXPL_GRENADE, _itemEffectExplGrenade },
+            {ItemEffectType.EXPL_ROCKET, _itemEffectExplRocket },
+            {ItemEffectType.MEDKIT_SPRAY, _itemEffectMedkitSpray },
+            {ItemEffectType.MEDKIT_BAG, _itemEffectMedkitBag },
         };
         return dict;
     }
@@ -41,4 +44,4 @@ public class SFXItems
     }
 }
 
-public enum ItemEffectType { NONE, EXPLOSION, MEDKIT_SPRAY, MEDKIT_BAG };
+public enum ItemEffectType { NONE, EXPL_GRENADE, EXPL_ROCKET, MEDKIT_SPRAY, MEDKIT_BAG };

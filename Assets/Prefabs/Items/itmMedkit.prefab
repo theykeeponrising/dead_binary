@@ -55,7 +55,7 @@ MonoBehaviour:
   itemInfoDescription: Heals a target friendly unit
   areaOfEffect: 1
   range: 1
-  itemSFX: 2
+  itemSFX: 3
   hpAmount: 5
   itemImpact: 0
   itemProp: {fileID: 0}

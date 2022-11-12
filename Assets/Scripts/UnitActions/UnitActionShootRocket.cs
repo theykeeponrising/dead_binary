@@ -130,7 +130,7 @@ public class UnitActionShootRocket : UnitActionShoot
         // Plays the rocket effect sound
         
         AudioSource audioSource = spawnEffect.GetComponent<AudioSource>();
-        AudioClip audioClip = AudioManager.GetSound(ItemEffectType.EXPLOSION);
+        AudioClip audioClip = AudioManager.GetSound(ItemEffectType.EXPL_ROCKET);
         audioSource.PlayOneShot(audioClip);
     }
 }
