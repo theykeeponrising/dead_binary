@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class AudioManager : MonoBehaviour
@@ -7,7 +5,7 @@ public class AudioManager : MonoBehaviour
     // Used to store and quickly reference various audio clip arrays
 
     public static AudioManager Instance = null;
-    AudioSource audioSource;
+    private AudioSource _audioSource;
 
     ////////////////
     // Soundtrack //
@@ -26,11 +24,12 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private SFXImpact Impact;
     [SerializeField] private SFXInterface Interface;
     [SerializeField] private SFXItems Items;
+    [SerializeField] private SFXDialog Dialog;
 
     private void Awake()
     {
         Instance = this;
-        audioSource = GetComponent<AudioSource>();
+        _audioSource = GetComponent<AudioSource>();
 
         // TO DO -- Add a more robust music system
         PlayMusic(musicGroundZero);
@@ -42,8 +41,8 @@ public class AudioManager : MonoBehaviour
 
         if (!playMusic) return;
 
-        audioSource.clip = audioClip;
-        audioSource.Play();
+        _audioSource.clip = audioClip;
+        _audioSource.Play();
     }
 
     // Ambience
@@ -88,4 +87,7 @@ public class AudioManager : MonoBehaviour
     public static AudioClip GetSound(ItemEffectType soundType, int index)
     { return Instance.Items.GetSound(soundType, index); }
 
+    // Dialog
+    public static AudioClip GetSound(DialogVoice soundType)
+    { return Instance.Dialog.GetSound(soundType); }
 }

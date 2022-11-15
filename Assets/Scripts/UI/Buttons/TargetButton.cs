@@ -1,57 +1,63 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class TargetButton : ActionButton
 {
-    InfoPanelScript infoPanel;
-    string spritePath;
-    Image iconBracket;
-    Image iconUnit;
+    private InfoPanelScript _infoPanel;
+    private string _spritePath;
+    private Image _iconBracket;
+    private Image _iconUnit;
 
-    private void Awake()
+    protected override void Awake()
     {
-        infoPanel = GetComponentInParent<InfoPanelScript>();
-        iconBracket = GetComponent<Image>();
-        iconUnit = GetComponentsInChildren<Image>()[1];
+        _audioSource = UIManager.AudioSource;
+        _button = GetComponentInChildren<Button>();
+
+        _infoPanel = GetComponentInParent<InfoPanelScript>();
+        _iconBracket = GetComponent<Image>();
+        _iconUnit = GetComponentsInChildren<Image>()[1];
     }
 
     public override void LoadResources(string newSpritePath)
     {
-        spritePath = newSpritePath;
+        _spritePath = newSpritePath;
+        _iconUnit.sprite = Resources.Load<Sprite>(_spritePath);
+        Debug.Log(_iconUnit.sprite.ToString());
+    }
 
-        iconUnit.sprite = Resources.Load<Sprite>(spritePath);
+    protected override void CheckRequirements()
+    {
+        // TO DO -- Add line of sight requirements here
     }
 
     public override void BindUnit(Unit unit)
     {
         base.BindUnit(unit);
-        button.onClick.AddListener(ButtonPress);
-        LoadResources(UnitIcons.GetIcon(boundUnit.attributes.unitIcon));
+        _button.onClick.AddListener(ButtonPress);
+        LoadResources(UnitIcons.GetIcon(BoundUnit.attributes.unitIcon));
         SetIconColor();
     }
 
-    void SetIconColor()
+    private void SetIconColor()
     {
-        Faction unitFaction = boundUnit.attributes.faction;
-        iconBracket.color = unitFaction.FactionColor;
-        iconUnit.color = unitFaction.FactionColor;
+        Faction unitFaction = BoundUnit.attributes.faction;
+        _iconBracket.color = unitFaction.FactionColor;
+        _iconUnit.color = unitFaction.FactionColor;
     }
 
     public void ShowBracket(bool show)
     {
-        iconBracket.enabled = show;
+        _iconBracket.enabled = show;
     }
 
-    public override void ButtonPress()
+    protected override void ButtonPress()
     {
         // On button press, play sound and switch selected unit's target to the bound unit
 
         ButtonTrigger();
         StateTarget currentState = (StateTarget)GetCurrentState();
         InCombatPlayerAction playerAction = GetPlayerAction();
-        currentState.ChangeTarget(playerAction, boundUnit);
-        infoPanel.UpdateTargetButtons();
+        currentState.ChangeTarget(playerAction, BoundUnit);
+        _infoPanel.UpdateTargetButtons();
     }
 }

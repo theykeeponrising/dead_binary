@@ -3,47 +3,58 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using TMPro;
 
 public abstract class ActionButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     // Class used to handle sprites for action buttons
     // Will be used to control mouse-over effects as well
 
-    public AudioSource audioSource;
-    public Button button;
+    protected AudioSource _audioSource;
+    protected Button _button;
+    protected TextMeshProUGUI _buttonLabel;
+    protected Image _buttonFrame;
+    protected Image _buttonBackground;
 
-    public Item boundItem;
-    public UnitAction boundAction;
-    public Unit boundUnit;
-    public bool requirementsMet;
+    protected bool _requirementsMet;
+    protected ButtonState _buttonState = ButtonState.PASSIVE;
 
-    public enum ButtonState { ACTIVE, PASSIVE, DISABLED };
-    public ButtonState currentButtonState = ButtonState.PASSIVE;
+    public Item BoundItem;
+    public UnitAction BoundAction;
+    public Unit BoundUnit;
 
     // Colors for the icon and frame
-    public Dictionary<ButtonState, Color32> IconColors = new Dictionary<ButtonState, Color32>() {
+    protected Dictionary<ButtonState, Color32> IconColors = new() {
         { ButtonState.ACTIVE, new Color32(37, 232, 232, 255) },
         { ButtonState.PASSIVE, new Color32(0, 0, 0, 255) },
         { ButtonState.DISABLED, new Color32(100, 100, 100, 255) },
     };
 
     // Colors for the background
-    public Dictionary<ButtonState, Color32> BackgroundColors = new Dictionary<ButtonState, Color32>() {
+    protected Dictionary<ButtonState, Color32> BackgroundColors = new() {
         { ButtonState.ACTIVE, new Color32(0, 0, 0, 255) },
         { ButtonState.PASSIVE, new Color32(37, 232, 232, 255) },
         { ButtonState.DISABLED, new Color32(0, 0, 0, 255) },
     };
 
-    void OnEnable()
+    protected virtual void Awake()
     {
-        audioSource = GetComponentInParent<AudioSource>();
-        button = GetComponent<Button>();
+        _audioSource = UIManager.AudioSource;
+        _button = GetComponentInChildren<Button>();
+        _buttonLabel = GetComponentInChildren<TextMeshProUGUI>();
+        _buttonFrame = transform.Find("Frame").GetComponent<Image>();
+        _buttonBackground = transform.Find("Background").GetComponent<Image>();
     }
 
-    void Update()
+    protected virtual void Start()
     {
-        if (boundAction) CheckRequirements();
-        if (boundItem) CheckQuantity();
+        _button.onClick.AddListener(ButtonPress);
+    }
+
+    protected virtual void Update()
+    {
+        CheckRequirements();
+        if (BoundItem) CheckQuantity();
     }
 
     public virtual void LoadResources(string newSpritePath)
@@ -56,12 +67,12 @@ public abstract class ActionButton : MonoBehaviour, IPointerEnterHandler, IPoint
         Debug.Log("Load Resources override missing for button!");
     }
 
-    public virtual void CheckRequirements()
+    protected virtual void CheckRequirements()
     {
-        Debug.Log("Check Requirements override missing for button!");
+        Debug.Log(string.Format("Check Requirements override missing for button {0}!", gameObject));
     }
 
-    public virtual void CheckQuantity()
+    protected virtual void CheckQuantity()
     {
         Debug.Log("Check Quantity override missing for button!");
     }
@@ -70,50 +81,55 @@ public abstract class ActionButton : MonoBehaviour, IPointerEnterHandler, IPoint
     {
         // Highlights icon on mouse over
 
-        if (requirementsMet) currentButtonState = ButtonState.ACTIVE;
+        if (!_requirementsMet)
+            return;
 
+        _buttonState = ButtonState.ACTIVE;
         AudioClip audioClip = AudioManager.GetSound(InterfaceType.MOUSE_OVER, 0);
-        audioSource.PlayOneShot(audioClip);
+        _audioSource.PlayOneShot(audioClip);
     }
 
     void IPointerExitHandler.OnPointerExit(PointerEventData eventData)
     {
         // Clears unit highlight on mouse leave
 
-        if (requirementsMet) currentButtonState = ButtonState.PASSIVE;
+        if (!_requirementsMet)
+            return;
+
+        _buttonState = ButtonState.PASSIVE;
     }
 
     public virtual void BindAction(UnitAction action)
     {
         // Stores action for checking requirements
 
-        boundAction = action;
+        BoundAction = action;
     }
 
     public virtual void BindItem(Item item)
     {
         // Binds item for requirement checking
 
-        boundItem = item;
+        BoundItem = item;
     }
 
     public virtual void BindUnit(Unit unit)
     {
-        boundUnit = unit;
+        BoundUnit = unit;
     }
 
     public UnitAction GetAction()
     {
         // Returns bound action
 
-        return boundAction;
+        return BoundAction;
     }
 
     public Item GetItem()
     {
         // Returns bound action
 
-        return boundItem;
+        return BoundItem;
     }
 
     public InCombatPlayerAction GetPlayerAction()
@@ -133,10 +149,10 @@ public abstract class ActionButton : MonoBehaviour, IPointerEnterHandler, IPoint
     {
         // Removes button bindings
 
-        button.onClick.RemoveAllListeners();
+        _button.onClick.RemoveAllListeners();
     }
 
-    public virtual void ButtonPress()
+    protected virtual void ButtonPress()
     {
         Debug.Log("Button Press override missing for button!");
     }
@@ -148,17 +164,17 @@ public abstract class ActionButton : MonoBehaviour, IPointerEnterHandler, IPoint
         StartCoroutine(ButtonTriggerEffect());
     }
 
-    IEnumerator ButtonTriggerEffect()
+    private IEnumerator ButtonTriggerEffect()
     {
         // Simulates the visual look of the action button being clicked
         // For use when action button is triggered via another input
 
         AudioClip audioClip = AudioManager.GetSound(InterfaceType.MOUSE_CLICK, 0);
-        audioSource.PlayOneShot(audioClip);
+        _audioSource.PlayOneShot(audioClip);
 
-        currentButtonState = ButtonState.ACTIVE;
+        _buttonState = ButtonState.ACTIVE;
         yield return new WaitForSeconds(0.2f);
-        currentButtonState = ButtonState.PASSIVE;
+        _buttonState = ButtonState.PASSIVE;
     }
 }
 
@@ -178,3 +194,4 @@ public static class ActionButtons
 }
 
 public enum ActionButtonSprite { MOVE, SHOOT, RELOAD, SWAP, CHOOSE_ITEM, MEDKIT, GRENADE }
+public enum ButtonState { ACTIVE, PASSIVE, DISABLED };

@@ -1,128 +1,79 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-using UnityEngine.UI;
-using TMPro;
 
-public class EndTurnPanelScript : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class EndTurnPanelScript : ActionButton
 {
-    InCombatPlayerAction playerAction;
-    Button button;
-    AudioSource audioSource;
+    private InCombatPlayerAction _playerAction;
+    private Canvas _canvas;
 
-    TextMeshProUGUI label;
-    List<Image> buttonFrames = new List<Image>();
-    List<Image> buttonBackgrounds = new List<Image>();
+    private bool IsPlayerTurn { get { return StateHandler.Instance.GetStateObject(StateHandler.State.PlayerTurnState).isActive(); } }
 
-    enum ButtonState { ACTIVE, PASSIVE, DISABLED };
-    ButtonState currentButtonState = ButtonState.PASSIVE;
-
-    bool _requirementsMet => CheckRequirementsMet();
-    bool _playerTurn => StateHandler.Instance.GetStateObject(StateHandler.State.PlayerTurnState).isActive();
-
-    // Colors for the icon and frame
-    Dictionary<ButtonState, Color32> IconColors = new Dictionary<ButtonState, Color32>() {
-        { ButtonState.ACTIVE, new Color32(0, 0, 0, 255) },
-        { ButtonState.PASSIVE, new Color32(37, 232, 232, 255) },
-        { ButtonState.DISABLED, new Color32(100, 100, 100, 255) },
-    };
-
-    // Colors for the background
-    Dictionary<ButtonState, Color32> BackgroundColors = new Dictionary<ButtonState, Color32>() {
-        { ButtonState.ACTIVE, new Color32(37, 232, 232, 255) },
-        { ButtonState.PASSIVE, new Color32(0, 0, 0, 255) },
-        { ButtonState.DISABLED, new Color32(0, 0, 0, 255) },
-    };
-
-    private void Awake()
+    protected override void Awake()
     {
-        audioSource = GetComponentInParent<AudioSource>();
-        label = GetComponentInChildren<TextMeshProUGUI>();
-
-        buttonFrames.Add(GetComponentsInChildren<Image>()[1]);
-        buttonFrames.Add(GetComponentsInChildren<Image>()[3]);
-        buttonFrames.Add(GetComponentsInChildren<Image>()[5]);
-
-        buttonBackgrounds.Add(GetComponentsInChildren<Image>()[0]);
-        buttonBackgrounds.Add(GetComponentsInChildren<Image>()[2]);
-        buttonBackgrounds.Add(GetComponentsInChildren<Image>()[4]);
+        base.Awake();
+        _canvas = GetComponent<Canvas>();
     }
 
-    // Start is called before the first frame update
-    private void Start()
+    protected override void Start()
     {
-        button = GetComponentInChildren<Button>();
-        button.onClick.AddListener(ButtonPress);
-
-        playerAction = ((PlayerTurnState)StateHandler.Instance.GetStateObject(StateHandler.State.PlayerTurnState)).GetPlayerAction();
+        base.Start();
+        _playerAction = ((PlayerTurnState)StateHandler.Instance.GetStateObject(StateHandler.State.PlayerTurnState)).GetPlayerAction();
     }
 
-    // Update is called once per frame
-    private void Update()
+    protected override void Update()
     {
-        SetButtonState();
+        base.Update();
+        SetColors();
+        SetCanvasVisibility();
     }
 
-    void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
-    {
-        // Highlights icon on mouse over
-
-        if (!_requirementsMet) return;
-        currentButtonState = ButtonState.ACTIVE;
-        AudioClip audioClip = AudioManager.GetSound(InterfaceType.MOUSE_OVER, 0);
-        audioSource.PlayOneShot(audioClip);
-    }
-
-    void IPointerExitHandler.OnPointerExit(PointerEventData eventData)
-    {
-        // Clears unit highlight on mouse leave
-
-        if (!_requirementsMet) return; 
-        currentButtonState = ButtonState.PASSIVE;
-    }
-
-    private void SetButtonState()
+    protected override void CheckRequirements()
     {
         // Changes button state based on if requirements are met
 
-        if (!_requirementsMet) currentButtonState = ButtonState.DISABLED;
-        else if (_requirementsMet && currentButtonState == ButtonState.DISABLED) currentButtonState = ButtonState.PASSIVE;
-
-        label.color = IconColors[currentButtonState];
-        foreach (Image image in buttonFrames)
-            image.color = IconColors[currentButtonState];
-        foreach (Image image in buttonBackgrounds)
-            image.color = BackgroundColors[currentButtonState];
+        _requirementsMet = CheckRequirementsMet();
+        if (!_requirementsMet) _buttonState = ButtonState.DISABLED;
+        else if (_requirementsMet && _buttonState == ButtonState.DISABLED) _buttonState = ButtonState.PASSIVE;
     }
 
     private bool CheckRequirementsMet()
     {
-        if (!_playerTurn)
+        if (!IsPlayerTurn)
             return false;
         
         var playerTurnState = (PlayerTurnState) StateHandler.Instance.GetStateObject(StateHandler.State.PlayerTurnState);
         var currentState = playerTurnState.GetPlayerAction().stateMachine.GetCurrentState();
 
-        return (playerAction.CheckTurnEnd() || Keyboard.current.shiftKey.isPressed) && 
+        return (_playerAction.CheckTurnEnd() || Keyboard.current.shiftKey.isPressed) && 
                (currentState.GetType() == typeof(StateNoSelection) || currentState.GetType() == typeof(StateIdle));
     }
 
-    private void ButtonPress()
+    protected override void ButtonPress()
     {
-        if (!_playerTurn)
+        if (!IsPlayerTurn)
             return;
 
         if (!_requirementsMet)
         {
-            playerAction.SelectRemainingUnit();
+            _playerAction.SelectRemainingUnit();
             return;
         }
 
         AudioClip audioClip = AudioManager.GetSound(InterfaceType.MOUSE_CLICK, 0);
-        audioSource.PlayOneShot(audioClip);
+        _audioSource.PlayOneShot(audioClip);
 
-        playerAction.EndTurn();
+        _playerAction.EndTurn();
+    }
+
+    private void SetColors()
+    {
+        _buttonLabel.color = BackgroundColors[_buttonState];
+        _buttonFrame.color = BackgroundColors[_buttonState];
+        _buttonBackground.color = IconColors[_buttonState];
+    }
+
+    private void SetCanvasVisibility()
+    {
+        _canvas.enabled = IsPlayerTurn;
     }
 }

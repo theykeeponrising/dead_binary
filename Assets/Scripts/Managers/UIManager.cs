@@ -4,6 +4,7 @@ using TMPro;
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance;
+    public static AudioSource AudioSource;
 
     static StatusMenuUI _statusMenuUI;
     static ActionPanelScript _actionPanel;
@@ -11,11 +12,13 @@ public class UIManager : MonoBehaviour
     static InventoryPanelScript _inventoryPanel;
     static InfoPanelScript _infoPanel;
     static TurnIndicatorPanel _turnIndicator;
+    static DialogPanel _dialogPanel;
     static TextMeshProUGUI _stateDebugText;
 
     private void Awake()
     {
         Instance = this;
+        AudioSource = GetComponent<AudioSource>();
     }
 
     public static InfoPanelScript GetInfoPanel()
@@ -52,6 +55,12 @@ public class UIManager : MonoBehaviour
     {
         if (!_turnIndicator) _turnIndicator = Instance.GetComponentInChildren<TurnIndicatorPanel>();
         return _turnIndicator;
+    }
+
+    public static DialogPanel GetDialogPanel()
+    {
+        if (!_dialogPanel) _dialogPanel = Instance.GetComponentInChildren<DialogPanel>();
+        return _dialogPanel;
     }
 
     public static TextMeshProUGUI GetStateDebug()

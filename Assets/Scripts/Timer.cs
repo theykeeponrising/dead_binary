@@ -1,16 +1,16 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Timer
 {
-    float timer;
+    float _timerLength;
+    float _timeRemaining;
 
     public Timer(float startValue)
     {
         // Creates a new timer and set it to the provided duration
 
-        timer = startValue;
+        _timeRemaining = startValue;
+        _timerLength = startValue;
     }
 
     public bool CheckTimer()
@@ -19,19 +19,33 @@ public class Timer
         // When false, reduces the timer
         // When true, resets the timer
 
-        if (timer > 0)
+        if (_timeRemaining > 0)
         {
-            timer -= Time.deltaTime;
+            _timeRemaining -= Time.deltaTime;
             return false;
         }
-        timer = 0f;
+        _timeRemaining = 0f;
         return true;
+    }
+
+    public bool CheckContinuousTimer()
+    {
+        if (_timeRemaining > 0)
+        {
+            _timeRemaining -= Time.deltaTime;
+            return false;
+        }
+        else
+        {
+            _timeRemaining = _timerLength;
+            return true;
+        }
     }
 
     public void SetTimer(float newValue)
     {
         // Sets the timer without the need for a new timer object
 
-        timer = newValue;
+        _timeRemaining = newValue;
     }
 }

@@ -6,13 +6,13 @@ using TMPro;
 
 public class InfoPanelScript : MonoBehaviour
 {
-    AudioSource _audioSource;
-    Button _button;
-    InfoData _infoData;
+    private AudioSource _audioSource;
+    private Button _button;
+    private InfoData _infoData;
 
-    Transform _targetContainer;
-    List<TargetButton> _targetButtons = new List<TargetButton>();
-    [SerializeField] TargetButton _targetButtonPrefab;
+    private Transform _targetContainer;
+    private List<TargetButton> _targetButtons = new ();
+    [SerializeField] private TargetButton _targetButtonPrefab;
 
     public class InfoData
     {
@@ -143,7 +143,7 @@ public class InfoPanelScript : MonoBehaviour
 
         foreach (TargetButton button in _targetButtons)
         {
-            button.ShowBracket(playerAction.selectedCharacter.GetActor().targetCharacter == button.boundUnit);
+            button.ShowBracket(playerAction.selectedCharacter.GetActor().targetCharacter == button.BoundUnit);
         }
 
         PlaySwitchTargetSFX();

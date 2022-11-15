@@ -53,6 +53,9 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
         public UnitType unitType;
         public UnitIconEnum unitIcon;
         public FootstepSource footstepSource;
+        public UnitPortrait UnitPortrait;
+        public DialogVoice UnitVoice;
+        [Range(0.01f, 3f)] public float UnitVoicePitch = 1f;
     }
 
     // Stats are values that will be referenced and changed frequently during combat
