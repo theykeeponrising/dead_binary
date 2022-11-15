@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class UnitActionSprites
 {
@@ -16,8 +14,9 @@ public class UnitActionSprites
     public static string btn_action_medkit = "Buttons/btn_medkit";
     public static string btn_action_grenade = "Buttons/btn_grenade";
     public static string btn_action_wait = "Buttons/btn_wait";
+    public static string btn_action_talk = "Buttons/btn_talk";
 
-    public static Dictionary<UnitActionEnum, string> UnitActionSpritesDict = new Dictionary<UnitActionEnum, string>() {
+    public static Dictionary<UnitActionEnum, string> UnitActionSpritesDict = new() {
         { UnitActionEnum.MOVE, btn_action_move },
         { UnitActionEnum.SHOOT, btn_action_shoot },
         { UnitActionEnum.RELOAD, btn_action_reload },
@@ -26,6 +25,7 @@ public class UnitActionSprites
         { UnitActionEnum.MEDKIT, btn_action_medkit },
         { UnitActionEnum.GRENADE, btn_action_grenade },
         { UnitActionEnum.WAIT, btn_action_wait },
+        { UnitActionEnum.TALK, btn_action_talk },
     };
 
     public static string GetSprite(UnitActionEnum match)
@@ -36,4 +36,4 @@ public class UnitActionSprites
     }
 }
 
-public enum UnitActionEnum { NONE, MOVE, SHOOT, RELOAD, SWAP, CHOOSE_ITEM, MEDKIT, GRENADE, WAIT };
+public enum UnitActionEnum { NONE, MOVE, SHOOT, RELOAD, SWAP, CHOOSE_ITEM, MEDKIT, GRENADE, WAIT, TALK };

@@ -71,11 +71,6 @@ public class CharacterActor
     {
         // Changes selection circle based on selection type
         selectionCircle.ChangeSelection(selectionType);
-        if (selectionType == SelectionType.SELECT && unit.attributes.UnitPortrait)
-        {
-            Say("Our first objective is to bring down the gate ahead.");
-            Debug.Log("Debug > Showing dialog test");
-        }
     }
 
     public void IsTargetUX(bool isTarget, bool isPotentialTarget)

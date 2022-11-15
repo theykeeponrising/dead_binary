@@ -204,7 +204,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
         // If we have movement, add move action
         if (stats.movement > 0)
         {
-            _unitActions.Insert(index, ActionManager.Instance.unitActions.move);
+            _unitActions.Insert(index, ActionManager.UnitActions.Move);
             index += 1;
         }
 
@@ -218,26 +218,26 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
         // If we have an equipped weapon, add reload action
         if (EquippedWeapon)
         {
-            _unitActions.Insert(index, ActionManager.Instance.unitActions.reload);
+            _unitActions.Insert(index, ActionManager.UnitActions.Reload);
             index += 1;
         }
 
         // If we have multiple weapons, add swap action
         if (inventory.weapons.Count > 1)
         {
-            _unitActions.Insert(index, ActionManager.Instance.unitActions.swap);
+            _unitActions.Insert(index, ActionManager.UnitActions.Swap);
             index += 1;
         }
 
         // If we have items, add inventory action
         if (GetItems().Count > 0)
         {
-            _unitActions.Insert(index, ActionManager.Instance.unitActions.inventory);
+            _unitActions.Insert(index, ActionManager.UnitActions.Inventory);
             index += 1;
         }
 
         // Always add "Wait" action
-        _unitActions.Insert(index, ActionManager.Instance.unitActions.wait);
+        _unitActions.Insert(index, ActionManager.UnitActions.Wait);
 
         // Clone the prefabs
         for (index = 0; index < _unitActions.Count; index++)
@@ -530,5 +530,10 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     public bool GetFlag(FlagType flag)
     {
         return flags.Contains(flag);
+    }
+
+    public void Say(string dialog)
+    {
+        GetActor().Say(dialog);
     }
 }

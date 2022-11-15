@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ActionManager : MonoBehaviour
@@ -10,20 +8,23 @@ public class ActionManager : MonoBehaviour
     void Awake()
     {
         Instance = this;
+        UnitActions = _unitActions;
     }
 
     [System.Serializable]
     public class UnitActionPrefabs
     {
-        public UnitAction move;
-        public UnitAction shoot;
-        public UnitAction swap;
-        public UnitAction reload;
-        public UnitAction inventory;
-        public UnitAction item_grenade;
-        public UnitAction item_medkit;
-        public UnitAction wait;
+        public UnitAction Move;
+        public UnitAction Shoot;
+        public UnitAction Swap;
+        public UnitAction Reload;
+        public UnitAction Inventory;
+        public UnitAction ItemGrenade;
+        public UnitAction ItemMedkit;
+        public UnitAction Wait;
+        public UnitAction Talk;
     }
 
-    public UnitActionPrefabs unitActions;
+    [SerializeField] private UnitActionPrefabs _unitActions;
+    public static UnitActionPrefabs UnitActions;
 }
