@@ -211,16 +211,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41a4ab23a0f69b84db184e4b916fb0fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneCameras: []
-  parent: {fileID: 0}
-  maxSpeed: 15
-  acceleration: 10
-  stepSize: 2
-  zoomDampening: 7.5
-  minHeight: 3
-  maxHeight: 13
-  zoomSpeed: 2
-  maxRotationSpeed: 0.15
+  _panSpeedMax: 10
+  _panAcceleration: 10
+  _panZoomHeightAdjust: 1
+  _zoomStepSize: 2
+  _zoomZoomSpeed: 2
+  _zoomDampening: 7.5
+  _zoomHeightMin: 5
+  _zoomHeightMax: 50
+  _rotationSpeedMax: 0.25
 --- !u!1 &4146606119251336789
 GameObject:
   m_ObjectHideFlags: 0
