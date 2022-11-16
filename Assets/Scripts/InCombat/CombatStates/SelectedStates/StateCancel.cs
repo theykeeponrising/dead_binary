@@ -13,13 +13,13 @@ public class StateCancel : FiniteState<InCombatPlayerAction>
     {
         // Right mouse button will exit targeting
 
-        t.selectedCharacter.GetActor().ClearTarget();
+        t.selectedCharacter.ClearTarget();
         ChangeState(new StateIdle(Machine));
     }
 
     public override void InputCancel(InCombatPlayerAction t)
     {
-        t.selectedCharacter.GetActor().ClearTarget();
+        t.selectedCharacter.ClearTarget();
         ChangeState(new StateIdle(Machine));
     }
 }

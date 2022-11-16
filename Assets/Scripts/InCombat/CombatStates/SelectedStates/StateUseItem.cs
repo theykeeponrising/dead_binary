@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class StateUseItem : StateTarget
@@ -10,12 +8,12 @@ public class StateUseItem : StateTarget
     {
         if (targetedUnit)
         {
-            t.selectedCharacter.GetActor().ItemAction(storedAction.item, targetedUnit);
+            t.selectedCharacter.UseItem(storedAction.item, targetedUnit);
 
         }
         else if (targetedTile)
         {
-            t.selectedCharacter.GetActor().ItemAction(storedAction.item, targetedTile);
+            t.selectedCharacter.UseItem(storedAction.item, targetedTile);
         }
         else
             Debug.Log("No Target to Use Item. But how. Reverting to idle.");

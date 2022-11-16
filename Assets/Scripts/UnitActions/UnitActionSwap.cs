@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,12 +8,11 @@ public class UnitActionSwap : UnitAction
     public override void UseAction()
     {
         // Kicks off performance with the swap animation
-        if (unit.GetActor().IsActing())
+        if (unit.IsActing())
             return;
 
         StartPerformance("Stow");
     }
-
 
     public override void UseAction(FiniteState<InCombatPlayerAction> setState)
     {
@@ -30,7 +28,7 @@ public class UnitActionSwap : UnitAction
         // Then cycles weapons and begins draw animation
         // Waits until draw is complete to end performance
 
-        while (unit.GetAnimator().AnimatorIsPlaying("Stow"))
+        while (unit.IsPlayingAnimation("Stow"))
             return;
 
         if (ActionStage(0))
@@ -40,49 +38,46 @@ public class UnitActionSwap : UnitAction
             NextStage();
         }
 
-        while (unit.GetAnimator().AnimatorIsPlaying("Draw"))
+        while (unit.IsPlayingAnimation("Draw"))
             return;
 
         EndPerformance();
     }
 
-    void StowWeapon()
+    private void StowWeapon()
     {
         // Stows currently equipped weapon by disabling object and animation layer
 
         if (unit.EquippedWeapon && unit.EquippedWeapon != AssetManager.Instance.weapon.noWeapon)
         {
             unit.EquippedWeapon.gameObject.SetActive(false);
-            unit.GetAnimator().SetLayerWeight(unit.EquippedWeapon.GetAnimationLayer(), 0);
+            unit.SetAnimationLayerWeight(unit.EquippedWeapon.GetAnimationLayer(), 0);
         }
     }
 
-    void DrawWeapon()
+    private void DrawWeapon()
     {
         // Cylce to next weapon
-        Weapon weapon = unit.inventory.CycleWeapon();
+        Weapon weapon = unit.CycleWeapon();
 
         if (weapon)
         {
-            unit.inventory.equippedWeapon = weapon;
+            unit.EquippedWeapon = weapon;
 
             // Enable weapon object, set position and animation layer
-            unit.EquippedWeapon.gameObject.SetActive(true);
-            unit.EquippedWeapon.DefaultPosition(unit);
+
             SwapWeaponAction();
             UnitTargetAction shootAction = null;
 
             if (currentState != null)
             {
-                shootAction = (UnitTargetAction)unit.GetActor().FindActionOfType(unit.EquippedWeapon.WeaponAction.GetType());
+                shootAction = (UnitTargetAction)unit.FindActionOfType(unit.EquippedWeapon.WeaponAction.GetType());
                 currentState.SetStoredAction(shootAction);
             }
 
             // Set animator values, play animation
-            unit.GetAnimator().Play("Draw");
-            unit.GetAnimator().SetLayerWeight(unit.EquippedWeapon.GetAnimationLayer(), 1);
-            unit.GetAnimator().SetAnimationSpeed(unit.EquippedWeapon.Attributes.AnimationSpeed);
-            unit.GetSFX().Event_PlaySound(AnimationType.SWAP);
+            unit.PlayAnimation("Draw");
+            unit.PlaySound(AnimationType.SWAP);
 
             ActionPanelScript actionPanel = UIManager.GetActionPanel();
             if (actionPanel.gameObject.activeSelf)
@@ -96,7 +91,7 @@ public class UnitActionSwap : UnitAction
             if (infoPanel.gameObject.activeSelf)
             {
                 if (shootAction) infoPanel.UpdateAction(shootAction);
-                infoPanel.UpdateHit(unit.GetCurrentHitChance());
+                infoPanel.UpdateHit(unit.GetHitChance());
                 infoPanel.UpdateDamage(-unit.EquippedWeapon.GetDamage());
             }
         }

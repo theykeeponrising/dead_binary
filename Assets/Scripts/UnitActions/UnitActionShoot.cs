@@ -12,7 +12,7 @@ public class UnitActionShoot : UnitTargetAction
         // Locks in target information and begins shoot sequence
         // Sets action to "performing" state
 
-        if (unit.GetActor().IsActing())
+        if (unit.IsActing())
             return;
 
         if (!setTarget)
@@ -22,9 +22,9 @@ public class UnitActionShoot : UnitTargetAction
         }
 
         TargetUnit = setTarget;
-        unit.AddFlag(FlagType.AIM);
+        unit.AddFlag(AnimationFlag.AIM);
 
-        unit.GetActor().targetCharacter = setTarget;
+        unit.TargetUnit = setTarget;
         unit.SpendActionPoints(actionCost);
 
         _targetDamaged = false;
@@ -56,7 +56,7 @@ public class UnitActionShoot : UnitTargetAction
         }
 
         // Waits until shoot animation completes
-        while (unit.GetAnimator().AnimatorIsPlaying("Shoot"))
+        while (unit.IsPlayingAnimation("Shoot"))
             return;
 
         // Wait for the end buffer
@@ -64,7 +64,7 @@ public class UnitActionShoot : UnitTargetAction
             return;
 
         // Revert to idle state
-        unit.GetActor().ClearTarget();
+        unit.ClearTarget();
         EndPerformance();
     }
 
@@ -83,7 +83,7 @@ public class UnitActionShoot : UnitTargetAction
     protected virtual void HitTargets()
     {
         if (_targetHit)
-            TargetUnit.GetAnimator().TakeDamageEffect(unit.EquippedWeapon);
+            TargetUnit.TakeDamageEffect(unit.EquippedWeapon);
     }
 
     protected virtual void DamageTargets()
@@ -100,13 +100,13 @@ public class UnitActionShoot : UnitTargetAction
 
     protected void PerformShot()
     {
-        unit.GetAnimator().Play("Shoot");
+        unit.PlayAnimation("Shoot");
         unit.EquippedWeapon.SpendAmmo();
     }
 
     private void CheckTargetHit()
     {
-        int distanceToTarget = unit.currentTile.GetMovementCost(TargetUnit.currentTile, 15).Count;
+        int distanceToTarget = unit.Tile.GetMovementCost(TargetUnit.Tile, 15).Count;
         _targetHit = TargetUnit.RollForHit(unit, distanceToTarget);
     }
 
@@ -115,7 +115,7 @@ public class UnitActionShoot : UnitTargetAction
         if (_targetHit)
             return;
 
-        else if (!TargetUnit.GetAnimator().IsDodging())
+        else if (!TargetUnit.IsDodging())
             TargetUnit.DodgeAttack(unit);
     }
 
@@ -148,7 +148,7 @@ public class UnitActionShoot : UnitTargetAction
         if (!projectile)
             TriggerAction();
 
-        Vector3 destination = TargetUnit.GetAnimator().GetBoneTransform(HumanBodyBones.Chest).transform.position;
+        Vector3 destination = TargetUnit.GetBoneTransform(HumanBodyBones.Chest).transform.position;
         Vector3 trajectory = ProjectileTrajectory();
 
         projectile = Map.MapEffects.CreateEffect(projectile, barrelEnd.position, barrelEnd.rotation);     

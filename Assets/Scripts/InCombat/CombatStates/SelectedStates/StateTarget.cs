@@ -77,10 +77,10 @@ public class StateTarget : StateCancel
         foreach (var v in targets)
         {
             v.TryGetComponent(out Unit c);
-            c.GetActor().IsTargetUX(false, false);
+            c.SelectUnit(SelectionType.CLEAR);
 
             // Show healthbar
-            v.healthbar.gameObject.SetActive(true);
+            v.Healthbar.gameObject.SetActive(true);
         }
 
         Map.MapGrid.DestroyIndicatorAOE(indicatorAOE);
@@ -99,9 +99,9 @@ public class StateTarget : StateCancel
                 Unit c = v.GetComponent<Unit>();
 
                 if (v == targetedUnit)
-                    c.GetActor().IsTargetUX(true, true);
+                    c.SelectUnit(SelectionType.TARGET_MAIN);
                 else
-                    c.GetActor().IsTargetUX(false, true);
+                    c.SelectUnit(SelectionType.TARGET_POTENTIAL);
             }
         }
     }
@@ -152,8 +152,8 @@ public class StateTarget : StateCancel
 
         targetedUnit = targetUnit;
         targetedTile = null;
-        t.selectedCharacter.GetActor().targetCharacter = targetedUnit;
-        t.selectedCharacter.GetActor().UpdateHitStats();
+        t.selectedCharacter.TargetUnit = targetedUnit;
+        t.selectedCharacter.UpdateHitStats();
         if (initialTargets) infoPanel.CreateTargetButtons(targets);
         else infoPanel.UpdateTargetButtons();
         ShowSelectionCircle(targetedUnit.transform.position);
@@ -169,7 +169,7 @@ public class StateTarget : StateCancel
 
         targetedUnit = null;
         targetedTile = targetTile;
-        t.selectedCharacter.GetActor().targetCharacter = null;
+        t.selectedCharacter.TargetUnit = null;
         if (initialTargets) infoPanel.CreateTargetButtons(targets);
         else infoPanel.UpdateTargetButtons();
         ShowSelectionCircle(targetedTile.transform.position);
@@ -188,8 +188,8 @@ public class StateTarget : StateCancel
 
     public void ShowHealtbar(Unit targetedUnit)
     {
-        foreach (Unit target in targets) target.healthbar.gameObject.SetActive(false);
-        targetedUnit.healthbar.gameObject.SetActive(true);
+        foreach (Unit target in targets) target.Healthbar.gameObject.SetActive(false);
+        targetedUnit.Healthbar.gameObject.SetActive(true);
     }
 
     public void SetStoredAction(UnitTargetAction newAction)

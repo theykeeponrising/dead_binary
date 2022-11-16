@@ -11,7 +11,7 @@ public class Medkit : DamageItem
         sourceUnit = setSourceUnit;
         targetedUnit = setTargetedUnit;
 
-        sourceUnit.GetActor().ClearTarget();
+        sourceUnit.ClearTarget();
 
         base.TriggerItem(targetedUnit);
     }

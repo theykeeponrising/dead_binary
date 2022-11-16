@@ -143,7 +143,7 @@ public class InfoPanelScript : MonoBehaviour
 
         foreach (TargetButton button in _targetButtons)
         {
-            button.ShowBracket(playerAction.selectedCharacter.GetActor().targetCharacter == button.BoundUnit);
+            button.ShowBracket(playerAction.selectedCharacter.TargetUnit == button.BoundUnit);
         }
 
         PlaySwitchTargetSFX();

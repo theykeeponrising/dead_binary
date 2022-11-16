@@ -14,8 +14,8 @@ public class UnitActionShootRocket : UnitActionShoot
         // Override for convenience
 
         TargetUnit = target;
-        unit.GetActor().targetCharacter = target;
-        UseAction(target.currentTile);
+        unit.TargetUnit = target;
+        UseAction(target.Tile);
     }
 
     public override void UseAction(Tile target)
@@ -23,7 +23,7 @@ public class UnitActionShootRocket : UnitActionShoot
         // Locks in target information and begins shoot sequence
         // Sets action to "performing" state
 
-        if (unit.GetActor().IsActing())
+        if (unit.IsActing())
             return;
 
         if (!target)
@@ -34,7 +34,7 @@ public class UnitActionShootRocket : UnitActionShoot
 
         TargetPosition = target.transform.position;
         _areaOfEffect = unit.EquippedWeapon.GetAreaOfEffect();
-        unit.AddFlag(FlagType.AIM);
+        unit.AddFlag(AnimationFlag.AIM);
         unit.SpendActionPoints(actionCost);
 
         _targetDamaged = false;
@@ -60,7 +60,7 @@ public class UnitActionShootRocket : UnitActionShoot
         }
 
         // Waits until shoot animation completes
-        while (unit.GetAnimator().AnimatorIsPlaying("Shoot"))
+        while (unit.IsPlayingAnimation("Shoot"))
             return;
 
         // Wait for the end buffer
@@ -68,7 +68,7 @@ public class UnitActionShootRocket : UnitActionShoot
             return;
 
         // Revert to idle state
-        unit.GetActor().ClearTarget();
+        unit.ClearTarget();
         TargetUnit = null;
         EndPerformance();
     }
@@ -86,13 +86,13 @@ public class UnitActionShootRocket : UnitActionShoot
     {
         if (_targetHit)
             foreach (Unit impactedUnit in Tile.GetTileOccupants(Tile.GetAreaOfEffect(_targetTile, _areaOfEffect)))
-                impactedUnit.GetAnimator().TakeDamageEffect(unit.EquippedWeapon);
+                impactedUnit.TakeDamageEffect(unit.EquippedWeapon);
     }
 
     protected override void DamageTargets()
     {
         // Use on unit if possible, otherwise on empty tile
-        _targetTile = TargetUnit ? TargetUnit.currentTile : unit.grid.GetTile(TargetPosition);
+        _targetTile = TargetUnit ? TargetUnit.Tile : Map.MapGrid.GetTile(TargetPosition);
 
         if (!_targetDamaged)
         {
@@ -108,7 +108,7 @@ public class UnitActionShootRocket : UnitActionShoot
         if (!projectile)
             TriggerAction();
 
-        Vector3 destination = TargetUnit ? TargetUnit.GetAnimator().GetBoneTransform(HumanBodyBones.Chest).transform.position : TargetPosition;
+        Vector3 destination = TargetUnit ? TargetUnit.GetBoneTransform(HumanBodyBones.Chest).transform.position : TargetPosition;
         projectile = Map.MapEffects.CreateEffect(projectile, barrelEnd.position, barrelEnd.rotation);
         projectile.Init(this, destination, speed);
     }

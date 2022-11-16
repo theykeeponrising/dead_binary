@@ -42,7 +42,7 @@ public class Grenade : DamageItem
         // Instantiates grenade prop and sets up the callback
 
         flashTimer = new Timer(flashTime);
-        grenade = Instantiate(itemProp, sourceUnit.GetAnimator().GetBoneTransform(HumanBodyBones.LeftHand));
+        grenade = Instantiate(itemProp, sourceUnit.GetBoneTransform(HumanBodyBones.LeftHand));
         grenade.SetItemEffect(this);
         grenade.SetItemDestination(targetPosition);
 
@@ -80,7 +80,7 @@ public class Grenade : DamageItem
             sourceUnit.GetComponent<Animator>().Play("Throw-Short");
 
         SpawnGrenade();
-        sourceUnit.GetActor().ClearTarget();
+        sourceUnit.ClearTarget();
     }
 
     public override void TriggerItem()

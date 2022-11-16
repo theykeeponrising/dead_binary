@@ -105,7 +105,7 @@ public class InCombatPlayerAction
 
         List<Unit> validUnits = new List<Unit>();
         foreach (Unit unit in playerUnits)
-            if (!unit.GetFlag(FlagType.DEAD) && (!unit.HasTurnEnded()))
+            if (!unit.GetFlag(AnimationFlag.DEAD) && (!unit.HasTurnEnded()))
                 validUnits.Add(unit);
 
         // Get the index of the currently selected unit (if any)
@@ -133,7 +133,7 @@ public class InCombatPlayerAction
 
         foreach (Unit unit in playerUnits)
         {
-            if (unit.GetFlag(FlagType.DEAD) || unit.HasTurnEnded()) continue;
+            if (unit.GetFlag(AnimationFlag.DEAD) || unit.HasTurnEnded()) continue;
             if (selectedCharacter == unit) return;
             SelectAction(unit);
             return;
@@ -203,7 +203,7 @@ public class InCombatPlayerAction
         // Change character selection
 
         //Can't select enemy units or dead units.
-        if (targetCharacter && (targetCharacter.GetFlag(FlagType.DEAD) || targetCharacter.attributes.faction != playerFaction)) return;
+        if (targetCharacter && (targetCharacter.GetFlag(AnimationFlag.DEAD) || targetCharacter.attributes.faction != playerFaction)) return;
 
         // Clears current action bar
         actionPanelScript.gameObject.SetActive(false);
@@ -213,11 +213,11 @@ public class InCombatPlayerAction
         if (targetCharacter)
         {
             if (selectedCharacter)
-                selectedCharacter.GetActor().SelectUnit(SelectionType.DESELECT);
+                selectedCharacter.SelectUnit(SelectionType.DESELECT);
 
             selectedCharacter = targetCharacter;
-            selectedCharacter.GetActor().SelectUnit(SelectionType.SELECT);
-            selectedCharacter.GetActor().SetWaiting(false);
+            selectedCharacter.SelectUnit(SelectionType.SELECT);
+            selectedCharacter.SetWaiting(isWaiting:false);
             Camera.main.GetComponent<CameraHandler>().SetCameraSnap(targetCharacter);
         }
 
@@ -227,7 +227,7 @@ public class InCombatPlayerAction
         {
             if (selectedCharacter)
             {
-                selectedCharacter.GetActor().SelectUnit(SelectionType.DESELECT);
+                selectedCharacter.SelectUnit(SelectionType.DESELECT);
                 selectedCharacter = null;
                 PathPreviewClear();
             }
@@ -260,23 +260,23 @@ public class InCombatPlayerAction
             return;
 
         // Previews move path on mouse over
-        if (selectedCharacter && !selectedCharacter.GetActor().IsActing() && targetTile)
+        if (selectedCharacter && !selectedCharacter.IsActing() && targetTile)
         {
            //if(stateMachine.GetCurrentState().GetType() 
             //    == typeof(SelectedStates.ChoosingMoveDestination))
             {
                 PathPreviewClear();
-                previewPath = selectedCharacter.currentTile.GetMovementCost(targetTile, selectedCharacter.stats.movement);
+                previewPath = selectedCharacter.Tile.GetMovementCost(targetTile, selectedCharacter.stats.movement);
 
                 // If target tile has an object on it, can't move there
                 if (targetTile.Occupant) previewPath = null;
 
                 if (previewPath != null)
                 {
-                    previewPath.Add(selectedCharacter.currentTile);
+                    previewPath.Add(selectedCharacter.Tile);
                     if (previewPath.Count > 1)
                         foreach (Tile tile in previewPath)
-                            if (tile != selectedCharacter.currentTile)
+                            if (tile != selectedCharacter.Tile)
                                 tile.HighlightTile(TileHighlightType.PREVIEW, true);
                 }       
             }
@@ -317,7 +317,7 @@ public class InCombatPlayerAction
         // Returns False if any units can still perform actions
 
         foreach (Unit unit in playerUnits)
-            if (!unit.HasTurnEnded() && !unit.GetFlag(FlagType.DEAD))
+            if (!unit.HasTurnEnded() && !unit.GetFlag(AnimationFlag.DEAD))
                 return false;
         return true;
     }

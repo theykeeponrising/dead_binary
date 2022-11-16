@@ -6,7 +6,7 @@ public class SelectionCircle : MonoBehaviour
     private Unit _unit;
     private Material _material;
     private Color32 _factionColor => _unit.attributes.faction.FactionColor;
-    private bool _unitSelected => _unit.GetActor().GetPlayerAction().selectedCharacter == _unit;
+    private bool _unitSelected => _unit.PlayerAction.selectedCharacter == _unit;
 
     private void Awake()
     {

@@ -5,12 +5,12 @@ public class UnitActionWait : UnitAction
         // Flags the unit as "waiting"
         // Displays waiting icon above character and flags them as ending turn
 
-        if (unit.GetActor().IsActing())
+        if (unit.IsActing())
             return;
 
         SetPerformed(true);
-        unit.GetActor().GetPlayerAction().SelectAction();
-        unit.healthbar.WaitingIndicator(true);
-        unit.GetActor().playerAction.CheckTurnEnd();
+        unit.PlayerAction.SelectAction();
+        unit.Healthbar.WaitingIndicator(true);
+        unit.PlayerAction.CheckTurnEnd();
     }
 }

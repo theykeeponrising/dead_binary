@@ -91,6 +91,15 @@ public class Inventory : MonoBehaviour
         return true;
     }
 
+    public void EquipWeapon(Weapon weapon)
+    {
+        equippedWeapon = weapon;
+        weapon.gameObject.SetActive(true);
+        weapon.DefaultPosition(unit);
+        unit.SetAnimationLayerWeight(weapon.GetAnimationLayer(), 1);
+        unit.SetAnimationSpeed(weapon.Attributes.AnimationSpeed);
+    }
+
     public bool PickupWeapon(Weapon weapon)
     {
         // Pickups weapon and adds it to the weapon list

@@ -7,11 +7,11 @@ public class UnitActionTalk : UnitAction
         // For testing purposes only
         // Unit will talk
 
-        if (unit.GetActor().IsActing())
+        if (unit.IsActing())
             return;
 
         SetPerformed(true);
-        unit.GetActor().GetPlayerAction().SelectAction();
+        unit.PlayerAction.SelectAction();
 
         string[] randomDialog = new string[]{
             "Well, things can't get much worse, right?",
