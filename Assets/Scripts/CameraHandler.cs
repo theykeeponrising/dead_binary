@@ -17,6 +17,7 @@ public class CameraHandler : MonoBehaviour
     // Horizontal Motion
     [SerializeField] [Range(5f, 50f)] private float _panSpeedMax = 10f;
     [SerializeField] private float _panAcceleration = 10f;
+    [SerializeField] private float _panZoomHeightAdjust = 1.0f;
     private float _panSpeed;
     private Vector3 _panNextPosition;
     private Vector3 _panLastPosition;
@@ -171,7 +172,8 @@ public class CameraHandler : MonoBehaviour
 
         if (_panNextPosition.sqrMagnitude > 0.1f)
         {
-            _panSpeed = Mathf.Lerp(_panSpeed, _panSpeedMax, Time.deltaTime * _panAcceleration);
+            float finalPanSpeed = _panSpeedMax + (_zoomHeight - _zoomHeightMin) * _panZoomHeightAdjust;
+            _panSpeed = Mathf.Lerp(_panSpeed, finalPanSpeed, Time.deltaTime * _panAcceleration);
             PlayerPosition += _panSpeed * Time.deltaTime * _panNextPosition;
         }
 
