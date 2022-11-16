@@ -301,4 +301,9 @@ public class CharacterActor
         item.UseItem(unit, targetTile.transform.position);
         unit.transform.LookAt(targetTile.transform);
     }
+
+    public void Say(string dialog)
+    {
+        UIManager.GetDialogPanel().UnitTalk(unit, dialog);
+    }
 }

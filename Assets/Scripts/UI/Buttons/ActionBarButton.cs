@@ -1,84 +1,68 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
 
 public class ActionBarButton : ActionButton
 {
-    // Class used to handle sprites for action buttons
-    // Will be used to control mouse-over effects as well
+    // Class used to handle sprites for action bar buttons
 
-    int buttonIndex;
-    string spritePath;
+    private int _buttonIndex;
+    private string _spritePath;
 
-    Image btnBackground;
-    Image btnFrame;
-    Image btnIcon;
-    TextMeshProUGUI btnLabel;
-    TextMeshProUGUI btnQuantity;
+    private Image _buttonIcon;
+    private TextMeshProUGUI _buttonQuantity;
 
-    void Awake()
+    protected override void Awake()
     {
-        btnBackground = GetComponentsInChildren<Image>()[0];
-        btnFrame = GetComponentsInChildren<Image>()[1];
-        btnIcon = GetComponentsInChildren<Image>()[2];
-        btnLabel = GetComponentsInChildren<TextMeshProUGUI>()[0];
-        btnQuantity = GetComponentsInChildren<TextMeshProUGUI>()[1];
-    }
-
-    void OnEnable()
-    {
-        audioSource = GetComponentInParent<AudioSource>();
-        button = GetComponent<Button>();
+        base.Awake();
+        _buttonIcon = transform.Find("Icon").GetComponent<Image>();
+        _buttonQuantity = transform.Find("Quantity").GetComponent<TextMeshProUGUI>();
     }
 
     public override void LoadResources(string newSpritePath)
     {
-        spritePath = newSpritePath;
-        btnIcon.sprite = Resources.Load<Sprite>(spritePath);
+        _spritePath = newSpritePath;
+        _buttonIcon.sprite = Resources.Load<Sprite>(_spritePath);
     }
 
-    public override void CheckRequirements()
+    protected override void CheckRequirements()
     {
-        requirementsMet = boundAction.CheckRequirements();
-        if (!requirementsMet) currentButtonState = ButtonState.DISABLED;
-        else if (requirementsMet && currentButtonState == ButtonState.DISABLED) currentButtonState = ButtonState.PASSIVE;
+        _requirementsMet = BoundAction.CheckRequirements();
+        if (!_requirementsMet) _buttonState = ButtonState.DISABLED;
+        else if (_requirementsMet && _buttonState == ButtonState.DISABLED) _buttonState = ButtonState.PASSIVE;
 
-        btnIcon.color = IconColors[currentButtonState];
-        btnFrame.color = IconColors[currentButtonState];
-        btnBackground.color = BackgroundColors[currentButtonState];
-        btnQuantity.color = IconColors[currentButtonState];
+        _buttonIcon.color = IconColors[_buttonState];
+        _buttonFrame.color = IconColors[_buttonState];
+        _buttonBackground.color = BackgroundColors[_buttonState];
+        _buttonQuantity.color = IconColors[_buttonState];
     }
 
-    public override void CheckQuantity()
+    protected override void CheckQuantity()
     {
-        btnQuantity.text = boundItem.itemUsesCurrent.ToString();
+        _buttonQuantity.text = BoundItem.itemUsesCurrent.ToString();
     }
 
     public void BindIndex(int index)
     {
         // Binds state to action buttons
 
-        buttonIndex = index;
-        button.onClick.AddListener(ButtonPress);
+        _buttonIndex = index;
     }
 
     public void SetLabel(string newLabel)
     {
         // Changes text label to new value
 
-        btnLabel.text = newLabel;
+        _buttonLabel.text = newLabel;
     }
 
-    public override void ButtonPress()
+    protected override void ButtonPress()
     {
         // On button press, play sound and execute indexed action from the state
 
-        if (!requirementsMet)
+        if (!_requirementsMet)
             return;
 
-        GetCurrentState().InputActionBtn(GetPlayerAction(), buttonIndex + 1);
+        GetCurrentState().InputActionBtn(GetPlayerAction(), _buttonIndex + 1);
     }
 }

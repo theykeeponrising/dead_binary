@@ -4063,5 +4063,8 @@ MonoBehaviour:
     unitType: 0
     unitIcon: 0
     footstepSource: 0
+    UnitSprite: {fileID: 21300000, guid: 64b903280b32a7e44a7406e08c35e440, type: 3}
+    UnitVoice: 0
+    UnitVoicePitch: 1
   velocityX: 0
   velocityZ: 0
