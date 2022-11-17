@@ -10,7 +10,7 @@ public class UnitActionWait : UnitAction
 
         SetPerformed(true);
         unit.PlayerAction.SelectAction();
-        unit.Healthbar.WaitingIndicator(true);
+        unit.Healthbar.ShowWaitIndicator(true);
         unit.PlayerAction.CheckTurnEnd();
     }
 }

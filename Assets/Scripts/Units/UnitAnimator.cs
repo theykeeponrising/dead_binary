@@ -14,6 +14,7 @@ public class UnitAnimator
 
     private int AnimationLayer { get { return _unit.EquippedWeapon.GetAnimationLayer(); } }
     private Transform[] BoneTransforms { get { return _unitRig.BoneTransforms; } }
+    private MoveData MoveData { get { return _unit.MoveData; } }
 
     public UnitAnimator(Unit unit)
     {
@@ -204,6 +205,13 @@ public class UnitAnimator
         bool[] shootingAnims = {
             _animator.GetCurrentAnimatorStateInfo(AnimationLayer).IsName("Shoot")};
         return shootingAnims.Any(x => x == true);
+    }
+
+    public bool IsMoving()
+    {
+        // Returns true if Z velocity is above the threshold
+
+        return MoveData.Velocity.z > 0.01f;
     }
 
     public void CoverCrouch()

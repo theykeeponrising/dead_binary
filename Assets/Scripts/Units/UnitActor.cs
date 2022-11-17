@@ -76,7 +76,7 @@ public class UnitActor
 
         UnitAction waitAction = FindActionOfType(typeof(UnitActionWait));
         waitAction?.SetPerformed(performed: isWaiting);
-        _unit.Healthbar.WaitingIndicator(showSprites: isWaiting);
+        _unit.Healthbar.ShowWaitIndicator(showSprites: isWaiting);
     }
 
     private void Movement()

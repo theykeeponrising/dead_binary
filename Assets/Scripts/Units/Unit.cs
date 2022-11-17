@@ -20,7 +20,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     private UnitCombat _unitCombat;
 
     private Inventory _inventory;
-    private Healthbar _healthbar;
+    private UnitHealthbar _healthbar;
 
     private InCombatPlayerAction _playerAction;
     [SerializeField] private List<UnitAction> _unitActions;
@@ -32,7 +32,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     public Rigidbody Rigidbody { get { return _rigidbody; } }
     public Collider[] Colliders { get { return _colliders; } }
     public Inventory Inventory { get { return _inventory; } }
-    public Healthbar Healthbar { get { return _healthbar; } }
+    public UnitHealthbar Healthbar { get { return _healthbar; } }
     public CoverObject CurrentCover { get { return Tile.Cover; } }
     public Weapon EquippedWeapon { get { return Inventory.equippedWeapon; } set { Inventory.EquipWeapon(value); } }
     public Unit TargetUnit { get { return _unitCombat.TargetUnit; } set { _unitCombat.TargetUnit = value; } }
@@ -59,7 +59,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
         _unitCombat = new UnitCombat(this);
 
         _inventory = GetComponentInChildren<Inventory>();
-        _healthbar = GetComponentInChildren<Healthbar>();
+        _healthbar = GetComponentInChildren<UnitHealthbar>();
     }
 
     protected override void Start()
@@ -219,6 +219,9 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
 
     public bool IsShooting()
     { return _unitAnimator.IsShooting(); }
+
+    public bool IsMoving()
+    { return _unitAnimator.IsMoving(); }
 
     public void ProcessAnimationEvent(AnimationEventContext animationEvent)
     { _unitAnimator.ProcessAnimationEvent(animationEvent, false); }
