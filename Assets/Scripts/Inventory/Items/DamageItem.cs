@@ -71,7 +71,8 @@ public abstract class DamageItem : Item
         else
         {
             Debug.Log(string.Format("Damaged {0} for {1} health!", targetedUnit.attributes.name, Mathf.Abs(hpAmount)));
-            targetedUnit.TakeDamage(sourceUnit, Mathf.Abs(hpAmount), triggerPosition, MessageType.DMG_EXPLOSIVE);
+            if (targetedUnit.attributes.faction == FactionManager.ACS) UIManager.GetTurnIndicator().SetTurnIndicatorMessage(MessageType.DMG_EXPLOSIVE);
+            targetedUnit.TakeDamage(sourceUnit, Mathf.Abs(hpAmount), triggerPosition);
             targetedUnit.TakeDamageEffect(item: this);
         }
     }

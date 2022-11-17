@@ -22,8 +22,6 @@ public class UnitActionShoot : UnitTargetAction
         }
 
         TargetUnit = setTarget;
-        unit.AddFlag(AnimationFlag.AIM);
-
         unit.TargetUnit = setTarget;
         unit.SpendActionPoints(actionCost);
 
@@ -93,7 +91,8 @@ public class UnitActionShoot : UnitTargetAction
 
         if (!_targetDamaged)
         {
-            TargetUnit.TakeDamage(unit, unit.EquippedWeapon.GetDamage(),MessageType.DMG_CONVENTIONAL);
+            if (TargetUnit.attributes.faction == FactionManager.ACS) UIManager.GetTurnIndicator().SetTurnIndicatorMessage(MessageType.DMG_CONVENTIONAL);
+            TargetUnit.TakeDamage(unit, unit.EquippedWeapon.GetDamage());
             _targetDamaged = true;
         }
     }
@@ -107,7 +106,7 @@ public class UnitActionShoot : UnitTargetAction
     private void CheckTargetHit()
     {
         int distanceToTarget = unit.Tile.GetMovementCost(TargetUnit.Tile, 15).Count;
-        _targetHit = TargetUnit.RollForHit(unit, distanceToTarget);
+        _targetHit = unit.RollForHit(distanceToTarget);
     }
 
     private void CheckDodge()
@@ -136,7 +135,7 @@ public class UnitActionShoot : UnitTargetAction
     private int GetRandomInt(int lowRange, int highRange)
     {
         int randomBool = Random.Range(0, 100);
-        bool negative = (randomBool % 2 == 0) ? true : false;
+        bool negative = (randomBool % 2 == 0);
         int modifier = negative ? -1 : 1;
         int randomNumber = Random.Range(lowRange, highRange);
 

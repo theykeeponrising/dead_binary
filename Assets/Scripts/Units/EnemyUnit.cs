@@ -55,7 +55,7 @@ public class EnemyUnit : Unit
     {
         Debug.Log(string.Format("Beginning Unit turn: {0}", gameObject.name));
 
-        if (GetFlag(AnimationFlag.DEAD))
+        if (IsDead())
             return;
 
         OnTurnStart();
@@ -103,7 +103,7 @@ public class EnemyUnit : Unit
         int numShots = 0;
         int numTilesCloserToBestShootTarget = 0;
 
-        List<Unit> oppFactionUnits = GetOppFactionUnits();
+        List<Unit> oppFactionUnits = GetHostileUnits();
         //If current tile is cover, don't add additional bonus
         bool isCover = false;
         Tile unitTile = Tile;
@@ -124,7 +124,7 @@ public class EnemyUnit : Unit
             {
                 numShots++;
                 //Calculated expected damage, if it would kill, etc.
-                float damage = CalculateExpectedDamage(this, enemyAction.ContextChar, unitTile);
+                float damage = CalculateExpectedDamage(enemyAction.ContextChar);
 
                 //TODO: Make this probabilistic (i.e. numKill += prob(kill))
                 if (damage > enemyAction.ContextChar.GetHealth())
@@ -234,7 +234,7 @@ public class EnemyUnit : Unit
 
         foreach (Unit other in oppFactionUnits)
         {
-            float expectedDamage = CalculateExpectedDamage(this, other, tile);
+            float expectedDamage = CalculateExpectedDamage(other);
             expectedDamage = Mathf.Min(expectedDamage, other.stats.healthCurrent);
 
             //Determine whether shooting the unit would kill
@@ -277,7 +277,7 @@ public class EnemyUnit : Unit
         //Get tiles unit can move to
         List<Tile> tilesInRange = GetTilesInMoveRange();
         //TODO: maybe handle this in EnemyTurnProcess so it doesn't get processed for every unit for performance reasons, and skip processing dead units or remove them from this list?
-        List<Unit> oppFactionUnits = GetOppFactionUnits();
+        List<Unit> oppFactionUnits = GetHostileUnits();
         List<EnemyAction> enemyActions = new();
 
         //If no ammo, either reload or switch weapon
@@ -462,26 +462,4 @@ public class EnemyUnit : Unit
         public Tile Tile { get; }
         public UnitAction UnitAction { get; }
     };
-
-    public override void TakeDamage(Unit attacker, int damage, MessageType damageType = MessageType.DMG_CONVENTIONAL)
-    {
-        // Called by an attacking source when taking damage
-        // TO DO: More complex damage reduction will be added here
-
-        UIManager.GetTurnIndicator().SetTurnIndicatorMessage(damageType);
-        Vector3 direction = (transform.position - attacker.transform.position);
-        float distance = (transform.position - attacker.transform.position).magnitude;
-        CheckDeath(attacker, direction, distance, damage);
-    }
-
-    public override void TakeDamage(Unit attacker, int damage, Vector3 attackPoint, MessageType damageType = MessageType.DMG_CONVENTIONAL)
-    {
-        // Called by an attacking item when taking damage
-        // TO DO: More complex damage reduction will be added here
-
-        UIManager.GetTurnIndicator().SetTurnIndicatorMessage(damageType);
-        Vector3 direction = (transform.position - attackPoint);
-        float distance = (transform.position - attackPoint).magnitude;
-        CheckDeath(attacker, direction, distance, damage, 50f);
-    }
 }

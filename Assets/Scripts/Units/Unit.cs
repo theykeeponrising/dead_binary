@@ -10,9 +10,6 @@ using UnityEngine.EventSystems;
 
 public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
 {
-    //List of units on opposing faction that are alive
-    protected List<Unit> oppFactionUnits;
-
     private AudioSource _audioSource;
     private UnitActor _unitActor;
     private UnitAnimator _unitAnimator;
@@ -29,8 +26,6 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     private InCombatPlayerAction _playerAction;
     [SerializeField] private List<UnitAction> _unitActions;
 
-    private readonly List<AnimationFlag> _animationFlags = new();
-    
     public Rigidbody Rigidbody { get { return _rigidbody; } }
     public Collider[] Colliders { get { return _colliders; } }
     public Inventory Inventory { get { return _inventory; } }
@@ -42,8 +37,12 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     public InCombatPlayerAction PlayerAction { get { return _playerAction; } }
     public MoveData MoveData { get { return _unitActor.MoveData; } set { _unitActor.MoveData = value; } }
 
+    public event System.Action OnHealthModified;
+    public event System.Action OnUnitDied;
+
     // Attributes are mosty permanent descriptors about the character
-    [System.Serializable] public class Attributes
+    [System.Serializable]
+    public class Attributes
     {
         public string name;
         public Faction faction;
@@ -56,7 +55,8 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     }
 
     // Stats are values that will be referenced and changed frequently during combat
-    [System.Serializable] public class Stats
+    [System.Serializable]
+    public class Stats
     {
         public int healthCurrent;
         public int healthMax;
@@ -74,9 +74,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
 
     public float velocityX = 0f;
     public float velocityZ = 0f;
-    
-    public event System.Action OnHealthModified;
-    public event System.Action OnUnitDied;
+
 
     protected override void Awake()
     {
@@ -97,7 +95,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
         _healthbar = GetComponentInChildren<Healthbar>();
     }
 
-    protected override void Start() 
+    protected override void Start()
     {
         base.Start();
         if (objectTiles.Count > 0) Tile = objectTiles[0];
@@ -137,7 +135,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
 
     public virtual void OnTurnStart()
     {
-        ResetActions(); 
+        ResetActions();
         ResetActionPoints();
         _unitActor?.SetWaiting(false);
     }
@@ -165,14 +163,50 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     public List<Item> GetItems()
     { return Inventory.items; }
 
-    public void Say(string dialog)
-    { _unitActor.Say(dialog); }
+    public bool IsDead()
+    { return stats.healthCurrent <= 0; }
 
-    public void GetTarget(bool useCharacterCamera=false)
+    public void GetTarget(bool useCharacterCamera = false)
     { _unitCombat.GetTarget(useCharacterCamera); }
 
     public void ClearTarget()
     { _unitCombat.ClearTarget(); }
+
+    public Unit GetNearestTarget(Tile unitTile, List<Unit> targets)
+    { return _unitCombat.GetNearestTarget(unitTile, targets); }
+
+    public Vector3 GetTargetPosition(bool snapToTarget = false)
+    { return _unitCombat.GetTargetPosition(snapToTarget); }
+
+    public List<Unit> GetHostileUnits()
+    { return _unitCombat.GetHostileUnits(); }
+
+    public float CalculateExpectedDamage()
+    { return _unitCombat.CalculateExpectedDamage(); }
+
+    public float CalculateExpectedDamage(Unit sampleUnit)
+    { return _unitCombat.CalculateExpectedDamage(sampleUnit); }
+
+    public float GetHitChance()
+    { return _unitCombat.CalculateHitChance(); }
+
+    public float GetHitChance(Unit sampleUnit)
+    { return _unitCombat.CalculateHitChance(sampleUnit); }
+
+    public bool RollForHit(int distanceToTarget)
+    { return _unitCombat.RollForHit(distanceToTarget); }
+
+    public void DodgeAttack(Unit attacker)
+    { _unitCombat.DodgeAttack(attacker); }
+
+    public void UpdateHitStats()
+    { _unitCombat.UpdateHitStats(); }
+
+    public virtual void TakeDamage(Unit attacker, int damage)
+    { _unitCombat.TakeDamage(attacker, damage); }
+
+    public virtual void TakeDamage(Unit attacker, int damage, Vector3 attackPoint)
+    { _unitCombat.TakeDamage(attacker, damage, attackPoint); }
 
     public bool IsActing()
     { return _unitActor.IsActing(); }
@@ -180,8 +214,8 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     public UnitAction FindActionOfType(System.Type actionType)
     { return _unitActor.FindActionOfType(actionType); }
 
-    public Vector3 GetTargetPosition(bool snapToTarget=false)
-    { return _unitCombat.GetTargetPosition(snapToTarget); }
+    public void Say(string dialog)
+    { _unitActor.Say(dialog); }
 
     public void SelectUnit(SelectionType selectionType)
     { _unitActor.SelectUnit(selectionType); }
@@ -192,16 +226,13 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     public void UseItem(Item item, Tile target)
     { _unitActor.ItemAction(item, target); }
 
-    public void UpdateHitStats()
-    { _unitCombat.UpdateHitStats(); }
-
     public void SetWaiting(bool isWaiting)
     { _unitActor.SetWaiting(isWaiting); }
 
     public Transform GetBoneTransform(HumanBodyBones bone)
     { return _unitAnimator.GetBoneTransform(bone); }
 
-    public void ToggleCrouch(bool instant=false)
+    public void ToggleCrouch(bool instant = false)
     { _unitAnimator.ToggleCrouch(instant); }
 
     public bool IsCrouching()
@@ -216,13 +247,22 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     public bool IsVaulting()
     { return _unitAnimator.IsVaulting(); }
 
+    public bool IsAiming()
+    { return _unitAnimator.IsAiming(); }
+
+    public bool IsShooting()
+    { return _unitAnimator.IsShooting(); }
+
+    public void ProcessAnimationEvent(AnimationEventContext animationEvent)
+    { _unitAnimator.ProcessAnimationEvent(animationEvent, false); }
+
     public void ProcessAnimationEvent(AnimationEventContext animationEvent, bool state)
     { _unitAnimator.ProcessAnimationEvent(animationEvent, state); }
 
     public void SetAnimatorBool(string name, bool state)
     { _unitAnimator.SetBool(name, state); }
 
-    public void SetAnimatorMode(AnimatorUpdateMode updateMode=AnimatorUpdateMode.Normal)
+    public void SetAnimatorMode(AnimatorUpdateMode updateMode = AnimatorUpdateMode.Normal)
     { _unitAnimator.SetUpdateMode(updateMode); }
 
     public void SetAnimatorTrigger(string name)
@@ -234,7 +274,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     public Transform GetWeaponAttachPoint()
     { return _unitAnimator.GetWeaponAttachPoint(); }
 
-    public void TakeDamageEffect(Weapon weapon=null, DamageItem item=null)
+    public void TakeDamageEffect(Weapon weapon = null, DamageItem item = null)
     { _unitAnimator.TakeDamageEffect(weapon, item); }
 
     public bool IsPlayingAnimation(string animationName)
@@ -341,118 +381,10 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
         Healthbar.UpdateHealthPoints();
     }
 
-    public List<Unit> GetOppFactionUnits()
-    {
-        List<Unit> oppFactionUnits = new();
-        List<Unit> gos = Map.FindUnits();
-
-        foreach (var v in gos)
-        {
-            if (attributes.faction != v.attributes.faction)
-                if (v.stats.healthCurrent > 0)
-                    oppFactionUnits.Add(v);
-        }
-
-        //Sort list by distance to current unit
-        if(oppFactionUnits.Count > 0)
-        {
-            oppFactionUnits.Sort(delegate (Unit a, Unit b)
-            {
-                return Vector2.Distance(transform.position, a.transform.position).CompareTo(
-                    Vector2.Distance(transform.position, b.transform.position));
-            });
-        }
-        return oppFactionUnits;
-    }
-
     public List<Tile> GetTilesInMoveRange()
     {
         Vector3 pos = Tile.transform.position;
         return Map.MapGrid.GetTilesInRange(pos, stats.movement);
-    }
-
-    protected float CalculateExpectedDamage(Unit attacker, Unit defender, Tile attackerTile, bool debug=false)
-    {
-        float weaponDamange = attacker.EquippedWeapon.GetDamage();
-        float hitChance = CalculateHitChance(attacker, defender, attackerTile);
-        if (debug) Debug.Log(string.Format("Wep Damage {0}, Hit Chance: {1}", weaponDamange, hitChance));
-
-        return weaponDamange * hitChance;
-    }
-
-    public float CalculateHitChance(Unit attacker, Unit defender)
-    {
-        // Overload for simplicity
-        return CalculateHitChance(attacker, defender, attacker.Tile);
-    }
-
-    public float CalculateHitChance(Unit attacker, Unit defender, Tile attackerTile)
-    {
-        // Calculate Hit Chance
-        int distance = Map.MapGrid.GetTileDistance(attackerTile, defender.Tile);
-        float weaponAccuracyModifier = attacker.EquippedWeapon.Stats.BaseAccuracyModifier;
-        float weaponAccuracyPenalty = attacker.EquippedWeapon.GetAccuracyPenalty(distance);
-
-        // Calculate chance to be hit
-        float hitModifier = GlobalManager.globalHit + attacker.stats.aim - stats.dodge - weaponAccuracyPenalty;
-
-        // Add cover bonus if not being flanked
-        if (defender.CurrentCover && Map.MapGrid.CheckIfCovered(attackerTile, defender.Tile))
-            hitModifier -= defender.CurrentCover.GetCoverBonus();
-        
-        float hitChance = weaponAccuracyModifier * hitModifier;
-        return hitChance / 100.0f;
-    }
-
-    public float GetHitChance()
-    {
-        // Returns calculated hit chance for a given target
-        return _unitCombat.CalculateHitChance();
-    }
-
-    public bool RollForHit(Unit attacker, int distanceToTarget)
-    {
-        // Dodge change for character vs. attacker's aim
-
-        // Dice roll performed
-        int randomChance = Random.Range(1, 100);
-        float hitChance = CalculateHitChance(attacker, this);
-        float baseChance = hitChance * 100.0f;
-
-        // FOR TESTING PURPOSES ONLY -- REMOVE WHEN FINISHED
-        Debug.Log(string.Format("Distance: {0}, Base chance to hit: {1}%, Dice roll: {2}", distanceToTarget, baseChance, randomChance));
-
-        // Return true/false if hit connected
-        return (baseChance  >= randomChance);
-    }
-
-    public virtual void TakeDamage(Unit attacker, int damage, MessageType damageType = MessageType.DMG_CONVENTIONAL)
-    {
-        // Called by an attacking source when taking damage
-        // TO DO: More complex damage reduction will be added here
-
-        Vector3 direction =  (transform.position - attacker.transform.position);
-        float distance = (transform.position - attacker.transform.position).magnitude;
-
-        CheckDeath(attacker, direction, distance, damage);
-    }
-
-    public virtual void TakeDamage(Unit attacker, int damage, Vector3 attackPoint, MessageType damageType = MessageType.DMG_CONVENTIONAL)
-    {
-        // Called by an attacking item when taking damage
-        // TO DO: More complex damage reduction will be added here
-
-        Vector3 direction = transform.position - attackPoint;
-        float distance = direction.magnitude;
-
-        CheckDeath(attacker, direction, distance, damage, 50f);
-    }
-
-    public void DodgeAttack(Unit attacker)
-    {
-        if (CurrentCover) CurrentCover.PlayImpactSFX();
-        SetAnimatorTrigger("dodge");
-        Debug.Log(string.Format("{0} missed target {1}!", attacker.attributes.name, attributes.name));
     }
 
     public void CheckDeath(
@@ -467,27 +399,21 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
         Debug.Log($"{attacker.attributes.name} has attacked {attributes.name} for {damage} damage!");
 
         stats.healthCurrent -= Mathf.Min(damage, stats.healthCurrent);
+        Healthbar.UpdateHealthPoints();
 
         OnHealthModified?.Invoke();
-        GetComponentInChildren<Healthbar>().UpdateHealthPoints();
 
         // Character death
-        if (stats.healthCurrent <= 0) 
+        if (IsDead())
         {
             OnUnitDied?.Invoke();
-            AddFlag(AnimationFlag.DEAD);
-            StartCoroutine(Death(attacker, direction, distance, impactForce));
+            Death(attacker, direction, distance, impactForce);
         }
     }
 
-    IEnumerator Death(Unit attacker, Vector3 attackDirection, float distance, float impactForce)
+    public void Death(Unit attacker, Vector3 attackDirection, float distance, float impactForce)
     {
         // Disables animator, turns on ragdoll effect, and applies a small force to push the character over
-
-        // Wait for attacker animation to complete
-       // while (attacker.GetAnimator().AnimatorIsPlaying())
-       while (attacker.GetFlag(AnimationFlag.SHOOT))
-            yield return new WaitForSeconds(0.01f);
 
         // Disable top collider
         GetComponent<CapsuleCollider>().enabled = false;
@@ -496,7 +422,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
         if (distance == 0) distance = 1;
 
         // Disable animator and top rigidbody
-        OnDeath(attackDirection * impactForce/distance, ForceMode.Impulse);
+        OnDeath(attackDirection * impactForce / distance, ForceMode.Impulse);
 
         gameObject.layer = LayerMask.NameToLayer("Ignore Raycast"); // TO DO -- Layer specifically for dead characters??
 
@@ -521,46 +447,6 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
 
         else if (attributes.faction == FactionManager.ACS)
             UIManager.GetTurnIndicator().SetTurnIndicatorMessage(MessageType.ACS_DEATH);
-    }
-
-    public Unit GetNearestTarget(Tile unitTile, List<Unit> targets)
-    {
-        if (targets.Count == 0) return null;
-        float minDistance = float.MaxValue;
-        Unit closestUnit = targets[0];
-        foreach (Unit target in targets)
-        {
-            float tileDist = Map.MapGrid.GetTileDistance(unitTile, target.Tile);
-            if (tileDist < minDistance)
-            {
-                minDistance = tileDist;
-                closestUnit = target;
-            }
-        }
-        return closestUnit;
-    }
-
-    public void AddFlag(AnimationFlag flag)
-    {
-        // Handler for adding new flags
-        // Used to prevent duplicate flags
-
-        if (!_animationFlags.Contains(flag))
-            _animationFlags.Add(flag);
-    }
-
-    public void RemoveFlag(AnimationFlag flag)
-    {
-        // Handler for adding new flags
-        // Used for consistency with AddFlag function
-
-        if (_animationFlags.Contains(flag))
-            _animationFlags.Remove(flag);
-    }
-
-    public bool GetFlag(AnimationFlag flag)
-    {
-        return _animationFlags.Contains(flag);
     }
 }
 

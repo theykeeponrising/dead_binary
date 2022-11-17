@@ -31,13 +31,14 @@ public class Map : MonoBehaviour
         //_coverMapResults = CoverMap.GetComponentsInChildren<CoverObject>().ToList();
     }
 
-    public static List<Unit> FindUnits(Faction faction = null)
+    public static List<Unit> FindUnits(Faction faction=null, bool excludeDeadUnits=true)
     {
         // Returns units on the active map filtered by faction
         // If no faction is provided, returns all units
 
         List<Unit> unitsFound = new();
 
+        // Find by faction
         if (faction != null)
         {
             foreach (Unit unit in UnitMap.GetComponentsInChildren<Unit>())
@@ -45,7 +46,18 @@ public class Map : MonoBehaviour
                     unitsFound.Add(unit);
         }
         else
+        {
             unitsFound = UnitMap.GetComponentsInChildren<Unit>().ToList();
+        }
+
+        // Exclude dead units
+        if (excludeDeadUnits)
+        {
+            List<Unit> iterateList = new (unitsFound);
+            foreach (Unit unit in iterateList)
+                if (unit.IsDead())
+                    unitsFound.Remove(unit);
+        }
 
         return unitsFound;
     }

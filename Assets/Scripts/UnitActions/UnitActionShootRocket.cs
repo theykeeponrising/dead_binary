@@ -34,7 +34,6 @@ public class UnitActionShootRocket : UnitActionShoot
 
         TargetPosition = target.transform.position;
         _areaOfEffect = unit.EquippedWeapon.GetAreaOfEffect();
-        unit.AddFlag(AnimationFlag.AIM);
         unit.SpendActionPoints(actionCost);
 
         _targetDamaged = false;

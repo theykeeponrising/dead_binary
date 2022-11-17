@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,12 +10,12 @@ public class Faction : MonoBehaviour
     private bool _turnInProgress = false;
     public bool TurnInProgress { get { return _turnInProgress; } }
 
-    AudioSource _audioSource;
-    Dictionary<Faction, FactionAffinity> _factionRelation = new Dictionary<Faction, FactionAffinity>();
+    private AudioSource _audioSource;
+    private readonly Dictionary<Faction, FactionAffinity> _factionRelation = new();
 
-    [SerializeField] AudioClip _sfxFactionTurnStart;
-    [SerializeField] List<Faction> _friendlyTowards = new List<Faction>();
-    [SerializeField] List<Faction> _hostileTowards = new List<Faction>();
+    [SerializeField] private AudioClip _sfxFactionTurnStart;
+    [SerializeField] private List<Faction> _friendlyTowards = new();
+    [SerializeField] private List<Faction> _hostileTowards = new();
 
     public void Init()
     {
@@ -69,7 +68,9 @@ public class Faction : MonoBehaviour
     {
         // Gets all factions of the relative affinity to this faction
 
-        List<Faction> foundFactions = new List<Faction>();
+        List<Faction> factions = new();
+        List<Faction> foundFactions = factions;
+
         foreach (Faction faction in _factionRelation.Keys)
         {
             if (_factionRelation[faction] == factionAffinity)

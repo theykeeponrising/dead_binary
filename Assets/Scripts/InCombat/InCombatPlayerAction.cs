@@ -13,7 +13,7 @@ public class InCombatPlayerAction
     public PlayerInput playerInput;
     public Unit selectedCharacter;
     public List<Unit> playerUnits;
-    public List<Tile> previewPath = new List<Tile>();
+    public List<Tile> previewPath = new();
     public Tile targetTile;
     public enum ClickAction { select, target }
     public ClickAction clickAction;
@@ -103,9 +103,9 @@ public class InCombatPlayerAction
         // Default index 0
         int index = 0;
 
-        List<Unit> validUnits = new List<Unit>();
+        List<Unit> validUnits = new();
         foreach (Unit unit in playerUnits)
-            if (!unit.GetFlag(AnimationFlag.DEAD) && (!unit.HasTurnEnded()))
+            if (!unit.IsDead() && (!unit.HasTurnEnded()))
                 validUnits.Add(unit);
 
         // Get the index of the currently selected unit (if any)
@@ -133,7 +133,7 @@ public class InCombatPlayerAction
 
         foreach (Unit unit in playerUnits)
         {
-            if (unit.GetFlag(AnimationFlag.DEAD) || unit.HasTurnEnded()) continue;
+            if (unit.IsDead() || unit.HasTurnEnded()) continue;
             if (selectedCharacter == unit) return;
             SelectAction(unit);
             return;
@@ -203,7 +203,7 @@ public class InCombatPlayerAction
         // Change character selection
 
         //Can't select enemy units or dead units.
-        if (targetCharacter && (targetCharacter.GetFlag(AnimationFlag.DEAD) || targetCharacter.attributes.faction != playerFaction)) return;
+        if (targetCharacter && (targetCharacter.IsDead() || targetCharacter.attributes.faction != playerFaction)) return;
 
         // Clears current action bar
         actionPanelScript.gameObject.SetActive(false);
@@ -317,7 +317,7 @@ public class InCombatPlayerAction
         // Returns False if any units can still perform actions
 
         foreach (Unit unit in playerUnits)
-            if (!unit.HasTurnEnded() && !unit.GetFlag(AnimationFlag.DEAD))
+            if (!unit.HasTurnEnded() && !unit.IsDead())
                 return false;
         return true;
     }

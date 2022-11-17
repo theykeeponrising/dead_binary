@@ -92,7 +92,6 @@ public class UnitAnimator
         switch (context)
         {
             case (AnimationEventContext.AIMING):
-                _unit.AddFlag(AnimationFlag.AIM);
                 _animator.SetBool("aiming", true);
                 break;
 
@@ -116,7 +115,6 @@ public class UnitAnimator
             case (AnimationEventContext.AIMING):
                 _animator.SetBool("aiming", false);
                 _animator.updateMode = AnimatorUpdateMode.Normal;
-                _unit.RemoveFlag(AnimationFlag.AIM);
                 break;
 
             // Throw
@@ -190,6 +188,23 @@ public class UnitAnimator
         return vaultingAnims.Any(x => x == true);
     }
 
+    public bool IsAiming()
+    {
+        // Returns true if any aimig animation is playing
+
+        bool[] aimingAnims = {
+            _animator.GetCurrentAnimatorStateInfo(AnimationLayer).IsName("Aiming")};
+        return aimingAnims.Any(x => x == true);
+    }
+
+    public bool IsShooting()
+    {
+        // Returns true if any shooting animation is playing
+
+        bool[] shootingAnims = {
+            _animator.GetCurrentAnimatorStateInfo(AnimationLayer).IsName("Shoot")};
+        return shootingAnims.Any(x => x == true);
+    }
 
     public void CoverCrouch()
     {
@@ -237,7 +252,7 @@ public class UnitAnimator
                 Vector3 aimDirection = _unit.EquippedWeapon.transform.forward;
                 
                 // Updates rotation up until the actual shoot animation happens
-                if (_unit.GetFlag(AnimationFlag.AIM))
+                if (IsAiming() || IsShooting())
                     _aimTowards = Quaternion.FromToRotation(aimDirection, targetDirection);
 
                 // Gets absolute angle
@@ -321,4 +336,3 @@ public class UnitAnimator
 }
 
 public enum AnimationEventContext { SHOOT, TAKE_DAMAGE, AIMING, RELOAD, STOW, DRAW, DODGE, VAULT, FOOTSTEP_LEFT, FOOTSTEP_RIGHT, IDLE, THROW };
-public enum AnimationFlag { MOVE, SHOOT, RELOAD, VAULT, AIM, STOW, DRAW, DEAD };

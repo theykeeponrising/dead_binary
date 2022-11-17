@@ -61558,21 +61558,21 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_Events:
   - time: 0
-    functionName: Event_PlaySound
+    functionName: PlaySound
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 5
     messageOptions: 0
   - time: 0.8
-    functionName: Event_PlaySound
+    functionName: PlaySound
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 6
     messageOptions: 0
   - time: 1.0666667
-    functionName: Event_OnAnimationEnd
+    functionName: ProcessAnimationEvent
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
