@@ -3,12 +3,13 @@ using UnityEngine;
 
 public class UnitActionSwap : UnitAction
 {
-    new StateTarget currentState;
+    new StateTarget CurrentState;
 
     public override void UseAction()
     {
         // Kicks off performance with the swap animation
-        if (unit.IsActing())
+
+        if (Unit.IsActing())
             return;
 
         StartPerformance("Stow");
@@ -17,7 +18,8 @@ public class UnitActionSwap : UnitAction
     public override void UseAction(FiniteState<InCombatPlayerAction> setState)
     {
         // Updates the shoot action while unit is aiming
-        currentState = (StateTarget)setState;
+
+        CurrentState = (StateTarget)setState;
 
         UseAction();
     }
@@ -28,7 +30,7 @@ public class UnitActionSwap : UnitAction
         // Then cycles weapons and begins draw animation
         // Waits until draw is complete to end performance
 
-        while (unit.IsPlayingAnimation("Stow"))
+        while (Unit.IsPlayingAnimation("Stow"))
             return;
 
         if (ActionStage(0))
@@ -38,7 +40,7 @@ public class UnitActionSwap : UnitAction
             NextStage();
         }
 
-        while (unit.IsPlayingAnimation("Draw"))
+        while (Unit.IsPlayingAnimation("Draw"))
             return;
 
         EndPerformance();
@@ -48,36 +50,36 @@ public class UnitActionSwap : UnitAction
     {
         // Stows currently equipped weapon by disabling object and animation layer
 
-        if (unit.EquippedWeapon && unit.EquippedWeapon != AssetManager.Instance.weapon.noWeapon)
+        if (Unit.EquippedWeapon && Unit.EquippedWeapon != AssetManager.Instance.weapon.noWeapon)
         {
-            unit.EquippedWeapon.gameObject.SetActive(false);
-            unit.SetAnimationLayerWeight(unit.EquippedWeapon.GetAnimationLayer(), 0);
+            Unit.EquippedWeapon.gameObject.SetActive(false);
+            Unit.SetAnimationLayerWeight(Unit.EquippedWeapon.GetAnimationLayer(), 0);
         }
     }
 
     private void DrawWeapon()
     {
         // Cylce to next weapon
-        Weapon weapon = unit.CycleWeapon();
+        Weapon weapon = Unit.CycleWeapon();
 
         if (weapon)
         {
-            unit.EquippedWeapon = weapon;
+            Unit.EquippedWeapon = weapon;
 
             // Enable weapon object, set position and animation layer
 
             SwapWeaponAction();
             UnitTargetAction shootAction = null;
 
-            if (currentState != null)
+            if (CurrentState != null)
             {
-                shootAction = (UnitTargetAction)unit.FindActionOfType(unit.EquippedWeapon.WeaponAction.GetType());
-                currentState.SetStoredAction(shootAction);
+                shootAction = (UnitTargetAction)Unit.FindActionOfType(Unit.EquippedWeapon.WeaponAction.GetType());
+                CurrentState.SetStoredAction(shootAction);
             }
 
             // Set animator values, play animation
-            unit.PlayAnimation("Draw");
-            unit.PlaySound(AnimationType.SWAP);
+            Unit.PlayAnimation("Draw");
+            Unit.PlaySound(AnimationType.SWAP);
 
             ActionPanelScript actionPanel = UIManager.GetActionPanel();
             if (actionPanel.gameObject.activeSelf)
@@ -91,8 +93,8 @@ public class UnitActionSwap : UnitAction
             if (infoPanel.gameObject.activeSelf)
             {
                 if (shootAction) infoPanel.UpdateAction(shootAction);
-                infoPanel.UpdateHit(unit.GetHitChance());
-                infoPanel.UpdateDamage(-unit.EquippedWeapon.GetDamage());
+                infoPanel.UpdateHit(Unit.GetHitChance());
+                infoPanel.UpdateDamage(-Unit.EquippedWeapon.GetDamage());
             }
         }
     }
@@ -102,14 +104,14 @@ public class UnitActionSwap : UnitAction
         // Finds the previous weapon's shoot action
         // Replaces it with the new weapon's shoot action
 
-        List<UnitAction> unitActions = unit.GetUnitActions();
+        List<UnitAction> unitActions = Unit.GetUnitActions();
         foreach (UnitAction foundAction in unitActions)
         {
             if (foundAction.GetType().IsSubclassOf(typeof(UnitTargetAction)))
             {
                 int index = unitActions.IndexOf(foundAction);
-                Transform _unitActionsContainer = unit.GetUnitActionsContainer();
-                UnitAction newAction = Instantiate(unit.EquippedWeapon.WeaponAction, _unitActionsContainer);
+                Transform _unitActionsContainer = Unit.GetUnitActionsContainer();
+                UnitAction newAction = Instantiate(Unit.EquippedWeapon.WeaponAction, _unitActionsContainer);
                 unitActions.Insert(index, newAction);
                 unitActions.Remove(foundAction);
                 Destroy(foundAction.gameObject);

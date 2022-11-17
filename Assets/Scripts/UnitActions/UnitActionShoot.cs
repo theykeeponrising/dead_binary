@@ -2,33 +2,33 @@ using UnityEngine;
 
 public class UnitActionShoot : UnitTargetAction
 {
-    protected Timer _bufferStartTimer;
-    protected Timer _bufferEndTimer;
-    protected bool _targetDamaged;
-    protected bool _targetHit;
+    protected Timer BufferStartTimer;
+    protected Timer BufferEndTimer;
+    protected bool TargetDamaged;
+    protected bool TargetHit;
 
     public override void UseAction(Unit setTarget)
     {
         // Locks in target information and begins shoot sequence
         // Sets action to "performing" state
 
-        if (unit.IsActing())
+        if (Unit.IsActing())
             return;
 
         if (!setTarget)
         {
-            Debug.Log(string.Format("{0} was called with no target by {1}", this, unit.gameObject));
+            Debug.Log(string.Format("{0} was called with no target by {1}", this, Unit.gameObject));
             return;
         }
 
         TargetUnit = setTarget;
-        unit.TargetUnit = setTarget;
-        unit.SpendActionPoints(actionCost);
+        Unit.TargetUnit = setTarget;
+        Unit.SpendActionPoints(ActionCost);
 
-        _targetDamaged = false;
-        _targetHit = false;
-        _bufferStartTimer = new(bufferStart);
-        _bufferEndTimer = new(bufferEnd);
+        TargetDamaged = false;
+        TargetHit = false;
+        BufferStartTimer = new(BufferStart);
+        BufferEndTimer = new(BufferEnd);
 
         StartPerformance();
     }
@@ -36,7 +36,7 @@ public class UnitActionShoot : UnitTargetAction
     public override void CheckAction()
     {
         // Wait for the start buffer
-        while (!_bufferStartTimer.CheckTimer())
+        while (!BufferStartTimer.CheckTimer())
             return;
 
         // Perform shoot animation, inflict damage, spend ammo and AP
@@ -54,15 +54,15 @@ public class UnitActionShoot : UnitTargetAction
         }
 
         // Waits until shoot animation completes
-        while (unit.IsPlayingAnimation("Shoot"))
+        while (Unit.IsPlayingAnimation("Shoot"))
             return;
 
         // Wait for the end buffer
-        while (!_bufferEndTimer.CheckTimer())
+        while (!BufferEndTimer.CheckTimer())
             return;
 
         // Revert to idle state
-        unit.ClearTarget();
+        Unit.ClearTarget();
         EndPerformance();
     }
 
@@ -80,53 +80,53 @@ public class UnitActionShoot : UnitTargetAction
 
     protected virtual void HitTargets()
     {
-        if (_targetHit)
-            TargetUnit.TakeDamageEffect(unit.EquippedWeapon);
+        if (TargetHit)
+            TargetUnit.TakeDamageEffect(Unit.EquippedWeapon);
     }
 
     protected virtual void DamageTargets()
     {
-        if (!_targetHit)
+        if (!TargetHit)
             return;
 
-        if (!_targetDamaged)
+        if (!TargetDamaged)
         {
             if (TargetUnit.Attributes.faction == FactionManager.ACS) UIManager.GetTurnIndicator().SetTurnIndicatorMessage(MessageType.DMG_CONVENTIONAL);
-            TargetUnit.TakeDamage(unit, unit.EquippedWeapon.GetDamage());
-            _targetDamaged = true;
+            TargetUnit.TakeDamage(Unit, Unit.EquippedWeapon.GetDamage());
+            TargetDamaged = true;
         }
     }
 
     protected void PerformShot()
     {
-        unit.PlayAnimation("Shoot");
-        unit.EquippedWeapon.SpendAmmo();
+        Unit.PlayAnimation("Shoot");
+        Unit.EquippedWeapon.SpendAmmo();
     }
 
     private void CheckTargetHit()
     {
-        int distanceToTarget = unit.Tile.GetMovementCost(TargetUnit.Tile, 15).Count;
-        _targetHit = unit.RollForHit(distanceToTarget);
+        int distanceToTarget = Unit.Tile.GetMovementCost(TargetUnit.Tile, 15).Count;
+        TargetHit = Unit.RollForHit(distanceToTarget);
     }
 
     private void CheckDodge()
     {
-        if (_targetHit)
+        if (TargetHit)
             return;
 
         else if (!TargetUnit.IsDodging())
-            TargetUnit.DodgeAttack(unit);
+            TargetUnit.DodgeAttack(Unit);
     }
 
     private Vector3 ProjectileTrajectory()
     {
-        int lowRange = _targetHit ? 0 : 3;
-        int highRange = _targetHit ? lowRange + 2 : lowRange + 5;
+        int lowRange = TargetHit ? 0 : 3;
+        int highRange = TargetHit ? lowRange + 2 : lowRange + 5;
 
         Vector3 trajectory = new Vector3(GetRandomInt(lowRange, highRange), GetRandomInt(lowRange, highRange), GetRandomInt(lowRange, highRange)) * 0.1f;
-        Vector3 direction =  TargetUnit.transform.position - unit.transform.position;
+        Vector3 direction =  TargetUnit.transform.position - Unit.transform.position;
 
-        if (!_targetHit)
+        if (!TargetHit)
             trajectory += direction * 1.5f;
 
         return trajectory;

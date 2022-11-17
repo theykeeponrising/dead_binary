@@ -53,7 +53,7 @@ public class ActionPanelScript : MonoBehaviour
                     actionsList.Add(characterAction);
                     buttons.Add(Instantiate(buttonPrefab, panel.transform));
                     int index = buttons.Count - 1;
-                    string spritePath = UnitActionSprites.GetSprite(characterAction.actionSprite);
+                    string spritePath = UnitActionSprites.GetSprite(characterAction.ActionSprite);
 
                     buttons[index].LoadResources(spritePath);
                     buttons[index].BindAction(characterAction);

@@ -143,13 +143,13 @@ public class UnitActor
         }
 
         item.UseItem(_unit, target);
-        _unit.SpendActionPoints(item.itemAction.actionCost);
+        _unit.SpendActionPoints(item.itemAction.ActionCost);
         _unit.transform.LookAt(target.transform);
     }
 
     public void ItemAction(Item item, Tile targetTile)
     {
-        _unit.SpendActionPoints(item.itemAction.actionCost);
+        _unit.SpendActionPoints(item.itemAction.ActionCost);
         item.UseItem(_unit, targetTile.transform.position);
         _unit.transform.LookAt(targetTile.transform);
     }

@@ -184,6 +184,7 @@ public class UnitHealthbar : MonoBehaviour
         while (i < HealthMax)
         {
             _healthPoints[i].color = (i < HealthCurrent) ? _healthColorHealthy : _healthColorInjured;
+            i++;
         }
     }
 

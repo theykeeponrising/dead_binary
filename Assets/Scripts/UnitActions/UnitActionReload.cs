@@ -7,11 +7,11 @@ public class UnitActionReload : UnitAction
         // Kicks off unit and weapon's reload methods
         // Sets action to "performing" state
 
-        if (unit.IsActing())
+        if (Unit.IsActing())
             return;
 
-        unit.SpendActionPoints(actionCost);
-        _weapon = unit.EquippedWeapon;
+        Unit.SpendActionPoints(ActionCost);
+        _weapon = Unit.EquippedWeapon;
         _weapon.PlaySound(WeaponSound.RELOAD);
         StartPerformance("Reload");
     }
@@ -21,7 +21,7 @@ public class UnitActionReload : UnitAction
         // Waits until reload animation completes
         // Then changes weapons ammo and ends action performance
 
-        while (unit.IsPlayingAnimation("Reload"))
+        while (Unit.IsPlayingAnimation("Reload"))
             return;
 
         _weapon.Reload();

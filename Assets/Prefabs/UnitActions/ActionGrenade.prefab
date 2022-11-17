@@ -44,18 +44,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 089d846fe1125544489061eb299c67e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  actionName: Throw Grenade
-  actionDescription: Throws a grenade at a target unit
-  actionCost: 1
-  actionCooldown: 0
-  actionCooldownRemaining: 0
   actionRequirements: 0100000004000000
-  actionSprite: 7
-  unit: {fileID: 0}
-  item: {fileID: 0}
-  actionStage: 0
-  bufferStart: 1
-  bufferEnd: 1
+  _actionRequirements: 0100000004000000
+  _actionSprite: 7
+  _actionName: Throw Grenade
+  _actionDescription: Throws a grenade at a target unit
+  _actionCost: 1
+  _actionCooldown: 0
+  _actionCooldownRemaining: 0
+  BufferStart: 1
+  BufferEnd: 1
   _useCharacterCamera: 0
   TargetFaction: 0
   TargetTypes: 0000000002000000

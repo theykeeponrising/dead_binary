@@ -44,15 +44,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eee274f0ac96c1441872313a9274f8ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  actionName: Wait
-  actionDescription: Wait until next turn
-  actionCost: 1
-  actionCooldown: 0
-  actionCooldownRemaining: 0
   actionRequirements: 01000000
-  actionSprite: 8
-  unit: {fileID: 0}
-  item: {fileID: 0}
-  actionStage: 0
-  bufferStart: 0
-  bufferEnd: 0
+  _actionRequirements: 01000000
+  _actionSprite: 8
+  _actionName: Wait
+  _actionDescription: Wait until next turn
+  _actionCost: 1
+  _actionCooldown: 0
+  _actionCooldownRemaining: 0
+  BufferStart: 0
+  BufferEnd: 0

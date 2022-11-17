@@ -51,8 +51,8 @@ public class InfoPanelScript : MonoBehaviour
     public void UpdateAction(UnitAction unitAction)
     {
         if (_infoData == null) _infoData = new InfoData(GetComponentInChildren<RectTransform>());
-        _infoData.actionName = unitAction.actionName;
-        _infoData.description = unitAction.actionDescription;
+        _infoData.actionName = unitAction.ActionName;
+        _infoData.description = unitAction.ActionDescription;
 
         //infoText[0].text = string.Format(">> {0} <<", actionName);
         //infoText[1].text = actionDesc;

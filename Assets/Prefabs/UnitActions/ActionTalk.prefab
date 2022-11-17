@@ -44,15 +44,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cab481a19957c1144a4a8850322d5404, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  actionName: Talk
-  actionDescription: For testing purposes only
-  actionCost: 0
-  actionCooldown: 0
-  actionCooldownRemaining: 0
   actionRequirements: 
-  actionSprite: 9
-  unit: {fileID: 0}
-  item: {fileID: 0}
-  actionStage: 0
-  bufferStart: 0
-  bufferEnd: 0
+  _actionSprite: 9
+  actionName: 
+  _actionName: Talk
+  actionDescription: 
+  _actionDescription: For testing purposes only
+  actionCost: 0
+  _actionCost: 0
+  _actionCooldown: 0
+  _actionCooldownRemaining: 0
+  BufferStart: 0
+  BufferEnd: 0

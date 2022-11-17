@@ -1,5 +1,4 @@
 using UnityEngine;
-using System;
 using System.Collections.Generic;
 
 public abstract class Item : MonoBehaviour
@@ -35,8 +34,8 @@ public abstract class Item : MonoBehaviour
         if (itemAction)
         {
             itemAction = Instantiate(itemAction, transform);
-            if (itemInfoName != "") itemAction.actionName = itemInfoName;
-            if (itemInfoDescription != "") itemAction.actionDescription = itemInfoDescription;
+            if (itemInfoName != "") itemAction.SetName(itemInfoName);
+            if (itemInfoDescription != "") itemAction.SetDescription(itemInfoDescription);
         }
     }
 

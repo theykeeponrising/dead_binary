@@ -1,40 +1,44 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class UnitAction : MonoBehaviour
 {
-    // Action attributes
-    public string actionName;
-    public string actionDescription;
-    public int actionCost;
+    [SerializeField] private string _actionName;
+    [SerializeField] private string _actionDescription;
+    [SerializeField] private int _actionCost;
+    [SerializeField] private int _actionCooldown;
+    [SerializeField] private int _actionCooldownRemaining;
 
-    public int actionCooldown;
-    public int actionCooldownRemaining;
-    public bool OnCooldown() => actionCooldownRemaining > 0;
+    [SerializeField] private UnitActionRequirement[] _actionRequirements;
+    [SerializeField] private UnitActionEnum _actionSprite;
 
-    public UnitActionRequirement[] actionRequirements;
-    public UnitActionEnum actionSprite;
-    public bool HasSprite() => actionSprite != UnitActionEnum.NONE;
+    private int _actionStage = 0;
+    private bool _actionPerforming;
+    private bool _actionPerformed;
 
-    // Gamestate values
-    [HideInInspector] public FiniteState<InCombatPlayerAction> currentState;
-    [HideInInspector] public Unit unit;
-    [HideInInspector] public Item item;
-    [HideInInspector] public int actionStage = 0;
+    private Unit _unit;
+    private Item _item;
 
-    public float bufferStart;
-    public float bufferEnd;
+    protected FiniteState<InCombatPlayerAction> CurrentState;
+    [SerializeField] protected float BufferStart;
+    [SerializeField] protected float BufferEnd;
 
-    bool actionPerforming;
-    bool actionPerformed;
-    public bool Performing() => actionPerforming;
-    public bool Performed() => actionPerformed;
+    public Unit Unit { get { return _unit; } }
+    public Item Item { get { return _item; } }
+    public string ActionName { get { return _actionName; } }
+    public string ActionDescription { get { return _actionDescription; } }
+    public int ActionCost { get { return _actionCost; } }
+    public UnitActionEnum ActionSprite { get { return _actionSprite; } }
+
+    public bool HasSprite() => _actionSprite != UnitActionEnum.NONE;
+    public bool Performing() => _actionPerforming;
+    public bool Performed() => _actionPerformed;
+    public bool OnCooldown() => _actionCooldownRemaining > 0;
 
     private void Awake()
     {
-        unit = GetComponentInParent<Unit>();
-        item = GetComponentInParent<Item>();
+        _unit = GetComponentInParent<Unit>();
+        _item = GetComponentInParent<Item>();
     }
 
     private void LateUpdate()
@@ -42,30 +46,34 @@ public abstract class UnitAction : MonoBehaviour
         if (Performing()) CheckAction();
     }
 
-    public bool IsType(System.Type type)
-    {
-        return GetType() == type;
-    }
+    public void SetName(string name)
+    { _actionName = name; }
+
+    public void SetDescription(string description)
+    { _actionDescription = description; }
+
+    public void SetPerformed(bool performed)
+    { _actionPerformed = performed; }
 
     public void OnTurnStart()
     {
         // Called at the start of the unit's turn
         // Reduce cooldown (if any) and reset the performed flag
 
-        if (OnCooldown()) actionCooldownRemaining -= 1;
-        actionPerformed = false;
+        if (OnCooldown()) _actionCooldownRemaining -= 1;
+        _actionPerformed = false;
     }
 
     public bool CheckRequirements(bool printDebug = false)
     {
         // Checks each requirement item in list
         // If any requirement fails, returns false, otherwise return true
-        if (actionRequirements.Length > 0)
-            foreach (UnitActionRequirement requirement in actionRequirements)
+        if (_actionRequirements.Length > 0)
+            foreach (UnitActionRequirement requirement in _actionRequirements)
             {
                 // Check that unit meets AP cost
                 if (requirement == UnitActionRequirement.AP)
-                    if (!unit || unit.Stats.actionPointsCurrent < actionCost)
+                    if (!Unit || Unit.Stats.actionPointsCurrent < ActionCost)
                     {
                         if (printDebug) Debug.Log("failed requirement ap");
                         return false;
@@ -73,7 +81,7 @@ public abstract class UnitAction : MonoBehaviour
 
                 // Check that unit meets Ammo cost
                 if (requirement == UnitActionRequirement.AMMO)
-                    if (!unit || unit.EquippedWeapon.Stats.AmmoCurrent <= 0)
+                    if (!Unit || Unit.EquippedWeapon.Stats.AmmoCurrent <= 0)
                     {
                         if (printDebug) Debug.Log("failed requirement ammo");
                         return false;
@@ -81,14 +89,14 @@ public abstract class UnitAction : MonoBehaviour
 
                 // Check that unit's ammo isn't full
                 if (requirement == UnitActionRequirement.RELOAD)
-                    if (!unit || unit.EquippedWeapon.Stats.AmmoCurrent >= unit.EquippedWeapon.Stats.AmmoMax)
+                    if (!Unit || Unit.EquippedWeapon.Stats.AmmoCurrent >= Unit.EquippedWeapon.Stats.AmmoMax)
                     {
                         if (printDebug) Debug.Log("failed requirement reload");
                         return false;
                     }
 
                 if (requirement == UnitActionRequirement.QUANTITY)
-                    if (item.itemUsesCurrent <= 0)
+                    if (Item.itemUsesCurrent <= 0)
                     {
                         if (printDebug) Debug.Log("failed requirement quantity");
                         return false;
@@ -98,16 +106,11 @@ public abstract class UnitAction : MonoBehaviour
         return true;
     }
 
-    public void SetPerformed(bool performed)
-    {
-        actionPerformed = performed;
-    }
-
     public void StartPerformance()
     {
         // Starts action's performing flag
 
-        actionPerforming = true;
+        _actionPerforming = true;
         SetPerformed(true);
     }
 
@@ -115,9 +118,9 @@ public abstract class UnitAction : MonoBehaviour
     {
         // Starts action's performing flag with an animation
 
-        actionPerforming = true;
+        _actionPerforming = true;
         SetPerformed(true);
-        unit.PlayAnimation(animation);
+        Unit.PlayAnimation(animation);
     }
 
     public void EndPerformance()
@@ -125,64 +128,69 @@ public abstract class UnitAction : MonoBehaviour
         // Ends action's performing flag
         // Returns target to cover if applicable
 
-        actionPerforming = false;
-        actionStage = 0;
-        unit.CoverCrouch();
-        unit.PlayerAction.CheckTurnEnd();
+        _actionPerforming = false;
+        _actionStage = 0;
+        Unit.CoverCrouch();
+        Unit.PlayerAction.CheckTurnEnd();
     }
 
     public void NextStage()
     {
         // Progresses action to the next stage
 
-        actionStage += 1;
+        _actionStage += 1;
     }
 
     public bool ActionStage(int stageCheck)
     {
         // Quick check if current action stage is value
 
-        return actionStage == stageCheck;
+        return _actionStage == stageCheck;
+    }
+
+    public bool IsType(System.Type type)
+    {
+        return GetType() == type;
     }
 
     public virtual void UseAction()
     {
-        Debug.Log(string.Format("No action use found for {0}", actionName));
+        Debug.Log(string.Format("No action use found for {0}", ActionName));
     }
 
     public virtual void UseAction(Unit unit)
     {
-        Debug.Log(string.Format("No action use found for {0} (unit)", actionName));
+        Debug.Log(string.Format("No action use found for {0} (unit)", ActionName));
     }
 
     public virtual void UseAction(Vector3 position)
     {
-        Debug.Log(string.Format("No action use found for {0} (vector3)", actionName));
+        Debug.Log(string.Format("No action use found for {0} (vector3)", ActionName));
     }
 
     public virtual void UseAction(Tile tile)
     {
-        Debug.Log(string.Format("No action use found for {0} (tile)", actionName));
+        Debug.Log(string.Format("No action use found for {0} (tile)", ActionName));
     }
 
     public virtual void UseAction(Tile tile, List<Tile> path)
     {
-        Debug.Log(string.Format("No action use found for {0} (tile, path)", actionName));
+        Debug.Log(string.Format("No action use found for {0} (tile, path)", ActionName));
     }
 
     public virtual void UseAction(FiniteState<InCombatPlayerAction> setState)
     {
-        Debug.Log(string.Format("No action use found for {0} (finite state)", actionName));
+        Debug.Log(string.Format("No action use found for {0} (finite state)", ActionName));
     }
 
     public virtual void UseAction(FiniteState<InCombatPlayerAction> setState, Item item)
     {
-        Debug.Log(string.Format("No action use found for {0} (finite state, item)", actionName));
+        Debug.Log(string.Format("No action use found for {0} (finite state, item)", ActionName));
     }
 
     public virtual void CheckAction()
     {
-        Debug.Log(string.Format("No action check found for {0}", actionName));
+        Debug.Log(string.Format("No action check found for {0}", ActionName));
     }
 }
 

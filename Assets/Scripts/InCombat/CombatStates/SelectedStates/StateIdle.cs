@@ -75,7 +75,7 @@ public class StateIdle : FiniteState<InCombatPlayerAction>
         }
 
         // If we can't perform move, inform player
-        else if (t.selectedCharacter && t.selectedCharacter.Stats.actionPointsCurrent < unitAction.actionCost)
+        else if (t.selectedCharacter && t.selectedCharacter.Stats.actionPointsCurrent < unitAction.ActionCost)
         {
             Debug.Log("Out of AP, cannot move!"); // TODO: Display this to player in UI
         }

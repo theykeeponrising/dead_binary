@@ -5,7 +5,7 @@ public class UnitActionMove : UnitAction
 {
     private List<Tile> _movePath;
     private int _moveCount;
-    private MoveData MoveData => unit.MoveData;
+    private MoveData MoveData => Unit.MoveData;
 
     private readonly Timer _animationBuffer = new();
 
@@ -13,10 +13,10 @@ public class UnitActionMove : UnitAction
     {
         // Sets units move data and updates as unit progresses
 
-        if (unit.IsActing())
+        if (Unit.IsActing())
             return;
 
-        _movePath = unit.MoveData.Path;
+        _movePath = Unit.MoveData.Path;
         _moveCount = 0;
 
         // If tile is unreachable, abort move action
@@ -28,12 +28,12 @@ public class UnitActionMove : UnitAction
             // If tile is occupied, we can't move there
             if (tile.Occupant)
                 _movePath = null;
-            else _movePath = unit.Tile.GetMovementCost(tile, unit.Stats.movement);
+            else _movePath = Unit.Tile.GetMovementCost(tile, Unit.Stats.movement);
 
             if (_movePath.Count > 0)
             {
-                unit.SpendActionPoints(actionCost);
-                if (unit.IsCrouching()) unit.ToggleCrouch();
+                Unit.SpendActionPoints(ActionCost);
+                if (Unit.IsCrouching()) Unit.ToggleCrouch();
                 StartPerformance();
             }
         }
@@ -42,15 +42,15 @@ public class UnitActionMove : UnitAction
     public override void CheckAction()
     {
         // Waits until unit stands
-        while (unit.IsCrouching())
+        while (Unit.IsCrouching())
             return;
 
         // Stage 0 -- Set the immediate destination and animation flag
         if (ActionStage(0))
         {
             MoveData.SetDestination(_movePath[^1]);
-            unit.Tile.Occupant = null;
-            unit.SetAnimatorBool("moving", true);
+            Unit.Tile.Occupant = null;
+            Unit.SetAnimatorBool("moving", true);
             NextStage();
         }
 
@@ -61,13 +61,13 @@ public class UnitActionMove : UnitAction
             CheckForObstacle();
 
             // If we've arrived as the next tile in path, proceed to the next time
-            if (Map.MapGrid.GetTile(unit.transform.position) == MoveData.immediate)
+            if (Map.MapGrid.GetTile(Unit.transform.position) == MoveData.immediate)
                 _moveCount += 1;
 
             // If we are at destination, set occupant and wrap-up the action
-            if (Map.MapGrid.GetTile(unit.transform.position) == _movePath[^1])
+            if (Map.MapGrid.GetTile(Unit.transform.position) == _movePath[^1])
             {
-                _movePath[^1].Occupant = unit;
+                _movePath[^1].Occupant = Unit;
                 NextStage();
             }
         }
@@ -75,9 +75,9 @@ public class UnitActionMove : UnitAction
         // Stage 2 -- Allow unit to reach stand position, and then set tile attribute
         else if (ActionStage(2))
         {
-            if (Vector3.Distance(unit.transform.position, MoveData.immediate.StandPoint) <= 0.01)
+            if (Vector3.Distance(Unit.transform.position, MoveData.immediate.StandPoint) <= 0.01)
             {
-                unit.Tile = MoveData.immediate;
+                Unit.Tile = MoveData.immediate;
                 NextStage();
             }
         }
@@ -88,7 +88,7 @@ public class UnitActionMove : UnitAction
             MoveData.immediate = null;
             MoveData.Destination.HighlightTile(showHighlight: false);
             MoveData.SetDestination(null);
-            unit.SetAnimatorBool("moving", false);
+            Unit.SetAnimatorBool("moving", false);
             EndPerformance();
         }
     }
@@ -98,15 +98,15 @@ public class UnitActionMove : UnitAction
         // Gets the shortest tile distance to target and compares to maximum allowed moves
         // If destination is too far, abort move action
 
-        _movePath = unit.Tile.GetMovementCost(newTile);
+        _movePath = Unit.Tile.GetMovementCost(newTile);
         if (_movePath.Count == 0 || !newTile.IsTraversable)
         {
             Debug.Log("No move path."); // Replace this with UI eventually
             return false;
         }
-        if (_movePath.Count > unit.Stats.movement)
+        if (_movePath.Count > Unit.Stats.movement)
         {
-            Debug.Log(string.Format("Destination Too Far! \nDistance: {0}, Max Moves: {1}", _movePath.Count, unit.Stats.movement)); // This will eventually be shown visually instead of told
+            Debug.Log(string.Format("Destination Too Far! \nDistance: {0}, Max Moves: {1}", _movePath.Count, Unit.Stats.movement)); // This will eventually be shown visually instead of told
             return false;
         }
         return true;
@@ -116,11 +116,11 @@ public class UnitActionMove : UnitAction
     {
         // Checks a short distance in front of character for objects in the "VaultOver" layer
 
-        if (unit.IsVaulting())
+        if (Unit.IsVaulting())
             return;
 
-        Vector3 direction = (MoveData.immediate.transform.position - unit.transform.position);
-        Ray ray = new(unit.transform.position, direction);
+        Vector3 direction = (MoveData.immediate.transform.position - Unit.transform.position);
+        Ray ray = new(Unit.transform.position, direction);
         int layerMask = (1 << LayerMask.NameToLayer("CoverObject"));
         float distance = 0.75f;
 
@@ -131,7 +131,7 @@ public class UnitActionMove : UnitAction
             {
                 if (_animationBuffer.CheckTimer())
                 {
-                    unit.SetAnimatorTrigger("vaulting");
+                    Unit.SetAnimatorTrigger("vaulting");
                     _animationBuffer.SetTimer(0.25f);
                 }
                 return;

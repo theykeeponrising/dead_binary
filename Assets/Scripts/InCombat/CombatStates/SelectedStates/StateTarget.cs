@@ -33,14 +33,14 @@ public class StateTarget : StateCancel
 
         if (storedAction.GetType().IsSubclassOf(typeof(UnitActionItem)))
         {
-            targetFaction = t.selectedCharacter.Attributes.faction.GetFactionsByRelation(storedAction.item.targetFaction)[0];
-            targetRange = storedAction.item.range;
-            areaOfEffect = storedAction.item.areaOfEffect;
-            targetType = storedAction.item.targetType;
+            targetFaction = t.selectedCharacter.Attributes.faction.GetFactionsByRelation(storedAction.Item.targetFaction)[0];
+            targetRange = storedAction.Item.range;
+            areaOfEffect = storedAction.Item.areaOfEffect;
+            targetType = storedAction.Item.targetType;
 
-            if (storedAction.item.GetType().BaseType == typeof(DamageItem))
+            if (storedAction.Item.GetType().BaseType == typeof(DamageItem))
             {
-                var itemType = (DamageItem)storedAction.item;
+                var itemType = (DamageItem)storedAction.Item;
                 infoPanel.UpdateDamage(itemType.hpAmount);
             }
         }

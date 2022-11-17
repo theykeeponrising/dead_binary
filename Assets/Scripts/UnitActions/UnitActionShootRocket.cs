@@ -14,7 +14,7 @@ public class UnitActionShootRocket : UnitActionShoot
         // Override for convenience
 
         TargetUnit = target;
-        unit.TargetUnit = target;
+        Unit.TargetUnit = target;
         UseAction(target.Tile);
     }
 
@@ -23,23 +23,23 @@ public class UnitActionShootRocket : UnitActionShoot
         // Locks in target information and begins shoot sequence
         // Sets action to "performing" state
 
-        if (unit.IsActing())
+        if (Unit.IsActing())
             return;
 
         if (!target)
         {
-            Debug.Log(string.Format("{0} was called with no target by {1}", this, unit.gameObject));
+            Debug.Log(string.Format("{0} was called with no target by {1}", this, Unit.gameObject));
             return;
         }
 
         TargetPosition = target.transform.position;
-        _areaOfEffect = unit.EquippedWeapon.GetAreaOfEffect();
-        unit.SpendActionPoints(actionCost);
+        _areaOfEffect = Unit.EquippedWeapon.GetAreaOfEffect();
+        Unit.SpendActionPoints(ActionCost);
 
-        _targetDamaged = false;
-        _targetHit = false;
-        _bufferStartTimer = new(bufferStart);
-        _bufferEndTimer = new(bufferEnd);
+        TargetDamaged = false;
+        TargetHit = false;
+        BufferStartTimer = new(BufferStart);
+        BufferEndTimer = new(BufferEnd);
 
         StartPerformance();
     }
@@ -48,7 +48,7 @@ public class UnitActionShootRocket : UnitActionShoot
     public override void CheckAction()
     {
         // Wait for the start buffer
-        while (!_bufferStartTimer.CheckTimer())
+        while (!BufferStartTimer.CheckTimer())
             return;
 
         // Perform shoot animation, inflict damage, spend ammo and AP
@@ -59,15 +59,15 @@ public class UnitActionShootRocket : UnitActionShoot
         }
 
         // Waits until shoot animation completes
-        while (unit.IsPlayingAnimation("Shoot"))
+        while (Unit.IsPlayingAnimation("Shoot"))
             return;
 
         // Wait for the end buffer
-        while (!_bufferEndTimer.CheckTimer())
+        while (!BufferEndTimer.CheckTimer())
             return;
 
         // Revert to idle state
-        unit.ClearTarget();
+        Unit.ClearTarget();
         TargetUnit = null;
         EndPerformance();
     }
@@ -83,9 +83,9 @@ public class UnitActionShootRocket : UnitActionShoot
     }
     protected override void HitTargets()
     {
-        if (_targetHit)
+        if (TargetHit)
             foreach (Unit impactedUnit in Tile.GetTileOccupants(Tile.GetAreaOfEffect(_targetTile, _areaOfEffect)))
-                impactedUnit.TakeDamageEffect(unit.EquippedWeapon);
+                impactedUnit.TakeDamageEffect(Unit.EquippedWeapon);
     }
 
     protected override void DamageTargets()
@@ -93,12 +93,12 @@ public class UnitActionShootRocket : UnitActionShoot
         // Use on unit if possible, otherwise on empty tile
         _targetTile = TargetUnit ? TargetUnit.Tile : Map.MapGrid.GetTile(TargetPosition);
 
-        if (!_targetDamaged)
+        if (!TargetDamaged)
         {
             foreach (Unit impactedUnit in Tile.GetTileOccupants(Tile.GetAreaOfEffect(_targetTile, _areaOfEffect)))
-                impactedUnit.TakeDamage(unit, unit.EquippedWeapon.GetDamage(), TriggerPosition);
-            _targetHit = true;
-            _targetDamaged = true;
+                impactedUnit.TakeDamage(Unit, Unit.EquippedWeapon.GetDamage(), TriggerPosition);
+            TargetHit = true;
+            TargetDamaged = true;
         }
     }
 

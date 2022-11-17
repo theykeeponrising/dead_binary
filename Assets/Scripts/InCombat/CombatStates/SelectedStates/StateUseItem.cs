@@ -8,12 +8,12 @@ public class StateUseItem : StateTarget
     {
         if (targetedUnit)
         {
-            t.selectedCharacter.UseItem(storedAction.item, targetedUnit);
+            t.selectedCharacter.UseItem(storedAction.Item, targetedUnit);
 
         }
         else if (targetedTile)
         {
-            t.selectedCharacter.UseItem(storedAction.item, targetedTile);
+            t.selectedCharacter.UseItem(storedAction.Item, targetedTile);
         }
         else
             Debug.Log("No Target to Use Item. But how. Reverting to idle.");
