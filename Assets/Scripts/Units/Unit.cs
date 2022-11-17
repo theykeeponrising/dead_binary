@@ -26,8 +26,8 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     [SerializeField] private List<UnitAction> _unitActions;
 
     [Header("--Character Info")]
-    public Stats Stats;
-    public Attributes Attributes;
+    public UnitStats Stats;
+    public UnitAttributes Attributes;
 
     public Rigidbody Rigidbody { get { return _rigidbody; } }
     public Collider[] Colliders { get { return _colliders; } }
@@ -419,7 +419,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
 
 // Attributes are mosty permanent descriptors about the character
 [System.Serializable]
-public class Attributes
+public class UnitAttributes
 {
     public string name;
     public Faction faction;
@@ -433,7 +433,7 @@ public class Attributes
 
 // Stats are values that will be referenced and changed frequently during combat
 [System.Serializable]
-public class Stats
+public class UnitStats
 {
     public int healthCurrent;
     public int healthMax;
