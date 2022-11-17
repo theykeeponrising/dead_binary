@@ -4042,12 +4042,17 @@ MonoBehaviour:
   objectTiles: []
   isTraversable: 0
   impactType: 0
-  currentTile: {fileID: 0}
-  grid: {fileID: 0}
-  flags: 
-  inventory: {fileID: 0}
-  healthbar: {fileID: 0}
+  Tile: {fileID: 0}
   _unitActions: []
+  Stats:
+    healthCurrent: 10
+    healthMax: 10
+    movement: 5
+    aim: 6
+    armor: 4
+    dodge: 3
+    actionPointsCurrent: 2
+    actionPointsMax: 2
   stats:
     healthCurrent: 10
     healthMax: 10
@@ -4057,13 +4062,22 @@ MonoBehaviour:
     dodge: 3
     actionPointsCurrent: 2
     actionPointsMax: 2
+  Attributes:
+    name: Dummy
+    faction: {fileID: 4617512284383335714, guid: aa42e248da1bda5478eecc62b886959c, type: 3}
+    unitType: 0
+    unitIcon: 0
+    footstepSource: 0
+    UnitPortrait: {fileID: 0}
+    UnitVoice: 0
+    UnitVoicePitch: 1
   attributes:
     name: Dummy
     faction: {fileID: 4617512284383335714, guid: aa42e248da1bda5478eecc62b886959c, type: 3}
     unitType: 0
     unitIcon: 0
     footstepSource: 0
-    UnitSprite: {fileID: 21300000, guid: 64b903280b32a7e44a7406e08c35e440, type: 3}
+    UnitPortrait: {fileID: 0}
     UnitVoice: 0
     UnitVoicePitch: 1
   velocityX: 0

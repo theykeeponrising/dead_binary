@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class Healthbar : MonoBehaviour
 {
     Unit _unit;
-    Color32 _factionColor => _unit.attributes.faction.FactionColor;
+    Color32 _factionColor => _unit.Attributes.faction.FactionColor;
 
     ///////////////////
     // Health points //
@@ -17,8 +17,8 @@ public class Healthbar : MonoBehaviour
     List<Transform> pointsBackground = new List<Transform>();
     int containerLength = 5;
 
-    int healthMax => _unit.stats.healthMax;
-    int healthCurrent => _unit.stats.healthCurrent;
+    int healthMax => _unit.Stats.healthMax;
+    int healthCurrent => _unit.Stats.healthCurrent;
     List<Image> healthPoints = new List<Image>();
     public GameObject HealthPointPrefab;
     enum HealthState { HEALTHY, INJURED };

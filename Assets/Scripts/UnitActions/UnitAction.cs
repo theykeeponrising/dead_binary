@@ -65,7 +65,7 @@ public abstract class UnitAction : MonoBehaviour
             {
                 // Check that unit meets AP cost
                 if (requirement == UnitActionRequirement.AP)
-                    if (!unit || unit.stats.actionPointsCurrent < actionCost)
+                    if (!unit || unit.Stats.actionPointsCurrent < actionCost)
                     {
                         if (printDebug) Debug.Log("failed requirement ap");
                         return false;

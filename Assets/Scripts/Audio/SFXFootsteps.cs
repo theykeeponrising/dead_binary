@@ -57,7 +57,7 @@ public class FootstepData
 {
     Unit unit;
     public ImpactTypes impactType => unit.Tile.ImpactType;
-    public FootstepSource footstepSource => unit.attributes.footstepSource;
+    public FootstepSource footstepSource => unit.Attributes.footstepSource;
 
     public FootstepData(Unit unit) { this.unit = unit; }
 }

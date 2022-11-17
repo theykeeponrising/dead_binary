@@ -38,7 +38,7 @@ public class UnitSFX
         if (!footAudioSource.isPlaying)
             footAudioSource.Stop();
         
-        if (_unit.velocityZ > 0.75f)
+        if (_unit.MoveData.Velocity.z > 0.75f)
             footAudioSource.PlayOneShot(footstep);
     }
 

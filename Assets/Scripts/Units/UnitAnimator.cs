@@ -48,8 +48,8 @@ public class UnitAnimator
 
         if (_unit.FindActionOfType(typeof(UnitActionMove)).Performing())
         {
-            _animator.SetFloat("velocityX", _unit.velocityX / GlobalManager.gameSpeed);
-            _animator.SetFloat("velocityZ", _unit.velocityZ / GlobalManager.gameSpeed);
+            _animator.SetFloat("velocityX", _unit.MoveData.Velocity.x / GlobalManager.gameSpeed);
+            _animator.SetFloat("velocityZ", _unit.MoveData.Velocity.z / GlobalManager.gameSpeed);
         }
         else
         {

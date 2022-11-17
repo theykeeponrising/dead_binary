@@ -203,7 +203,7 @@ public class InCombatPlayerAction
         // Change character selection
 
         //Can't select enemy units or dead units.
-        if (targetCharacter && (targetCharacter.IsDead() || targetCharacter.attributes.faction != playerFaction)) return;
+        if (targetCharacter && (targetCharacter.IsDead() || targetCharacter.Attributes.faction != playerFaction)) return;
 
         // Clears current action bar
         actionPanelScript.gameObject.SetActive(false);
@@ -266,7 +266,7 @@ public class InCombatPlayerAction
             //    == typeof(SelectedStates.ChoosingMoveDestination))
             {
                 PathPreviewClear();
-                previewPath = selectedCharacter.Tile.GetMovementCost(targetTile, selectedCharacter.stats.movement);
+                previewPath = selectedCharacter.Tile.GetMovementCost(targetTile, selectedCharacter.Stats.movement);
 
                 // If target tile has an object on it, can't move there
                 if (targetTile.Occupant) previewPath = null;

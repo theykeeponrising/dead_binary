@@ -33,13 +33,13 @@ public class TargetButton : ActionButton
     {
         base.BindUnit(unit);
         _button.onClick.AddListener(ButtonPress);
-        LoadResources(UnitIcons.GetIcon(BoundUnit.attributes.unitIcon));
+        LoadResources(UnitIcons.GetIcon(BoundUnit.Attributes.unitIcon));
         SetIconColor();
     }
 
     private void SetIconColor()
     {
-        Faction unitFaction = BoundUnit.attributes.faction;
+        Faction unitFaction = BoundUnit.Attributes.faction;
         _iconBracket.color = unitFaction.FactionColor;
         _iconUnit.color = unitFaction.FactionColor;
     }

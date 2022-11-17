@@ -42,7 +42,7 @@ public class Map : MonoBehaviour
         if (faction != null)
         {
             foreach (Unit unit in UnitMap.GetComponentsInChildren<Unit>())
-                if (unit.attributes.faction == faction)
+                if (unit.Attributes.faction == faction)
                     unitsFound.Add(unit);
         }
         else

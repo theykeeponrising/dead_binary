@@ -28,7 +28,7 @@ public class UnitActionMove : UnitAction
             // If tile is occupied, we can't move there
             if (tile.Occupant)
                 _movePath = null;
-            else _movePath = unit.Tile.GetMovementCost(tile, unit.stats.movement);
+            else _movePath = unit.Tile.GetMovementCost(tile, unit.Stats.movement);
 
             if (_movePath.Count > 0)
             {
@@ -104,9 +104,9 @@ public class UnitActionMove : UnitAction
             Debug.Log("No move path."); // Replace this with UI eventually
             return false;
         }
-        if (_movePath.Count > unit.stats.movement)
+        if (_movePath.Count > unit.Stats.movement)
         {
-            Debug.Log(string.Format("Destination Too Far! \nDistance: {0}, Max Moves: {1}", _movePath.Count, unit.stats.movement)); // This will eventually be shown visually instead of told
+            Debug.Log(string.Format("Destination Too Far! \nDistance: {0}, Max Moves: {1}", _movePath.Count, unit.Stats.movement)); // This will eventually be shown visually instead of told
             return false;
         }
         return true;

@@ -74,7 +74,7 @@ public class EnemyUnit : Unit
         if (IsActing() || !IsProcessingTurn())
             return;
 
-        if (_actionsQueue.Count == 0 && stats.actionPointsCurrent == 0)
+        if (_actionsQueue.Count == 0 && Stats.actionPointsCurrent == 0)
         {
             _isProcessingTurn = false;
         }
@@ -235,18 +235,18 @@ public class EnemyUnit : Unit
         foreach (Unit other in oppFactionUnits)
         {
             float expectedDamage = CalculateExpectedDamage(other);
-            expectedDamage = Mathf.Min(expectedDamage, other.stats.healthCurrent);
+            expectedDamage = Mathf.Min(expectedDamage, other.Stats.healthCurrent);
 
             //Determine whether shooting the unit would kill
             //Always favor shots that would kill
-            if (!wouldKill && expectedDamage == other.stats.healthCurrent)
+            if (!wouldKill && expectedDamage == other.Stats.healthCurrent)
             {
                 wouldKill = true;
                 highestExpectedDamage = expectedDamage;
                 currentTarget = other;
                 //Continue if shot wouldn't kill (and another shot would)
             }
-            else if (wouldKill && expectedDamage < other.stats.healthCurrent)
+            else if (wouldKill && expectedDamage < other.Stats.healthCurrent)
             {
                 continue;
             }
@@ -310,7 +310,7 @@ public class EnemyUnit : Unit
 
         //Get Best 2AP Move + Shoot actions
         //Note: Action values for 2AP actions are averaged
-        if (stats.actionPointsCurrent >= 2)
+        if (Stats.actionPointsCurrent >= 2)
         {
             List<EnemyAction> moveAndShootActions = MoveAndShoot(oppFactionUnits, tilesInRange);
             float moveAndShootValue = CalculateActionsValue(moveAndShootActions);

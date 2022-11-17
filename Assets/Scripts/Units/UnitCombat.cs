@@ -21,7 +21,7 @@ class UnitCombat
 
     public List<Unit> GetHostileUnits()
     {
-        List<Faction> hostileFactions = _unit.attributes.faction.GetFactionsByRelation(FactionAffinity.ENEMY);
+        List<Faction> hostileFactions = _unit.Attributes.faction.GetFactionsByRelation(FactionAffinity.ENEMY);
         List<Unit> hostileUnits = new();
 
         foreach (Faction faction in hostileFactions)
@@ -121,7 +121,7 @@ class UnitCombat
         float weaponAccuracyPenalty = EquippedWeapon.GetAccuracyPenalty(distance);
 
         // Calculate chance to be hit
-        float hitModifier = GlobalManager.globalHit + _unit.stats.aim - _targetUnit.stats.dodge - weaponAccuracyPenalty;
+        float hitModifier = GlobalManager.globalHit + _unit.Stats.aim - _targetUnit.Stats.dodge - weaponAccuracyPenalty;
 
         // Add cover bonus if not being flanked
         if (_targetUnit.CurrentCover && Map.MapGrid.CheckIfCovered(UnitTile, _targetUnit.Tile))
@@ -140,7 +140,7 @@ class UnitCombat
         float weaponAccuracyPenalty = EquippedWeapon.GetAccuracyPenalty(distance);
 
         // Calculate chance to be hit
-        float hitModifier = GlobalManager.globalHit + _unit.stats.aim - sampleUnit.stats.dodge - weaponAccuracyPenalty;
+        float hitModifier = GlobalManager.globalHit + _unit.Stats.aim - sampleUnit.Stats.dodge - weaponAccuracyPenalty;
 
         // Add cover bonus if not being flanked
         if (sampleUnit.CurrentCover && Map.MapGrid.CheckIfCovered(UnitTile, sampleUnit.Tile))
@@ -208,6 +208,6 @@ class UnitCombat
     {
         _unit.CurrentCover?.PlayImpactSFX();
         _unit.SetAnimatorTrigger("dodge");
-        Debug.Log(string.Format("{0} missed target {1}!", attacker.attributes.name, _unit.attributes.name));
+        Debug.Log(string.Format("{0} missed target {1}!", attacker.Attributes.name, _unit.Attributes.name));
     }
 }

@@ -81,7 +81,7 @@ public class ActionPanelScript : MonoBehaviour
 
         if (playerAction.selectedCharacter != null && textObjects.Length > 0)
         {
-            textObjects[1].text = playerAction.selectedCharacter.stats.actionPointsCurrent.ToString();
+            textObjects[1].text = playerAction.selectedCharacter.Stats.actionPointsCurrent.ToString();
             textObjects[3].text = playerAction.selectedCharacter.EquippedWeapon.Stats.AmmoCurrent.ToString();
         }
     }

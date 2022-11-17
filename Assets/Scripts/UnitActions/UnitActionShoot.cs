@@ -91,7 +91,7 @@ public class UnitActionShoot : UnitTargetAction
 
         if (!_targetDamaged)
         {
-            if (TargetUnit.attributes.faction == FactionManager.ACS) UIManager.GetTurnIndicator().SetTurnIndicatorMessage(MessageType.DMG_CONVENTIONAL);
+            if (TargetUnit.Attributes.faction == FactionManager.ACS) UIManager.GetTurnIndicator().SetTurnIndicatorMessage(MessageType.DMG_CONVENTIONAL);
             TargetUnit.TakeDamage(unit, unit.EquippedWeapon.GetDamage());
             _targetDamaged = true;
         }

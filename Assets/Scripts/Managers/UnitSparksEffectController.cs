@@ -35,8 +35,8 @@ public sealed class UnitSparksEffectController: MonoBehaviour
 
     private void HealthModifiedHandler()
     {
-        int unitHealth = _observedUnit.stats.healthCurrent;
-        int maxHealth = _observedUnit.stats.healthMax;
+        int unitHealth = _observedUnit.Stats.healthCurrent;
+        int maxHealth = _observedUnit.Stats.healthMax;
         float effectInensity = CalculateIntensity(unitHealth, maxHealth);
         bool isEffectEnabled = effectInensity > 0;
         _requireSnapPositionToTarget = isEffectEnabled;

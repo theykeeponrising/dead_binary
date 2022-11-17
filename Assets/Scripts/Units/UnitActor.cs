@@ -11,7 +11,6 @@ public class UnitActor
     private readonly SelectionCircle _selectionCircle;
 
     public MoveData MoveData = new();
-    public UnitAction currentAction;
 
     public UnitActor(Unit unit)
     {
@@ -91,7 +90,7 @@ public class UnitActor
             Vector3 relativePos;
             Vector3 moveTargetPoint = MoveData.Destination.StandPoint;
             float distance = Vector3.Distance(_unit.transform.position, moveTargetPoint);
-            _unit.velocityZ = distance / 2;
+            MoveData.Velocity.z = distance / 2;
 
             // Slow down movement speed if character is vaulting
             float distanceDelta = (_unit.IsVaulting()) ? 0.0125f : 0.03f;
@@ -137,7 +136,7 @@ public class UnitActor
 
     public void ItemAction(Item item, Unit target)
     {
-        if (item.immuneUnitTypes.Contains(target.attributes.unitType))
+        if (item.immuneUnitTypes.Contains(target.Attributes.unitType))
         {
             Debug.Log("Units of this type are immune to the effect of this item.");
             return;
@@ -166,6 +165,7 @@ public class MoveData
     public List<Tile> Path;
     public Tile immediate;
     public Tile Destination;
+    public Vector3 Velocity = new();
 
     public void SetPath(List<Tile> path)
     { Path = path; }
