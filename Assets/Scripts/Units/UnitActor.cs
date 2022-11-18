@@ -156,6 +156,12 @@ public class UnitActor
 
     public void Say(string dialog)
     {
+        if (!_unit.Attributes.UnitPortrait)
+        {
+            Debug.Log("Unit has \"Talk\" action but no portrait assigned.");
+            return;
+        }
+
         UIManager.GetDialogPanel().UnitTalk(_unit, dialog);
     }
 }

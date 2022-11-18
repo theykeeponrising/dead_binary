@@ -44,13 +44,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56411a9a515f35842b0f941347840195, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  actionRequirements: 01000000
-  _actionRequirements: 01000000
-  _actionSprite: 0
   _actionName: Move
   _actionDescription: Move to target destination
-  _actionCost: 0
+  _actionCost: 1
   _actionCooldown: 0
   _actionCooldownRemaining: 0
+  _actionRequirements: 01000000
+  _actionSprite: 0
   BufferStart: 0
   BufferEnd: 0
