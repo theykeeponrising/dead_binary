@@ -14,10 +14,10 @@ public class StateTarget : StateCancel
     protected Unit targetedUnit;
     protected Tile targetedTile;
 
-    float targetRange = 50f;
-    float areaOfEffect = 1f;
+    private float targetRange = 50f;
+    private float areaOfEffect = 1f;
 
-    GameObject indicatorAOE;
+    private GameObject indicatorAOE;
 
     public override void Enter(InCombatPlayerAction t)
     {
@@ -192,9 +192,11 @@ public class StateTarget : StateCancel
         targetedUnit.Healthbar.gameObject.SetActive(true);
     }
 
-    public void SetStoredAction(UnitTargetAction newAction)
+    public void SetStoredAction(UnitTargetAction newAction, Weapon weapon)
     {
         storedAction = newAction;
+        areaOfEffect = weapon.Stats.AreaOfEffect;
+        infoPanel.UpdateDamage(weapon.GetDamage());
     }
 
     public override void InputPrimary(InCombatPlayerAction t)
