@@ -74,7 +74,7 @@ public class UnitActionSwap : UnitAction
             if (CurrentState != null)
             {
                 shootAction = (UnitTargetAction)Unit.FindActionOfType(Unit.EquippedWeapon.WeaponAction.GetType());
-                CurrentState.SetStoredAction(shootAction);
+                CurrentState.SetStoredAction(shootAction, weapon);
             }
 
             // Set animator values, play animation
