@@ -12,14 +12,14 @@ public class StateIdle : FiniteState<InCombatPlayerAction>
 
         if (t.selectedCharacter)
         {
-            if (t.selectedCharacter.GetActor().potentialTargets != null)
-                foreach (var v in t.selectedCharacter.GetActor().potentialTargets)
-                    v.GetActor().IsTargetUX(false, false);
+            if (t.selectedCharacter.PotentialTargets != null)
+                foreach (var v in t.selectedCharacter.PotentialTargets)
+                    v.SelectUnit(SelectionType.CLEAR);
 
-            t.selectedCharacter.GetActor().potentialTargets = null;
+            t.selectedCharacter.PotentialTargets = null;
 
-            if (t.selectedCharacter.GetActor().targetCharacter != null && t.selectedCharacter.GetActor().targetCharacter.stats.healthCurrent <= 0)
-                t.selectedCharacter.GetActor().targetCharacter = null;
+            if (t.selectedCharacter.TargetUnit != null && t.selectedCharacter.TargetUnit.Stats.healthCurrent <= 0)
+                t.selectedCharacter.TargetUnit = null;
         }
     }
 
@@ -43,7 +43,7 @@ public class StateIdle : FiniteState<InCombatPlayerAction>
     public override void InputSecndry(InCombatPlayerAction t)
     {
         // Orders selected character to move to target tile
-        UnitAction unitAction = t.selectedCharacter.GetActor().FindActionOfType(typeof(UnitActionMove));
+        UnitAction unitAction = t.selectedCharacter.FindActionOfType(typeof(UnitActionMove));
         UnitActionMove unitActionMove = (UnitActionMove)unitAction;
 
         // Check that we have a selected character and they meet the AP cost
@@ -75,7 +75,7 @@ public class StateIdle : FiniteState<InCombatPlayerAction>
         }
 
         // If we can't perform move, inform player
-        else if (t.selectedCharacter && t.selectedCharacter.stats.actionPointsCurrent < unitAction.actionCost)
+        else if (t.selectedCharacter && t.selectedCharacter.Stats.actionPointsCurrent < unitAction.ActionCost)
         {
             Debug.Log("Out of AP, cannot move!"); // TODO: Display this to player in UI
         }

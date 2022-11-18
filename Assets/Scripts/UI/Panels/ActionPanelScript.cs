@@ -53,7 +53,7 @@ public class ActionPanelScript : MonoBehaviour
                     actionsList.Add(characterAction);
                     buttons.Add(Instantiate(buttonPrefab, panel.transform));
                     int index = buttons.Count - 1;
-                    string spritePath = UnitActionSprites.GetSprite(characterAction.actionSprite);
+                    string spritePath = UnitActionSprites.GetSprite(characterAction.ActionSprite);
 
                     buttons[index].LoadResources(spritePath);
                     buttons[index].BindAction(characterAction);
@@ -81,8 +81,8 @@ public class ActionPanelScript : MonoBehaviour
 
         if (playerAction.selectedCharacter != null && textObjects.Length > 0)
         {
-            textObjects[1].text = playerAction.selectedCharacter.stats.actionPointsCurrent.ToString();
-            textObjects[3].text = playerAction.selectedCharacter.inventory.equippedWeapon.Stats.AmmoCurrent.ToString();
+            textObjects[1].text = playerAction.selectedCharacter.Stats.actionPointsCurrent.ToString();
+            textObjects[3].text = playerAction.selectedCharacter.EquippedWeapon.Stats.AmmoCurrent.ToString();
         }
     }
 

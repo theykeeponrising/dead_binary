@@ -7,11 +7,11 @@ public class UnitActionTalk : UnitAction
         // For testing purposes only
         // Unit will talk
 
-        if (unit.GetActor().IsActing())
+        if (Unit.IsActing())
             return;
 
         SetPerformed(true);
-        unit.GetActor().GetPlayerAction().SelectAction();
+        Unit.PlayerAction.SelectAction();
 
         string[] randomDialog = new string[]{
             "Well, things can't get much worse, right?",
@@ -22,6 +22,6 @@ public class UnitActionTalk : UnitAction
             "I'm not really sure how these \"Healnades\" work. The future is great!"
         };
 
-        unit.Say(randomDialog[Random.Range(0, randomDialog.Length)]);
+        Unit.Say(randomDialog[Random.Range(0, randomDialog.Length)]);
     }
 }

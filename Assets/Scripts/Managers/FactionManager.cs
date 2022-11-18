@@ -12,7 +12,7 @@ public class FactionManager : MonoBehaviour
     [SerializeField] Faction _pv; //= new Faction("Primogen Volition", new Color32(37, 232, 232, 255));
     [SerializeField] Faction _acs; //= new Faction("Anonymous Civil Service", new Color32(255, 0, 0, 255));
 
-    [HideInInspector] public static List<Faction> AllFactions = new List<Faction>();
+    [HideInInspector] public static List<Faction> AllFactions = new();
 
     private void Awake()
     {

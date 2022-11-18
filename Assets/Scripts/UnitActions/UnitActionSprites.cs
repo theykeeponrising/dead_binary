@@ -4,17 +4,17 @@ public class UnitActionSprites
 {
     // Used as a quick way to designate sprites to actions
 
-    public static string btn_background = "Buttons/btn_background";
-    public static string btn_action_move = "Buttons/btn_move";
-    public static string btn_action_shoot = "Buttons/btn_shoot";
-    public static string btn_action_reload = "Buttons/btn_reload";
-    public static string btn_action_swap = "Buttons/btn_swap";
-    public static string btn_action_chooseItem = "Buttons/btn_chooseItem";
-    public static string btn_action_useItem = "Buttons/btn_useItem";
-    public static string btn_action_medkit = "Buttons/btn_medkit";
-    public static string btn_action_grenade = "Buttons/btn_grenade";
-    public static string btn_action_wait = "Buttons/btn_wait";
-    public static string btn_action_talk = "Buttons/btn_talk";
+    private const string btn_background = "Buttons/btn_background";
+    private const string btn_action_move = "Buttons/btn_move";
+    private const string btn_action_shoot = "Buttons/btn_shoot";
+    private const string btn_action_reload = "Buttons/btn_reload";
+    private const string btn_action_swap = "Buttons/btn_swap";
+    private const string btn_action_chooseItem = "Buttons/btn_chooseItem";
+    private const string btn_action_useItem = "Buttons/btn_useItem";
+    private const string btn_action_medkit = "Buttons/btn_medkit";
+    private const string btn_action_grenade = "Buttons/btn_grenade";
+    private const string btn_action_wait = "Buttons/btn_wait";
+    private const string btn_action_talk = "Buttons/btn_talk";
 
     public static Dictionary<UnitActionEnum, string> UnitActionSpritesDict = new() {
         { UnitActionEnum.MOVE, btn_action_move },

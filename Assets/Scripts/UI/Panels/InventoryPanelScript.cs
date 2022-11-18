@@ -37,7 +37,7 @@ public class InventoryPanelScript : ActionPanelScript
                     actionsList.Add(characterItem.itemAction);
                     buttons.Add(Instantiate(buttonPrefab, panel.transform));
                     int index = buttons.Count - 1;
-                    string spritePath = UnitActionSprites.GetSprite(characterItem.itemAction.actionSprite);
+                    string spritePath = UnitActionSprites.GetSprite(characterItem.itemAction.ActionSprite);
 
                     buttons[index].LoadResources(spritePath);
                     buttons[index].BindAction(characterItem.itemAction);

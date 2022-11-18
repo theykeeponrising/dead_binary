@@ -44,13 +44,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40fc1270902acb74398770958a5e5f15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  actionName: Swap
-  actionDescription: Swap to the next weapon in inventory
-  actionCost: 0
-  actionCooldown: 0
   actionRequirements: 
-  actionSprite: 4
-  unit: {fileID: 0}
-  actionStage: 0
-  bufferStart: 0
-  bufferEnd: 0
+  _actionSprite: 4
+  actionName: 
+  _actionName: Swap
+  actionDescription: 
+  _actionDescription: Swap to the next weapon in inventory
+  actionCost: 0
+  _actionCost: 0
+  _actionCooldown: 0
+  _actionCooldownRemaining: 0
+  BufferStart: 0
+  BufferEnd: 0

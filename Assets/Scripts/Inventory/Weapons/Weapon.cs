@@ -41,7 +41,7 @@ public class Weapon : MonoBehaviour
         // Used to place newly-created weapon objects into the default position
 
         _unit = unit;
-        transform.parent = unit.GetAnimator().GetWeaponDefaultPosition();
+        transform.parent = unit.GetWeaponAttachPoint();
         transform.position = transform.parent.position;
         transform.localPosition = transform.localPosition + _offset;
         transform.rotation = transform.parent.transform.rotation;
@@ -99,7 +99,7 @@ public class Weapon : MonoBehaviour
         // Spawns projectile and sets its trajectory
 
         System.Type actionType = _weaponAction.GetType();
-        UnitActionShoot action = (UnitActionShoot)_unit.GetActor().FindActionOfType(actionType);
+        UnitActionShoot action = (UnitActionShoot)_unit.FindActionOfType(actionType);
         action.SpawnProjectile(_projectilePrefab, _barrelEnd, Attributes.ProjectileSpeed);
     }
 

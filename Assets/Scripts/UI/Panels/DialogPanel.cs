@@ -59,14 +59,14 @@ public class DialogPanel : MonoBehaviour
 
     public void SetUnitSpeaking()
     {
-        _dialogNameUI.text = _unit.attributes.name;
-        _dialogPortraitSprite.sprite = _unit.attributes.UnitPortrait.GetSprites()[0].sprite;
-        _dialogPortraitOutline.sprite = _unit.attributes.UnitPortrait.GetSprites()[1].sprite;
+        _dialogNameUI.text = _unit.Attributes.name;
+        _dialogPortraitSprite.sprite = _unit.Attributes.UnitPortrait.GetSprites()[0].sprite;
+        _dialogPortraitOutline.sprite = _unit.Attributes.UnitPortrait.GetSprites()[1].sprite;
     }
 
     private void SetColor()
     {
-        Color factionColor = _unit.attributes.faction.FactionColor;
+        Color factionColor = _unit.Attributes.faction.FactionColor;
 
         foreach (Image frame in _dialogFrames)
             frame.color = factionColor;
@@ -103,8 +103,8 @@ public class DialogPanel : MonoBehaviour
 
     private void PlayDialogSound()
     {
-        AudioClip audioClip = AudioManager.GetSound(_unit.attributes.UnitVoice);
-        _audioSource.pitch = _unit.attributes.UnitVoicePitch;
+        AudioClip audioClip = AudioManager.GetSound(_unit.Attributes.UnitVoice);
+        _audioSource.pitch = _unit.Attributes.UnitVoicePitch;
         _audioSource.PlayOneShot(audioClip);
     }
 

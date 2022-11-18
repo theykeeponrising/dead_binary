@@ -2,10 +2,10 @@ using UnityEngine;
 
 public class Timer
 {
-    float _timerLength;
+    readonly float _timerLength;
     float _timeRemaining;
 
-    public Timer(float startValue)
+    public Timer(float startValue=0f)
     {
         // Creates a new timer and set it to the provided duration
 

@@ -7,7 +7,7 @@ public class StateChoosingTarget : StateTarget
     public override void FindTargets<TargetType>(InCombatPlayerAction t)
     {
         base.FindTargets<TargetType>(t);
-        t.selectedCharacter.GetActor().GetTarget(storedAction.UseCharacterCamera);
+        t.selectedCharacter.GetTarget(storedAction.UseCharacterCamera);
     }
 
     public override void InputActionBtn(InCombatPlayerAction t, int index)
@@ -42,14 +42,14 @@ public class StateChoosingTarget : StateTarget
         else if (action.GetType().IsSubclassOf(typeof(UnitStateAction)))
         {
             ButtonPress(index);
-            t.selectedCharacter.GetActor().ClearTarget();
+            t.selectedCharacter.ClearTarget();
             action.UseAction(this);
         }
 
         // Switching state
         else
         {
-            t.selectedCharacter.GetActor().ClearTarget();
+            t.selectedCharacter.ClearTarget();
             StateIdle stateIdle = new(Machine);
             stateIdle.InputActionBtn(t, index);
             ChangeState(new StateWaitForAction(Machine, action, stateIdle));

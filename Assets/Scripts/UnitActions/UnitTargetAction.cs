@@ -3,7 +3,7 @@ using UnityEngine;
 
 public abstract class UnitTargetAction : UnitAction
 {
-    [SerializeField] bool _useCharacterCamera = false;
+    [SerializeField] private bool _useCharacterCamera = false;
     
     protected Unit TargetUnit;
     protected Vector3 TargetPosition;

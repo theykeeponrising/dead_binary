@@ -7582,12 +7582,17 @@ MonoBehaviour:
   objectTiles: []
   isTraversable: 0
   impactType: 0
-  currentTile: {fileID: 0}
-  grid: {fileID: 0}
-  flags: 
-  inventory: {fileID: 0}
-  healthbar: {fileID: 0}
+  Tile: {fileID: 0}
   _unitActions: []
+  Stats:
+    healthCurrent: 10
+    healthMax: 10
+    movement: 5
+    aim: 6
+    armor: 4
+    dodge: 3
+    actionPointsCurrent: 2
+    actionPointsMax: 2
   stats:
     healthCurrent: 10
     healthMax: 10
@@ -7597,6 +7602,15 @@ MonoBehaviour:
     dodge: 3
     actionPointsCurrent: 2
     actionPointsMax: 2
+  Attributes:
+    name: Human
+    faction: {fileID: 4617512284383335714, guid: aa42e248da1bda5478eecc62b886959c, type: 3}
+    unitType: 0
+    unitIcon: 0
+    footstepSource: 0
+    UnitPortrait: {fileID: 5109197237807887600, guid: 89be96d83ec682a4d8707a0c8ef0938d, type: 3}
+    UnitVoice: 0
+    UnitVoicePitch: 1
   attributes:
     name: Human
     faction: {fileID: 4617512284383335714, guid: aa42e248da1bda5478eecc62b886959c, type: 3}

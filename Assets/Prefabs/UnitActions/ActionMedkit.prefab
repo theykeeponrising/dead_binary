@@ -44,18 +44,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0442ba118d2bc943a943b095c965ab2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  actionName: Use Medkit
-  actionDescription: Heals target friendly unit
-  actionCost: 1
-  actionCooldown: 0
-  actionCooldownRemaining: 0
   actionRequirements: 0100000004000000
-  actionSprite: 6
-  unit: {fileID: 0}
-  item: {fileID: 0}
-  actionStage: 0
-  bufferStart: 0
-  bufferEnd: 0
+  _actionRequirements: 0100000004000000
+  _actionSprite: 6
+  _actionName: Use Medkit
+  _actionDescription: Heals target friendly unit
+  _actionCost: 1
+  _actionCooldown: 0
+  _actionCooldownRemaining: 0
+  BufferStart: 0
+  BufferEnd: 0
   _useCharacterCamera: 0
   TargetFaction: 0
   TargetTypes: 00000000

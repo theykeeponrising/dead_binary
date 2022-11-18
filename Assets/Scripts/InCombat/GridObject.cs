@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 public class GridObject : MonoBehaviour
 {
@@ -9,7 +7,7 @@ public class GridObject : MonoBehaviour
     [HideInInspector] public List<Tile> objectTiles;
     public bool isTraversable = false;
     public ImpactTypes impactType;
-    public Tile currentTile;
+    public Tile Tile;
 
     protected virtual void Awake()
     {
