@@ -196,6 +196,9 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     public void SetWaiting(bool isWaiting)
     { _unitActor.SetWaiting(isWaiting); }
 
+    public List<Tile> GetMovePath(Tile tile)
+    { return _unitActor.GetMovePath(tile); }
+
     public Transform GetBoneTransform(HumanBodyBones bone)
     { return _unitAnimator.GetBoneTransform(bone); }
 
@@ -222,6 +225,9 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
 
     public bool IsMoving()
     { return _unitAnimator.IsMoving(); }
+
+    public bool IsPatrolling()
+    { return _unitAnimator.IsPatrolling(); }
 
     public void ProcessAnimationEvent(AnimationEventContext animationEvent)
     { _unitAnimator.ProcessAnimationEvent(animationEvent, false); }

@@ -85,7 +85,7 @@ public class UnitActor
         // If there is no move target, then this action is skipped
         
         // If we have a move target, begin moving
-        if (MoveData.immediate)
+        if (MoveData.Immediate)
         {
             Vector3 relativePos;
             Vector3 moveTargetPoint = MoveData.Destination.StandPoint;
@@ -93,18 +93,18 @@ public class UnitActor
             MoveData.Velocity.z = distance / 2;
 
             // Slow down movement speed if character is vaulting
-            float distanceDelta = (_unit.IsVaulting()) ? 0.0125f : 0.03f;
+            float distanceDelta = (_unit.IsVaulting() || _unit.IsPatrolling()) ? 0.0125f : 0.03f;
 
             // If the final move target is also the most immediate one, slow down move speed as we approach
-            if (MoveData.Destination == MoveData.immediate)
+            if (MoveData.Destination == MoveData.Immediate)
             {
                 _unit.transform.position = Vector3.MoveTowards(_unit.transform.position, moveTargetPoint, distanceDelta);
                 relativePos = moveTargetPoint - _unit.transform.position;
             }
             else
             {
-                _unit.transform.position = Vector3.MoveTowards(_unit.transform.position, MoveData.immediate.transform.position, distanceDelta);
-                relativePos = MoveData.immediate.transform.position - _unit.transform.position;
+                _unit.transform.position = Vector3.MoveTowards(_unit.transform.position, MoveData.Immediate.transform.position, distanceDelta);
+                relativePos = MoveData.Immediate.transform.position - _unit.transform.position;
             }
 
             // Gradually rotate character to face towards move target
@@ -132,6 +132,24 @@ public class UnitActor
             // Character look at position
             _unit.transform.rotation = Quaternion.Slerp(_unit.transform.rotation, Quaternion.LookRotation(lookDirection - _unit.transform.position), 3 * Time.time);
         }
+    }
+
+    public List<Tile> GetMovePath(Tile tile)
+    {
+        // Gets either the full or partial movement path to tile
+
+        List<Tile> movePath = _unit.Tile.GetMovementCost(tile);
+        UnitAction unitAction = FindActionOfType(typeof(UnitActionMove));
+
+        // If we don't have enough AP to move, return null
+        if (unitAction.ActionCost > _unit.Stats.actionPointsCurrent)
+            return null;
+
+        // If path is too far for a single movement, return partial path
+        if (movePath.Count > _unit.Stats.movement)
+            movePath = movePath.GetRange(0, _unit.Stats.movement);
+
+        return movePath;
     }
 
     public void ItemAction(Item item, Unit target)
@@ -169,7 +187,7 @@ public class UnitActor
 public class MoveData
 {
     public List<Tile> Path;
-    public Tile immediate;
+    public Tile Immediate;
     public Tile Destination;
     public Vector3 Velocity = new();
 

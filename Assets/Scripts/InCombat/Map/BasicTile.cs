@@ -82,7 +82,7 @@ public class BasicTile : Tile, IPointerEnterHandler, IPointerExitHandler
         _tileGlowMaterial.color = newColor;
     }
 
-    public override List<Tile> GetMovementCost(Tile findTile, int maxDist = 10)
+    public override List<Tile> GetMovementCost(Tile findTile, int maxDist = 1000)
     {
         // Finds the nearest path to the destination tile
         // Returns path of tiles in ordered list format

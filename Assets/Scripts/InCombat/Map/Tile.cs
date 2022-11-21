@@ -63,7 +63,7 @@ public abstract class Tile : MonoBehaviour
             }
     }
 
-    public abstract List<Tile> GetMovementCost(Tile findTile, int maxDist = 10);   
+    public abstract List<Tile> GetMovementCost(Tile findTile, int maxDist = 1000);   
     public abstract bool CheckIfTileOccupant(GridObject gridObj);
     public static List<Tile> GetAreaOfEffect(Tile targetTile, float areaOfEffect)
     {

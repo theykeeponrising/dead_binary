@@ -64,7 +64,7 @@ public class StateIdle : FiniteState<InCombatPlayerAction>
                     //t.selectedCharacter.GetActor().ProcessAction(Action.action_move, contextTile: tile, contextPath: t.previewPath); // TO DO -- FIX THIS
 
                     //TODO: Clean this up. Need to check that this is a valid move before sending to state machine.
-                    if (unitActionMove.CheckTileMove(tile))
+                    if (unitActionMove.IsTilePathable(tile))
                     {
                         t.PathPreviewClear();
                         unitActionMove.UseAction(tile);

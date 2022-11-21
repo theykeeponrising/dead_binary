@@ -239,7 +239,7 @@ public class InCombatPlayerAction
             actionPanelScript.BindButtons();
     }
 
-    void PathPreview()
+    private void PathPreview()
     {
         // Don't show path preview if mouse is over UI element
         if (stateMachine.GetCurrentState().IsPointerOverUIElement(this))
@@ -266,7 +266,7 @@ public class InCombatPlayerAction
             //    == typeof(SelectedStates.ChoosingMoveDestination))
             {
                 PathPreviewClear();
-                previewPath = selectedCharacter.Tile.GetMovementCost(targetTile, selectedCharacter.Stats.movement);
+                previewPath = selectedCharacter.GetMovePath(targetTile);
 
                 // If target tile has an object on it, can't move there
                 if (targetTile.Occupant) previewPath = null;
