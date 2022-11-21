@@ -70,6 +70,7 @@ namespace UnityEditor.Tilemaps
             get { return m_CanChangeZPosition; }
             set { m_CanChangeZPosition = value; }
         }
+        public Vector3 m_scaleAdjust = new Vector3(1.0f, 1.0f, 1.0f);
 
         /// <summary>
         /// This Brush instances, places and manipulates GameObjects onto the scene.
@@ -142,10 +143,13 @@ namespace UnityEditor.Tilemaps
             Quaternion orientation = Quaternion.identity;
             Vector3 offset = new Vector3(0f, -0.5f, 0f);
 
+            // If m_scaleAdjust has negative values, that means we either did FlipX or FlipY
+            Vector3 scale = Vector3.Scale(cell.scale, m_scaleAdjust);
+
             var existingGO = GetObjectInCell(grid, parent, position);
             if (existingGO == null)
             {
-                SetSceneCell(grid, parent, position, cell.gameObject, offset, cell.scale, orientation, m_Anchor);
+                SetSceneCell(grid, parent, position, cell.gameObject, offset, scale, orientation, m_Anchor);
             }
         }
 
@@ -375,53 +379,58 @@ namespace UnityEditor.Tilemaps
 
         private void FlipX()
         {
-            BrushCell[] oldCells = m_Cells.Clone() as BrushCell[];
-            BoundsInt oldBounds = new BoundsInt(Vector3Int.zero, m_Size);
+            m_scaleAdjust = Vector3.Scale(m_scaleAdjust, new Vector3(-1.0f, 1.0f, 1.0f));
+            // Original implementation
+            // BrushCell[] oldCells = m_Cells.Clone() as BrushCell[];
+            // BoundsInt oldBounds = new BoundsInt(Vector3Int.zero, m_Size);
 
-            foreach (Vector3Int oldPos in oldBounds.allPositionsWithin)
-            {
-                int newX = m_Size.x - oldPos.x - 1;
-                int toIndex = GetCellIndex(newX, oldPos.y, oldPos.z);
-                int fromIndex = GetCellIndex(oldPos);
-                m_Cells[toIndex] = oldCells[fromIndex];
-            }
+            // foreach (Vector3Int oldPos in oldBounds.allPositionsWithin)
+            // {
+            //     int newX = m_Size.x - oldPos.x - 1;
+            //     int toIndex = GetCellIndex(newX, oldPos.y, oldPos.z);
+            //     int fromIndex = GetCellIndex(oldPos);
+            //     m_Cells[toIndex] = oldCells[fromIndex];
+            // }
 
-            int newPivotX = m_Size.x - pivot.x - 1;
-            pivot = new Vector3Int(newPivotX, pivot.y, pivot.z);
-            Matrix4x4 flip = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(-1f, 1f, 1f));
-            Quaternion orientation = Quaternion.Euler(0f, 0f, -180f);
+            // int newPivotX = m_Size.x - pivot.x - 1;
+            // pivot = new Vector3Int(newPivotX, pivot.y, pivot.z);
+            // Matrix4x4 flip = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(-1f, 1f, 1f));
+            // Quaternion orientation = Quaternion.Euler(0f, 0f, -180f);
 
-            foreach (BrushCell cell in m_Cells)
-            {
-                Vector3 oldOffset = cell.offset;
-                cell.offset = flip * oldOffset;
-                cell.orientation = cell.orientation * orientation;
-            }
+            // foreach (BrushCell cell in m_Cells)
+            // {
+                
+            //     Vector3 oldOffset = cell.offset;
+            //     cell.offset = flip * oldOffset;
+            //     cell.orientation = cell.orientation * orientation;
+            // }
         }
 
         private void FlipY()
         {
-            BrushCell[] oldCells = m_Cells.Clone() as BrushCell[];
-            BoundsInt oldBounds = new BoundsInt(Vector3Int.zero, m_Size);
+            m_scaleAdjust = Vector3.Scale(m_scaleAdjust, new Vector3(1.0f, -1.0f, 1.0f));
+            // Original implementation
+            // BrushCell[] oldCells = m_Cells.Clone() as BrushCell[];
+            // BoundsInt oldBounds = new BoundsInt(Vector3Int.zero, m_Size);
 
-            foreach (Vector3Int oldPos in oldBounds.allPositionsWithin)
-            {
-                int newY = m_Size.y - oldPos.y - 1;
-                int toIndex = GetCellIndex(oldPos.x, newY, oldPos.z);
-                int fromIndex = GetCellIndex(oldPos);
-                m_Cells[toIndex] = oldCells[fromIndex];
-            }
+            // foreach (Vector3Int oldPos in oldBounds.allPositionsWithin)
+            // {
+            //     int newY = m_Size.y - oldPos.y - 1;
+            //     int toIndex = GetCellIndex(oldPos.x, newY, oldPos.z);
+            //     int fromIndex = GetCellIndex(oldPos);
+            //     m_Cells[toIndex] = oldCells[fromIndex];
+            // }
 
-            int newPivotY = m_Size.y - pivot.y - 1;
-            pivot = new Vector3Int(pivot.x, newPivotY, pivot.z);
-            Matrix4x4 flip = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(1f, -1f, 1f));
-            Quaternion orientation = Quaternion.Euler(0f, 0f, -180f);
-            foreach (BrushCell cell in m_Cells)
-            {
-                Vector3 oldOffset = cell.offset;
-                cell.offset = flip * oldOffset;
-                cell.orientation = cell.orientation * orientation;
-            }
+            // int newPivotY = m_Size.y - pivot.y - 1;
+            // pivot = new Vector3Int(pivot.x, newPivotY, pivot.z);
+            // Matrix4x4 flip = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(1f, -1f, 1f));
+            // Quaternion orientation = Quaternion.Euler(0f, 0f, -180f);
+            // foreach (BrushCell cell in m_Cells)
+            // {
+            //     Vector3 oldOffset = cell.offset;
+            //     cell.offset = flip * oldOffset;
+            //     cell.orientation = cell.orientation * orientation;
+            // }
         }
 
         /// <summary>Updates the size, pivot and the number of layers of the brush.</summary>
