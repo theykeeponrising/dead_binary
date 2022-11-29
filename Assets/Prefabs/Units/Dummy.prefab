@@ -4045,18 +4045,18 @@ MonoBehaviour:
   Tile: {fileID: 0}
   _unitActions: []
   Stats:
-    HealthCurrent: 0
-    HealthMax: 0
-    Movement: 0
-    Aim: 0
-    Armor: 0
-    Dodge: 0
-    ActionPointsCurrent: 0
-    ActionPointsMax: 0
-    Sight: 0
+    HealthCurrent: 10
+    HealthMax: 10
+    Movement: 5
+    Aim: 6
+    Armor: 4
+    Dodge: 3
+    ActionPointsCurrent: 2
+    ActionPointsMax: 2
+    Sight: 10
   Attributes:
     Name: Dummy
-    Faction: {fileID: 0}
+    Faction: {fileID: 4617512284383335714, guid: aa42e248da1bda5478eecc62b886959c, type: 3}
     UnitType: 0
     UnitIcon: 0
     FootstepSource: 0

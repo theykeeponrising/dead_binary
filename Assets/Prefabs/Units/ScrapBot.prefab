@@ -5312,43 +5312,25 @@ MonoBehaviour:
   Tile: {fileID: 0}
   _unitActions: []
   Stats:
-    healthCurrent: 10
-    healthMax: 10
-    movement: 5
-    aim: 6
-    armor: 3
-    dodge: 3
-    actionPointsCurrent: 2
-    actionPointsMax: 2
-  stats:
-    healthCurrent: 10
-    healthMax: 10
-    movement: 5
-    aim: 6
-    armor: 3
-    dodge: 3
-    actionPointsCurrent: 2
-    actionPointsMax: 2
+    HealthCurrent: 10
+    HealthMax: 10
+    Movement: 5
+    Aim: 6
+    Armor: 4
+    Dodge: 3
+    ActionPointsCurrent: 2
+    ActionPointsMax: 2
+    Sight: 10
   Attributes:
-    name: ScrapBot
-    faction: {fileID: 4617512284383335714, guid: 9963300e191ce2e41a13bf8c82ec5125, type: 3}
-    unitType: 1
-    unitIcon: 1
-    footstepSource: 1
+    Name: ScrapBot
+    Faction: {fileID: 4617512284383335714, guid: 9963300e191ce2e41a13bf8c82ec5125, type: 3}
+    UnitType: 1
+    UnitIcon: 1
+    FootstepSource: 1
     UnitPortrait: {fileID: 0}
     UnitVoice: 0
     UnitVoicePitch: 1
-  attributes:
-    name: ScrapBot
-    faction: {fileID: 4617512284383335714, guid: 9963300e191ce2e41a13bf8c82ec5125, type: 3}
-    unitType: 1
-    unitIcon: 1
-    footstepSource: 1
-    UnitPortrait: {fileID: 0}
-    UnitVoice: 0
-    UnitVoicePitch: 1
-  velocityX: 0
-  velocityZ: 0
+  _patrolPath: {fileID: 0}
 --- !u!4 &4732323010971060870 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2258509963431223535, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
