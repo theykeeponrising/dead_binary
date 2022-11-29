@@ -10,6 +10,7 @@ public class UnitActor
     private readonly Unit _unit;
     private readonly SelectionCircle _selectionCircle;
 
+    public UnitStats Stats { get { return _unit.Stats; } }
     public MoveData MoveData = new();
 
     public UnitActor(Unit unit)
@@ -138,23 +139,24 @@ public class UnitActor
     {
         // Gets either the full or partial movement path to tile
 
-        List<Tile> movePath = _unit.Tile.GetMovementCost(tile);
+        int maxDist = Stats.Movement * 2;
+        List<Tile> movePath = _unit.Tile.GetMovementCost(tile, maxDist);
         UnitAction unitAction = FindActionOfType(typeof(UnitActionMove));
 
         // If we don't have enough AP to move, return null
-        if (unitAction.ActionCost > _unit.Stats.actionPointsCurrent)
+        if (unitAction.ActionCost > Stats.ActionPointsCurrent)
             return null;
 
         // If path is too far for a single movement, return partial path
-        if (movePath.Count > _unit.Stats.movement)
-            movePath = movePath.GetRange(0, _unit.Stats.movement);
+        if (movePath.Count > Stats.Movement)
+            movePath = movePath.GetRange(0, Stats.Movement);
 
         return movePath;
     }
 
     public void ItemAction(Item item, Unit target)
     {
-        if (item.immuneUnitTypes.Contains(target.Attributes.unitType))
+        if (item.immuneUnitTypes.Contains(target.Attributes.UnitType))
         {
             Debug.Log("Units of this type are immune to the effect of this item.");
             return;

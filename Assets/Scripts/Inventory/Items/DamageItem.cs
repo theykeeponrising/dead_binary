@@ -38,7 +38,7 @@ public abstract class DamageItem : Item
 
         foreach (Unit unit in Tile.GetTileOccupants(Tile.GetAreaOfEffect(targetedTile, areaOfEffect)))
         {
-            if (!immuneUnitTypes.Contains(unit.Attributes.unitType)) 
+            if (!immuneUnitTypes.Contains(unit.Attributes.UnitType)) 
                 ItemEffect(sourceUnit, unit);
         }
 
@@ -65,13 +65,13 @@ public abstract class DamageItem : Item
 
         if (hpAmount >= 0)
         {
-            Debug.Log(string.Format("Healed {0} for {1} health!", targetedUnit.Attributes.name, Mathf.Abs(hpAmount)));
+            Debug.Log(string.Format("Healed {0} for {1} health!", targetedUnit.Attributes.Name, Mathf.Abs(hpAmount)));
             targetedUnit.RestoreHealth(Mathf.Abs(hpAmount));
         }
         else
         {
-            Debug.Log(string.Format("Damaged {0} for {1} health!", targetedUnit.Attributes.name, Mathf.Abs(hpAmount)));
-            if (targetedUnit.Attributes.faction == FactionManager.ACS) UIManager.GetTurnIndicator().SetTurnIndicatorMessage(MessageType.DMG_EXPLOSIVE);
+            Debug.Log(string.Format("Damaged {0} for {1} health!", targetedUnit.Attributes.Name, Mathf.Abs(hpAmount)));
+            if (targetedUnit.Attributes.Faction == FactionManager.ACS) UIManager.GetTurnIndicator().SetTurnIndicatorMessage(MessageType.DMG_EXPLOSIVE);
             targetedUnit.TakeDamage(sourceUnit, Mathf.Abs(hpAmount), triggerPosition);
             targetedUnit.TakeDamageEffect(item: this);
         }

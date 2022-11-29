@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,20 +6,15 @@ using UnityEngine;
 public class MapGrid : MonoBehaviour
 {
     //Grid is a 2d array indexed to the tiles, flattened to 1d, assumes square map
-    public Tile[] grid;
-    public int width;
-    public int height;
-    public float gridOffsetX;
-    public float gridOffsetZ;
+    public Tile[] Grid;
+    public int Width;
+    public int Height;
+    public float GridOffsetX;
+    public float GridOffsetZ;
 
     // Distance between neighboring tiles
-    public static float tileSpacing = 2.0f;
+    public static int TileSpacing = 2;
 
-    public GameObject indicatorAOEPrefab;
-    public GameObject emptyTile;
-
-    private GameObject emptyTileParentGO;
-    
     void Awake() 
     {
         List<Tile> tiles = Map.FindTiles();
@@ -43,15 +36,15 @@ public class MapGrid : MonoBehaviour
             if (z < minZ) minZ = z;
             if (z > maxZ) maxZ = z;
         }
-        width = Mathf.RoundToInt((maxX - minX) / tileSpacing) + 1;
-        height = Mathf.RoundToInt((maxZ - minZ) / tileSpacing) + 1;
+        Width = Mathf.RoundToInt((maxX - minX) / TileSpacing) + 1;
+        Height = Mathf.RoundToInt((maxZ - minZ) / TileSpacing) + 1;
         Debug.Log(string.Format("Min X: {0}, Max X: {1}, Min Y: {2}, Max Y: {3}", minX, maxX, minZ, maxZ));
 
-        gridOffsetX = minX / tileSpacing;
-        gridOffsetZ = minZ / tileSpacing;
+        GridOffsetX = minX / TileSpacing;
+        GridOffsetZ = minZ / TileSpacing;
 
-        Debug.Log(string.Format("Grid Width: {0}, Grid Height: {1}", width, height));
-        grid = new Tile[width * height];
+        Debug.Log(string.Format("Grid Width: {0}, Grid Height: {1}", Width, Height));
+        Grid = new Tile[Width * Height];
 
         foreach (Tile tile in tiles)
         {
@@ -65,49 +58,49 @@ public class MapGrid : MonoBehaviour
         Vector3 pos = NormalizePositionToGrid(tile.gameObject.transform.position);
         int flattened_xz = GetFlattenedIndex(pos);
         
-        if (grid[flattened_xz] != null)
+        if (Grid[flattened_xz] != null)
         {
-            GameObject go = grid[flattened_xz].gameObject;
-            grid[flattened_xz] = null;
+            GameObject go = Grid[flattened_xz].gameObject;
+            Grid[flattened_xz] = null;
             Destroy(go);
         }
 
-        grid[flattened_xz] = tile;
+        Grid[flattened_xz] = tile;
         tile.Grid = this;
         
     }
 
     public Vector3 GetPositionFromIndex(int flattened_xz)
     {
-        float z = Mathf.Floor(((float)flattened_xz) / width);
-        float x = flattened_xz - (z * width);
+        float z = Mathf.Floor(((float)flattened_xz) / Width);
+        float x = flattened_xz - (z * Width);
 
-        Vector3 pos = new Vector3((x + gridOffsetX) * tileSpacing, 0.0f, (z + gridOffsetZ) * tileSpacing);
+        Vector3 pos = new Vector3((x + GridOffsetX) * TileSpacing, 0.0f, (z + GridOffsetZ) * TileSpacing);
         return pos;
     }
 
     //Convert the 2-D index to a 1-D flattened array index
     public int GetFlattenedIndex(Vector3 pos)
     {
-        int zLoc = Mathf.RoundToInt(pos.z - gridOffsetZ);
-        int xLoc = Mathf.RoundToInt(pos.x - gridOffsetX);
+        int zLoc = Mathf.RoundToInt(pos.z - GridOffsetZ);
+        int xLoc = Mathf.RoundToInt(pos.x - GridOffsetX);
         
         //Bounds check
-        if (xLoc < 0 || xLoc >= width || zLoc < 0 || zLoc >= height) return -1;
+        if (xLoc < 0 || xLoc >= Width || zLoc < 0 || zLoc >= Height) return -1;
         
-        return zLoc * width + xLoc;
+        return zLoc * Width + xLoc;
     }
 
     public Vector3 NormalizePositionToGrid(Vector3 pos)
     {
-        return pos / tileSpacing;
+        return pos / TileSpacing;
     } 
 
     //Get the tile at a particular position
     public Tile GetTile(Vector3 pos)
     {
         pos = NormalizePositionToGrid(pos);
-        return grid[GetFlattenedIndex(pos)];
+        return Grid[GetFlattenedIndex(pos)];
     }
 
     public List<Tile> GetTilesInRange(Vector3 startPos, int tileDist)
@@ -116,7 +109,7 @@ public class MapGrid : MonoBehaviour
         tilesInRange.Add(GetTile(startPos));
 
         // Reset path for tiles
-        foreach (Tile tile in grid)
+        foreach (Tile tile in Grid)
             tile.NearestTile = null;
 
         // Prevent finding our current tile again
@@ -199,7 +192,7 @@ public class MapGrid : MonoBehaviour
 
         //Note: Not straight line distance
         float dist = Mathf.Abs(diff.x) + Mathf.Abs(diff.z);
-        return Mathf.RoundToInt(dist / tileSpacing);
+        return Mathf.RoundToInt(dist / TileSpacing);
     }
 
     public Vector3 GetAverageTileLocation(List<Tile> tiles)
@@ -241,15 +234,5 @@ public class MapGrid : MonoBehaviour
                 return true;
         }
         return false;
-    }
-
-    public GameObject InstantiateIndicatorAOE(Vector3 position)
-    {
-        return Instantiate(indicatorAOEPrefab, position, Quaternion.identity, transform);
-    }
-
-    public void DestroyIndicatorAOE(GameObject indicatorAOE)
-    {
-        Destroy(indicatorAOE);
     }
 }

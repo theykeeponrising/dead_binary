@@ -59,14 +59,14 @@ public class DialogPanel : MonoBehaviour
 
     public void SetUnitSpeaking()
     {
-        _dialogNameUI.text = _unit.Attributes.name;
+        _dialogNameUI.text = _unit.Attributes.Name;
         _dialogPortraitSprite.sprite = _unit.Attributes.UnitPortrait.GetSprites()[0].sprite;
         _dialogPortraitOutline.sprite = _unit.Attributes.UnitPortrait.GetSprites()[1].sprite;
     }
 
     private void SetColor()
     {
-        Color factionColor = _unit.Attributes.faction.FactionColor;
+        Color factionColor = _unit.Attributes.Faction.FactionColor;
 
         foreach (Image frame in _dialogFrames)
             frame.color = factionColor;

@@ -50,7 +50,7 @@ public class UnitActionSwap : UnitAction
     {
         // Stows currently equipped weapon by disabling object and animation layer
 
-        if (Unit.EquippedWeapon && Unit.EquippedWeapon != AssetManager.Instance.weapon.noWeapon)
+        if (Unit.EquippedWeapon)
         {
             Unit.EquippedWeapon.gameObject.SetActive(false);
             Unit.SetAnimationLayerWeight(Unit.EquippedWeapon.GetAnimationLayer(), 0);

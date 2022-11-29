@@ -105,7 +105,7 @@ public class InCombatPlayerAction
 
         List<Unit> validUnits = new();
         foreach (Unit unit in playerUnits)
-            if (!unit.IsDead() && (!unit.HasTurnEnded()))
+            if (!unit.IsDead() && !unit.HasTurnEnded())
                 validUnits.Add(unit);
 
         // Get the index of the currently selected unit (if any)
@@ -203,7 +203,7 @@ public class InCombatPlayerAction
         // Change character selection
 
         //Can't select enemy units or dead units.
-        if (targetCharacter && (targetCharacter.IsDead() || targetCharacter.Attributes.faction != playerFaction)) return;
+        if (targetCharacter && (targetCharacter.IsDead() || targetCharacter.Attributes.Faction != playerFaction)) return;
 
         // Clears current action bar
         actionPanelScript.gameObject.SetActive(false);

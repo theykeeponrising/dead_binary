@@ -29,11 +29,11 @@ public class StateTarget : StateCancel
         infoPanel.UpdateHit(-1);
 
         targets = new List<Unit>();
-        targetFaction = t.selectedCharacter.Attributes.faction.GetFactionsByRelation(storedAction.TargetFaction)[0];
+        targetFaction = t.selectedCharacter.Attributes.Faction.GetFactionsByRelation(storedAction.TargetFaction)[0];
 
         if (storedAction.GetType().IsSubclassOf(typeof(UnitActionItem)))
         {
-            targetFaction = t.selectedCharacter.Attributes.faction.GetFactionsByRelation(storedAction.Item.targetFaction)[0];
+            targetFaction = t.selectedCharacter.Attributes.Faction.GetFactionsByRelation(storedAction.Item.targetFaction)[0];
             targetRange = storedAction.Item.range;
             areaOfEffect = storedAction.Item.areaOfEffect;
             targetType = storedAction.Item.targetType;
@@ -47,14 +47,14 @@ public class StateTarget : StateCancel
         else if (storedAction.GetType() == typeof(UnitActionShootRocket))
         {
             Weapon weapon = t.selectedCharacter.EquippedWeapon;
-            targetFaction = t.selectedCharacter.Attributes.faction.GetFactionsByRelation(storedAction.TargetFaction)[0];
+            targetFaction = t.selectedCharacter.Attributes.Faction.GetFactionsByRelation(storedAction.TargetFaction)[0];
             areaOfEffect = weapon.Stats.AreaOfEffect;
             targetType = TargetType.CHARACTER;
             infoPanel.UpdateDamage(weapon.GetDamage());
         }
 
         // Instantiate tile selection circle
-        indicatorAOE = Map.MapGrid.InstantiateIndicatorAOE(Vector3.zero);
+        indicatorAOE = UIManager.InstantiateIndicatorAOE(Vector3.zero);
 
         //Find Targets
         switch (targetType)
@@ -83,7 +83,7 @@ public class StateTarget : StateCancel
             v.Healthbar.gameObject.SetActive(true);
         }
 
-        Map.MapGrid.DestroyIndicatorAOE(indicatorAOE);
+        UIManager.DestroyIndicatorAOE(indicatorAOE);
 
         base.Exit(t);
     }
@@ -113,7 +113,7 @@ public class StateTarget : StateCancel
             List<Unit> units = Map.FindUnits(targetFaction);
 
             foreach (Unit unit in units)
-                if (unit.Stats.healthCurrent > 0 && TargetInRange(t.selectedCharacter, unit))
+                if (unit.Stats.HealthCurrent > 0 && TargetInRange(t.selectedCharacter, unit))
                     targets.Add(unit);
         }
 

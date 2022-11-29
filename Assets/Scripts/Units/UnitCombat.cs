@@ -4,14 +4,21 @@ using UnityEngine;
 class UnitCombat
 {
     private readonly Unit _unit;
-    private Unit _targetUnit;
-    private List<Unit> _potentialTargets;
     private readonly InfoPanelScript _infoPanel;
+
+    private Unit _targetUnit;
+    private List<Unit> _potentialTargets = new();
+    private List<Unit> _seenUnits = new();
+    private bool _inCombat = false;
 
     private Weapon EquippedWeapon { get { return _unit.EquippedWeapon; } }
     private Tile UnitTile { get { return _unit.Tile; } }
+
     public Unit TargetUnit { get { return _targetUnit; } set { _targetUnit = value; } }
     public List<Unit> PotentialTargets { get { return _potentialTargets; } set { _potentialTargets = value; } }
+    public bool InCombat { get { return _inCombat; } }
+    public UnitStats Stats { get { return _unit.Stats; } }
+    public UnitAttributes Attributes { get { return _unit.Attributes; } }
 
     public UnitCombat(Unit unit)
     {
@@ -19,9 +26,34 @@ class UnitCombat
         _infoPanel = UIManager.GetInfoPanel();
     }
 
+    public void EnterCombat(bool alertFriendlies = true)
+    {
+        if (_inCombat)
+            return;
+
+        _inCombat = true;
+
+        Debug.Log(string.Format("{0} is entering combat", _unit));
+        if (alertFriendlies) AlertFriendliesInRange();
+    }
+
+    public void LeaveCombat()
+    { 
+        _inCombat = false; 
+    }
+
+    public bool IsEnemy(Unit unit)
+    {
+        List<Faction> hostileFactions = _unit.Attributes.Faction.GetFactionsByRelation(FactionAffinity.ENEMY);
+        return (hostileFactions.Contains(unit.Attributes.Faction));
+    }
+
     public List<Unit> GetHostileUnits()
     {
-        List<Faction> hostileFactions = _unit.Attributes.faction.GetFactionsByRelation(FactionAffinity.ENEMY);
+        // Finds all hostile units regardless of their faction
+        // Useful for encounters where there may be multiple hostile factions at once
+
+        List<Faction> hostileFactions = _unit.Attributes.Faction.GetFactionsByRelation(FactionAffinity.ENEMY);
         List<Unit> hostileUnits = new();
 
         foreach (Faction faction in hostileFactions)
@@ -121,7 +153,7 @@ class UnitCombat
         float weaponAccuracyPenalty = EquippedWeapon.GetAccuracyPenalty(distance);
 
         // Calculate chance to be hit
-        float hitModifier = GlobalManager.globalHit + _unit.Stats.aim - _targetUnit.Stats.dodge - weaponAccuracyPenalty;
+        float hitModifier = GlobalManager.globalHit + _unit.Stats.Aim - _targetUnit.Stats.Dodge - weaponAccuracyPenalty;
 
         // Add cover bonus if not being flanked
         if (_targetUnit.CurrentCover && Map.MapGrid.CheckIfCovered(UnitTile, _targetUnit.Tile))
@@ -140,7 +172,7 @@ class UnitCombat
         float weaponAccuracyPenalty = EquippedWeapon.GetAccuracyPenalty(distance);
 
         // Calculate chance to be hit
-        float hitModifier = GlobalManager.globalHit + _unit.Stats.aim - sampleUnit.Stats.dodge - weaponAccuracyPenalty;
+        float hitModifier = GlobalManager.globalHit + _unit.Stats.Aim - sampleUnit.Stats.Dodge - weaponAccuracyPenalty;
 
         // Add cover bonus if not being flanked
         if (sampleUnit.CurrentCover && Map.MapGrid.CheckIfCovered(UnitTile, sampleUnit.Tile))
@@ -190,6 +222,8 @@ class UnitCombat
         Vector3 direction = (_unit.transform.position - attacker.transform.position);
         float distance = (_unit.transform.position - attacker.transform.position).magnitude;
 
+        attacker.EnterCombat();
+        _unit.EnterCombat();
         _unit.CheckDeath(attacker, direction, distance, damage);
     }
 
@@ -201,13 +235,90 @@ class UnitCombat
         Vector3 direction = _unit.transform.position - attackPoint;
         float distance = direction.magnitude;
 
+        attacker.EnterCombat();
+        _unit.EnterCombat();
         _unit.CheckDeath(attacker, direction, distance, damage, 50f);
     }
 
     public void DodgeAttack(Unit attacker)
     {
+        attacker.EnterCombat();
+        _unit.EnterCombat();
         _unit.CurrentCover?.PlayImpactSFX();
         _unit.SetAnimatorTrigger("dodge");
-        Debug.Log(string.Format("{0} missed target {1}!", attacker.Attributes.name, _unit.Attributes.name));
+        Debug.Log(string.Format("{0} missed target {1}!", attacker.Attributes.Name, _unit.Attributes.Name));
+    }
+
+    public void CheckSight()
+    {
+        _seenUnits = GetUnitsInRange(Stats.Sight * MapGrid.TileSpacing);
+
+        foreach (Unit unit in _seenUnits)
+        {
+            if (IsEnemy(unit))
+                _unit.EnterCombat();
+            else if (unit.InCombat)
+                _unit.EnterCombat(alertFriendlies: false);
+        }
+    }
+
+    public void CheckCombatOver()
+    {
+        if (!InCombat)
+            return;
+
+        foreach (Unit unit in GetHostileUnits())
+            if (unit.IsAlive() && unit.InCombat)
+                return;
+
+        LeaveCombat();
+    }
+
+    private List<Unit> GetUnitsInRange(int distance)
+    {
+        List<Unit> units = Map.FindUnits();
+        List<Unit> unitsInRange = new();
+
+        foreach (Unit unit in units)
+        {
+            if (unit == _unit) continue;
+            if (IsInRange(unit, distance)) unitsInRange.Add(unit);
+        }
+
+        return unitsInRange;
+    }
+
+    private List<Unit> GetUnitsInRange(int distance, Faction faction)
+    {
+        List<Unit> units = Map.FindUnits(faction);
+        List<Unit> unitsInRange = new();
+
+        foreach (Unit unit in units)
+        {
+            if (unit == _unit) continue;
+            if (IsInRange(unit, distance)) unitsInRange.Add(unit);
+        }
+
+        return unitsInRange;
+    }
+
+    private void AlertFriendliesInRange()
+    {
+        List<Unit> units = GetUnitsInRange(Stats.Sight, Attributes.Faction);
+        foreach (Unit unit in units)
+        {
+            if (unit == _unit) continue;
+            unit.EnterCombat(alertFriendlies: false);
+        }
+    }
+
+    private bool IsInRange(Unit unit, int distance)
+    {
+        return Vector3.Distance(_unit.transform.position, unit.transform.position) <= distance;
+    }
+
+    public bool CanSee(Unit unit)
+    {
+        return _seenUnits.Contains(unit);
     }
 }

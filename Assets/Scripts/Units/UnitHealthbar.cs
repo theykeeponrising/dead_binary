@@ -22,9 +22,9 @@ public class UnitHealthbar : MonoBehaviour
     private Color32 _healthColorHealthy = new (255, 255, 255, 255);
     private Color32 _healthColorInjured = new (150, 150, 150, 255);
 
-    private Color32 FactionColor { get { return _unit.Attributes.faction.FactionColor; } }
-    private int HealthCurrent { get { return _unit.Stats.healthCurrent; } }
-    private int HealthMax { get { return _unit.Stats.healthMax; } }
+    private Color32 FactionColor { get { return _unit.Attributes.Faction.FactionColor; } }
+    private int HealthCurrent { get { return _unit.Stats.HealthCurrent; } }
+    private int HealthMax { get { return _unit.Stats.HealthMax; } }
     private bool ShowCover { get { return _unit.CurrentCover != null && !_unit.IsMoving();  } }
 
     public GameObject HealthPointPrefab;

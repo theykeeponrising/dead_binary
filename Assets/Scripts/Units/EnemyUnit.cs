@@ -19,7 +19,6 @@ public class EnemyUnit : Unit
     private float _leaveCoverPenalty;
 
     private bool _isProcessingTurn = false;
-    private bool _inCombat = false;
 
     private Queue<EnemyAction> _actionsQueue;
     private Strategy _unitStrategy;
@@ -51,9 +50,15 @@ public class EnemyUnit : Unit
         ProcessCombatActions();           
     }
 
+    public override void EnterCombat(bool alertFriendlies = false)
+    {
+        base.EnterCombat(alertFriendlies);
+        SetAnimatorBool("patrolling", false);
+    }
+
     private void GetPatrolTile()
     {
-        if (!_patrolPath)
+        if (!_patrolPath || InCombat)
             return;
 
         _patrolTile = _patrolPath.GetNearestPatrolTile(this);
@@ -62,7 +67,7 @@ public class EnemyUnit : Unit
 
     private void CreatePatrolActions()
     {
-        if (!_patrolPath)
+        if (!_patrolPath || InCombat)
             return;
 
         _patrolTile = _patrolPath.GetPatrolTile(this, _patrolTile);
@@ -254,18 +259,18 @@ public class EnemyUnit : Unit
         foreach (Unit other in hostileUnits)
         {
             float expectedDamage = CalculateExpectedDamage(other);
-            expectedDamage = Mathf.Min(expectedDamage, other.Stats.healthCurrent);
+            expectedDamage = Mathf.Min(expectedDamage, other.Stats.HealthCurrent);
 
             //Determine whether shooting the unit would kill
             //Always favor shots that would kill
-            if (!wouldKill && expectedDamage == other.Stats.healthCurrent)
+            if (!wouldKill && expectedDamage == other.Stats.HealthCurrent)
             {
                 wouldKill = true;
                 highestExpectedDamage = expectedDamage;
                 currentTarget = other;
                 //Continue if shot wouldn't kill (and another shot would)
             }
-            else if (wouldKill && expectedDamage < other.Stats.healthCurrent)
+            else if (wouldKill && expectedDamage < other.Stats.HealthCurrent)
             {
                 continue;
             }
@@ -329,7 +334,7 @@ public class EnemyUnit : Unit
 
         //Get Best 2AP Move + Shoot actions
         //Note: Action values for 2AP actions are averaged
-        if (Stats.actionPointsCurrent >= 2)
+        if (Stats.ActionPointsCurrent >= 2)
         {
             List<EnemyAction> moveAndShootActions = MoveAndShoot(hostileUnits, tilesInRange);
             float moveAndShootValue = CalculateActionsValue(moveAndShootActions);

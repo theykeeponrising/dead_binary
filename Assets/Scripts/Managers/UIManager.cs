@@ -5,6 +5,7 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager Instance;
     public static AudioSource AudioSource;
+    public static GameObject IndicatorAOE;
 
     static StatusMenuUI _statusMenuUI;
     static ActionPanelScript _actionPanel;
@@ -15,10 +16,13 @@ public class UIManager : MonoBehaviour
     static DialogPanel _dialogPanel;
     static TextMeshProUGUI _stateDebugText;
 
+    [SerializeField] private GameObject _indicatorAOE;
+
     private void Awake()
     {
         Instance = this;
         AudioSource = GetComponent<AudioSource>();
+        IndicatorAOE = _indicatorAOE;
     }
 
     public static InfoPanelScript GetInfoPanel()
@@ -67,5 +71,15 @@ public class UIManager : MonoBehaviour
     {
         if (!_stateDebugText) _stateDebugText = Instance.transform.Find("StateDebugText").GetComponent<TextMeshProUGUI>();
         return _stateDebugText;
+    }
+
+    public static GameObject InstantiateIndicatorAOE(Vector3 position)
+    {
+        return Map.MapEffects.CreateEffect(IndicatorAOE, position, Quaternion.identity);
+    }
+
+    public static void DestroyIndicatorAOE(GameObject indicatorAOE)
+    {
+        Map.MapEffects.DestroyEffect(indicatorAOE);
     }
 }

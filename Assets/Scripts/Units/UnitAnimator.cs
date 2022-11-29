@@ -128,6 +128,13 @@ public class UnitAnimator
         }
     }
 
+    public bool GetBool(string flag)
+    {
+        // Sets animator bool
+
+        return _animator.GetBool(flag);
+    }
+
     public void SetBool(string flag, bool state)
     {
         // Sets animator bool
