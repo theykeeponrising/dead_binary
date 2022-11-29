@@ -5,8 +5,6 @@ public class UnitActionMove : UnitAction
 {
     private List<Tile> _movePath;
     private int _moveCount;
-    private bool _patrolling;
-
     private MoveData MoveData => Unit.MoveData;
 
     private readonly Timer _animationBuffer = new();
@@ -20,7 +18,6 @@ public class UnitActionMove : UnitAction
 
         _movePath = Unit.MoveData.Path;
         _moveCount = 0;
-        _patrolling = Unit.GetAnimatorBool("patrolling");
 
         // If tile is unreachable, abort move action
         if (!IsTilePathable(tile))
@@ -100,8 +97,7 @@ public class UnitActionMove : UnitAction
     {
         // Returns true/false is destination is pathable
 
-        int maxDist = _patrolling ? 50 : Unit.Stats.Movement * 2;
-        List<Tile> movePath = Unit.Tile.GetMovementCost(tile, maxDist);
+        List<Tile> movePath = Unit.Tile.GetMovementCost(tile);
 
         // If tile is unreachable, return false
         if (movePath.Count == 0 || !tile.IsTraversable || tile.Occupant)

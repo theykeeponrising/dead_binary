@@ -9,7 +9,7 @@ public class AudioManager : MonoBehaviour
     private float _musicVolumeTarget;
     [SerializeField] private Player _player;
     [SerializeField] private bool _playMusic = true; // USED UNTIL OPTIONS ARE MADE
-    [SerializeField] private float _musicTransitionTime = 3f;
+    [SerializeField] private float _musicTransitionTime = 20f;
 
     ////////////////
     // Soundtrack //

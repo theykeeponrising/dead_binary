@@ -254,9 +254,6 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     public void ProcessAnimationEvent(AnimationEventContext animationEvent, bool state)
     { _unitAnimator.ProcessAnimationEvent(animationEvent, state); }
 
-    public bool GetAnimatorBool(string name)
-    { return _unitAnimator.GetBool(name); }
-
     public void SetAnimatorBool(string name, bool state)
     { _unitAnimator.SetBool(name, state); }
 

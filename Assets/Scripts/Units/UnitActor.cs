@@ -134,7 +134,6 @@ public class UnitActor
             _unit.transform.rotation = Quaternion.Slerp(_unit.transform.rotation, Quaternion.LookRotation(lookDirection - _unit.transform.position), 3 * Time.time);
         }
     }
-
     public List<Tile> GetMovePath(Tile tile)
     {
         // Gets either the full or partial movement path to tile

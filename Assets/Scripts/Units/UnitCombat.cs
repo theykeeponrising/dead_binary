@@ -27,13 +27,9 @@ class UnitCombat
     }
 
     public void EnterCombat(bool alertFriendlies = true)
-    {
-        if (_inCombat)
-            return;
-
+    { 
         _inCombat = true;
 
-        Debug.Log(string.Format("{0} is entering combat", _unit));
         if (alertFriendlies) AlertFriendliesInRange();
     }
 
@@ -264,12 +260,18 @@ class UnitCombat
 
     public void CheckCombatOver()
     {
+        Debug.Log("Check combat over");
         if (!InCombat)
             return;
 
         foreach (Unit unit in GetHostileUnits())
+        {
             if (unit.IsAlive() && unit.InCombat)
+            {
+                Debug.Log(string.Format("{0} is alive and in combat", unit.Attributes.Name));
                 return;
+            }
+        }
 
         LeaveCombat();
     }
