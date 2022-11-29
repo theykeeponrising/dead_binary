@@ -191,9 +191,6 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     public void CheckSight()
     { _unitCombat.CheckSight(); }
 
-    public void CheckCombatOver()
-    { _unitCombat.CheckCombatOver(); }
-
     public bool IsActing()
     { return _unitActor.IsActing(); }
 
@@ -402,8 +399,8 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
         if (IsDead())
         {
             OnUnitDied?.Invoke();
+            LeaveCombat();
             Death(attacker, direction, distance, impactForce);
-            attacker.CheckCombatOver();
         }
     }
 

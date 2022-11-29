@@ -27,7 +27,10 @@ class UnitCombat
     }
 
     public void EnterCombat(bool alertFriendlies = true)
-    { 
+    {
+        if (_unit.IsDead() || _inCombat)
+            return;
+
         _inCombat = true;
 
         if (alertFriendlies) AlertFriendliesInRange();
@@ -256,24 +259,6 @@ class UnitCombat
             else if (unit.InCombat)
                 _unit.EnterCombat(alertFriendlies: false);
         }
-    }
-
-    public void CheckCombatOver()
-    {
-        Debug.Log("Check combat over");
-        if (!InCombat)
-            return;
-
-        foreach (Unit unit in GetHostileUnits())
-        {
-            if (unit.IsAlive() && unit.InCombat)
-            {
-                Debug.Log(string.Format("{0} is alive and in combat", unit.Attributes.Name));
-                return;
-            }
-        }
-
-        LeaveCombat();
     }
 
     private List<Unit> GetUnitsInRange(int distance)

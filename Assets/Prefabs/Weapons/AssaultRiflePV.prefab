@@ -207,11 +207,11 @@ PrefabInstance:
       objectReference: {fileID: -7717606581783689183, guid: f2ae4ad16d3449247a8408b557533bac, type: 3}
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: Stats.RangeMax
-      value: 5
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: Stats.RangeMin
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: Stats.AmmoCurrent
