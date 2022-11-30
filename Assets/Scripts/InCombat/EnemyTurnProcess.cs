@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,17 +5,17 @@ using UnityEngine;
 //Process for handling enemy turns. Will basically iterate through each unit one at a time and have them act.
 public class EnemyTurnProcess
 {
-    List<EnemyUnit> enemyUnits;
-    EnemyTurnState enemyTurnState;
+    private readonly List<EnemyUnit> _enemyUnits;
+    private readonly EnemyTurnState _enemyTurnState;
     public EnemyTurnProcess(EnemyTurnState enemyTurnState)
     {
-        this.enemyTurnState = enemyTurnState;
-        enemyUnits = new List<EnemyUnit>();
+        _enemyTurnState = enemyTurnState;
+        _enemyUnits = new ();
         List<Unit> units = Map.FindUnits();
         foreach (Unit unit in units)
         {
             EnemyUnit enemyUnit = unit.GetComponent<EnemyUnit>();
-            if (enemyUnit) enemyUnits.Add(enemyUnit);
+            if (enemyUnit) _enemyUnits.Add(enemyUnit);
         }
     }
 
@@ -28,7 +27,7 @@ public class EnemyTurnProcess
     public IEnumerator ProcessEnemyUnits()
     {
         //TODO: Get enemy units here and pass these along
-        foreach (EnemyUnit enemyUnit in enemyUnits)
+        foreach (EnemyUnit enemyUnit in _enemyUnits)
         {
             enemyUnit.ProcessUnitTurn();
             //Ensure units act one at a time
@@ -41,6 +40,6 @@ public class EnemyTurnProcess
 
     public void EnemyUnitsProcessedCallback()
     {
-        enemyTurnState.EndTurn();
+        _enemyTurnState.EndTurn();
     }
 }

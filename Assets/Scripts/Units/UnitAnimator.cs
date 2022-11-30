@@ -161,50 +161,50 @@ public class UnitAnimator
     {
         // Returns true if any crouch animation is playing
 
-        bool[] crouchingAnims = {
+        bool[] anims = {
             _animator.GetCurrentAnimatorStateInfo(AnimationLayer).IsName("Crouch-Down"),
             _animator.GetCurrentAnimatorStateInfo(AnimationLayer).IsName("Crouch-Up"),
             _animator.GetCurrentAnimatorStateInfo(AnimationLayer).IsName("Crouch"),
             _animator.GetCurrentAnimatorStateInfo(AnimationLayer).IsName("Crouch-Dodge"),
             _animator.GetCurrentAnimatorStateInfo(AnimationLayer).IsName("Crouch-Damage")};
-        return crouchingAnims.Any(x => x == true);
+        return anims.Any(x => x == true);
     }
 
     public bool IsDodging()
     {
         // Returns true if any dodge animation is playing
 
-        bool[] dodgingAnims = {
+        bool[] anims = {
             _animator.GetCurrentAnimatorStateInfo(AnimationLayer).IsName("Dodge"),
             _animator.GetCurrentAnimatorStateInfo(AnimationLayer).IsName("Crouch-Dodge")};
-        return dodgingAnims.Any(x => x == true);
+        return anims.Any(x => x == true);
     }
 
     public bool IsVaulting()
     {
         // Returns true if any vaulting animation is playing
 
-        bool[] vaultingAnims = {
+        bool[] anims = {
             _animator.GetCurrentAnimatorStateInfo(AnimationLayer).IsName("Vault-Over")};
-        return vaultingAnims.Any(x => x == true);
+        return anims.Any(x => x == true);
     }
 
     public bool IsAiming()
     {
         // Returns true if any aimig animation is playing
 
-        bool[] aimingAnims = {
+        bool[] anims = {
             _animator.GetCurrentAnimatorStateInfo(AnimationLayer).IsName("Aiming")};
-        return aimingAnims.Any(x => x == true);
+        return anims.Any(x => x == true);
     }
 
     public bool IsShooting()
     {
         // Returns true if any shooting animation is playing
 
-        bool[] shootingAnims = {
+        bool[] anims = {
             _animator.GetCurrentAnimatorStateInfo(AnimationLayer).IsName("Shoot")};
-        return shootingAnims.Any(x => x == true);
+        return anims.Any(x => x == true);
     }
 
     public bool IsMoving()
@@ -212,6 +212,15 @@ public class UnitAnimator
         // Returns true if Z velocity is above the threshold
 
         return MoveData.Velocity.z > 0.01f;
+    }
+
+    public bool IsPatrolling()
+    {
+        // Returns true if any patrolling animation is playing
+
+        bool[] anims = {
+            _animator.GetCurrentAnimatorStateInfo(AnimationLayer).IsName("Patrol")};
+        return anims.Any(x => x == true);
     }
 
     public void CoverCrouch()

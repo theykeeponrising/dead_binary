@@ -74,7 +74,7 @@ public class Grenade : DamageItem
 
         float distance = (sourceUnit.transform.position - targetPosition).magnitude;
 
-        if (distance > MapGrid.tileSpacing * 3)
+        if (distance > MapGrid.TileSpacing * 3)
             sourceUnit.GetComponent<Animator>().Play("Throw-Long");
         else
             sourceUnit.GetComponent<Animator>().Play("Throw-Short");

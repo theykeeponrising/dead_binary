@@ -42,7 +42,7 @@ public abstract class Tile : MonoBehaviour
             if (tile != this)
             {
                 float distance = Vector3.Distance(this.gameObject.transform.position, tile.gameObject.transform.position);
-                if (distance <= MapGrid.tileSpacing) _adjacentTiles.Add(tile);
+                if (distance <= MapGrid.TileSpacing) _adjacentTiles.Add(tile);
             }
     }
 
@@ -54,7 +54,7 @@ public abstract class Tile : MonoBehaviour
             if (coverObj.gameObject.GetInstanceID() != gameObject.GetInstanceID())
             {
                 float distance = Vector3.Distance(this.gameObject.transform.position, coverObj.gameObject.transform.position);
-                if (distance <= MapGrid.tileSpacing)
+                if (distance <= MapGrid.TileSpacing)
                 {
                     Cover = coverObj;
                     Cover.RegisterTile(this);
@@ -63,7 +63,7 @@ public abstract class Tile : MonoBehaviour
             }
     }
 
-    public abstract List<Tile> GetMovementCost(Tile findTile, int maxDist = 10);   
+    public abstract List<Tile> GetMovementCost(Tile findTile, int maxDist = 100);   
     public abstract bool CheckIfTileOccupant(GridObject gridObj);
     public static List<Tile> GetAreaOfEffect(Tile targetTile, float areaOfEffect)
     {
@@ -100,6 +100,19 @@ public abstract class Tile : MonoBehaviour
         }
 
         return impactedUnits;
+    }
+
+    public bool IsPathable(Unit unit)
+    {
+        // Returns true/false is destination is pathable
+
+        int maxDist = unit.Stats.Movement * 2;
+        List<Tile> movePath = unit.Tile.GetMovementCost(this, maxDist);
+
+        // If tile is unreachable, return false
+        if (movePath.Count == 0 || !IsTraversable || Occupant)
+            return false;
+        return true;
     }
 }
 

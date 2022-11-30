@@ -1,18 +1,35 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] private Faction _faction;
+    private List<Unit> _units = new();
+    private List<Unit> _hostileUnits = new();
+
+    private void Start()
     {
-        
+        GetPlayerUnits();
+        GetHostileUnits();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void GetPlayerUnits()
     {
-        
+        _units = Map.FindUnits(_faction);
+    }
+
+    private void GetHostileUnits()
+    {
+        List<Faction> hostileFactions = _faction.GetFactionsByRelation(FactionAffinity.ENEMY);
+
+        foreach (Faction faction in hostileFactions)
+            _hostileUnits.AddRange(Map.FindUnits(faction));
+    }
+
+    public bool InCombat()
+    {
+        foreach (Unit unit in _hostileUnits)
+            if (unit.InCombat && unit.IsAlive()) return true;
+        return false;
     }
 }

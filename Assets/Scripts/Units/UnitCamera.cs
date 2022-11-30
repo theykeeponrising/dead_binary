@@ -14,7 +14,7 @@ public class UnitCamera : MonoBehaviour
         _unitCamera = GetComponent<Camera>();
         _raycaster = GetComponent<PhysicsRaycaster>();
 
-        name = string.Format("{0} (Camera)", _unit.Attributes.name);
+        name = string.Format("{0} (Camera)", _unit.Attributes.Name);
 
         Camera.main.gameObject.GetComponent<CameraHandler>().AddSceneCamera(_unitCamera);
     }

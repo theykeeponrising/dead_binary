@@ -28,7 +28,7 @@ public class Weapon : MonoBehaviour
     [SerializeField] private AudioClip[] _fireSound;
     [SerializeField] private AudioClip[] _reloadSound;
 
-    private Color FactionColor { get { return _unit.Attributes.faction.FactionColor; } }
+    private Color FactionColor { get { return _unit.Attributes.Faction.FactionColor; } }
     
     public WeaponStats Stats;
     public WeaponAttributes Attributes;

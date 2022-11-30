@@ -4045,40 +4045,21 @@ MonoBehaviour:
   Tile: {fileID: 0}
   _unitActions: []
   Stats:
-    healthCurrent: 10
-    healthMax: 10
-    movement: 5
-    aim: 6
-    armor: 4
-    dodge: 3
-    actionPointsCurrent: 2
-    actionPointsMax: 2
-  stats:
-    healthCurrent: 10
-    healthMax: 10
-    movement: 5
-    aim: 6
-    armor: 4
-    dodge: 3
-    actionPointsCurrent: 2
-    actionPointsMax: 2
+    HealthCurrent: 10
+    HealthMax: 10
+    Movement: 5
+    Aim: 6
+    Armor: 4
+    Dodge: 3
+    ActionPointsCurrent: 2
+    ActionPointsMax: 2
+    Sight: 10
   Attributes:
-    name: Dummy
-    faction: {fileID: 4617512284383335714, guid: aa42e248da1bda5478eecc62b886959c, type: 3}
-    unitType: 0
-    unitIcon: 0
-    footstepSource: 0
+    Name: Dummy
+    Faction: {fileID: 4617512284383335714, guid: aa42e248da1bda5478eecc62b886959c, type: 3}
+    UnitType: 0
+    UnitIcon: 0
+    FootstepSource: 0
     UnitPortrait: {fileID: 0}
     UnitVoice: 0
     UnitVoicePitch: 1
-  attributes:
-    name: Dummy
-    faction: {fileID: 4617512284383335714, guid: aa42e248da1bda5478eecc62b886959c, type: 3}
-    unitType: 0
-    unitIcon: 0
-    footstepSource: 0
-    UnitPortrait: {fileID: 0}
-    UnitVoice: 0
-    UnitVoicePitch: 1
-  velocityX: 0
-  velocityZ: 0

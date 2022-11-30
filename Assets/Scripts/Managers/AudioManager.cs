@@ -5,16 +5,21 @@ public class AudioManager : MonoBehaviour
     // Used to store and quickly reference various audio clip arrays
 
     public static AudioManager Instance = null;
-    private AudioSource _audioSource;
+    private AudioSource[] _audioSources;
+    private float _musicVolumeTarget;
+    [SerializeField] private Player _player;
+    [SerializeField] private bool _playMusic = true; // USED UNTIL OPTIONS ARE MADE
+    [SerializeField] private float _musicTransitionTime = 20f;
 
     ////////////////
     // Soundtrack //
     ////////////////
 
-    public AudioClip musicGroundZero;
-    public bool playMusic = true; // USED UNTIL OPTIONS ARE MADE
+    public AudioClip OSTGroundZero;
+    public AudioClip OSTRestInTheShadows;
+    public AudioClip OSTRestInTheShadowsCombat;
 
-    /////////////////
+        /////////////////
     // SFX Classes //
     /////////////////
 
@@ -29,20 +34,53 @@ public class AudioManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        _audioSource = GetComponent<AudioSource>();
+        _audioSources = GetComponents<AudioSource>();
+        _musicVolumeTarget = _audioSources[0].volume;
 
         // TO DO -- Add a more robust music system
-        PlayMusic(musicGroundZero);
+        PlayMusic(OSTRestInTheShadows, OSTRestInTheShadowsCombat);
     }
-    
+
+    private void Update()
+    {
+        CombatMusicTransition();
+    }
+
     public void PlayMusic(AudioClip audioClip)
     {
         // Plays provided music clip
 
-        if (!playMusic) return;
+        if (!_playMusic) return;
 
-        _audioSource.clip = audioClip;
-        _audioSource.Play();
+        _audioSources[0].clip = audioClip;
+        _audioSources[0].Play();
+        _audioSources[1].Play();
+    }
+
+    public void PlayMusic(AudioClip audioClip, AudioClip audioClipCombat)
+    {
+        // Plays provided music clip
+
+        if (!_playMusic) return;
+
+        _audioSources[0].clip = audioClip;
+        _audioSources[1].clip = audioClipCombat;
+        _audioSources[0].Play();
+        _audioSources[1].Play();
+    }
+
+    private void CombatMusicTransition()
+    {
+        if (_player.InCombat())
+        {
+            _audioSources[1].volume = Mathf.Lerp(_audioSources[1].volume, _musicVolumeTarget, Time.deltaTime / _musicTransitionTime);
+            _audioSources[0].volume = Mathf.Lerp(_audioSources[0].volume, 0, Time.deltaTime / _musicTransitionTime);
+        }
+        else
+        {
+            _audioSources[0].volume = Mathf.Lerp(_audioSources[0].volume, _musicVolumeTarget, Time.deltaTime / _musicTransitionTime);
+            _audioSources[1].volume = Mathf.Lerp(_audioSources[1].volume, 0, Time.deltaTime / _musicTransitionTime);
+        }
     }
 
     // Ambience

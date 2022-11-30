@@ -105,7 +105,7 @@ public class InCombatPlayerAction
 
         List<Unit> validUnits = new();
         foreach (Unit unit in playerUnits)
-            if (!unit.IsDead() && (!unit.HasTurnEnded()))
+            if (!unit.IsDead() && !unit.HasTurnEnded())
                 validUnits.Add(unit);
 
         // Get the index of the currently selected unit (if any)
@@ -203,7 +203,7 @@ public class InCombatPlayerAction
         // Change character selection
 
         //Can't select enemy units or dead units.
-        if (targetCharacter && (targetCharacter.IsDead() || targetCharacter.Attributes.faction != playerFaction)) return;
+        if (targetCharacter && (targetCharacter.IsDead() || targetCharacter.Attributes.Faction != playerFaction)) return;
 
         // Clears current action bar
         actionPanelScript.gameObject.SetActive(false);
@@ -239,7 +239,7 @@ public class InCombatPlayerAction
             actionPanelScript.BindButtons();
     }
 
-    void PathPreview()
+    private void PathPreview()
     {
         // Don't show path preview if mouse is over UI element
         if (stateMachine.GetCurrentState().IsPointerOverUIElement(this))
@@ -262,24 +262,26 @@ public class InCombatPlayerAction
         // Previews move path on mouse over
         if (selectedCharacter && !selectedCharacter.IsActing() && targetTile)
         {
-           //if(stateMachine.GetCurrentState().GetType() 
-            //    == typeof(SelectedStates.ChoosingMoveDestination))
-            {
-                PathPreviewClear();
-                previewPath = selectedCharacter.Tile.GetMovementCost(targetTile, selectedCharacter.Stats.movement);
+            PathPreviewClear();
 
-                // If target tile has an object on it, can't move there
-                if (targetTile.Occupant) previewPath = null;
+            // Is tile is unreachable, exit
+            if (!targetTile.IsPathable(selectedCharacter))
+                return;
 
-                if (previewPath != null)
-                {
-                    previewPath.Add(selectedCharacter.Tile);
-                    if (previewPath.Count > 1)
-                        foreach (Tile tile in previewPath)
-                            if (tile != selectedCharacter.Tile)
-                                tile.HighlightTile(TileHighlightType.PREVIEW, true);
-                }       
-            }
+            // If target tile has an object on it, exit
+            if (targetTile.Occupant)
+                return;
+
+            previewPath = selectedCharacter.GetMovePath(targetTile);
+
+            if (previewPath == null)
+                return;
+
+            previewPath.Add(selectedCharacter.Tile);
+            if (previewPath.Count > 1)
+                foreach (Tile tile in previewPath)
+                    if (tile != selectedCharacter.Tile)
+                        tile.HighlightTile(TileHighlightType.PREVIEW, true); 
         }
     }
 

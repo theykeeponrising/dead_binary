@@ -34,10 +34,11 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     public Inventory Inventory { get { return _inventory; } }
     public UnitHealthbar Healthbar { get { return _healthbar; } }
     public CoverObject CurrentCover { get { return Tile.Cover; } }
+    public InCombatPlayerAction PlayerAction { get { return _playerAction; } }
     public Weapon EquippedWeapon { get { return Inventory.equippedWeapon; } set { Inventory.EquipWeapon(value); } }
     public Unit TargetUnit { get { return _unitCombat.TargetUnit; } set { _unitCombat.TargetUnit = value; } }
     public List<Unit> PotentialTargets { get { return _unitCombat.PotentialTargets; } set { _unitCombat.PotentialTargets = value; } }
-    public InCombatPlayerAction PlayerAction { get { return _playerAction; } }
+    public bool InCombat { get { return _unitCombat.InCombat; } }
     public MoveData MoveData { get { return _unitActor.MoveData; } set { _unitActor.MoveData = value; } }
 
     public event System.Action OnHealthModified;
@@ -46,7 +47,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     protected override void Awake()
     {
         base.Awake();
-        this.name = string.Format("{0} (Character)", Attributes.name);
+        this.name = string.Format("{0} (Character)", Attributes.Name);
 
         _audioSource = GetComponent<AudioSource>();
         _rigidbody = GetComponent<Rigidbody>();
@@ -68,8 +69,8 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
         if (objectTiles.Count > 0) Tile = objectTiles[0];
 
         // Characters start with full health and action points
-        Stats.healthCurrent = Stats.healthMax;
-        Stats.actionPointsCurrent = Stats.actionPointsMax;
+        Stats.HealthCurrent = Stats.HealthMax;
+        Stats.ActionPointsCurrent = Stats.ActionPointsMax;
 
         PlayerTurnState playerTurnState = (PlayerTurnState)StateHandler.Instance.GetStateObject(StateHandler.State.PlayerTurnState);
         _playerAction = playerTurnState.GetPlayerAction();
@@ -109,7 +110,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
 
     public bool HasTurnEnded()
     {
-        if (Stats.actionPointsCurrent == 0)
+        if (Stats.ActionPointsCurrent == 0)
             return true;
 
         if (_unitActor.FindActionOfType(typeof(UnitActionWait)).Performed())
@@ -130,8 +131,11 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     public List<Item> GetItems()
     { return Inventory.items; }
 
+    public bool IsAlive()
+    { return !IsDead(); }
+
     public bool IsDead()
-    { return Stats.healthCurrent <= 0; }
+    { return Stats.HealthCurrent <= 0; }
 
     public void GetTarget(bool useCharacterCamera = false)
     { _unitCombat.GetTarget(useCharacterCamera); }
@@ -163,6 +167,15 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     public bool RollForHit(int distanceToTarget)
     { return _unitCombat.RollForHit(distanceToTarget); }
 
+    public bool IsEnemy(Unit unit)
+    { return _unitCombat.IsEnemy(unit); }
+
+    public virtual void EnterCombat(bool alertFriendlies = true)
+    { _unitCombat.EnterCombat(alertFriendlies); }
+
+    public virtual void LeaveCombat()
+    { _unitCombat.LeaveCombat(); }
+
     public void DodgeAttack(Unit attacker)
     { _unitCombat.DodgeAttack(attacker); }
 
@@ -174,6 +187,9 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
 
     public virtual void TakeDamage(Unit attacker, int damage, Vector3 attackPoint)
     { _unitCombat.TakeDamage(attacker, damage, attackPoint); }
+
+    public void CheckSight()
+    { _unitCombat.CheckSight(); }
 
     public bool IsActing()
     { return _unitActor.IsActing(); }
@@ -195,6 +211,9 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
 
     public void SetWaiting(bool isWaiting)
     { _unitActor.SetWaiting(isWaiting); }
+
+    public List<Tile> GetMovePath(Tile tile)
+    { return _unitActor.GetMovePath(tile); }
 
     public Transform GetBoneTransform(HumanBodyBones bone)
     { return _unitAnimator.GetBoneTransform(bone); }
@@ -222,6 +241,9 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
 
     public bool IsMoving()
     { return _unitAnimator.IsMoving(); }
+
+    public bool IsPatrolling()
+    { return _unitAnimator.IsPatrolling(); }
 
     public void ProcessAnimationEvent(AnimationEventContext animationEvent)
     { _unitAnimator.ProcessAnimationEvent(animationEvent, false); }
@@ -269,7 +291,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
         int index = 0;
 
         // If we have movement, add move action
-        if (Stats.movement > 0)
+        if (Stats.Movement > 0)
         {
             _unitActions.Insert(index, ActionManager.UnitActions.Move);
             index += 1;
@@ -317,7 +339,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     {
         // Reduces action points by amount provided
 
-        Stats.actionPointsCurrent -= amount;
+        Stats.ActionPointsCurrent -= amount;
     }
 
     public void ResetActionPoints()
@@ -325,7 +347,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
         // Used to refresh character action points to max
         // TO-DO -- Add AP penalties here from debuffs
 
-        Stats.actionPointsCurrent = Stats.actionPointsMax;
+        Stats.ActionPointsCurrent = Stats.ActionPointsMax;
     }
 
     public void ResetActions()
@@ -339,22 +361,22 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
 
     public int GetHealth()
     {
-        return Stats.healthCurrent;
+        return Stats.HealthCurrent;
     }
 
     public void RestoreHealth(int amount)
     {
         // Heals character by the indicated amount
 
-        Stats.healthCurrent += amount;
-        if (Stats.healthCurrent > Stats.healthMax) Stats.healthCurrent = Stats.healthMax;
+        Stats.HealthCurrent += amount;
+        if (Stats.HealthCurrent > Stats.HealthMax) Stats.HealthCurrent = Stats.HealthMax;
         Healthbar.UpdateHealthPoints();
     }
 
     public List<Tile> GetTilesInMoveRange()
     {
         Vector3 pos = Tile.transform.position;
-        return Map.MapGrid.GetTilesInRange(pos, Stats.movement);
+        return Map.MapGrid.GetTilesInRange(pos, Stats.Movement);
     }
 
     public void CheckDeath(
@@ -366,9 +388,9 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     {
         //todo: show visually instead of told.
         // Inflict damage on character
-        Debug.Log($"{attacker.Attributes.name} has attacked {Attributes.name} for {damage} damage!");
+        Debug.Log($"{attacker.Attributes.Name} has attacked {Attributes.Name} for {damage} damage!");
 
-        Stats.healthCurrent -= Mathf.Min(damage, Stats.healthCurrent);
+        Stats.HealthCurrent -= Mathf.Min(damage, Stats.HealthCurrent);
         Healthbar.UpdateHealthPoints();
 
         OnHealthModified?.Invoke();
@@ -377,6 +399,8 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
         if (IsDead())
         {
             OnUnitDied?.Invoke();
+            LeaveCombat();
+            SelectUnit(SelectionType.DESELECT);
             Death(attacker, direction, distance, impactForce);
         }
     }
@@ -412,10 +436,10 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
             EquippedWeapon.DropGun();
 
         // Display message
-        if (attacker.Attributes.faction == FactionManager.ACS)
+        if (attacker.Attributes.Faction == FactionManager.ACS)
             UIManager.GetTurnIndicator().SetTurnIndicatorMessage(MessageType.PV_DEATH);
 
-        else if (Attributes.faction == FactionManager.ACS)
+        else if (Attributes.Faction == FactionManager.ACS)
             UIManager.GetTurnIndicator().SetTurnIndicatorMessage(MessageType.ACS_DEATH);
     }
 }
@@ -424,11 +448,11 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
 [System.Serializable]
 public class UnitAttributes
 {
-    public string name;
-    public Faction faction;
-    public UnitType unitType;
-    public UnitIconEnum unitIcon;
-    public FootstepSource footstepSource;
+    public string Name;
+    public Faction Faction;
+    public UnitType UnitType;
+    public UnitIconEnum UnitIcon;
+    public FootstepSource FootstepSource;
     public UnitPortrait UnitPortrait;
     public DialogVoice UnitVoice;
     [Range(0.01f, 3f)] public float UnitVoicePitch = 1f;
@@ -438,14 +462,15 @@ public class UnitAttributes
 [System.Serializable]
 public class UnitStats
 {
-    public int healthCurrent;
-    public int healthMax;
-    public int movement;
-    public float aim;
-    public int armor;
-    public float dodge;
-    public int actionPointsCurrent;
-    public int actionPointsMax;
+    public int HealthCurrent;
+    public int HealthMax;
+    public int Movement;
+    public float Aim;
+    public int Armor;
+    public float Dodge;
+    public int ActionPointsCurrent;
+    public int ActionPointsMax;
+    public int Sight;
 }
 
 public enum UnitType

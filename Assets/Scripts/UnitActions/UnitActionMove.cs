@@ -20,22 +20,23 @@ public class UnitActionMove : UnitAction
         _moveCount = 0;
 
         // If tile is unreachable, abort move action
-        if (!CheckTileMove(tile))
-            return;
-
-        if ((CheckTileMove(tile)))
+        if (!IsTilePathable(tile))
         {
-            // If tile is occupied, we can't move there
-            if (tile.Occupant)
-                _movePath = null;
-            else _movePath = Unit.Tile.GetMovementCost(tile, Unit.Stats.movement);
+            Debug.Log("Tile is unreachable!");
+            return;
+        }
 
-            if (_movePath.Count > 0)
-            {
-                Unit.SpendActionPoints(ActionCost);
-                if (Unit.IsCrouching()) Unit.ToggleCrouch();
-                StartPerformance();
-            }
+        _movePath = Unit.GetMovePath(tile);
+        
+        if (_movePath.Count > 0)
+        {
+            Unit.SpendActionPoints(ActionCost);
+            if (Unit.IsCrouching()) Unit.ToggleCrouch();
+            StartPerformance();
+        }
+        else
+        {
+            Debug.Log("Move path is zero!");
         }
     }
 
@@ -57,15 +58,16 @@ public class UnitActionMove : UnitAction
         // Stage 1 -- Progress through tiles in path until destination is reached
         else if (ActionStage(1))
         {
-            MoveData.immediate = _movePath[_moveCount];
+            MoveData.Immediate = _movePath[_moveCount];
             CheckForObstacle();
+            CheckAllUnitSight();
 
             // If we've arrived as the next tile in path, proceed to the next time
-            if (Map.MapGrid.GetTile(Unit.transform.position) == MoveData.immediate)
+            if (IsDestinationReached(MoveData.Immediate))
                 _moveCount += 1;
 
             // If we are at destination, set occupant and wrap-up the action
-            if (Map.MapGrid.GetTile(Unit.transform.position) == _movePath[^1])
+            if (IsDestinationReached(_movePath[^1]))
             {
                 _movePath[^1].Occupant = Unit;
                 NextStage();
@@ -75,51 +77,54 @@ public class UnitActionMove : UnitAction
         // Stage 2 -- Allow unit to reach stand position, and then set tile attribute
         else if (ActionStage(2))
         {
-            if (Vector3.Distance(Unit.transform.position, MoveData.immediate.StandPoint) <= 0.01)
+            if (Vector3.Distance(Unit.transform.position, MoveData.Immediate.StandPoint) <= 0.01)
             {
-                Unit.Tile = MoveData.immediate;
+                Unit.Tile = MoveData.Immediate;
                 NextStage();
             }
         }
 
-        // Stage 4 -- Clean-up and end performance
+        // Stage 3 -- Clean-up and end performance
         else if (ActionStage(3))
         {
-            MoveData.immediate = null;
+            MoveData.Immediate = null;
             MoveData.Destination.HighlightTile(showHighlight: false);
             MoveData.SetDestination(null);
+            Unit.CheckSight();
             Unit.SetAnimatorBool("moving", false);
             EndPerformance();
         }
     }
 
-    public bool CheckTileMove(Tile newTile)
+    public bool IsTilePathable(Tile tile)
     {
-        // Gets the shortest tile distance to target and compares to maximum allowed moves
-        // If destination is too far, abort move action
+        // Returns true/false is destination is pathable
 
-        _movePath = Unit.Tile.GetMovementCost(newTile);
-        if (_movePath.Count == 0 || !newTile.IsTraversable)
+        List<Tile> movePath = Unit.Tile.GetMovementCost(tile);
+
+        // If tile is unreachable, return false
+        if (movePath.Count == 0 || !tile.IsTraversable || tile.Occupant)
         {
-            Debug.Log("No move path."); // Replace this with UI eventually
+            _movePath = null;
             return false;
         }
-        if (_movePath.Count > Unit.Stats.movement)
-        {
-            Debug.Log(string.Format("Destination Too Far! \nDistance: {0}, Max Moves: {1}", _movePath.Count, Unit.Stats.movement)); // This will eventually be shown visually instead of told
-            return false;
-        }
+
         return true;
     }
 
-    public void CheckForObstacle()
+    public bool IsDestinationReached(Tile tile)
+    {
+        return Map.MapGrid.GetTile(Unit.transform.position) == tile;
+    }
+
+    private void CheckForObstacle()
     {
         // Checks a short distance in front of character for objects in the "VaultOver" layer
 
         if (Unit.IsVaulting())
             return;
 
-        Vector3 direction = (MoveData.immediate.transform.position - Unit.transform.position);
+        Vector3 direction = (MoveData.Immediate.transform.position - Unit.transform.position);
         Ray ray = new(Unit.transform.position, direction);
         int layerMask = (1 << LayerMask.NameToLayer("CoverObject"));
         float distance = 0.75f;
@@ -136,6 +141,16 @@ public class UnitActionMove : UnitAction
                 }
                 return;
             }
+        }
+    }
+
+    private void CheckAllUnitSight()
+    {
+        List<Unit> units = Map.FindUnits();
+        foreach (Unit unit in units)
+        {
+            if (unit == Unit) continue;
+            unit.CheckSight();
         }
     }
 }
