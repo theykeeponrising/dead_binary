@@ -262,24 +262,26 @@ public class InCombatPlayerAction
         // Previews move path on mouse over
         if (selectedCharacter && !selectedCharacter.IsActing() && targetTile)
         {
-           //if(stateMachine.GetCurrentState().GetType() 
-            //    == typeof(SelectedStates.ChoosingMoveDestination))
-            {
-                PathPreviewClear();
-                previewPath = selectedCharacter.GetMovePath(targetTile);
+            PathPreviewClear();
 
-                // If target tile has an object on it, can't move there
-                if (targetTile.Occupant) previewPath = null;
+            // Is tile is unreachable, exit
+            if (!targetTile.IsPathable(selectedCharacter))
+                return;
 
-                if (previewPath != null)
-                {
-                    previewPath.Add(selectedCharacter.Tile);
-                    if (previewPath.Count > 1)
-                        foreach (Tile tile in previewPath)
-                            if (tile != selectedCharacter.Tile)
-                                tile.HighlightTile(TileHighlightType.PREVIEW, true);
-                }       
-            }
+            // If target tile has an object on it, exit
+            if (targetTile.Occupant)
+                return;
+
+            previewPath = selectedCharacter.GetMovePath(targetTile);
+
+            if (previewPath == null)
+                return;
+
+            previewPath.Add(selectedCharacter.Tile);
+            if (previewPath.Count > 1)
+                foreach (Tile tile in previewPath)
+                    if (tile != selectedCharacter.Tile)
+                        tile.HighlightTile(TileHighlightType.PREVIEW, true); 
         }
     }
 

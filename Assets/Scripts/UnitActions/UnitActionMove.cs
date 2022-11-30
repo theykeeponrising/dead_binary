@@ -21,7 +21,10 @@ public class UnitActionMove : UnitAction
 
         // If tile is unreachable, abort move action
         if (!IsTilePathable(tile))
+        {
+            Debug.Log("Tile is unreachable!");
             return;
+        }
 
         _movePath = Unit.GetMovePath(tile);
         

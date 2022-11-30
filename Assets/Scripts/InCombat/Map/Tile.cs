@@ -101,6 +101,19 @@ public abstract class Tile : MonoBehaviour
 
         return impactedUnits;
     }
+
+    public bool IsPathable(Unit unit)
+    {
+        // Returns true/false is destination is pathable
+
+        int maxDist = unit.Stats.Movement * 2;
+        List<Tile> movePath = unit.Tile.GetMovementCost(this, maxDist);
+
+        // If tile is unreachable, return false
+        if (movePath.Count == 0 || !IsTraversable || Occupant)
+            return false;
+        return true;
+    }
 }
 
 public enum TileHighlightType { PREVIEW, MOVEMENT, ERROR }

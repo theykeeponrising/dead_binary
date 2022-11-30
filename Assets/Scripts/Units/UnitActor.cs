@@ -138,8 +138,7 @@ public class UnitActor
     {
         // Gets either the full or partial movement path to tile
 
-        int maxDist = Stats.Movement * 2;
-        List<Tile> movePath = _unit.Tile.GetMovementCost(tile, maxDist);
+        List<Tile> movePath = _unit.Tile.GetMovementCost(tile);
         UnitAction unitAction = FindActionOfType(typeof(UnitActionMove));
 
         // If we don't have enough AP to move, return null

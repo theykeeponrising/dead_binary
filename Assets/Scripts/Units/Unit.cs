@@ -400,6 +400,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
         {
             OnUnitDied?.Invoke();
             LeaveCombat();
+            SelectUnit(SelectionType.DESELECT);
             Death(attacker, direction, distance, impactForce);
         }
     }
