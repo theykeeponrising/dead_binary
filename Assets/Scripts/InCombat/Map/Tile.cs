@@ -114,6 +114,16 @@ public abstract class Tile : MonoBehaviour
             return false;
         return true;
     }
+
+    public Tile GetNearestOpenTile()
+    {
+        foreach (Tile tile in _adjacentTiles)
+            if (!tile.Occupant)
+                return tile;
+
+        Debug.Log("No open neighbor tiles found!");
+        return null;
+    }
 }
 
 public enum TileHighlightType { PREVIEW, MOVEMENT, ERROR }

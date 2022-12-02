@@ -260,19 +260,19 @@ PrefabInstance:
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: _fireSound.Array.data[0]
       value: 
-      objectReference: {fileID: 8300000, guid: e6516c52e617e14499fa0075b2766d44, type: 3}
+      objectReference: {fileID: 8300000, guid: 308e90e4dd8d6824b84196e1b8136c64, type: 3}
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: _fireSound.Array.data[1]
       value: 
-      objectReference: {fileID: 8300000, guid: e459ee48ddb436f4c995ee3a51654ad3, type: 3}
+      objectReference: {fileID: 8300000, guid: 8834d0cbd13b49f4195e99ba05c25567, type: 3}
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: _fireSound.Array.data[2]
       value: 
-      objectReference: {fileID: 8300000, guid: c83dff2934bcfd84b8e192daee1e8bd0, type: 3}
+      objectReference: {fileID: 8300000, guid: e23ce45bd2d59384a9a6ff852a2dc65f, type: 3}
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: _fireSound.Array.data[3]
       value: 
-      objectReference: {fileID: 8300000, guid: ee8e6ec8d65e43f4a80f89cdc5980bad, type: 3}
+      objectReference: {fileID: 8300000, guid: 3e4617c4f380af34dabf205a06d867bd, type: 3}
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: Attributes.AnimationLayer
       value: 2

@@ -6,17 +6,14 @@ using UnityEngine;
 public class EnemyTurnProcess
 {
     private readonly List<EnemyUnit> _enemyUnits;
+    private readonly List<EnemyPod> _enemyPods;
     private readonly EnemyTurnState _enemyTurnState;
+
     public EnemyTurnProcess(EnemyTurnState enemyTurnState)
     {
         _enemyTurnState = enemyTurnState;
-        _enemyUnits = new ();
-        List<Unit> units = Map.FindUnits();
-        foreach (Unit unit in units)
-        {
-            EnemyUnit enemyUnit = unit.GetComponent<EnemyUnit>();
-            if (enemyUnit) _enemyUnits.Add(enemyUnit);
-        }
+        _enemyUnits = Map.FindEnemyUnits();
+        _enemyPods = Map.FindPods();
     }
 
     public void ProcessTurn()
@@ -26,12 +23,23 @@ public class EnemyTurnProcess
 
     public IEnumerator ProcessEnemyUnits()
     {
-        //TODO: Get enemy units here and pass these along
+        foreach (EnemyPod enemyPod in _enemyPods)
+        {
+            Camera.main.GetComponent<CameraHandler>().SetCameraSnap(enemyPod.Leader);
+            enemyPod.ProcessTurn();
+            //Ensure one pod acts at a time
+            while (enemyPod.IsProcessingTurn) yield return new WaitForSeconds(0.1f);
+        }
+
         foreach (EnemyUnit enemyUnit in _enemyUnits)
         {
-            enemyUnit.ProcessUnitTurn();
+            if (enemyUnit.IsFollowingPod())
+                continue;
+
+            Camera.main.GetComponent<CameraHandler>().SetCameraSnap(enemyUnit);
+            enemyUnit.ProcessTurn();
             //Ensure units act one at a time
-            while (enemyUnit.IsProcessingTurn()) yield return new WaitForSeconds(0.1f);
+            while (enemyUnit.IsProcessingTurn) yield return new WaitForSeconds(0.1f);
         }
 
         //End turn when we're done processing the units

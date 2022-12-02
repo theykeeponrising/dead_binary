@@ -62,6 +62,46 @@ public class Map : MonoBehaviour
         return unitsFound;
     }
 
+    public static List<EnemyUnit> FindEnemyUnits(Faction faction = null, bool excludeDeadUnits = true)
+    {
+        // Returns enemy units on the active map filtered by faction
+        // If no faction is provided, returns all units
+
+        List<EnemyUnit> unitsFound = new();
+
+        // Find by faction
+        if (faction != null)
+        {
+            foreach (EnemyUnit unit in UnitMap.GetComponentsInChildren<EnemyUnit>())
+                if (unit.Attributes.Faction == faction)
+                    unitsFound.Add(unit);
+        }
+        else
+        {
+            unitsFound = UnitMap.GetComponentsInChildren<EnemyUnit>().ToList();
+        }
+
+        // Exclude dead units
+        if (excludeDeadUnits)
+        {
+            List<EnemyUnit> iterateList = new(unitsFound);
+            foreach (EnemyUnit unit in iterateList)
+                if (unit.IsDead())
+                    unitsFound.Remove(unit);
+        }
+
+        return unitsFound;
+    }
+
+    public static List<EnemyPod> FindPods()
+    {
+        // Returns enemy pods on the map
+
+        List<EnemyPod> podsFound = UnitMap.GetComponentsInChildren<EnemyPod>().ToList();
+
+        return podsFound;
+    }
+
     public static List<Tile> FindTiles()
     {
         // Returns all tiles on the active map

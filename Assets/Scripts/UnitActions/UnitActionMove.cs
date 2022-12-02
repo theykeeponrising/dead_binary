@@ -19,10 +19,16 @@ public class UnitActionMove : UnitAction
         _movePath = Unit.MoveData.Path;
         _moveCount = 0;
 
-        // If tile is unreachable, abort move action
-        if (!IsTilePathable(tile))
+        // If tile is unreachable while patrolling, find nearby tile instead
+        if (Unit.IsPatrolling() && !IsTilePathable(tile))
         {
-            Debug.Log("Tile is unreachable!");
+            tile = tile.GetNearestOpenTile();
+        }
+
+        // If tile is unreachable, abort move action
+        else if (!IsTilePathable(tile))
+        {
+            Debug.Log(string.Format("Tile is unreachable! {0}", tile.name));
             return;
         }
 
@@ -31,6 +37,7 @@ public class UnitActionMove : UnitAction
         if (_movePath.Count > 0)
         {
             Unit.SpendActionPoints(ActionCost);
+            _movePath[^1].Occupant = Unit;
             if (Unit.IsCrouching()) Unit.ToggleCrouch();
             StartPerformance();
         }
