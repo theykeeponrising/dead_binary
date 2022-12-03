@@ -50,7 +50,7 @@ namespace UnityEditor.Tilemaps
         /// <summary>
         /// Anchor Point of the Instantiated GameObject in the cell when painting
         /// </summary>
-        public Vector3 m_Anchor = new Vector3(0.5f, 0.5f, 0.5f);
+        public Vector3 m_Anchor = new Vector3(0.0f, 0.5f, 0.5f);
         /// <summary>Size of the brush in cells. </summary>
         public Vector3Int size { get { return m_Size; } set { m_Size = value; SizeUpdated(); } }
         /// <summary>Pivot of the brush. </summary>
@@ -141,13 +141,14 @@ namespace UnityEditor.Tilemaps
                 return;
 
             var existingGO = GetObjectInCell(grid, parent, position);
+            Quaternion orientation = new Quaternion(0, cell.orientation.y, 0, cell.orientation.w);
 
             // If m_scaleAdjust has negative values, that means we either did FlipX or FlipY
             Vector3 scale = Vector3.Scale(cell.scale, m_scaleAdjust);
 
             if (existingGO == null)
             {
-                SetSceneCell(grid, parent, position, cell.gameObject, cell.offset, scale, cell.orientation, m_Anchor);
+                SetSceneCell(grid, parent, position, cell.gameObject, cell.offset, scale, orientation, m_Anchor);
             }
         }
 
@@ -245,7 +246,7 @@ namespace UnityEditor.Tilemaps
             pivot = new Vector3Int(newPivotX, newPivotY, pivot.z);
 
             Matrix4x4 rotation = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0f, direction == RotationDirection.Clockwise ? 90f : -90f, 0f), Vector3.one);
-            Quaternion orientation = Quaternion.Euler(0f, direction == RotationDirection.Clockwise ? 90f : -90f, 0f);
+            Quaternion orientation = Quaternion.Euler(0f, 0f, direction == RotationDirection.Clockwise ? 90f : -90f);
             foreach (BrushCell cell in m_Cells)
             {
                 cell.offset = rotation * cell.offset;
