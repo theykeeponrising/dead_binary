@@ -12,7 +12,7 @@ public abstract class UnitAction : MonoBehaviour
     [SerializeField] private UnitActionRequirement[] _actionRequirements;
     [SerializeField] private UnitActionEnum _actionSprite;
 
-    private int _actionStage = 0;
+    protected int _actionStage = 0;
     private bool _actionPerforming;
     private bool _actionPerformed;
 
@@ -54,6 +54,18 @@ public abstract class UnitAction : MonoBehaviour
 
     public void SetPerformed(bool performed)
     { _actionPerformed = performed; }
+
+    public bool IsType(System.Type type)
+    { return GetType() == type; }
+
+    public int GetActionStage()
+    { return _actionStage; }
+
+    public void NextActionStage()
+    { _actionStage += 1; }
+
+    public bool IsActionStage(int stageCheck)
+    { return _actionStage == stageCheck; }
 
     public void OnTurnStart()
     {
@@ -132,25 +144,6 @@ public abstract class UnitAction : MonoBehaviour
         _actionStage = 0;
         Unit.CoverCrouch();
         Unit.PlayerAction.CheckTurnEnd();
-    }
-
-    public void NextStage()
-    {
-        // Progresses action to the next stage
-
-        _actionStage += 1;
-    }
-
-    public bool ActionStage(int stageCheck)
-    {
-        // Quick check if current action stage is value
-
-        return _actionStage == stageCheck;
-    }
-
-    public bool IsType(System.Type type)
-    {
-        return GetType() == type;
     }
 
     public virtual void UseAction()

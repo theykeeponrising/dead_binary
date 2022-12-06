@@ -40,17 +40,17 @@ public class UnitActionShoot : UnitTargetAction
             return;
 
         // Perform shoot animation, inflict damage, spend ammo and AP
-        if (ActionStage(0))
+        if (IsActionStage(0))
         {
             CheckTargetHit();
             PerformShot();
-            NextStage();
+            NextActionStage();
         }
 
-        if (ActionStage(1))
+        if (IsActionStage(1))
         {
             CheckDodge();
-            NextStage();
+            NextActionStage();
         }
 
         // Waits until shoot animation completes

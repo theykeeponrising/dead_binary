@@ -10,7 +10,7 @@ public abstract class Tile : MonoBehaviour
     protected MapGrid _grid;
 
     // Grid objects
-    protected GridObject _occupant;
+    [SerializeField] protected GridObject _occupant;
     [SerializeField] private CoverObject _cover;
 
     // Pathing

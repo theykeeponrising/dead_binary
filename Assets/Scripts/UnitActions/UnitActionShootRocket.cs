@@ -52,10 +52,10 @@ public class UnitActionShootRocket : UnitActionShoot
             return;
 
         // Perform shoot animation, inflict damage, spend ammo and AP
-        if (ActionStage(0))
+        if (IsActionStage(0))
         {
             PerformShot();
-            NextStage();
+            NextActionStage();
         }
 
         // Waits until shoot animation completes
