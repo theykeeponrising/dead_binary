@@ -52,8 +52,6 @@ public class BasicTile : Tile, IPointerEnterHandler, IPointerExitHandler
         return false;
     }
 
-    
-
     public override void HighlightTile(TileHighlightType highlightType = TileHighlightType.ERROR, bool showHighlight = true)
     {
         // Changes tile highlight based on context

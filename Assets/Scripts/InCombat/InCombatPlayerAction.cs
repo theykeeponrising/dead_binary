@@ -26,6 +26,7 @@ public class InCombatPlayerAction
     public LayerMask uiLayermask;
     private PlayerTurnState playerTurnState; 
     InCombatPlayerActionUI playerActionUI;
+    private bool _firstTurn = true;
 
     public Faction playerFaction = FactionManager.PV;
 
@@ -299,9 +300,12 @@ public class InCombatPlayerAction
         // Start player's next turn
 
         foreach (Unit unit in playerUnits)
-        {
             unit.OnTurnStart();
-        }
+
+        if (!_firstTurn)
+            SelectNextUnit();
+        else
+            _firstTurn = false;
     }
 
     public void EndTurn()

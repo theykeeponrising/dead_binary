@@ -23,10 +23,12 @@ public class EnemyUnit : Unit
     private Queue<EnemyAction> _actionsQueue;
     private Strategy _unitStrategy;
 
-    [SerializeField] private PatrolPath _patrolPath;
+    private EnemyPod _enemyPod;
+    [SerializeField] private EnemyPatrol _enemyPatrol;
     private Tile _patrolTile;
 
-    public bool IsProcessingTurn() => _isProcessingTurn;
+    public bool IsProcessingTurn { get { return _isProcessingTurn; } }
+    public bool IsFollowing { get { return _enemyPod && !_enemyPod.IsLeader(this); } }
 
     protected override void Awake()
     {
@@ -44,42 +46,82 @@ public class EnemyUnit : Unit
     {
         base.Update();
 
-        if (IsActing() || !IsProcessingTurn())
+        if (IsActing() || !IsProcessingTurn)
             return;
 
-        ProcessCombatActions();           
+        ProcessActions();           
     }
 
     public override void EnterCombat(bool alertFriendlies = false)
     {
         base.EnterCombat(alertFriendlies);
         SetAnimatorBool("patrolling", false);
+
+        if (_enemyPod)
+            _enemyPod.EnterCombat();
+    }
+
+    public void SetPod(EnemyPod enemyPod)
+    {
+        _enemyPod = enemyPod;
+    }
+
+    public void SetPod(EnemyPod enemyPod, EnemyPatrol enemyPatrol)
+    {
+        _enemyPod = enemyPod;
+        _enemyPatrol = enemyPatrol;
+    }
+
+    public bool IsFollowingPod()
+    {
+        return _enemyPod && !_enemyPod.IsInCombat;
     }
 
     private void GetPatrolTile()
     {
-        if (!_patrolPath || InCombat)
+        if (!_enemyPatrol || InCombat)
             return;
 
-        _patrolTile = _patrolPath.GetNearestPatrolTile(this);
+        _patrolTile = _enemyPatrol.GetNearestPatrolTile(this);
         SetAnimatorBool("patrolling", true);
     }
 
     private void CreatePatrolActions()
     {
-        if (!_patrolPath || InCombat)
-            return;
+        _patrolTile = _enemyPatrol.GetPatrolTile(this, _patrolTile);
 
-        _patrolTile = _patrolPath.GetPatrolTile(this, _patrolTile);
+        if (!_enemyPatrol.IsDestinationReached(this, _patrolTile))
+        {
+            EnemyAction patrolAction = CreateMoveAction(_patrolTile);
+            _actionsQueue.Enqueue(patrolAction);
+        }
 
-        EnemyAction patrolAction = CreateMoveAction(_patrolTile);
-        EnemyAction waitAction = CreateNoneAction();
-
-        _actionsQueue.Enqueue(patrolAction);
+        EnemyAction waitAction = CreateNoneAction();       
         _actionsQueue.Enqueue(waitAction);
     }
 
-    private void ProcessCombatActions()
+    private void CreateFollowActions()
+    {
+        EnemyAction waitAction = CreateNoneAction();
+
+        if (_enemyPod.Leader.HasTurnEnded())
+        {
+            _actionsQueue.Enqueue(waitAction);
+            return;
+        }
+
+        else if (_enemyPod.Leader.MoveData == null || _enemyPod.Leader.MoveData.Destination == null)
+        {
+            return;
+        }
+
+        Tile followTile = _enemyPod.Leader.MoveData.Destination;
+        EnemyAction followAction = CreateMoveAction(followTile);
+        _actionsQueue.Enqueue(followAction);
+        _actionsQueue.Enqueue(waitAction);
+    }
+
+    private void ProcessActions()
     {
         if (_actionsQueue.Count == 0 && HasTurnEnded())
         {
@@ -90,6 +132,14 @@ public class EnemyUnit : Unit
             //Process queued actions
             EnemyAction nextAction = _actionsQueue.Dequeue();
             PerformAction(nextAction);
+        }
+        else if (IsFollowing && !InCombat)
+        {
+            CreateFollowActions();
+        }
+        else if (IsPatrolling() && !InCombat)
+        {
+            CreatePatrolActions();
         }
         else
         {
@@ -106,10 +156,9 @@ public class EnemyUnit : Unit
         base.OnTurnStart();
         _isProcessingTurn = true;
         _actionsQueue = new Queue<EnemyAction>();
-        CreatePatrolActions();
     }
 
-    public void ProcessUnitTurn()
+    public void ProcessTurn()
     {
         if (IsDead())
             return;
