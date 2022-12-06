@@ -54,7 +54,7 @@ public abstract class Tile : MonoBehaviour
             if (coverObj.gameObject.GetInstanceID() != gameObject.GetInstanceID())
             {
                 float distance = Vector3.Distance(this.gameObject.transform.position, coverObj.gameObject.transform.position);
-                if (distance <= MapGrid.TileSpacing)
+                if (distance <= MapGrid.TileSpacing / 2.0f + 0.1f)
                 {
                     Cover = coverObj;
                     Cover.RegisterTile(this);
