@@ -33,11 +33,11 @@ public class UnitActionSwap : UnitAction
         while (Unit.IsPlayingAnimation("Stow"))
             return;
 
-        if (ActionStage(0))
+        if (IsActionStage(0))
         {
             StowWeapon();
             DrawWeapon();
-            NextStage();
+            NextActionStage();
         }
 
         while (Unit.IsPlayingAnimation("Draw"))

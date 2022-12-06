@@ -10,7 +10,7 @@ public abstract class Tile : MonoBehaviour
     protected MapGrid _grid;
 
     // Grid objects
-    protected GridObject _occupant;
+    [SerializeField] protected GridObject _occupant;
     [SerializeField] private CoverObject _cover;
 
     // Pathing
@@ -54,7 +54,7 @@ public abstract class Tile : MonoBehaviour
             if (coverObj.gameObject.GetInstanceID() != gameObject.GetInstanceID())
             {
                 float distance = Vector3.Distance(this.gameObject.transform.position, coverObj.gameObject.transform.position);
-                if (distance <= MapGrid.TileSpacing / 2.0f + 0.1f)
+                if (distance <= MapGrid.TileSpacing)
                 {
                     Cover = coverObj;
                     Cover.RegisterTile(this);
