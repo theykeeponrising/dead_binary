@@ -54,16 +54,16 @@ public class UnitActionMove : UnitAction
             return;
 
         // Stage 0 -- Set the immediate destination and animation flag
-        if (ActionStage(0))
+        if (IsActionStage(0))
         {
             MoveData.SetDestination(_movePath[^1]);
             Unit.Tile.Occupant = null;
             Unit.SetAnimatorBool("moving", true);
-            NextStage();
+            NextActionStage();
         }
 
         // Stage 1 -- Progress through tiles in path until destination is reached
-        else if (ActionStage(1))
+        else if (IsActionStage(1))
         {
             MoveData.Immediate = _movePath[_moveCount];
             CheckForObstacle();
@@ -77,22 +77,22 @@ public class UnitActionMove : UnitAction
             if (IsDestinationReached(_movePath[^1]))
             {
                 _movePath[^1].Occupant = Unit;
-                NextStage();
+                NextActionStage();
             }
         }
 
         // Stage 2 -- Allow unit to reach stand position, and then set tile attribute
-        else if (ActionStage(2))
+        else if (IsActionStage(2))
         {
             if (Vector3.Distance(Unit.transform.position, MoveData.Immediate.StandPoint) <= 0.01)
             {
                 Unit.Tile = MoveData.Immediate;
-                NextStage();
+                NextActionStage();
             }
         }
 
         // Stage 3 -- Clean-up and end performance
-        else if (ActionStage(3))
+        else if (IsActionStage(3))
         {
             MoveData.Immediate = null;
             MoveData.Destination.HighlightTile(showHighlight: false);
