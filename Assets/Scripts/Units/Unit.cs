@@ -79,10 +79,14 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
         GenerateActions();
     }
 
+    protected virtual void FixedUpdate()
+    {
+        _unitAnimator.FixedUpdate();
+    }
+
     // Update is called once per frame
     protected virtual void Update()
     {
-        _unitAnimator.Update();
         _unitActor.Update();
     }
 
