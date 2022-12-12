@@ -141,7 +141,7 @@ public class CameraHandler : MonoBehaviour
         Vector2 readValue = InputPan ? Camera.main.ScreenToViewportPoint(MousePosition) - new Vector3(0.5f, 0.5f, 0f) : InputMovement;
         Vector3 inputValue = (readValue.x * GetCameraRight() + readValue.y * GetCameraForward()).normalized;
 
-        if (inputValue.sqrMagnitude > 0.1f)
+        if (inputValue.sqrMagnitude > 0.1f && IsPositionInViewFrustum(PlayerPosition + LocalPosition, _panNextPosition + inputValue))
         {
             _panNextPosition += inputValue;
             _panSnapPosition = Vector3.zero;
@@ -247,5 +247,39 @@ public class CameraHandler : MonoBehaviour
         // Once position is reached, clear snap target
         if (Vector3.Distance(PlayerPosition, newPosition) <= 0.25f) 
             _panSnapPosition = Vector3.zero;
+    }
+
+    private bool IsPositionInViewFrustum(Vector3 originalPosition, Vector3 delta)
+    {
+        if (Map.MapGrid != null)
+        {
+            // Convert screen-space coordinates [0, 0], [1, 0], [0, 1], [1, 1] to world space
+            // Note: The direction vectors don't change when we are trying to pan the camera, but this won't be true for arbitrary positions
+            // Also, cameras look down the -Z direction, so need to flip signs
+            Vector3 topLeft = ActiveCamera.ViewportToWorldPoint(new Vector3(0.0f, 0.0f, ActiveCamera.nearClipPlane)) - originalPosition;
+            Vector3 topRight = ActiveCamera.ViewportToWorldPoint(new Vector3(1.0f, 0.0f, ActiveCamera.nearClipPlane)) - originalPosition;
+            Vector3 bottomLeft = ActiveCamera.ViewportToWorldPoint(new Vector3(0.0f, 1.0f, ActiveCamera.nearClipPlane)) - originalPosition;
+            Vector3 bottomRight = ActiveCamera.ViewportToWorldPoint(new Vector3(1.0f, 1.0f, ActiveCamera.nearClipPlane)) - originalPosition;
+            List<Vector3> cameraDirVectors = new List<Vector3> { topLeft, topRight, bottomLeft, bottomRight };
+
+            // Intersect camera rays with the grid
+            Vector3 gridNormal;
+            Vector3 gridPoint;
+            Map.MapGrid.GetPlaneEquation(out gridPoint, out gridNormal);
+
+            // Check if any of the intersection points lie within the grid
+            List<Vector3> gridBounds = Map.MapGrid.GetGridBounds();
+            for (int i = 0; i < cameraDirVectors.Count; i++)
+            {
+                Vector3 cameraVector = cameraDirVectors[i];
+                Vector3 planeIntersection;
+                bool bRayHit = VectorUtils.RayPlaneIntersection(out planeIntersection, originalPosition + delta, cameraVector, gridPoint, gridNormal);
+                
+                // Grid is probably clipping the near plean if bRayHit is false
+                if (!bRayHit) return false;
+                if (Map.MapGrid.ContainsPoint(planeIntersection)) return true;
+            }
+        }
+        return false;
     }
 }

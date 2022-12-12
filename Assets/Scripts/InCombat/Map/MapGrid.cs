@@ -11,6 +11,10 @@ public class MapGrid : MonoBehaviour
     public int Height;
     public float GridOffsetX;
     public float GridOffsetZ;
+    private float maxX;
+    private float minX;
+    private float maxZ;
+    private float minZ;
 
     // Distance between neighboring tiles
     public static int TileSpacing = 2;
@@ -18,10 +22,10 @@ public class MapGrid : MonoBehaviour
     void Awake() 
     {
         List<Tile> tiles = Map.FindTiles();
-        float minX = float.MaxValue;
-        float maxX = float.MinValue;
-        float minZ = float.MaxValue;
-        float maxZ = float.MinValue;
+        minX = float.MaxValue;
+        maxX = float.MinValue;
+        minZ = float.MaxValue;
+        maxZ = float.MinValue;
 
         if (tiles.Count == 0) Debug.LogError("No objects with tag 'Tile' found!");
 
@@ -203,6 +207,38 @@ public class MapGrid : MonoBehaviour
             pos += tile.gameObject.transform.position / tiles.Count;
         }
         return pos;
+    }
+
+    // Returns two points corresponding to the top left and bottom right of the grid
+    public List<Vector3> GetGridBounds()
+    {
+        List<Vector3> gridBounds = new List<Vector3>();
+        Vector3 topLeft = new Vector3(minX, 0.0f, minZ);
+        Vector3 bottomRight = new Vector3(maxX, 0.0f, maxZ);
+        gridBounds.Add(topLeft);
+        gridBounds.Add(bottomRight);
+        return gridBounds;
+    }
+
+    public void GetPlaneEquation(out Vector3 planePoint, out Vector3 planeNormal)
+    {
+        Vector3 a = new Vector3(minX, 0.0f, minZ);
+        Vector3 b = new Vector3(minX, 0.0f, maxZ);
+        Vector3 c = new Vector3(maxX, 0.0f, minZ);
+        planeNormal = Vector3.Normalize(Vector3.Cross(a - b, b - c));
+        planePoint = new Vector3((maxX - minX) / 2.0f, 0.0f, (maxZ - minZ) / 2.0f);
+    }
+
+    // Checks if grid contains point, ignoring y-values
+    public bool ContainsPoint(Vector3 point)
+    {
+        if (point.x >= minX && point.x <= maxX)
+            if (point.z >= minZ && point.z <= maxZ)
+            {
+                return true;
+            }
+        
+        return false;
     }
 
     public bool CheckIfCovered(Tile attackerTile, Tile defenderTile)
