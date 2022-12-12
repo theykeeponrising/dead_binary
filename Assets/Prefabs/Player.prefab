@@ -218,7 +218,7 @@ MonoBehaviour:
   _zoomZoomSpeed: 2
   _zoomDampening: 7.5
   _zoomHeightMin: 5
-  _zoomHeightMax: 50
+  _zoomHeightMax: 20
   _rotationSpeedMax: 0.25
 --- !u!1 &4146606119251336789
 GameObject:
@@ -266,3 +266,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7667898bb8369de409cd73a45ec787e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _faction: {fileID: 0}
