@@ -263,8 +263,8 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     public void OnDeath(Vector3 forceDirection, ForceMode forceMode)
     { _unitAnimator.OnDeath(forceDirection, forceMode); }
 
-    public Transform GetWeaponAttachPoint()
-    { return _unitAnimator.GetWeaponAttachPoint(); }
+    public Transform GetAttachPoint(WeaponAttachPoint attachPoint)
+    { return _unitAnimator.GetAttachPoint(attachPoint); }
 
     public void TakeDamageEffect(Weapon weapon = null, DamageItem item = null)
     { _unitAnimator.TakeDamageEffect(weapon, item); }
@@ -456,6 +456,7 @@ public class UnitAttributes
     public UnitPortrait UnitPortrait;
     public DialogVoice UnitVoice;
     [Range(0.01f, 3f)] public float UnitVoicePitch = 1f;
+    public bool UseTorsoTwist;
 }
 
 // Stats are values that will be referenced and changed frequently during combat

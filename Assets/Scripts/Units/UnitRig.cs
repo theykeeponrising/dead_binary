@@ -36,7 +36,9 @@ public sealed class UnitRig : MonoBehaviour
 
     public Transform GetBoneTransform(HumanBodyBones bone)
     {
-        return _animator.GetBoneTransform(bone);
+        if (_animator.GetBoneTransform(bone))
+            return _animator.GetBoneTransform(bone);
+        return _unit.transform;
     }
 
     public void SetRagdollActive(bool isActive)

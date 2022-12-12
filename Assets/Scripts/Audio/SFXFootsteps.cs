@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,14 +10,16 @@ using UnityEngine;
 public class SFXFootsteps
 {
     [SerializeField] private AudioClip[] _footstepConcrete;
-    [SerializeField] private AudioClip[] _footstepScrapBot;
+    [SerializeField] private AudioClip[] _footstepMetal;
+    [SerializeField] private AudioClip[] _footstepFlying;
 
     private Dictionary<ImpactTypes, Dictionary<FootstepSource, AudioClip[]>> GetDict()
     {
         var footstepsType = new Dictionary<FootstepSource, AudioClip[]>
         {
             {FootstepSource.HUMAN, _footstepConcrete },
-            {FootstepSource.SCRAPBOT, _footstepScrapBot },
+            {FootstepSource.METAL, _footstepMetal },
+            {FootstepSource.FLYING, _footstepFlying },
         };
 
         var FootstepSounds = new Dictionary<ImpactTypes, Dictionary<FootstepSource, AudioClip[]>>
@@ -33,8 +34,8 @@ public class SFXFootsteps
     {
         // Returns a specific sound for the provided type and index
 
-        ImpactTypes impactType = footstepData.impactType;
-        FootstepSource footstepSource = footstepData.footstepSource;
+        ImpactTypes impactType = footstepData.ImpactType;
+        FootstepSource footstepSource = footstepData.FootstepSource;
 
         var dict = GetDict();
         return dict[impactType][footstepSource][index];
@@ -44,8 +45,8 @@ public class SFXFootsteps
     {
         // Returns a random sound for the provided type
 
-        ImpactTypes impactType = footstepData.impactType;
-        FootstepSource footstepSource = footstepData.footstepSource;
+        ImpactTypes impactType = footstepData.ImpactType;
+        FootstepSource footstepSource = footstepData.FootstepSource;
 
         var dict = GetDict();
         int range = dict[impactType][footstepSource].Length;
@@ -55,11 +56,11 @@ public class SFXFootsteps
 
 public class FootstepData
 {
-    Unit unit;
-    public ImpactTypes impactType => unit.Tile.ImpactType;
-    public FootstepSource footstepSource => unit.Attributes.FootstepSource;
+    private readonly Unit Unit;
+    public ImpactTypes ImpactType => Unit.Tile.ImpactType;
+    public FootstepSource FootstepSource => Unit.Attributes.FootstepSource;
 
-    public FootstepData(Unit unit) { this.unit = unit; }
+    public FootstepData(Unit unit) { this.Unit = unit; }
 }
 
-public enum FootstepSource { HUMAN, SCRAPBOT }
+public enum FootstepSource { HUMAN, METAL, FLYING }

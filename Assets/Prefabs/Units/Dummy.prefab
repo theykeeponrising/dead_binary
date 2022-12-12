@@ -4063,3 +4063,4 @@ MonoBehaviour:
     UnitPortrait: {fileID: 0}
     UnitVoice: 0
     UnitVoicePitch: 1
+    UseTorsoTwist: 1

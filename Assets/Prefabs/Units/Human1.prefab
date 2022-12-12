@@ -7603,6 +7603,7 @@ MonoBehaviour:
     UnitPortrait: {fileID: 5109197237807887600, guid: 89be96d83ec682a4d8707a0c8ef0938d, type: 3}
     UnitVoice: 0
     UnitVoicePitch: 1
+    UseTorsoTwist: 1
 --- !u!4 &6475551837164368749 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7329307604263240806, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}

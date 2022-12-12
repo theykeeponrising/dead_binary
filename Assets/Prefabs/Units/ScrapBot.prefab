@@ -5330,7 +5330,8 @@ MonoBehaviour:
     UnitPortrait: {fileID: 0}
     UnitVoice: 0
     UnitVoicePitch: 1
-  _patrolPath: {fileID: 0}
+    UseTorsoTwist: 1
+  _enemyPatrol: {fileID: 0}
 --- !u!4 &4732323010971060870 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2258509963431223535, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}

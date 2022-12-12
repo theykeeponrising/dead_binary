@@ -48,7 +48,7 @@ public class Inventory : MonoBehaviour
         for (int index = 0; index < weapons.Count; index++)
         {
             weapons[index] = Instantiate(weapons[index]);
-            weapons[index].DefaultPosition(unit);
+            weapons[index].SetParent(unit);
             weapons[index].gameObject.SetActive(false);
         }
 
@@ -78,7 +78,7 @@ public class Inventory : MonoBehaviour
 
         weapon = Instantiate(weapon);
         weapons.Add(weapon);
-        weapon.DefaultPosition(unit);
+        weapon.SetParent(unit);
         weapon.gameObject.SetActive(false);
 
         if (!equippedWeapon && weapons.IndexOf(weapon) == 0)
@@ -95,7 +95,7 @@ public class Inventory : MonoBehaviour
     {
         equippedWeapon = weapon;
         weapon.gameObject.SetActive(true);
-        weapon.DefaultPosition(unit);
+        weapon.SetParent(unit);
         unit.SetAnimationLayerWeight(weapon.GetAnimationLayer(), 1);
         unit.SetAnimationSpeed(weapon.Attributes.AnimationSpeed);
     }
@@ -112,7 +112,7 @@ public class Inventory : MonoBehaviour
         }
 
         weapons.Add(weapon);
-        weapon.DefaultPosition(unit);
+        weapon.SetParent(unit);
         weapon.gameObject.SetActive(false);
 
         if (!equippedWeapon && weapons.IndexOf(weapon) == 0)
