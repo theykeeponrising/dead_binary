@@ -79,6 +79,9 @@ public class UnitSFX
             case (AnimationType.SHOOT):
                 _unit.EquippedWeapon.Shoot();
                 break;
+            case (AnimationType.SHOOT_ALT):
+                _unit.AltWeapon.Shoot();
+                break;
             case (AnimationType.THROW): case (AnimationType.PRIME): case (AnimationType.SWAP):
                 PlayRandomAnimationSound(sound);
                 break;

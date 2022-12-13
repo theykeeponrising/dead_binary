@@ -43,4 +43,4 @@ public class SFXAnimations
     }
 }
 
-public enum AnimationType { NONE, IMPACT, FOOTSTEP_LEFT, FOOTSTEP_RIGHT, SHOOT, THROW, PRIME, SWAP };
+public enum AnimationType { NONE, IMPACT, FOOTSTEP_LEFT, FOOTSTEP_RIGHT, SHOOT, THROW, PRIME, SWAP, SHOOT_ALT };

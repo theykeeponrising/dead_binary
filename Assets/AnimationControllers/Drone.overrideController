@@ -8,4 +8,6 @@ AnimatorOverrideController:
   m_PrefabAsset: {fileID: 0}
   m_Name: Drone
   m_Controller: {fileID: 9100000, guid: 347ec8c34e26d9146b434b8d63ef1192, type: 2}
-  m_Clips: []
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: d63d4ba5a70559444b42bdae02ae92ac, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: b51d69208c1d45f42ab8de5b815cda2c, type: 2}

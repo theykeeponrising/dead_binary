@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+
 
 //Handles all the animations+animation logic for a particular character
 
@@ -12,6 +14,7 @@ public class UnitAnimator
 
     private int AnimationLayer { get { return _unit.EquippedWeapon.GetAnimationLayer(); } }
     private Transform[] BoneTransforms { get { return _unitRig.BoneTransforms; } }
+    private List<Transform> AttachPointOverride { get { return _unitRig.AttachPointOverride; } }
     private MoveData MoveData { get { return _unit.MoveData; } }
     private bool UseTorsoTwist { get { return _unit.Attributes.UseTorsoTwist; } }
 
@@ -33,14 +36,13 @@ public class UnitAnimator
     }
 
     public void SetEnabled(bool enabled)
-    {
-        _animator.enabled = enabled;
-    }
+    { _animator.enabled = enabled; }
 
     public bool GetEnabled()
-    {
-        return _animator.enabled;
-    }
+    { return _animator.enabled; }
+
+    public UnitRig GetRig()
+    { return _unitRig; }
 
     private void SetAnimation()
     {
@@ -61,7 +63,9 @@ public class UnitAnimator
 
     public Transform GetAttachPoint(WeaponAttachPoint attachPoint)
     {
-        Transform attachTransform = _unit.transform.Find("AttachPoint"); ;
+        Transform attachTransform = _unit.transform.Find("AttachPoint");
+
+        Debug.Log(("Finding attach point ", attachPoint));
 
         switch (attachPoint)
         {
@@ -80,7 +84,7 @@ public class UnitAnimator
     {
         if (_animator.GetBoneTransform(bone))
             return _animator.GetBoneTransform(bone);
-        return _unit.transform;
+        return _unitRig.transform;
     }
 
     public bool AnimatorIsPlaying(string animationName)
@@ -120,10 +124,6 @@ public class UnitAnimator
 
     public void Event_OnAnimationEnd(AnimationEventContext context)
     {
-        // Handler for animation events
-        // Evaluate context and perform appropriate actions
-
-        // Weapon shooting effect and sound
         switch (context)
         {           
             case (AnimationEventContext.AIMING):
