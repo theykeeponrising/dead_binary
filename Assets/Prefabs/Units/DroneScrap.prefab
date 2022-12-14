@@ -180,6 +180,7 @@ GameObject:
   - component: {fileID: 924386506887517181}
   - component: {fileID: 1205196827512587702}
   - component: {fileID: 6417450810287084226}
+  - component: {fileID: 5502295487816412734}
   m_Layer: 0
   m_Name: TopCableRight_low
   m_TagString: Untagged
@@ -282,6 +283,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &5502295487816412734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3045509601907707508}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 668c3b4e278763b4faf86cbda3acdd45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _alwaysDetach: 1
 --- !u!1 &3080206824146679356
 GameObject:
   m_ObjectHideFlags: 0
@@ -295,6 +309,7 @@ GameObject:
   - component: {fileID: 7085330292273539512}
   - component: {fileID: 5718654282053881602}
   - component: {fileID: 620316926855415800}
+  - component: {fileID: 6209165024415188635}
   m_Layer: 0
   m_Name: TopCableLeft_low
   m_TagString: Untagged
@@ -397,6 +412,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &6209165024415188635
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3080206824146679356}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 668c3b4e278763b4faf86cbda3acdd45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _alwaysDetach: 1
 --- !u!1 &3384180106210929042
 GameObject:
   m_ObjectHideFlags: 0
@@ -440,7 +468,7 @@ GameObject:
   - component: {fileID: 4434788161059316746}
   - component: {fileID: 2009656744089689682}
   - component: {fileID: 8562055547543723799}
-  - component: {fileID: 848210092733826757}
+  - component: {fileID: 5302623849975081168}
   - component: {fileID: 4114688309558224380}
   - component: {fileID: 7019442017901158818}
   m_Layer: 8
@@ -603,7 +631,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!136 &848210092733826757
+--- !u!136 &5302623849975081168
 CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -611,12 +639,12 @@ CapsuleCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4107424573818312927}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.11
-  m_Height: 0.1
+  m_Radius: 0.5
+  m_Height: 2.5
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!114 &4114688309558224380
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -648,7 +676,7 @@ MonoBehaviour:
     Name: Scrap Drone
     Faction: {fileID: 4617512284383335714, guid: 9963300e191ce2e41a13bf8c82ec5125, type: 3}
     UnitType: 1
-    UnitIcon: 1
+    UnitIcon: 2
     FootstepSource: 2
     UnitPortrait: {fileID: 0}
     UnitVoice: 0
@@ -667,8 +695,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad134dd5597bffa408b14aa5f35caf76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _hoverDistance: 3
-  _hoverDampening: 0.5
+  _hoverDistance: {x: 0.1, y: 0.5, z: 0.1}
+  _hoverDampening: {x: 10, y: 5, z: 20}
 --- !u!1 &4576358228060971243
 GameObject:
   m_ObjectHideFlags: 0
@@ -682,6 +710,7 @@ GameObject:
   - component: {fileID: 7942844460363206758}
   - component: {fileID: 7513577265067300695}
   - component: {fileID: 4215949656646040861}
+  - component: {fileID: 3872216748399552795}
   m_Layer: 0
   m_Name: BottomCableRight_low
   m_TagString: Untagged
@@ -784,6 +813,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &3872216748399552795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4576358228060971243}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 668c3b4e278763b4faf86cbda3acdd45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _alwaysDetach: 1
 --- !u!1 &5266735927700936964
 GameObject:
   m_ObjectHideFlags: 0
@@ -1204,6 +1246,7 @@ GameObject:
   - component: {fileID: 7851607250050945887}
   - component: {fileID: 5505600178505320278}
   - component: {fileID: 1999948390434236116}
+  - component: {fileID: 1288226131064901220}
   m_Layer: 0
   m_Name: LeftTurret_low
   m_TagString: Untagged
@@ -1308,6 +1351,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &1288226131064901220
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5853870935456928993}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 668c3b4e278763b4faf86cbda3acdd45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _alwaysDetach: 1
 --- !u!1 &6329928633206581059
 GameObject:
   m_ObjectHideFlags: 0
@@ -1336,7 +1392,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6329928633206581059}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 2, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
@@ -1408,8 +1464,8 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6329928633206581059}
   serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
+  m_Mass: 5
+  m_Drag: 0.5
   m_AngularDrag: 0.05
   m_UseGravity: 1
   m_IsKinematic: 1
@@ -1458,6 +1514,7 @@ GameObject:
   - component: {fileID: 8730394169370226122}
   - component: {fileID: 7447300648886152330}
   - component: {fileID: 6531912610045682352}
+  - component: {fileID: 5273509175477509509}
   m_Layer: 0
   m_Name: RightTurret_low
   m_TagString: Untagged
@@ -1562,6 +1619,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &5273509175477509509
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6527209835744369540}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 668c3b4e278763b4faf86cbda3acdd45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _alwaysDetach: 1
 --- !u!1 &8379280364628448365
 GameObject:
   m_ObjectHideFlags: 0
@@ -1658,6 +1728,7 @@ GameObject:
   - component: {fileID: 2942963446776256289}
   - component: {fileID: 8071382781585331963}
   - component: {fileID: 5926227604968884519}
+  - component: {fileID: 2692982035796431240}
   m_Layer: 0
   m_Name: BottomCableLeft_low
   m_TagString: Untagged
@@ -1760,6 +1831,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &2692982035796431240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9129829819949352090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 668c3b4e278763b4faf86cbda3acdd45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _alwaysDetach: 1
 --- !u!1 &9186450645085781865
 GameObject:
   m_ObjectHideFlags: 0

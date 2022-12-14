@@ -137,6 +137,7 @@ GameObject:
   - component: {fileID: 7651017373605905580}
   - component: {fileID: 5265616882487018756}
   - component: {fileID: 2530698499469768866}
+  - component: {fileID: 8419020501190156295}
   m_Layer: 0
   m_Name: Bone.UpperArm.L
   m_TagString: Untagged
@@ -235,6 +236,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.08, y: 0.25, z: 0.1}
   m_Center: {x: 0, y: 0.15, z: 0}
+--- !u!114 &8419020501190156295
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 631564993757454222}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 668c3b4e278763b4faf86cbda3acdd45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &698456666404836839
 GameObject:
   m_ObjectHideFlags: 0
@@ -923,8 +936,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2339961625498302231}
   m_LocalRotation: {x: -0.08326229, y: 0, z: -0, w: 0.9965277}
-  m_LocalPosition: {x: -0, y: 0.08606971, z: 0.0000000027939677}
-  m_LocalScale: {x: 1, y: 1.0000001, z: 1.0000001}
+  m_LocalPosition: {x: 0, y: 0.08606971, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 657533022612600434}
@@ -1018,6 +1031,7 @@ GameObject:
   - component: {fileID: 2928248260083599559}
   - component: {fileID: 5257196102391054188}
   - component: {fileID: 1417811110428024}
+  - component: {fileID: 2180313276715477636}
   m_Layer: 0
   m_Name: Bone.LowerArm.R
   m_TagString: Untagged
@@ -1116,6 +1130,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.1, y: 0.2, z: 0.08}
   m_Center: {x: 0, y: 0.15, z: -0.02}
+--- !u!114 &2180313276715477636
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2362510567900479071}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 668c3b4e278763b4faf86cbda3acdd45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2402711211160181542
 GameObject:
   m_ObjectHideFlags: 0
@@ -1815,6 +1841,7 @@ GameObject:
   - component: {fileID: 7598240287207384865}
   - component: {fileID: 1450372060681333140}
   - component: {fileID: 729980541575948285}
+  - component: {fileID: 8452325754135796314}
   m_Layer: 0
   m_Name: Bone.LowerArm.L
   m_TagString: Untagged
@@ -1913,6 +1940,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.1, y: 0.2, z: 0.08}
   m_Center: {x: 0, y: 0.15, z: -0.02}
+--- !u!114 &8452325754135796314
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3235300720140577789}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 668c3b4e278763b4faf86cbda3acdd45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3267443430675030849
 GameObject:
   m_ObjectHideFlags: 0
@@ -1956,6 +1995,7 @@ GameObject:
   - component: {fileID: 8434838083370707234}
   - component: {fileID: 3800443492113357928}
   - component: {fileID: 1249449099735388365}
+  - component: {fileID: 6482471310118167206}
   m_Layer: 0
   m_Name: Bone.Head
   m_TagString: Untagged
@@ -2056,6 +2096,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.18, y: 0.18, z: 0.25}
   m_Center: {x: 0, y: 0.085, z: 0}
+--- !u!114 &6482471310118167206
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3342098928038055884}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 668c3b4e278763b4faf86cbda3acdd45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3351028461802872328
 GameObject:
   m_ObjectHideFlags: 0
@@ -3240,6 +3292,7 @@ GameObject:
   - component: {fileID: 6023965921987621475}
   - component: {fileID: 8888092091315850266}
   - component: {fileID: 2788242909863022782}
+  - component: {fileID: 8616314897255288201}
   m_Layer: 0
   m_Name: Bone.UpperLeg.L
   m_TagString: Untagged
@@ -3338,6 +3391,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.1, y: 0.4, z: 0.125}
   m_Center: {x: 0, y: 0.25, z: 0}
+--- !u!114 &8616314897255288201
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6399269833221720219}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 668c3b4e278763b4faf86cbda3acdd45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6417455661195667484
 GameObject:
   m_ObjectHideFlags: 0
@@ -3591,6 +3656,7 @@ GameObject:
   - component: {fileID: 4381420045837377874}
   - component: {fileID: 1818690962223911991}
   - component: {fileID: 6157721531534892398}
+  - component: {fileID: 9149339627188717127}
   m_Layer: 0
   m_Name: Bone.UpperLeg.R
   m_TagString: Untagged
@@ -3689,6 +3755,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.1, y: 0.4, z: 0.125}
   m_Center: {x: 0, y: 0.25, z: 0}
+--- !u!114 &9149339627188717127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6656047426326017891}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 668c3b4e278763b4faf86cbda3acdd45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6786033328666332332
 GameObject:
   m_ObjectHideFlags: 0
@@ -4330,6 +4408,7 @@ GameObject:
   - component: {fileID: 3296996921105095026}
   - component: {fileID: 966773216890413224}
   - component: {fileID: 6032303015252096701}
+  - component: {fileID: 8261122322109927194}
   m_Layer: 0
   m_Name: Bone.LowerLeg.L
   m_TagString: Untagged
@@ -4428,6 +4507,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.1, y: 0.3, z: 0.1}
   m_Center: {x: 0, y: 0.2, z: 0}
+--- !u!114 &8261122322109927194
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8554637912118651806}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 668c3b4e278763b4faf86cbda3acdd45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8764790471579469705
 GameObject:
   m_ObjectHideFlags: 0
@@ -4586,6 +4677,7 @@ GameObject:
   - component: {fileID: 638656980810477945}
   - component: {fileID: 4664919586577182446}
   - component: {fileID: 962082351147503062}
+  - component: {fileID: 7082771968736116914}
   m_Layer: 0
   m_Name: Bone.UpperArm.R
   m_TagString: Untagged
@@ -4684,6 +4776,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.08, y: 0.25, z: 0.1}
   m_Center: {x: 0, y: 0.15, z: 0}
+--- !u!114 &7082771968736116914
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8820608520944973312}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 668c3b4e278763b4faf86cbda3acdd45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8947547231903706005
 GameObject:
   m_ObjectHideFlags: 0
@@ -4728,6 +4832,7 @@ GameObject:
   - component: {fileID: 5452792685310970764}
   - component: {fileID: 7157073577408019636}
   - component: {fileID: 7768161938453549732}
+  - component: {fileID: 1905268788739055147}
   m_Layer: 0
   m_Name: Bone.LowerLeg.R
   m_TagString: Untagged
@@ -4826,6 +4931,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.1, y: 0.3, z: 0.1}
   m_Center: {x: 0, y: 0.2, z: 0}
+--- !u!114 &1905268788739055147
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9057313131082767718}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 668c3b4e278763b4faf86cbda3acdd45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &5943825160526194010
 PrefabInstance:
   m_ObjectHideFlags: 0

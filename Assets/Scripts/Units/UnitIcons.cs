@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class UnitIcons
 {
@@ -8,10 +6,12 @@ public class UnitIcons
 
     const string icon_dummy = "Icons/icon_dummy";
     const string icon_scrapbot = "Icons/icon_scrapbot";
+    const string icon_drone = "Icons/icon_drone";
 
     static Dictionary<UnitIconEnum, string> UnitIconsDict = new Dictionary<UnitIconEnum, string>() {
         { UnitIconEnum.DUMMY, icon_dummy },
         { UnitIconEnum.SCRAPBOT, icon_scrapbot },
+        { UnitIconEnum.DRONE, icon_drone },
     };
 
     public static string GetIcon(UnitIconEnum match)
@@ -22,4 +22,4 @@ public class UnitIcons
     }
 }
 
-public enum UnitIconEnum { DUMMY, SCRAPBOT };
+public enum UnitIconEnum { DUMMY, SCRAPBOT, DRONE };

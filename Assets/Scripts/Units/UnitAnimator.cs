@@ -65,8 +65,6 @@ public class UnitAnimator
     {
         Transform attachTransform = _unit.transform.Find("AttachPoint");
 
-        Debug.Log(("Finding attach point ", attachPoint));
-
         switch (attachPoint)
         {
             case (WeaponAttachPoint.HAND_RIGHT):
