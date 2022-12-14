@@ -695,8 +695,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad134dd5597bffa408b14aa5f35caf76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _hoverDistance: {x: 0.1, y: 0.5, z: 0.1}
-  _hoverDampening: {x: 10, y: 5, z: 20}
+  _hoverDistance: {x: 0.05, y: 0.2, z: 0.05}
+  _hoverDampening: {x: 2, y: 0.5, z: 2}
 --- !u!1 &4576358228060971243
 GameObject:
   m_ObjectHideFlags: 0
