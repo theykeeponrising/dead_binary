@@ -25,7 +25,7 @@ public class UnitAnimator
         _animator = unit.GetComponent<Animator>();
     }
 
-    public void Update()
+    public void FixedUpdate()
     {
         SetAnimation();
     }
