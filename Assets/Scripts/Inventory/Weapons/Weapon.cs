@@ -71,12 +71,13 @@ public class Weapon : MonoBehaviour
             light.color = (Color)_muzzleFlashColors[Attributes.MuzzleFlash];
     }
 
-    public void DefaultPosition(Unit unit)
+    public void SetParent(Unit unit)
     {
         // Used to place newly-created weapon objects into the default position
 
         _unit = unit;
-        transform.parent = unit.GetWeaponAttachPoint();
+
+        transform.parent = _unit.GetAttachPoint(Attributes.AttachPoint);
         transform.position = transform.parent.position;
         transform.localPosition = transform.localPosition + _offset;
         transform.rotation = transform.parent.transform.rotation;
@@ -225,6 +226,8 @@ public enum WeaponSound { FIRE, RELOAD };
 
 public enum WeaponMuzzleFlash { CONVENTIONAL, LASER_RED, LASER_PINK };
 
+public enum WeaponAttachPoint { NONE, HAND_RIGHT, HAND_LEFT }
+
 [System.Serializable]
 public struct WeaponAttributes
 {
@@ -233,6 +236,7 @@ public struct WeaponAttributes
     public float ProjectileSpeed;
     public WeaponImpact Impact;
     public WeaponMuzzleFlash MuzzleFlash;
+    public WeaponAttachPoint AttachPoint;
 }
 
 [System.Serializable]

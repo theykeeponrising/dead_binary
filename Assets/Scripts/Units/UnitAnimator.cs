@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+
 
 //Handles all the animations+animation logic for a particular character
 
@@ -8,13 +10,13 @@ public class UnitAnimator
     private readonly Unit _unit;
     private readonly Animator _animator;
     private readonly UnitRig _unitRig;
-
     private Quaternion _aimTowards = Quaternion.identity;
-    [SerializeField] private bool _useTorsoTwist = true;
 
     private int AnimationLayer { get { return _unit.EquippedWeapon.GetAnimationLayer(); } }
     private Transform[] BoneTransforms { get { return _unitRig.BoneTransforms; } }
+    private List<Transform> AttachPointOverride { get { return _unitRig.AttachPointOverride; } }
     private MoveData MoveData { get { return _unit.MoveData; } }
+    private bool UseTorsoTwist { get { return _unit.Attributes.UseTorsoTwist; } }
 
     public UnitAnimator(Unit unit)
     {
@@ -34,16 +36,15 @@ public class UnitAnimator
     }
 
     public void SetEnabled(bool enabled)
-    {
-        _animator.enabled = enabled;
-    }
+    { _animator.enabled = enabled; }
 
     public bool GetEnabled()
-    {
-        return _animator.enabled;
-    }
+    { return _animator.enabled; }
 
-    void SetAnimation()
+    public UnitRig GetRig()
+    { return _unitRig; }
+
+    private void SetAnimation()
     {
         // Changes movement animation based on flags
 
@@ -60,14 +61,28 @@ public class UnitAnimator
         }
     }
 
-    public Transform GetWeaponAttachPoint()
+    public Transform GetAttachPoint(WeaponAttachPoint attachPoint)
     {
-        return _unitRig.GetBoneTransform(HumanBodyBones.RightHand).Find("AttachPoint");
+        Transform attachTransform = _unit.transform.Find("AttachPoint");
+
+        switch (attachPoint)
+        {
+            case (WeaponAttachPoint.HAND_RIGHT):
+                attachTransform = _unitRig.GetBoneTransform(HumanBodyBones.RightHand).Find("AttachPoint");
+                break;
+            case (WeaponAttachPoint.HAND_LEFT):
+                attachTransform = _unitRig.GetBoneTransform(HumanBodyBones.LeftHand).Find("AttachPoint");
+                break;
+        }
+
+        return attachTransform;
     }
 
     public Transform GetBoneTransform(HumanBodyBones bone)
     {
-        return _animator.GetBoneTransform(bone);
+        if (_animator.GetBoneTransform(bone))
+            return _animator.GetBoneTransform(bone);
+        return _unitRig.transform;
     }
 
     public bool AnimatorIsPlaying(string animationName)
@@ -107,10 +122,6 @@ public class UnitAnimator
 
     public void Event_OnAnimationEnd(AnimationEventContext context)
     {
-        // Handler for animation events
-        // Evaluate context and perform appropriate actions
-
-        // Weapon shooting effect and sound
         switch (context)
         {           
             case (AnimationEventContext.AIMING):
@@ -231,7 +242,7 @@ public class UnitAnimator
             if (!IsCrouching()) ToggleCrouch();
     }
 
-    void AimGetTarget()
+    private void AimGetTarget()
     {
         // Twists characters torso to aim gun at target
 
@@ -245,7 +256,7 @@ public class UnitAnimator
         _unit.GetComponentInChildren<UnitCamera>().AdjustAngle(targetDirection.x, targetPosition);
 
         // If we are crouching or not using torso twist, then skip the bone rotations
-        if (IsCrouching() || !_useTorsoTwist)
+        if (IsCrouching() || !UseTorsoTwist)
             return;
 
         // If we are not aiming or shooting, then skip the bone rotations
@@ -285,7 +296,7 @@ public class UnitAnimator
         }
     }
 
-    void ThrowItem()
+    private void ThrowItem()
     {
         // Releases item from hand and starts item movement
 

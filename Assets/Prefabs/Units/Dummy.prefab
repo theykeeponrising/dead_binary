@@ -3682,6 +3682,18 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4984933978760455573, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
+      propertyPath: Weapons.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4984933978760455573, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
+      propertyPath: Weapons.Array.data[0]
+      value: 
+      objectReference: {fileID: 5609646081035275099, guid: f2cc325da79e8f745b9376f985a2c06a, type: 3}
+    - target: {fileID: 4984933978760455573, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
+      propertyPath: Weapons.Array.data[1]
+      value: 
+      objectReference: {fileID: 5609646081035275099, guid: af5f01db1b146354ca1980b3ecc6772a, type: 3}
+    - target: {fileID: 4984933978760455573, guid: 92b448bdaa4a0d145946d3c92f3329aa, type: 3}
       propertyPath: weapons.Array.data[0]
       value: 
       objectReference: {fileID: 5609646081035275099, guid: f2cc325da79e8f745b9376f985a2c06a, type: 3}
@@ -4063,3 +4075,4 @@ MonoBehaviour:
     UnitPortrait: {fileID: 0}
     UnitVoice: 0
     UnitVoicePitch: 1
+    UseTorsoTwist: 1

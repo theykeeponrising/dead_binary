@@ -92,6 +92,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
+      propertyPath: Attributes.AttachPoint
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: reloadSound.Array.size
       value: 3
       objectReference: {fileID: 0}

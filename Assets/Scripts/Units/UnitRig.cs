@@ -8,10 +8,11 @@ public sealed class UnitRig : MonoBehaviour
     private HumanBodyBones[] _humanBones;
     private Transform[] _boneTransforms;
     private readonly List<Ragdoll> _ragdolls = new();
-
+    
     private Rigidbody UnitRigidbody => _unit.Rigidbody;
     private Collider[] UnitColliders => _unit.Colliders;
     public Transform[] BoneTransforms=> _boneTransforms;
+    public List<Transform> AttachPointOverride = new();
 
     private void Awake()
     {
@@ -36,7 +37,13 @@ public sealed class UnitRig : MonoBehaviour
 
     public Transform GetBoneTransform(HumanBodyBones bone)
     {
-        return _animator.GetBoneTransform(bone);
+        if (_animator.GetBoneTransform(bone))
+            return _animator.GetBoneTransform(bone);
+        else if (bone == HumanBodyBones.RightHand && AttachPointOverride.Count >= 1)
+            return AttachPointOverride[0];
+        else if (bone == HumanBodyBones.LeftHand && AttachPointOverride.Count >= 2)
+            return AttachPointOverride[1];
+        return _unit.transform;
     }
 
     public void SetRagdollActive(bool isActive)

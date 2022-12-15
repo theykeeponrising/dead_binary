@@ -6,8 +6,10 @@ public class UnitSFX
 {
     private readonly Unit _unit;
     private readonly AudioSource _audioSource;
-    private readonly Dictionary<AnimationType, AudioSource> _bodyAudioSources = new();
     private readonly FootstepData _footstepData;
+    private readonly Dictionary<AnimationType, AudioSource> _bodyAudioSources = new();
+
+    private UnitAttributes Attributes { get { return _unit.Attributes; } }
 
     public UnitSFX(Unit unit, AudioSource audioSource)
     {
@@ -15,11 +17,21 @@ public class UnitSFX
         _audioSource = audioSource;
         _footstepData = new FootstepData(unit);
 
-        _bodyAudioSources = new Dictionary<AnimationType, AudioSource>()
-        { 
-            { AnimationType.FOOTSTEP_LEFT, unit.GetBoneTransform(HumanBodyBones.LeftFoot).GetComponent<AudioSource>() },
-            { AnimationType.FOOTSTEP_RIGHT, unit.GetBoneTransform(HumanBodyBones.RightFoot).GetComponent<AudioSource>() },
-        };
+        GetFootsteps();
+    }
+
+    private void GetFootsteps()
+    {
+        if (Attributes.FootstepSource == FootstepSource.FLYING)
+        {
+            _bodyAudioSources[AnimationType.FOOTSTEP_LEFT] = _unit.GetComponent<AudioSource>();
+            _bodyAudioSources[AnimationType.FOOTSTEP_RIGHT] = _unit.GetComponent<AudioSource>();
+        }
+        else
+        {
+            _bodyAudioSources[AnimationType.FOOTSTEP_LEFT] = _unit.GetBoneTransform(HumanBodyBones.LeftFoot).GetComponent<AudioSource>();
+            _bodyAudioSources[AnimationType.FOOTSTEP_RIGHT] = _unit.GetBoneTransform(HumanBodyBones.RightFoot).GetComponent<AudioSource>();
+        }
     }
 
     private void PlayOneShot(AudioClip clip)
@@ -66,6 +78,9 @@ public class UnitSFX
                 break;
             case (AnimationType.SHOOT):
                 _unit.EquippedWeapon.Shoot();
+                break;
+            case (AnimationType.SHOOT_ALT):
+                _unit.AltWeapon.Shoot();
                 break;
             case (AnimationType.THROW): case (AnimationType.PRIME): case (AnimationType.SWAP):
                 PlayRandomAnimationSound(sound);

@@ -35,7 +35,8 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     public UnitHealthbar Healthbar { get { return _healthbar; } }
     public CoverObject CurrentCover { get { return Tile.Cover; } }
     public InCombatPlayerAction PlayerAction { get { return _playerAction; } }
-    public Weapon EquippedWeapon { get { return Inventory.equippedWeapon; } set { Inventory.EquipWeapon(value); } }
+    public Weapon EquippedWeapon { get { return Inventory.EquippedWeapon; } set { Inventory.EquipWeapon(value); } }
+    public Weapon AltWeapon { get { return Inventory.AltWeapon; } }
     public Unit TargetUnit { get { return _unitCombat.TargetUnit; } set { _unitCombat.TargetUnit = value; } }
     public List<Unit> PotentialTargets { get { return _unitCombat.PotentialTargets; } set { _unitCombat.PotentialTargets = value; } }
     public bool InCombat { get { return _unitCombat.InCombat; } }
@@ -133,7 +134,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     { return Inventory.CycleWeapon(); }
 
     public List<Item> GetItems()
-    { return Inventory.items; }
+    { return Inventory.Items; }
 
     public bool IsAlive()
     { return !IsDead(); }
@@ -219,6 +220,9 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     public List<Tile> GetMovePath(Tile tile)
     { return _unitActor.GetMovePath(tile); }
 
+    public UnitRig GetRig()
+    { return _unitAnimator.GetRig(); }
+
     public Transform GetBoneTransform(HumanBodyBones bone)
     { return _unitAnimator.GetBoneTransform(bone); }
 
@@ -267,8 +271,8 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     public void OnDeath(Vector3 forceDirection, ForceMode forceMode)
     { _unitAnimator.OnDeath(forceDirection, forceMode); }
 
-    public Transform GetWeaponAttachPoint()
-    { return _unitAnimator.GetWeaponAttachPoint(); }
+    public Transform GetAttachPoint(WeaponAttachPoint attachPoint)
+    { return _unitAnimator.GetAttachPoint(attachPoint); }
 
     public void TakeDamageEffect(Weapon weapon = null, DamageItem item = null)
     { _unitAnimator.TakeDamageEffect(weapon, item); }
@@ -316,7 +320,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
         }
 
         // If we have multiple weapons, add swap action
-        if (Inventory.weapons.Count > 1)
+        if (Inventory.Weapons.Count > 1)
         {
             _unitActions.Insert(index, ActionManager.UnitActions.Swap);
             index += 1;
@@ -460,6 +464,7 @@ public class UnitAttributes
     public UnitPortrait UnitPortrait;
     public DialogVoice UnitVoice;
     [Range(0.01f, 3f)] public float UnitVoicePitch = 1f;
+    public bool UseTorsoTwist;
 }
 
 // Stats are values that will be referenced and changed frequently during combat
