@@ -106,15 +106,30 @@ public class StateTarget : StateCancel
         }
     }
 
+    public bool IsTargetInLineOfSight(Unit unit, Unit target)
+    {
+        Tile startTile = unit.Tile;
+        Tile endTile = target.Tile;
+        List<Tile> lineOfSightPath = Map.MapGrid.GetLineOfSightPath(startTile, endTile);
+        if (lineOfSightPath.Count > 0) return true;
+        return false;
+    }
+
     public virtual void FindTargets<TargetType>(InCombatPlayerAction t)
     {
         if (typeof(TargetType) == typeof(Unit))
         {
             List<Unit> units = Map.FindUnits(targetFaction);
 
+            // Iterates through enemy faction units, and adds them if they are
+            // Alive, In Range, and within the line of sight
             foreach (Unit unit in units)
-                if (unit.Stats.HealthCurrent > 0 && TargetInRange(t.selectedCharacter, unit))
+                if (unit.Stats.HealthCurrent > 0 &&
+                    TargetInRange(t.selectedCharacter, unit) &&
+                    IsTargetInLineOfSight(t.selectedCharacter, unit))
+                {
                     targets.Add(unit);
+                }
         }
 
         //Find closest Target

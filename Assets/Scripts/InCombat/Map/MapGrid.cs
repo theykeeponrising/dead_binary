@@ -271,4 +271,20 @@ public class MapGrid : MonoBehaviour
         }
         return false;
     }
+
+    public List<Tile> GetLineOfSightPath(Tile startTile, Tile endTile)
+    {
+        List<Tile> path = GridUtils.GetStraightPath(startTile, endTile);
+        if (path.Count == 0) return new List<Tile>();
+        else
+        {
+            Tile lastTile = startTile;
+            foreach (Tile tile in path)
+            {
+                if (IsTilePathObstructed(lastTile, tile)) return new List<Tile>();
+                lastTile = tile;
+            }
+            return path;
+        }
+    }
 }
