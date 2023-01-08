@@ -196,6 +196,12 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     public void CheckSight()
     { _unitCombat.CheckSight(); }
 
+    public List<Unit> GetTargetsInLineOfSight<TargetType>()
+    { return _unitCombat.GetTargetsInLineOfSight<TargetType>(); }
+
+    public bool IsTargetInLineOfSight(Unit target)
+    { return _unitCombat.IsTargetInLineOfSight(target); }
+
     public bool IsActing()
     { return _unitActor.IsActing(); }
 

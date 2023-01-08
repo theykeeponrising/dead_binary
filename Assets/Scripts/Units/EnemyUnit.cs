@@ -195,6 +195,7 @@ public class EnemyUnit : Unit
 
             if (unitAction.IsType(typeof(UnitActionShoot)))
             {
+                if (!IsTargetInLineOfSight(unitTile, enemyAction.Tile)) continue;
                 numShots++;
                 //Calculated expected damage, if it would kill, etc.
                 float damage = CalculateExpectedDamage(enemyAction.ContextChar);
@@ -233,6 +234,13 @@ public class EnemyUnit : Unit
         }
 
         return actionValue;
+    }
+
+    private bool IsTargetInLineOfSight(Tile unitTile, Tile targetTile)
+    {
+        List<Tile> lineOfSightPath = Map.MapGrid.GetLineOfSightPath(unitTile, targetTile);
+        if (lineOfSightPath.Count > 0) return true;
+        return false;
     }
 
     private float CalculateActionValue(EnemyAction action)

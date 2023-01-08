@@ -44,14 +44,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 146dbb2831ff1ed47aaea72d19fa1556, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  actionRequirements: 0100000002000000
-  _actionRequirements: 0100000002000000
-  _actionSprite: 2
   _actionName: Shoot Rocket
   _actionDescription: Open fire with the currently equipped weapon
   _actionCost: 2
   _actionCooldown: 0
   _actionCooldownRemaining: 0
+  _actionRequirements: 010000000200000005000000
+  _actionSprite: 2
   BufferStart: 1
   BufferEnd: 1
   _useCharacterCamera: 0

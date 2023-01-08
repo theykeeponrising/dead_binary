@@ -289,6 +289,34 @@ class UnitCombat
         return unitsInRange;
     }
 
+    public List<Unit> GetTargetsInLineOfSight<TargetType>()
+    {
+        List<Unit> targets = new List<Unit>();
+        if (typeof(TargetType) == typeof(Unit))
+        {
+            List<Unit> units = GetHostileUnits();
+
+            // Iterates through enemy faction units, and adds them if they are
+            // Alive, In Range, and within the line of sight
+            foreach (Unit target in units)
+                if (target.Stats.HealthCurrent > 0 &&
+                    IsTargetInLineOfSight(target))
+                {
+                    targets.Add(target);
+                }
+        }
+        return targets;
+    }
+
+    public bool IsTargetInLineOfSight(Unit target)
+    {
+        Tile startTile = UnitTile;
+        Tile endTile = target.Tile;
+        List<Tile> lineOfSightPath = Map.MapGrid.GetLineOfSightPath(startTile, endTile);
+        if (lineOfSightPath.Count > 0) return true;
+        return false;
+    }
+
     private void AlertFriendliesInRange()
     {
         List<Unit> units = GetUnitsInRange(Stats.Sight, Attributes.Faction);
