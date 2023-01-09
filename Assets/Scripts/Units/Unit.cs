@@ -33,7 +33,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     public Collider[] Colliders { get { return _colliders; } }
     public Inventory Inventory { get { return _inventory; } }
     public UnitHealthbar Healthbar { get { return _healthbar; } }
-    public CoverObject CurrentCover { get { return Tile.Cover; } }
+    public CoverObject CurrentCover { get { return objectTile.Cover; } }
     public InCombatPlayerAction PlayerAction { get { return _playerAction; } }
     public Weapon EquippedWeapon { get { return Inventory.EquippedWeapon; } set { Inventory.EquipWeapon(value); } }
     public Weapon AltWeapon { get { return Inventory.AltWeapon; } }
@@ -67,7 +67,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     protected override void Start()
     {
         base.Start();
-        if (objectTiles.Count > 0) Tile = objectTiles[0];
+        if (objectTiles.Count > 0) objectTile = objectTiles[0];
 
         // Characters start with full health and action points
         Stats.HealthCurrent = Stats.HealthMax;
@@ -389,7 +389,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
 
     public List<Tile> GetTilesInMoveRange()
     {
-        Vector3 pos = Tile.transform.position;
+        Vector3 pos = objectTile.transform.position;
         return Map.MapGrid.GetTilesInRange(pos, Stats.Movement);
     }
 
@@ -443,7 +443,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
             light.enabled = false;
 
         // Remove character as a obstacle on the map
-        Tile.Occupant = null;
+        objectTile.Occupant = null;
         enabled = false;
 
         if (EquippedWeapon)

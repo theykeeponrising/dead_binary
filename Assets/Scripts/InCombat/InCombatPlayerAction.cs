@@ -278,10 +278,10 @@ public class InCombatPlayerAction
             if (previewPath == null)
                 return;
 
-            previewPath.Add(selectedCharacter.Tile);
+            previewPath.Add(selectedCharacter.objectTile);
             if (previewPath.Count > 1)
                 foreach (Tile tile in previewPath)
-                    if (tile != selectedCharacter.Tile)
+                    if (tile != selectedCharacter.objectTile)
                         tile.HighlightTile(TileHighlightType.PREVIEW, true); 
         }
     }

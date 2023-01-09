@@ -26,7 +26,7 @@ public abstract class Tile : MonoBehaviour
     public CoverObject Cover { get { return _cover; } set { _cover = value; } }
     public Vector3 StandPoint => (Cover) ? Cover.GetStandPoint(this) : transform.position;
     public ImpactTypes ImpactType { get { return _impactType; } }
-    public bool IsTraversable => !_occupant || _occupant.isTraversable;
+    public virtual bool IsTraversable => !_occupant || _occupant.isTraversable;
 
     public Vector3 Position => transform.position;
        
@@ -114,7 +114,7 @@ public abstract class Tile : MonoBehaviour
         // Returns true/false is destination is pathable
 
         int maxDist = unit.Stats.Movement * 2;
-        List<Tile> movePath = unit.Tile.GetMovementCost(this, maxDist);
+        List<Tile> movePath = unit.objectTile.GetMovementCost(this, maxDist);
 
         // If tile is unreachable, return false
         if (movePath.Count == 0 || !IsTraversable || Occupant)

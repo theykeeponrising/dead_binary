@@ -57,7 +57,7 @@ public class SFXFootsteps
 public class FootstepData
 {
     private readonly Unit Unit;
-    public ImpactTypes ImpactType => Unit.Tile.ImpactType;
+    public ImpactTypes ImpactType => Unit.objectTile.ImpactType;
     public FootstepSource FootstepSource => Unit.Attributes.FootstepSource;
 
     public FootstepData(Unit unit) { this.Unit = unit; }

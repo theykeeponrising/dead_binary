@@ -10,6 +10,8 @@ public class EmptyTile : Tile
         FindCoverObjects();
     }
 
+    public override bool IsTraversable => false;
+
     public override bool CheckIfTileOccupant(GridObject gridObj)
     {
         return false;
