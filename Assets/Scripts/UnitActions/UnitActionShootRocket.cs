@@ -15,7 +15,7 @@ public class UnitActionShootRocket : UnitActionShoot
 
         TargetUnit = target;
         Unit.TargetUnit = target;
-        UseAction(target.Tile);
+        UseAction(target.objectTile);
     }
 
     public override void UseAction(Tile target)
@@ -91,7 +91,7 @@ public class UnitActionShootRocket : UnitActionShoot
     protected override void DamageTargets()
     {
         // Use on unit if possible, otherwise on empty tile
-        _targetTile = TargetUnit ? TargetUnit.Tile : Map.MapGrid.GetTile(TargetPosition);
+        _targetTile = TargetUnit ? TargetUnit.objectTile : Map.MapGrid.GetTile(TargetPosition);
 
         if (!TargetDamaged)
         {

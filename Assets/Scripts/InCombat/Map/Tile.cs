@@ -26,7 +26,9 @@ public abstract class Tile : MonoBehaviour
     public CoverObject Cover { get { return _cover; } set { _cover = value; } }
     public Vector3 StandPoint => (Cover) ? Cover.GetStandPoint(this) : transform.position;
     public ImpactTypes ImpactType { get { return _impactType; } }
-    public bool IsTraversable => !_occupant || _occupant.isTraversable;
+    public virtual bool IsTraversable => !_occupant || _occupant.isTraversable;
+
+    public Vector3 Position => transform.position;
        
     protected abstract void Start();
 
@@ -35,15 +37,20 @@ public abstract class Tile : MonoBehaviour
     protected virtual void FindAdjacentTiles()
     {
         // Gets all immediate vertical and horizontal neighbors
-
         List<Tile> tiles = Map.FindTiles();
-
+        Vector2 gridPos = new Vector2(this.gameObject.transform.position.x, this.gameObject.transform.position.z);
+    
         foreach (Tile tile in tiles)
             if (tile != this)
             {
-                float distance = Vector3.Distance(this.gameObject.transform.position, tile.gameObject.transform.position);
+                Vector2 otherGridPos = new Vector2(tile.gameObject.transform.position.x, tile.gameObject.transform.position.z);
+                float distance = Vector2.Distance(gridPos, otherGridPos);
                 if (distance <= MapGrid.TileSpacing) _adjacentTiles.Add(tile);
             }
+        if (AdjacentTiles.Count == 0)
+        {
+            Debug.LogError(string.Format("No neighbors found for tile at position ({0}, {1}, {2}).", Position.x, Position.y, Position.z));
+        }
     }
 
     protected virtual void FindCoverObjects()
@@ -107,7 +114,7 @@ public abstract class Tile : MonoBehaviour
         // Returns true/false is destination is pathable
 
         int maxDist = unit.Stats.Movement * 2;
-        List<Tile> movePath = unit.Tile.GetMovementCost(this, maxDist);
+        List<Tile> movePath = unit.objectTile.GetMovementCost(this, maxDist);
 
         // If tile is unreachable, return false
         if (movePath.Count == 0 || !IsTraversable || Occupant)

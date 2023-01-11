@@ -113,6 +113,15 @@ public abstract class UnitAction : MonoBehaviour
                         if (printDebug) Debug.Log("failed requirement quantity");
                         return false;
                     }
+
+                // Check that there are targets in unit's line of sight
+                if (requirement == UnitActionRequirement.TARGETS)
+                    if (!Unit || Unit.GetTargetsInLineOfSight<Unit>().Count == 0)
+                    {
+                        if (printDebug) Debug.Log("failed requirement targets");
+                        return false;
+                    }
+
             }
 
         return true;
@@ -187,4 +196,4 @@ public abstract class UnitAction : MonoBehaviour
     }
 }
 
-public enum UnitActionRequirement { NONE, AP, AMMO, RELOAD, QUANTITY };
+public enum UnitActionRequirement { NONE, AP, AMMO, RELOAD, QUANTITY, TARGETS };

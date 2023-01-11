@@ -179,7 +179,7 @@ public class EnemyUnit : Unit
         List<Unit> hostileUnits = GetHostileUnits();
         //If current tile is cover, don't add additional bonus
         bool isCover = false;
-        Tile unitTile = Tile;
+        Tile unitTile = objectTile;
 
         foreach (EnemyAction enemyAction in actions)
         {
@@ -188,13 +188,14 @@ public class EnemyUnit : Unit
             //The last tile we move to will determine the cover value
             if (unitAction.IsType(typeof(UnitActionMove)))
             {
-                isCover = Map.MapGrid.CheckIfCovered(GetNearestTarget(enemyAction.Tile, hostileUnits).Tile, enemyAction.Tile);
+                isCover = Map.MapGrid.CheckIfCovered(GetNearestTarget(enemyAction.Tile, hostileUnits).objectTile, enemyAction.Tile);
                 //Update the tile we do calculations with
                 unitTile = enemyAction.Tile;
             }
 
             if (unitAction.IsType(typeof(UnitActionShoot)))
             {
+                if (!IsTargetInLineOfSight(unitTile, enemyAction.Tile)) continue;
                 numShots++;
                 //Calculated expected damage, if it would kill, etc.
                 float damage = CalculateExpectedDamage(enemyAction.ContextChar);
@@ -211,14 +212,18 @@ public class EnemyUnit : Unit
         //TODO: Replace best shoot target with enemy that would do highest expected damage or something
 
         //Make the unit approach the player
-        GetBestShootTarget(hostileUnits, Tile, out Unit shootTarget, out _);
+        GetBestShootTarget(hostileUnits, objectTile, out Unit shootTarget, out _);
 
         int oldDist, newDist = 0;
 
         if (shootTarget)
         {
-            oldDist = Map.MapGrid.GetTileDistance(Tile, shootTarget.Tile);
-            newDist = Map.MapGrid.GetTileDistance(unitTile, shootTarget.Tile);
+            oldDist = Map.MapGrid.GetTileDistance(objectTile, shootTarget.objectTile);
+            newDist = Map.MapGrid.GetTileDistance(unitTile, shootTarget.objectTile);
+
+            // Note: More accurate calculation, but currently way too slow
+            // oldDist = objectTile.GetMovementCost(shootTarget.objectTile).Count;
+            // newDist = unitTile.GetMovementCost(shootTarget.objectTile).Count;
             numTilesCloserToBestShootTarget = oldDist - newDist;
         }
 
@@ -233,6 +238,13 @@ public class EnemyUnit : Unit
         }
 
         return actionValue;
+    }
+
+    private bool IsTargetInLineOfSight(Tile unitTile, Tile targetTile)
+    {
+        List<Tile> lineOfSightPath = Map.MapGrid.GetLineOfSightPath(unitTile, targetTile);
+        if (lineOfSightPath.Count > 0) return true;
+        return false;
     }
 
     private float CalculateActionValue(EnemyAction action)
@@ -250,13 +262,13 @@ public class EnemyUnit : Unit
     private EnemyAction CreateNoneAction()
     {
         UnitAction noneAction = FindActionOfType(typeof(UnitActionWait));
-        return new EnemyAction(noneAction, Tile, null, null);
+        return new EnemyAction(noneAction, objectTile, null, null);
     }
 
     private EnemyAction CreateReloadAction()
     {
         UnitAction reloadAction = FindActionOfType(typeof(UnitActionReload));
-        return new EnemyAction(reloadAction, Tile, null, null);
+        return new EnemyAction(reloadAction, objectTile, null, null);
     }
 
     private EnemyAction CreateShootAction(Unit contextChar, Tile unitTile)
@@ -272,7 +284,7 @@ public class EnemyUnit : Unit
 
         foreach (Tile nextTile in tilesInRange)
         {
-            if (nextTile == Tile)
+            if (nextTile == objectTile)
                 continue;
 
             EnemyAction action = CreateMoveAction(nextTile);
@@ -429,7 +441,7 @@ public class EnemyUnit : Unit
 
         foreach (Tile tile in tilesInRange)
         {
-            if (tile == Tile)
+            if (tile == objectTile)
                 continue;
 
             GetBestShootTarget(hostileUnits, tile, out Unit bestTarget, out float expectedDamage);
@@ -509,11 +521,11 @@ public class EnemyUnit : Unit
         //Get Shoot Action value
         List<EnemyAction> actions = new();
 
-        GetBestShootTarget(hostileUnits, Tile, out Unit shootTarget, out _);
+        GetBestShootTarget(hostileUnits, objectTile, out Unit shootTarget, out _);
 
         if (shootTarget != null)
         {
-            EnemyAction shootAction = CreateShootAction(shootTarget, Tile);
+            EnemyAction shootAction = CreateShootAction(shootTarget, objectTile);
             actions.Add(shootAction);
         }
 

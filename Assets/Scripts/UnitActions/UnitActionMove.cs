@@ -57,7 +57,7 @@ public class UnitActionMove : UnitAction
         if (IsActionStage(0))
         {
             MoveData.SetDestination(_movePath[^1]);
-            Unit.Tile.Occupant = null;
+            Unit.objectTile.Occupant = null;
             Unit.SetAnimatorBool("moving", true);
             NextActionStage();
         }
@@ -86,7 +86,7 @@ public class UnitActionMove : UnitAction
         {
             if (Vector3.Distance(Unit.transform.position, MoveData.Immediate.StandPoint) <= 0.01)
             {
-                Unit.Tile = MoveData.Immediate;
+                Unit.objectTile = MoveData.Immediate;
                 NextActionStage();
             }
         }
@@ -107,7 +107,7 @@ public class UnitActionMove : UnitAction
     {
         // Returns true/false is destination is pathable
 
-        List<Tile> movePath = Unit.Tile.GetMovementCost(tile);
+        List<Tile> movePath = Unit.objectTile.GetMovementCost(tile);
 
         // If tile is unreachable, return false
         if (movePath.Count == 0 || !tile.IsTraversable || tile.Occupant)

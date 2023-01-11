@@ -122,10 +122,10 @@ public class UnitActor
         else if (_unit.CurrentCover && !_unit.IsActing())
         {
             // Get which the direction the cover is relative to the tile
-            Vector3 lookDirection = (_unit.CurrentCover.transform.position - _unit.Tile.transform.position);
+            Vector3 lookDirection = (_unit.CurrentCover.transform.position - _unit.objectTile.transform.position);
 
             // Add the direction to the tile world space position to get a world space point to look at
-            lookDirection += _unit.Tile.transform.position;
+            lookDirection += _unit.objectTile.transform.position;
 
             // Remove vertical position for a flat lookat point
             lookDirection = new Vector3(lookDirection.x, 0f, lookDirection.z);
@@ -138,7 +138,7 @@ public class UnitActor
     {
         // Gets either the full or partial movement path to tile
 
-        List<Tile> movePath = _unit.Tile.GetMovementCost(tile);
+        List<Tile> movePath = _unit.objectTile.GetMovementCost(tile);
         UnitAction unitAction = FindActionOfType(typeof(UnitActionMove));
 
         // If we don't have enough AP to move, return null

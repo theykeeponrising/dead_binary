@@ -34,7 +34,7 @@ public abstract class DamageItem : Item
         CreateItemEffect();
         
         // Use on unit if possible, otherwise on empty tile
-        Tile targetedTile = targetedUnit ? targetedUnit.Tile : Map.MapGrid.GetTile(targetPosition);
+        Tile targetedTile = targetedUnit ? targetedUnit.objectTile : Map.MapGrid.GetTile(targetPosition);
 
         foreach (Unit unit in Tile.GetTileOccupants(Tile.GetAreaOfEffect(targetedTile, areaOfEffect)))
         {

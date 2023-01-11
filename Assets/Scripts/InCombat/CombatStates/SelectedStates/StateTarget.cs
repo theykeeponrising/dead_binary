@@ -112,9 +112,15 @@ public class StateTarget : StateCancel
         {
             List<Unit> units = Map.FindUnits(targetFaction);
 
+            // Iterates through enemy faction units, and adds them if they are
+            // Alive, In Range, and within the line of sight
             foreach (Unit unit in units)
-                if (unit.Stats.HealthCurrent > 0 && TargetInRange(t.selectedCharacter, unit))
+                if (unit.Stats.HealthCurrent > 0 &&
+                    TargetInRange(t.selectedCharacter, unit) &&
+                    t.selectedCharacter.IsTargetInLineOfSight(unit))
+                {
                     targets.Add(unit);
+                }
         }
 
         //Find closest Target

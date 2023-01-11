@@ -4,7 +4,13 @@ using UnityEngine.EventSystems;
 
 public class EmptyTile : Tile
 {
-    protected override void Start() {}
+    protected override void Start()
+    {
+        FindAdjacentTiles();
+        FindCoverObjects();
+    }
+
+    public override bool IsTraversable => false;
 
     public override bool CheckIfTileOccupant(GridObject gridObj)
     {

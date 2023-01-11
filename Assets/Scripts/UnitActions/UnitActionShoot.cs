@@ -105,7 +105,7 @@ public class UnitActionShoot : UnitTargetAction
 
     private void CheckTargetHit()
     {
-        int distanceToTarget = Unit.Tile.GetMovementCost(TargetUnit.Tile, 15).Count;
+        int distanceToTarget = Unit.objectTile.GetMovementCost(TargetUnit.objectTile, 15).Count;
         TargetHit = Unit.RollForHit(distanceToTarget);
     }
 

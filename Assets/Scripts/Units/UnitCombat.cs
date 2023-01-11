@@ -12,7 +12,7 @@ class UnitCombat
     private bool _inCombat = false;
 
     private Weapon EquippedWeapon { get { return _unit.EquippedWeapon; } }
-    private Tile UnitTile { get { return _unit.Tile; } }
+    private Tile UnitTile { get { return _unit.objectTile; } }
 
     public Unit TargetUnit { get { return _targetUnit; } set { _targetUnit = value; } }
     public List<Unit> PotentialTargets { get { return _potentialTargets; } set { _potentialTargets = value; } }
@@ -133,7 +133,7 @@ class UnitCombat
         Unit closestUnit = targets[0];
         foreach (Unit target in targets)
         {
-            float tileDist = Map.MapGrid.GetTileDistance(unitTile, target.Tile);
+            float tileDist = Map.MapGrid.GetTileDistance(unitTile, target.objectTile);
             if (tileDist < minDistance)
             {
                 minDistance = tileDist;
@@ -147,7 +147,7 @@ class UnitCombat
     {
         // Calculate hit chance from the attacker's perspective
 
-        int distance = Map.MapGrid.GetTileDistance(UnitTile, _targetUnit.Tile);
+        int distance = Map.MapGrid.GetTileDistance(UnitTile, _targetUnit.objectTile);
         float weaponAccuracyModifier = EquippedWeapon.Stats.BaseAccuracyModifier;
         float weaponAccuracyPenalty = EquippedWeapon.GetAccuracyPenalty(distance);
 
@@ -155,7 +155,7 @@ class UnitCombat
         float hitModifier = GlobalManager.globalHit + _unit.Stats.Aim - _targetUnit.Stats.Dodge - weaponAccuracyPenalty;
 
         // Add cover bonus if not being flanked
-        if (_targetUnit.CurrentCover && Map.MapGrid.CheckIfCovered(UnitTile, _targetUnit.Tile))
+        if (_targetUnit.CurrentCover && Map.MapGrid.CheckIfCovered(UnitTile, _targetUnit.objectTile))
             hitModifier -= _targetUnit.CurrentCover.GetCoverBonus();
 
         float hitChance = weaponAccuracyModifier * hitModifier;
@@ -166,7 +166,7 @@ class UnitCombat
     {
         // Calculate hit chance from the attacker's perspective
 
-        int distance = Map.MapGrid.GetTileDistance(UnitTile, sampleUnit.Tile);
+        int distance = Map.MapGrid.GetTileDistance(UnitTile, sampleUnit.objectTile);
         float weaponAccuracyModifier = EquippedWeapon.Stats.BaseAccuracyModifier;
         float weaponAccuracyPenalty = EquippedWeapon.GetAccuracyPenalty(distance);
 
@@ -174,7 +174,7 @@ class UnitCombat
         float hitModifier = GlobalManager.globalHit + _unit.Stats.Aim - sampleUnit.Stats.Dodge - weaponAccuracyPenalty;
 
         // Add cover bonus if not being flanked
-        if (sampleUnit.CurrentCover && Map.MapGrid.CheckIfCovered(UnitTile, sampleUnit.Tile))
+        if (sampleUnit.CurrentCover && Map.MapGrid.CheckIfCovered(UnitTile, sampleUnit.objectTile))
             hitModifier -= sampleUnit.CurrentCover.GetCoverBonus();
 
         float hitChance = weaponAccuracyModifier * hitModifier;
@@ -287,6 +287,34 @@ class UnitCombat
         }
 
         return unitsInRange;
+    }
+
+    public List<Unit> GetTargetsInLineOfSight<TargetType>()
+    {
+        List<Unit> targets = new List<Unit>();
+        if (typeof(TargetType) == typeof(Unit))
+        {
+            List<Unit> units = GetHostileUnits();
+
+            // Iterates through enemy faction units, and adds them if they are
+            // Alive, In Range, and within the line of sight
+            foreach (Unit target in units)
+                if (target.Stats.HealthCurrent > 0 &&
+                    IsTargetInLineOfSight(target))
+                {
+                    targets.Add(target);
+                }
+        }
+        return targets;
+    }
+
+    public bool IsTargetInLineOfSight(Unit target)
+    {
+        Tile startTile = UnitTile;
+        Tile endTile = target.objectTile;
+        List<Tile> lineOfSightPath = Map.MapGrid.GetLineOfSightPath(startTile, endTile);
+        if (lineOfSightPath.Count > 0) return true;
+        return false;
     }
 
     private void AlertFriendliesInRange()

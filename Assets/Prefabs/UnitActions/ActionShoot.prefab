@@ -44,14 +44,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3739ed61f3b42dc4b892c9c478673a8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  actionRequirements: 0100000002000000
-  _actionRequirements: 0100000002000000
-  _actionSprite: 2
   _actionName: Shoot
   _actionDescription: Open fire with the currently equipped weapon
   _actionCost: 1
   _actionCooldown: 0
   _actionCooldownRemaining: 0
+  _actionRequirements: 010000000200000005000000
+  _actionSprite: 2
   BufferStart: 1
   BufferEnd: 1
   _useCharacterCamera: 1

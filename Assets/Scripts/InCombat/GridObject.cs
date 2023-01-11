@@ -7,7 +7,7 @@ public class GridObject : MonoBehaviour
     [HideInInspector] public List<Tile> objectTiles;
     public bool isTraversable = false;
     public ImpactTypes impactType;
-    public Tile Tile;
+    public Tile objectTile;
 
     protected virtual void Awake()
     {
