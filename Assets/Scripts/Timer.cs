@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class Timer
 {
-    readonly float _timerLength;
-    float _timeRemaining;
+    private readonly float _timerLength;
+    private float _timeRemaining;
 
     public Timer(float startValue=0f)
     {
@@ -47,5 +47,10 @@ public class Timer
         // Sets the timer without the need for a new timer object
 
         _timeRemaining = newValue;
+    }
+
+    public float TimeRemaining()
+    {
+        return _timeRemaining;
     }
 }

@@ -248,6 +248,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 668c3b4e278763b4faf86cbda3acdd45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _alwaysDetach: 0
 --- !u!1 &698456666404836839
 GameObject:
   m_ObjectHideFlags: 0
@@ -1142,6 +1143,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 668c3b4e278763b4faf86cbda3acdd45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _alwaysDetach: 0
 --- !u!1 &2402711211160181542
 GameObject:
   m_ObjectHideFlags: 0
@@ -1952,6 +1954,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 668c3b4e278763b4faf86cbda3acdd45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _alwaysDetach: 0
 --- !u!1 &3267443430675030849
 GameObject:
   m_ObjectHideFlags: 0
@@ -2108,6 +2111,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 668c3b4e278763b4faf86cbda3acdd45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _alwaysDetach: 0
 --- !u!1 &3351028461802872328
 GameObject:
   m_ObjectHideFlags: 0
@@ -3403,6 +3407,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 668c3b4e278763b4faf86cbda3acdd45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _alwaysDetach: 0
 --- !u!1 &6417455661195667484
 GameObject:
   m_ObjectHideFlags: 0
@@ -3767,6 +3772,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 668c3b4e278763b4faf86cbda3acdd45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _alwaysDetach: 0
 --- !u!1 &6786033328666332332
 GameObject:
   m_ObjectHideFlags: 0
@@ -4519,6 +4525,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 668c3b4e278763b4faf86cbda3acdd45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _alwaysDetach: 0
 --- !u!1 &8764790471579469705
 GameObject:
   m_ObjectHideFlags: 0
@@ -4788,6 +4795,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 668c3b4e278763b4faf86cbda3acdd45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _alwaysDetach: 0
 --- !u!1 &8947547231903706005
 GameObject:
   m_ObjectHideFlags: 0
@@ -4943,6 +4951,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 668c3b4e278763b4faf86cbda3acdd45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _alwaysDetach: 0
 --- !u!1001 &5943825160526194010
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5438,7 +5447,7 @@ MonoBehaviour:
   objectTiles: []
   isTraversable: 0
   impactType: 1
-  Tile: {fileID: 0}
+  objectTile: {fileID: 0}
   _unitActions: []
   Stats:
     HealthCurrent: 10
@@ -5459,6 +5468,7 @@ MonoBehaviour:
     UnitPortrait: {fileID: 0}
     UnitVoice: 0
     UnitVoicePitch: 1
+    UnitDeathType: 1
     UseTorsoTwist: 1
   _enemyPatrol: {fileID: 0}
 --- !u!4 &4732323010971060870 stripped

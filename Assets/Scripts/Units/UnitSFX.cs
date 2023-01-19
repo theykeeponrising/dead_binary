@@ -66,7 +66,7 @@ public class UnitSFX
         PlayOneShot(throwSound);
     }
 
-    public void Event_PlaySound(AnimationType sound)
+    public void PlaySound(AnimationType sound)
     {
         switch (sound)
         {
@@ -90,5 +90,14 @@ public class UnitSFX
                 break;
         }
         return;
+    }
+
+    public void PlayDeathSound()
+    {
+        if (Attributes.UnitDeathType == DeathType.NONE)
+            return;
+
+        AudioClip deathSound = AudioManager.GetSound(Attributes.UnitDeathType);
+        PlayOneShot(deathSound);
     }
 }
