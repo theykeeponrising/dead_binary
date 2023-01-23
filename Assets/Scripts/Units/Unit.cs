@@ -296,7 +296,10 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     { _unitAnimator.SetAnimationSpeed(animationSpeed); }
 
     public void PlaySound(AnimationType soundType)
-    { _unitSFX.Event_PlaySound(soundType); }
+    { _unitSFX.PlaySound(soundType); }
+
+    public void PlayDeathSound()
+    { _unitSFX.PlayDeathSound(); }
 
     private void GenerateActions()
     {
@@ -449,6 +452,8 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
         if (EquippedWeapon)
             EquippedWeapon.DropGun();
 
+        PlayDeathSound();
+
         // Display message
         if (attacker.Attributes.Faction == FactionManager.ACS)
             UIManager.GetTurnIndicator().SetTurnIndicatorMessage(MessageType.PV_DEATH);
@@ -470,6 +475,7 @@ public class UnitAttributes
     public UnitPortrait UnitPortrait;
     public DialogVoice UnitVoice;
     [Range(0.01f, 3f)] public float UnitVoicePitch = 1f;
+    public DeathType UnitDeathType;
     public bool UseTorsoTwist;
 }
 

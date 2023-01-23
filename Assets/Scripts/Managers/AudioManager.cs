@@ -25,6 +25,7 @@ public class AudioManager : MonoBehaviour
 
     [SerializeField] private SFXAmbience Ambience;
     [SerializeField] private SFXAnimations Animation;
+    [SerializeField] private SFXDeath Death;
     [SerializeField] private SFXFootsteps Footstep;
     [SerializeField] private SFXImpact Impact;
     [SerializeField] private SFXInterface Interface;
@@ -128,4 +129,8 @@ public class AudioManager : MonoBehaviour
     // Dialog
     public static AudioClip GetSound(DialogVoice soundType)
     { return Instance.Dialog.GetSound(soundType); }
+
+    // Death
+    public static AudioClip GetSound(DeathType soundType)
+    { return Instance.Death.GetSound(soundType); }
 }
