@@ -660,7 +660,7 @@ MonoBehaviour:
   objectTiles: []
   isTraversable: 0
   impactType: 1
-  Tile: {fileID: 0}
+  objectTile: {fileID: 0}
   _unitActions: []
   Stats:
     HealthCurrent: 5
@@ -681,6 +681,7 @@ MonoBehaviour:
     UnitPortrait: {fileID: 0}
     UnitVoice: 0
     UnitVoicePitch: 1
+    UnitDeathType: 2
     UseTorsoTwist: 0
   _enemyPatrol: {fileID: 0}
 --- !u!114 &7019442017901158818

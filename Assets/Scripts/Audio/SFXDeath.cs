@@ -10,12 +10,14 @@ using UnityEngine;
 public class SFXDeath
 {
     [SerializeField] private AudioClip[] _deathScrapbot;
+    [SerializeField] private AudioClip[] _deathDrone;
 
     private Dictionary<DeathType, AudioClip[]> GetDict()
     {
         var dict = new Dictionary<DeathType, AudioClip[]>
         {
             {DeathType.SCRAPBOT, _deathScrapbot },
+            {DeathType.DRONE, _deathDrone },
         };
         return dict;
     }
@@ -38,4 +40,4 @@ public class SFXDeath
     }
 }
 
-public enum DeathType { NONE, SCRAPBOT };
+public enum DeathType { NONE, SCRAPBOT, DRONE };
