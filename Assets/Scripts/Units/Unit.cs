@@ -50,14 +50,14 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
         base.Awake();
         this.name = string.Format("{0} (Character)", Attributes.Name);
 
-        _audioSource = GetComponent<AudioSource>();
+        _audioSource = GetComponents<AudioSource>()[0];
         _rigidbody = GetComponent<Rigidbody>();
         _colliders = GetComponents<Collider>();
         _actionsContainer = transform.Find("Actions");
 
         _unitActor = new UnitActor(this);
         _unitAnimator = new UnitAnimator(this);
-        _unitSFX = new UnitSFX(this, _audioSource);
+        _unitSFX = new UnitSFX(this);
         _unitCombat = new UnitCombat(this);
 
         _inventory = GetComponentInChildren<Inventory>();
@@ -298,8 +298,20 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
     public void PlaySound(AnimationType soundType)
     { _unitSFX.PlaySound(soundType); }
 
+    public void PlaySound(AudioClip audioClip)
+    { _unitSFX.PlaySound(audioClip); }
+
+    public void StopSound()
+    { _unitSFX.StopSound(); }
+
+    public void StopSoundLoop()
+    { _unitSFX.StopSoundLoop(); }
+
     public void PlayDeathSound()
     { _unitSFX.PlayDeathSound(); }
+
+    public void PlayIdleSound()
+    { _unitSFX.PlayIdleSound(); }
 
     private void GenerateActions()
     {
@@ -453,6 +465,7 @@ public class Unit : GridObject, IPointerEnterHandler, IPointerExitHandler
             EquippedWeapon.DropGun();
 
         PlayDeathSound();
+        StopSoundLoop();
 
         // Display message
         if (attacker.Attributes.Faction == FactionManager.ACS)
@@ -476,6 +489,7 @@ public class UnitAttributes
     public DialogVoice UnitVoice;
     [Range(0.01f, 3f)] public float UnitVoicePitch = 1f;
     public DeathType UnitDeathType;
+    public IdleType UnitIdleType;
     public bool UseTorsoTwist;
 }
 

@@ -22,6 +22,7 @@ public class UnitActor
     public void Update()
     {
         Movement();
+        Idle();
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -181,6 +182,14 @@ public class UnitActor
         }
 
         UIManager.GetDialogPanel().UnitTalk(_unit, dialog);
+    }
+
+    private void Idle()
+    {
+        if (_unit.IsDead())
+            return;
+
+        _unit.PlayIdleSound();
     }
 }
 
