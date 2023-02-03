@@ -13,6 +13,9 @@ public class StatusMenuUI : MonoBehaviour
     public PlayerInput playerInput;
     public bool shouldQuit;
 
+    //Used by PlayerTurnState to check if SetStateActive is coming from Status Menu
+    public static bool ISSTATUS = false;
+
     void Awake()
     {
         playerInput = new PlayerInput();
@@ -45,7 +48,9 @@ public class StatusMenuUI : MonoBehaviour
 
         if (playerInput.Controls.InputCancel.triggered || playerInput.Controls.InputMenu.triggered)
         {
+            ISSTATUS = true;
             statusMenuState.ChangeState(StateHandler.State.CombatState);
+            ISSTATUS = false;
             keyPressed = true;
         }
 
