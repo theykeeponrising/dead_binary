@@ -71,10 +71,15 @@ public class PlayerTurnState : GameState
 
     public override void SetStateActive()
     {
-        FactionManager.PV.StartTurn();
         base.SetStateActive();
         playerAction.EnablePlayerInput();
-        playerAction.StartTurn();
+
+        //If coming from Esc/Status Menu, do NOT restart turn.
+        if (StatusMenuUI.ISSTATUS == false)
+        {
+            FactionManager.PV.StartTurn();
+            playerAction.StartTurn();
+        }
     }
 
     public override void SetStateInactive()
