@@ -10,12 +10,15 @@ using UnityEngine;
 public class SFXDeath
 {
     [SerializeField] private AudioClip[] _deathScrapbot;
+    [SerializeField] private AudioClip[] _deathDrone;
 
     private Dictionary<DeathType, AudioClip[]> GetDict()
     {
         var dict = new Dictionary<DeathType, AudioClip[]>
         {
+            {DeathType.NONE, null },
             {DeathType.SCRAPBOT, _deathScrapbot },
+            {DeathType.DRONE, _deathDrone },
         };
         return dict;
     }
@@ -23,6 +26,9 @@ public class SFXDeath
     public AudioClip GetSound(DeathType animationSFX, int index)
     {
         // Returns a specific sound for the provided type and index
+
+        if (animationSFX == DeathType.NONE)
+            return null;
 
         var dict = GetDict();
         return dict[animationSFX][index];
@@ -32,10 +38,13 @@ public class SFXDeath
     {
         // Returns a random sound for the provided type
 
+        if (animationSFX == DeathType.NONE)
+            return null;
+
         var dict = GetDict();
         int range = dict[animationSFX].Length;
         return dict[animationSFX][Random.Range(0, range)];
     }
 }
 
-public enum DeathType { NONE, SCRAPBOT };
+public enum DeathType { NONE, SCRAPBOT, DRONE };

@@ -19,18 +19,20 @@ public class AudioManager : MonoBehaviour
     public AudioClip OSTRestInTheShadows;
     public AudioClip OSTRestInTheShadowsCombat;
 
-        /////////////////
+    /////////////////
     // SFX Classes //
     /////////////////
 
     [SerializeField] private SFXAmbience Ambience;
     [SerializeField] private SFXAnimations Animation;
     [SerializeField] private SFXDeath Death;
+    [SerializeField] private SFXDialog Dialog;
     [SerializeField] private SFXFootsteps Footstep;
+    [SerializeField] private SFXIdle Idle;
     [SerializeField] private SFXImpact Impact;
     [SerializeField] private SFXInterface Interface;
     [SerializeField] private SFXItems Items;
-    [SerializeField] private SFXDialog Dialog;
+
 
     private void Awake()
     {
@@ -61,6 +63,7 @@ public class AudioManager : MonoBehaviour
     public void PlayMusic(AudioClip audioClip, AudioClip audioClipCombat)
     {
         // Plays provided music clip
+        // Switches between combat and non-combat tracks
 
         if (!_playMusic) return;
 
@@ -72,6 +75,8 @@ public class AudioManager : MonoBehaviour
 
     private void CombatMusicTransition()
     {
+        // Gradually transitions volume between combat and non-combat audio sources
+
         if (_player.InCombat())
         {
             _audioSources[1].volume = Mathf.Lerp(_audioSources[1].volume, _musicVolumeTarget, Time.deltaTime / _musicTransitionTime);
@@ -133,4 +138,8 @@ public class AudioManager : MonoBehaviour
     // Death
     public static AudioClip GetSound(DeathType soundType)
     { return Instance.Death.GetSound(soundType); }
+
+    // Idle
+    public static AudioClip GetSound(IdleType soundType)
+    { return Instance.Idle.GetSound(soundType); }
 }

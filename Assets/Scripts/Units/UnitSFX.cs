@@ -6,15 +6,17 @@ public class UnitSFX
 {
     private readonly Unit _unit;
     private readonly AudioSource _audioSource;
+    private readonly AudioSource _audioSourceLoop;
     private readonly FootstepData _footstepData;
     private readonly Dictionary<AnimationType, AudioSource> _bodyAudioSources = new();
 
     private UnitAttributes Attributes { get { return _unit.Attributes; } }
 
-    public UnitSFX(Unit unit, AudioSource audioSource)
+    public UnitSFX(Unit unit)
     {
         _unit = unit;
-        _audioSource = audioSource;
+        _audioSource = unit.GetComponents<AudioSource>()[0];
+        _audioSourceLoop = unit.GetComponents<AudioSource>()[1];
         _footstepData = new FootstepData(unit);
 
         GetFootsteps();
@@ -34,36 +36,39 @@ public class UnitSFX
         }
     }
 
-    private void PlayOneShot(AudioClip clip)
-    {
-        _audioSource.PlayOneShot(clip);
-    }
+    public void StopSound()
+    { _audioSource.Stop(); }
 
-    private void PlayFootstepSound(AnimationType whichFoot)
-    {
-        // Plays a random footstep sound based on tile data
-
-        AudioClip footstep = AudioManager.GetSound(_footstepData);
-        AudioSource footAudioSource = _bodyAudioSources[whichFoot];
-
-        // Prevent overlapping footstep sounds from the same foot
-        if (!footAudioSource.isPlaying)
-            footAudioSource.Stop();
-        
-        if (_unit.MoveData.Velocity.z > 0.75f)
-            footAudioSource.PlayOneShot(footstep);
-    }
+    public void StopSoundLoop()
+    { _audioSourceLoop.Stop(); }
 
     public void PlayImpactSound()
-    {
-        AudioClip impactSound = AudioManager.GetSound(_unit.impactType);
-        PlayOneShot(impactSound);
-    }
+    { PlaySound(AudioManager.GetSound(_unit.impactType)); }
 
     public void PlayRandomAnimationSound(AnimationType sound)
+    { PlaySound(AudioManager.GetSound(sound)); }
+
+    public void PlayIdleSound()
+    { PlaySoundLoop(AudioManager.GetSound(Attributes.UnitIdleType)); }
+
+    public void PlayDeathSound()
+    { PlaySound(AudioManager.GetSound(Attributes.UnitDeathType)); }
+
+    public void PlaySound(AudioClip clip)
     {
-        AudioClip throwSound = AudioManager.GetSound(sound);
-        PlayOneShot(throwSound);
+        if (clip)
+        {
+            _audioSource.PlayOneShot(clip);
+        }
+    }
+
+    public void PlaySoundLoop(AudioClip clip)
+    {
+        if (!_audioSourceLoop.isPlaying)
+        {
+            _audioSourceLoop.clip = clip;
+            _audioSourceLoop.Play();
+        }
     }
 
     public void PlaySound(AnimationType sound)
@@ -92,12 +97,18 @@ public class UnitSFX
         return;
     }
 
-    public void PlayDeathSound()
+    private void PlayFootstepSound(AnimationType whichFoot)
     {
-        if (Attributes.UnitDeathType == DeathType.NONE)
-            return;
+        // Plays a random footstep sound based on tile data
 
-        AudioClip deathSound = AudioManager.GetSound(Attributes.UnitDeathType);
-        PlayOneShot(deathSound);
+        AudioClip footstep = AudioManager.GetSound(_footstepData);
+        AudioSource footAudioSource = _bodyAudioSources[whichFoot];
+
+        // Prevent overlapping footstep sounds from the same foot
+        if (!footAudioSource.isPlaying)
+            footAudioSource.Stop();
+
+        if (_unit.MoveData.Velocity.z > 0.75f)
+            footAudioSource.PlayOneShot(footstep);
     }
 }
