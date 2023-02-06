@@ -195,7 +195,7 @@ public class EnemyUnit : Unit
 
             if (unitAction.IsType(typeof(UnitActionShoot)))
             {
-                if (!IsTargetInLineOfSight(unitTile, enemyAction.Tile)) continue;
+                if (!IsTargetInLineOfSight(unitTile, enemyAction.ContextChar.objectTile)) continue;
                 numShots++;
                 //Calculated expected damage, if it would kill, etc.
                 float damage = CalculateExpectedDamage(enemyAction.ContextChar);
@@ -218,8 +218,8 @@ public class EnemyUnit : Unit
 
         if (shootTarget)
         {
-            oldDist = Map.MapGrid.GetTileDistance(objectTile, shootTarget.objectTile);
-            newDist = Map.MapGrid.GetTileDistance(unitTile, shootTarget.objectTile);
+            oldDist = Mathf.Max(Map.MapGrid.GetTileDistance(objectTile, shootTarget.objectTile) - Inventory.EquippedWeapon.GetMinimumRange(), 0);
+            newDist = Mathf.Max(Map.MapGrid.GetTileDistance(unitTile, shootTarget.objectTile) - Inventory.EquippedWeapon.GetMinimumRange(), 0);
 
             // Note: More accurate calculation, but currently way too slow
             // oldDist = objectTile.GetMovementCost(shootTarget.objectTile).Count;
