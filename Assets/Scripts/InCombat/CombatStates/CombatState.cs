@@ -17,6 +17,9 @@ public class CombatState : GameState
         this.substates = new List<GameState> {
             new PlayerTurnState(),
             new EnemyTurnState(),
+            new StatusMenuState(),
+            new GameOverState(),
+            new GameWinState(),
         };
 
         foreach (GameState gameState in substates) {
@@ -29,5 +32,36 @@ public class CombatState : GameState
     public override void Update() 
     {
         base.Update();
+    }
+
+    public void CheckGameConditions()
+    {
+        bool gameEnded = CheckGameWin();
+        if (!gameEnded) CheckGameOver();
+    }
+
+    public bool CheckGameOver()
+    {
+        GameOverState gameOverState = (GameOverState) StateHandler.Instance.GetStateObject(StateHandler.State.GameOverState);
+        bool gameOver = gameOverState.CheckGameOver();
+
+        if (gameOver)
+        {
+            this.activeSubState.ChangeState(StateHandler.State.GameOverState);
+            Debug.Log("Game Over.");
+        }
+        return gameOver;
+    }
+
+    public bool CheckGameWin()
+    {
+        GameWinState gameWinState = (GameWinState) StateHandler.Instance.GetStateObject(StateHandler.State.GameWinState);
+        bool gameWin = gameWinState.CheckGameWin();
+        if (gameWin) 
+        {
+            this.activeSubState.ChangeState(StateHandler.State.GameWinState);
+            Debug.Log("Map clear! Well done.");
+        }
+        return gameWin;
     }
 }

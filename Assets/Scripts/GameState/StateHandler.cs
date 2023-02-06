@@ -13,7 +13,9 @@ public class StateHandler: MonoBehaviour
         StatusMenuState,
         CombatState,
         PlayerTurnState,
-        EnemyTurnState
+        EnemyTurnState,
+        GameWinState,
+        GameOverState
     };
 
     public State activeState;

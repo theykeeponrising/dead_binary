@@ -152,6 +152,10 @@ public abstract class UnitAction : MonoBehaviour
         _actionPerforming = false;
         _actionStage = 0;
         Unit.CoverCrouch();
+
+        CombatState combatState = (CombatState) StateHandler.Instance.GetStateObject(StateHandler.State.CombatState);
+        combatState.CheckGameConditions();
+        
         Unit.PlayerAction.CheckTurnEnd();
     }
 
