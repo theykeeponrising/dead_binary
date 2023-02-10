@@ -111,7 +111,7 @@ abstract public class FiniteState<T>
     public virtual void InputTab(T t, bool shift)
     { Debug.Log("Tab has no function in this State. (" + StateName + ")"); }
     public virtual void InputCancel(T t)
-    { StateHandler.Instance.GetStateObject(StateHandler.State.CombatState).ChangeState(StateHandler.State.StatusMenuState); }
+    { StateHandler.Instance.GetStateObject(StateHandler.State.CombatState).ChangeSubState(StateHandler.State.StatusMenuState); }
 
     // Helper Functions
 

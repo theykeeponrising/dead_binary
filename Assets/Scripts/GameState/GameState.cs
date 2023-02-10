@@ -40,7 +40,17 @@ public abstract class GameState
 
     public virtual void ChangeState(StateHandler.State newStateEnum) {
         this.parentState.ChangeSubState(newStateEnum);
+    }
 
+    public bool IsChildStateOf(StateHandler.State otherState)
+    {
+        List<GameState> childStates = this.parentState.substates;
+        return childStates.Contains(this);
+    }
+
+    public List<GameState> GetSubStates()
+    {
+        return this.substates;
     }
 
     public virtual void HandleInput() {

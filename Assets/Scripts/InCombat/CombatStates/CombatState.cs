@@ -15,8 +15,7 @@ public class CombatState : GameState
         base.Init(parentState, stateHandler);
         this.stateEnum = StateHandler.State.CombatState;
         this.substates = new List<GameState> {
-            new PlayerTurnState(),
-            new EnemyTurnState(),
+            new TurnState(),
             new StatusMenuState(),
             new GameOverState(),
             new GameWinState(),
@@ -26,7 +25,7 @@ public class CombatState : GameState
             gameState.Init(this, stateHandler);
         }
 
-        this.activeSubState = FindSubState(StateHandler.State.PlayerTurnState);
+        this.activeSubState = FindSubState(StateHandler.State.TurnState);
     }
 
     public override void Update() 
