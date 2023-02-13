@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6211419823786417833}
   - component: {fileID: 8848617526508433353}
   - component: {fileID: 2817195221360451341}
-  - component: {fileID: 909961950153340012}
+  - component: {fileID: 8163677281597779460}
   m_Layer: 0
   m_Name: Bone.Neck
   m_TagString: Untagged
@@ -64,7 +64,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: 0, z: 0}
+  m_ConnectedAnchor: {x: 3.5527137e-15, y: 0.18506666, z: -0.00000007450582}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -98,8 +98,8 @@ CharacterJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!136 &909961950153340012
-CapsuleCollider:
+--- !u!64 &8163677281597779460
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -108,10 +108,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.05
-  m_Height: 0.1
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.02, z: -0.01}
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: b9c3221664f222d49bb20de56e219fa4, type: 2}
 --- !u!1 &252664882761043799
 GameObject:
   m_ObjectHideFlags: 0
@@ -123,7 +123,7 @@ GameObject:
   - component: {fileID: 6011844133497738694}
   - component: {fileID: 856339536328129335}
   - component: {fileID: 1186777878665737411}
-  - component: {fileID: 3236105770375358203}
+  - component: {fileID: 9003604480293148712}
   m_Layer: 0
   m_Name: Bone.UpperArm.L
   m_TagString: Untagged
@@ -175,7 +175,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: 0, z: 0}
+  m_ConnectedAnchor: {x: -0.00000017369166, y: 0.14019197, z: -0.0000003017485}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -209,8 +209,8 @@ CharacterJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!136 &3236105770375358203
-CapsuleCollider:
+--- !u!64 &9003604480293148712
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -219,10 +219,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.05
-  m_Height: 0.3
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.1, z: 0}
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: e166f756960637b4f947534f4536ff73, type: 2}
 --- !u!1 &334961043585970719
 GameObject:
   m_ObjectHideFlags: 0
@@ -232,6 +232,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3992310026983445588}
+  - component: {fileID: 6521117233981071142}
   m_Layer: 0
   m_Name: Bone.LowerLip.001.L
   m_TagString: Untagged
@@ -254,6 +255,20 @@ Transform:
   m_Father: {fileID: 480935865105371949}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &6521117233981071142
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 334961043585970719}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: b03d525fcc54dc543a1a6457a90635bd, type: 2}
 --- !u!1 &340507189093187719
 GameObject:
   m_ObjectHideFlags: 0
@@ -263,6 +278,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 150345554854360320}
+  - component: {fileID: 3176773975742670637}
   m_Layer: 0
   m_Name: Bone.Thumb.001.L
   m_TagString: Untagged
@@ -286,6 +302,20 @@ Transform:
   m_Father: {fileID: 6391644251304176645}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &3176773975742670637
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 340507189093187719}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 9660f112af24d3d4082c0ab3ee52e2e9, type: 2}
 --- !u!1 &358047583650292418
 GameObject:
   m_ObjectHideFlags: 0
@@ -295,6 +325,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3053351503158509709}
+  - component: {fileID: 4092368486758080893}
   m_Layer: 0
   m_Name: Bone.HairFrill.001.L
   m_TagString: Untagged
@@ -318,6 +349,20 @@ Transform:
   m_Father: {fileID: 7573983174246167798}
   m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &4092368486758080893
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 358047583650292418}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: c5eb99d36c0a7184cac08727b2ef07bc, type: 2}
 --- !u!1 &360157117469118027
 GameObject:
   m_ObjectHideFlags: 0
@@ -329,7 +374,7 @@ GameObject:
   - component: {fileID: 4542200645089486443}
   - component: {fileID: 4230069450106175662}
   - component: {fileID: 7378297982668816032}
-  - component: {fileID: 2671765909257940522}
+  - component: {fileID: 2094369056403570924}
   - component: {fileID: 7190254669114404568}
   m_Layer: 0
   m_Name: Bone.Foot.R
@@ -416,8 +461,8 @@ CharacterJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!136 &2671765909257940522
-CapsuleCollider:
+--- !u!64 &2094369056403570924
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -426,10 +471,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.06
-  m_Height: 0.01
-  m_Direction: 1
-  m_Center: {x: -0.06, y: 0.06, z: 0}
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: c753853c9457cce41bfb6c74ec76a37d, type: 2}
 --- !u!82 &7190254669114404568
 AudioSource:
   m_ObjectHideFlags: 0
@@ -537,7 +582,7 @@ GameObject:
   - component: {fileID: 2856287231634584916}
   - component: {fileID: 2227891177937212916}
   - component: {fileID: 6126632199169582990}
-  - component: {fileID: 2440923897535709513}
+  - component: {fileID: 1201319991589507174}
   m_Layer: 0
   m_Name: Bone.Toes.L
   m_TagString: Untagged
@@ -622,8 +667,8 @@ CharacterJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!65 &2440923897535709513
-BoxCollider:
+--- !u!64 &1201319991589507174
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -632,9 +677,10 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.07, y: 0.15, z: 0.1}
-  m_Center: {x: -0.03, y: 0, z: 0}
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: bed5a2c956af9b7489fc1c48655b296e, type: 2}
 --- !u!1 &451696060636722673
 GameObject:
   m_ObjectHideFlags: 0
@@ -644,6 +690,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2223220518481416612}
+  - component: {fileID: 5717477682011663506}
   m_Layer: 0
   m_Name: Bone.IndexF.003.L
   m_TagString: Untagged
@@ -666,6 +713,20 @@ Transform:
   m_Father: {fileID: 4829189372689648340}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &5717477682011663506
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 451696060636722673}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 195f0df1d073b234c84876bf4e60257d, type: 2}
 --- !u!1 &677049002960623010
 GameObject:
   m_ObjectHideFlags: 0
@@ -708,7 +769,7 @@ GameObject:
   - component: {fileID: 7289792293634962984}
   - component: {fileID: 4468426855889956770}
   - component: {fileID: 2088496786956746812}
-  - component: {fileID: 8013372156647730015}
+  - component: {fileID: 4671306573404106770}
   m_Layer: 0
   m_Name: Bone.Ponytail.006
   m_TagString: Untagged
@@ -760,7 +821,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: 0, z: 0}
+  m_ConnectedAnchor: {x: -2.2133672e-11, y: 0.04646105, z: -0.000000029709778}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 0, z: 1}
   m_TwistLimitSpring:
@@ -794,8 +855,8 @@ CharacterJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!136 &8013372156647730015
-CapsuleCollider:
+--- !u!64 &4671306573404106770
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -804,10 +865,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.02
-  m_Height: 0
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 254a8f7d4d8493d42aee4656f3b03d47, type: 2}
 --- !u!1 &796323209288963501
 GameObject:
   m_ObjectHideFlags: 0
@@ -817,6 +878,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7912218611596807171}
+  - component: {fileID: 6669675990813553630}
   m_Layer: 0
   m_Name: Bone.MiddleF.001.L
   m_TagString: Untagged
@@ -840,6 +902,20 @@ Transform:
   m_Father: {fileID: 6391644251304176645}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &6669675990813553630
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 796323209288963501}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 7ddef1a565479e746ba2345180e27280, type: 2}
 --- !u!1 &924939640269004167
 GameObject:
   m_ObjectHideFlags: 0
@@ -880,6 +956,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 993006672779897018}
+  - component: {fileID: 7790383833173117023}
   m_Layer: 0
   m_Name: Bone.UpperLip.003.L
   m_TagString: Untagged
@@ -902,6 +979,20 @@ Transform:
   m_Father: {fileID: 7573983174246167798}
   m_RootOrder: 22
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &7790383833173117023
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 949485157420538928}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: e810df1fa6f0b3d49a17a26f803f6b93, type: 2}
 --- !u!1 &1008737668632392439
 GameObject:
   m_ObjectHideFlags: 0
@@ -911,6 +1002,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4940079447495097217}
+  - component: {fileID: 4029287883835852955}
   m_Layer: 0
   m_Name: Bone.MiddleF.003.L
   m_TagString: Untagged
@@ -933,6 +1025,20 @@ Transform:
   m_Father: {fileID: 5945722993137475964}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &4029287883835852955
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1008737668632392439}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 191baca4a328e0c478f5372b5808ae76, type: 2}
 --- !u!1 &1183957160175024486
 GameObject:
   m_ObjectHideFlags: 0
@@ -942,6 +1048,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 722754606444564254}
+  - component: {fileID: 6228642248866978689}
   m_Layer: 0
   m_Name: Bone.UpperLip.002.R
   m_TagString: Untagged
@@ -964,6 +1071,20 @@ Transform:
   m_Father: {fileID: 7573983174246167798}
   m_RootOrder: 21
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &6228642248866978689
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1183957160175024486}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: b4c6711d7be64004993a4dd41dc08f3f, type: 2}
 --- !u!1 &1186002366080456384
 GameObject:
   m_ObjectHideFlags: 0
@@ -973,6 +1094,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6182547290374423636}
+  - component: {fileID: 2149697088154214522}
   m_Layer: 0
   m_Name: Bone.LowerLip.003.L
   m_TagString: Untagged
@@ -995,6 +1117,20 @@ Transform:
   m_Father: {fileID: 480935865105371949}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &2149697088154214522
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1186002366080456384}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 2b62b674a40996c43911e229ba33e694, type: 2}
 --- !u!1 &1286056531066306234
 GameObject:
   m_ObjectHideFlags: 0
@@ -1004,6 +1140,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5342392205606128669}
+  - component: {fileID: 6222900450321502530}
   m_Layer: 0
   m_Name: Bone.HairFrill.003.L
   m_TagString: Untagged
@@ -1027,6 +1164,20 @@ Transform:
   m_Father: {fileID: 2939651043105780950}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &6222900450321502530
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1286056531066306234}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: f40edc5f2b87de648b0aeb0b83cdd6cb, type: 2}
 --- !u!1 &1496856652104140627
 GameObject:
   m_ObjectHideFlags: 0
@@ -1036,6 +1187,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2067090267421708491}
+  - component: {fileID: 7638156853294529332}
   m_Layer: 0
   m_Name: Bone.RingF.001.R
   m_TagString: Untagged
@@ -1059,6 +1211,20 @@ Transform:
   m_Father: {fileID: 548683910622295748}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &7638156853294529332
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1496856652104140627}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: bad964be35d4c2d4aafa43d24402e8c1, type: 2}
 --- !u!1 &1756088047806890685
 GameObject:
   m_ObjectHideFlags: 0
@@ -1068,6 +1234,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7217170808322663653}
+  - component: {fileID: 7560037156279600180}
   m_Layer: 0
   m_Name: Bone.Eyebrow.001.L
   m_TagString: Untagged
@@ -1090,6 +1257,20 @@ Transform:
   m_Father: {fileID: 7573983174246167798}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &7560037156279600180
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1756088047806890685}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: cf2e3f6e1b337c442a376f35c41fa936, type: 2}
 --- !u!1 &1765648141709058342
 GameObject:
   m_ObjectHideFlags: 0
@@ -1099,6 +1280,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2249934038417931185}
+  - component: {fileID: 2595554974106328976}
   m_Layer: 0
   m_Name: Bone.UpperLipCenter.R
   m_TagString: Untagged
@@ -1121,6 +1303,20 @@ Transform:
   m_Father: {fileID: 7573983174246167798}
   m_RootOrder: 24
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &2595554974106328976
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1765648141709058342}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 2868a829a491a884a91c053860b91504, type: 2}
 --- !u!1 &1775994935485214908
 GameObject:
   m_ObjectHideFlags: 0
@@ -1130,6 +1326,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5212642773258195173}
+  - component: {fileID: 1917262153530314828}
   m_Layer: 0
   m_Name: Bone.LowerLip.002.R
   m_TagString: Untagged
@@ -1152,6 +1349,20 @@ Transform:
   m_Father: {fileID: 480935865105371949}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &1917262153530314828
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1775994935485214908}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 912584aeb0ff68d4c9a2283a149f1775, type: 2}
 --- !u!1 &1882842967152408488
 GameObject:
   m_ObjectHideFlags: 0
@@ -1161,6 +1372,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 719684878827651258}
+  - component: {fileID: 5891965723274295900}
   m_Layer: 0
   m_Name: Bone.Eyelid.Lower.R
   m_TagString: Untagged
@@ -1183,6 +1395,20 @@ Transform:
   m_Father: {fileID: 7573983174246167798}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &5891965723274295900
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1882842967152408488}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: ac76da05b63166b40abc52699cdab4ef, type: 2}
 --- !u!1 &1897987729332248143
 GameObject:
   m_ObjectHideFlags: 0
@@ -1626,6 +1852,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7929967793414345014}
+  - component: {fileID: 5826187538264958266}
   m_Layer: 0
   m_Name: Bone.MiddleF.002.R
   m_TagString: Untagged
@@ -1649,6 +1876,20 @@ Transform:
   m_Father: {fileID: 2504073264597736321}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &5826187538264958266
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1933285568015897831}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 4fac23af9ec7ee445b1e272f4c9afe7c, type: 2}
 --- !u!1 &1964455875144184041
 GameObject:
   m_ObjectHideFlags: 0
@@ -1658,6 +1899,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5030656970570029095}
+  - component: {fileID: 792443612542009999}
   m_Layer: 0
   m_Name: Bone.HairFrill.004.L
   m_TagString: Untagged
@@ -1681,6 +1923,20 @@ Transform:
   m_Father: {fileID: 5342392205606128669}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &792443612542009999
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1964455875144184041}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: affebce7a34c7ab4da4b664b5769c91c, type: 2}
 --- !u!1 &1991348308947294689
 GameObject:
   m_ObjectHideFlags: 0
@@ -1783,6 +2039,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9189590686311880324}
+  - component: {fileID: 2162350738439079724}
   m_Layer: 0
   m_Name: Bone.Eyebrow.003.L
   m_TagString: Untagged
@@ -1805,6 +2062,20 @@ Transform:
   m_Father: {fileID: 7573983174246167798}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &2162350738439079724
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2097991951081937315}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: ef4581162b760484791b4208a30f383f, type: 2}
 --- !u!1 &2200088592342464168
 GameObject:
   m_ObjectHideFlags: 0
@@ -1878,7 +2149,7 @@ GameObject:
   - component: {fileID: 4614806858380481365}
   - component: {fileID: 2074354601857252410}
   - component: {fileID: 8625564888829619394}
-  - component: {fileID: 4039574489566659632}
+  - component: {fileID: 6222655225365056989}
   m_Layer: 0
   m_Name: Bone.Ponytail.005
   m_TagString: Untagged
@@ -1930,7 +2201,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: 0, z: 0}
+  m_ConnectedAnchor: {x: 1.6069333e-11, y: 0.046461444, z: -0.00000003009388}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 0, z: 1}
   m_TwistLimitSpring:
@@ -1964,8 +2235,8 @@ CharacterJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!136 &4039574489566659632
-CapsuleCollider:
+--- !u!64 &6222655225365056989
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -1974,10 +2245,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.02
-  m_Height: 0
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: cf3f19aa21dd44f4b8996dad0cacd91d, type: 2}
 --- !u!1 &2383535290118287183
 GameObject:
   m_ObjectHideFlags: 0
@@ -1987,6 +2258,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 38770002208440172}
+  - component: {fileID: 5407921112465960349}
   m_Layer: 0
   m_Name: Bone.PinkyF.001.L
   m_TagString: Untagged
@@ -2010,6 +2282,20 @@ Transform:
   m_Father: {fileID: 6391644251304176645}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &5407921112465960349
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2383535290118287183}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 74d9c4842ad962544a36c466902b2532, type: 2}
 --- !u!1 &2401630187275745555
 GameObject:
   m_ObjectHideFlags: 0
@@ -2021,7 +2307,7 @@ GameObject:
   - component: {fileID: 6813521274267981109}
   - component: {fileID: 2894395838412659230}
   - component: {fileID: 661354944799278779}
-  - component: {fileID: 1980913083}
+  - component: {fileID: 6561368371805506219}
   m_Layer: 0
   m_Name: Bone.Shoulder.L
   m_TagString: Untagged
@@ -2073,7 +2359,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: 0, z: 0}
+  m_ConnectedAnchor: {x: -0.045182824, y: 0.12981373, z: 0.07421395}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -2107,8 +2393,8 @@ CharacterJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!136 &1980913083
-CapsuleCollider:
+--- !u!64 &6561368371805506219
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -2117,10 +2403,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.075
-  m_Height: 0
-  m_Direction: 1
-  m_Center: {x: 0.01, y: 0.12, z: -0.03}
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: d8700f89dd067e14db097f7380f1ba78, type: 2}
 --- !u!1 &2635233537297215163
 GameObject:
   m_ObjectHideFlags: 0
@@ -2163,7 +2449,7 @@ GameObject:
   - component: {fileID: 7573983174246167798}
   - component: {fileID: 5928208767231856273}
   - component: {fileID: 52553909557669429}
-  - component: {fileID: 9161709729339403762}
+  - component: {fileID: 7150969812768687416}
   m_Layer: 0
   m_Name: Bone.Head
   m_TagString: Untagged
@@ -2240,7 +2526,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 1.2434498e-14, y: 0.06872242, z: 0.00000032945528}
+  m_ConnectedAnchor: {x: -1.7763568e-15, y: 0.06872242, z: 0.00000032945528}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -2274,8 +2560,8 @@ CharacterJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!136 &9161709729339403762
-CapsuleCollider:
+--- !u!64 &7150969812768687416
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -2284,10 +2570,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.1
-  m_Height: 0.25
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.09, z: 0.06}
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: f46a4576a457e0743b7ae0ce79136dff, type: 2}
 --- !u!1 &2721123031466888913
 GameObject:
   m_ObjectHideFlags: 0
@@ -2297,6 +2583,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6128604140499757122}
+  - component: {fileID: 6010837371949957662}
   m_Layer: 0
   m_Name: Bone.RingF.001.L
   m_TagString: Untagged
@@ -2320,6 +2607,20 @@ Transform:
   m_Father: {fileID: 6391644251304176645}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &6010837371949957662
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2721123031466888913}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: ffe647ea32b484f44af03cc13768642e, type: 2}
 --- !u!1 &2722506719401021045
 GameObject:
   m_ObjectHideFlags: 0
@@ -2331,7 +2632,7 @@ GameObject:
   - component: {fileID: 265241605434909199}
   - component: {fileID: 794747443848759506}
   - component: {fileID: 3965039812891641846}
-  - component: {fileID: 3317368699812762271}
+  - component: {fileID: 1146514714635750049}
   m_Layer: 0
   m_Name: Bone.Ponytail.003
   m_TagString: Untagged
@@ -2383,7 +2684,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: 0, z: 0}
+  m_ConnectedAnchor: {x: 9.745098e-11, y: 0.04646133, z: 0.000000024394922}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 0, z: 1}
   m_TwistLimitSpring:
@@ -2417,8 +2718,8 @@ CharacterJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!136 &3317368699812762271
-CapsuleCollider:
+--- !u!64 &1146514714635750049
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -2427,10 +2728,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.02
-  m_Height: 0
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 48bde2c1f155c574eb696d0eca1a9f19, type: 2}
 --- !u!1 &2856540582137264932
 GameObject:
   m_ObjectHideFlags: 0
@@ -2442,7 +2743,7 @@ GameObject:
   - component: {fileID: 4034479531796728732}
   - component: {fileID: 2676060974275669192}
   - component: {fileID: 8218403076524307965}
-  - component: {fileID: 358828317626814509}
+  - component: {fileID: 8580432969740482568}
   m_Layer: 0
   m_Name: Bone.LowerArm.L
   m_TagString: Untagged
@@ -2494,7 +2795,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: 0, z: 0}
+  m_ConnectedAnchor: {x: 0, y: 0.27550375, z: -0.00000017881398}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -2528,8 +2829,8 @@ CharacterJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!136 &358828317626814509
-CapsuleCollider:
+--- !u!64 &8580432969740482568
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -2538,10 +2839,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.05
-  m_Height: 0.25
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.125, z: 0}
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 90243b786fefd6547add931a2cc547e8, type: 2}
 --- !u!1 &2942362115549859484
 GameObject:
   m_ObjectHideFlags: 0
@@ -2551,6 +2852,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7211288777117390418}
+  - component: {fileID: 6586444212338158697}
   m_Layer: 0
   m_Name: Bone.PinkyF.003.L
   m_TagString: Untagged
@@ -2574,6 +2876,20 @@ Transform:
   m_Father: {fileID: 378854454815548381}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &6586444212338158697
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2942362115549859484}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: a644b2e0762f41e4bbda78205e8fd4d0, type: 2}
 --- !u!1 &2982827591068810233
 GameObject:
   m_ObjectHideFlags: 0
@@ -2583,6 +2899,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6452234360938727}
+  - component: {fileID: 5713576995508273052}
   m_Layer: 0
   m_Name: Bone.MiddleF.003.R
   m_TagString: Untagged
@@ -2605,6 +2922,20 @@ Transform:
   m_Father: {fileID: 7929967793414345014}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &5713576995508273052
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2982827591068810233}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 87bc0354cbc5bc94dbb053eaacba1067, type: 2}
 --- !u!1 &3005300258013664234
 GameObject:
   m_ObjectHideFlags: 0
@@ -2616,7 +2947,7 @@ GameObject:
   - component: {fileID: 2988071771973106275}
   - component: {fileID: 5228411957851025927}
   - component: {fileID: 3175443693424975398}
-  - component: {fileID: 5965085685349717035}
+  - component: {fileID: 2830374345159479717}
   m_Layer: 0
   m_Name: Bone.Ponytail.004
   m_TagString: Untagged
@@ -2668,7 +2999,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: 0, z: 0}
+  m_ConnectedAnchor: {x: 1.387798e-10, y: 0.04646189, z: -0.00000013623533}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 0, z: 1}
   m_TwistLimitSpring:
@@ -2702,8 +3033,8 @@ CharacterJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!136 &5965085685349717035
-CapsuleCollider:
+--- !u!64 &2830374345159479717
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -2712,10 +3043,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.02
-  m_Height: 0
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 1b04e78bdfd191c4ca6bd0efa595483e, type: 2}
 --- !u!1 &3033813468189887487
 GameObject:
   m_ObjectHideFlags: 0
@@ -2756,6 +3087,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3980048717366425809}
+  - component: {fileID: 3122259682594008608}
   m_Layer: 0
   m_Name: Bone.UpperLip.002.L
   m_TagString: Untagged
@@ -2778,6 +3110,20 @@ Transform:
   m_Father: {fileID: 7573983174246167798}
   m_RootOrder: 20
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &3122259682594008608
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3048493812486451362}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: fec54af66025bc04d88d53028214391a, type: 2}
 --- !u!1 &3115179122403518414
 GameObject:
   m_ObjectHideFlags: 0
@@ -2789,7 +3135,7 @@ GameObject:
   - component: {fileID: 4129513131238457059}
   - component: {fileID: 148049286376358233}
   - component: {fileID: 8693386534007324382}
-  - component: {fileID: 3466073699155315320}
+  - component: {fileID: 7245882370787153535}
   m_Layer: 0
   m_Name: Bone.Spine002
   m_TagString: Untagged
@@ -2841,7 +3187,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: 0, z: 0}
+  m_ConnectedAnchor: {x: 2.0095037e-14, y: 0.15403807, z: 0.000000072643154}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -2875,8 +3221,8 @@ CharacterJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!136 &3466073699155315320
-CapsuleCollider:
+--- !u!64 &7245882370787153535
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -2885,10 +3231,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.08
-  m_Height: 0.3
-  m_Direction: 0
-  m_Center: {x: 0, y: 0, z: 0}
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 556b1b79479613e4086f5c28adf6304d, type: 2}
 --- !u!1 &3137657105236651654
 GameObject:
   m_ObjectHideFlags: 0
@@ -2900,7 +3246,7 @@ GameObject:
   - component: {fileID: 6564290050345597957}
   - component: {fileID: 2240174778485152274}
   - component: {fileID: 942279582605983360}
-  - component: {fileID: 8663534577975270536}
+  - component: {fileID: 2684409799737994216}
   m_Layer: 0
   m_Name: Bone.LowerArm.R
   m_TagString: Untagged
@@ -2952,7 +3298,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: 0, z: 0}
+  m_ConnectedAnchor: {x: 0.000000029802322, y: 0.2755038, z: -0.00000029802322}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -2986,8 +3332,8 @@ CharacterJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!136 &8663534577975270536
-CapsuleCollider:
+--- !u!64 &2684409799737994216
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -2996,10 +3342,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.05
-  m_Height: 0.25
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.125, z: 0}
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: fab9c04fddd1b854090791516fce59e8, type: 2}
 --- !u!1 &3302129235010393918
 GameObject:
   m_ObjectHideFlags: 0
@@ -3009,6 +3355,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 763643504258187980}
+  - component: {fileID: 1245608023309209084}
   m_Layer: 0
   m_Name: Bone.IndexF.001.L
   m_TagString: Untagged
@@ -3032,6 +3379,20 @@ Transform:
   m_Father: {fileID: 6391644251304176645}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &1245608023309209084
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3302129235010393918}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 62c9ff2a074076c4cad48e76291f1820, type: 2}
 --- !u!1 &3371693215576897783
 GameObject:
   m_ObjectHideFlags: 0
@@ -3041,6 +3402,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6494101768814248270}
+  - component: {fileID: 1457722312184332630}
   m_Layer: 0
   m_Name: Bone.PinkyF.004.L
   m_TagString: Untagged
@@ -3063,6 +3425,20 @@ Transform:
   m_Father: {fileID: 7211288777117390418}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &1457722312184332630
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3371693215576897783}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 1b1f6ed6849367841bde8a32a5fcf07c, type: 2}
 --- !u!1 &3376510053126376963
 GameObject:
   m_ObjectHideFlags: 0
@@ -3072,6 +3448,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5118488028132831179}
+  - component: {fileID: 1555610700763022066}
   m_Layer: 0
   m_Name: Bone.SideLip.R
   m_TagString: Untagged
@@ -3094,6 +3471,20 @@ Transform:
   m_Father: {fileID: 7573983174246167798}
   m_RootOrder: 17
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &1555610700763022066
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3376510053126376963}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 0f8ce63bf6e8fdf4fbf775f1ac7ef2c7, type: 2}
 --- !u!1 &3573906852589935102
 GameObject:
   m_ObjectHideFlags: 0
@@ -3103,6 +3494,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5945722993137475964}
+  - component: {fileID: 7803125536021366706}
   m_Layer: 0
   m_Name: Bone.MiddleF.002.L
   m_TagString: Untagged
@@ -3126,6 +3518,20 @@ Transform:
   m_Father: {fileID: 7912218611596807171}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &7803125536021366706
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3573906852589935102}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 67a754e5de2e93247951c6afb0a9be4f, type: 2}
 --- !u!1 &3619407584465142440
 GameObject:
   m_ObjectHideFlags: 0
@@ -3135,6 +3541,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7962975561067455297}
+  - component: {fileID: 1264997760649351249}
   m_Layer: 0
   m_Name: Bone.Thumb.003.L
   m_TagString: Untagged
@@ -3157,6 +3564,20 @@ Transform:
   m_Father: {fileID: 5751484348240883879}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &1264997760649351249
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3619407584465142440}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 9b5ffd4b05a784b44ad30d581ffa55b4, type: 2}
 --- !u!1 &3711557653577563664
 GameObject:
   m_ObjectHideFlags: 0
@@ -3166,6 +3587,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3642721262150654176}
+  - component: {fileID: 2174086347699976837}
   m_Layer: 0
   m_Name: Bone.IndexF.001.R
   m_TagString: Untagged
@@ -3189,6 +3611,20 @@ Transform:
   m_Father: {fileID: 548683910622295748}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &2174086347699976837
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3711557653577563664}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: b77c7699a90fb5b4baa52e89452297fd, type: 2}
 --- !u!1 &3807723997491377562
 GameObject:
   m_ObjectHideFlags: 0
@@ -3198,6 +3634,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1406303033366101104}
+  - component: {fileID: 6225329454368387972}
   m_Layer: 0
   m_Name: Bone.Thumb.001.R
   m_TagString: Untagged
@@ -3221,6 +3658,20 @@ Transform:
   m_Father: {fileID: 548683910622295748}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &6225329454368387972
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3807723997491377562}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 186b63bf4f6bc9e4e8a3e72162735e7e, type: 2}
 --- !u!1 &3854289020474478076
 GameObject:
   m_ObjectHideFlags: 0
@@ -3230,6 +3681,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4360733439264921899}
+  - component: {fileID: 7589896752268477954}
   m_Layer: 0
   m_Name: Bone.Eye.L
   m_TagString: Untagged
@@ -3252,6 +3704,20 @@ Transform:
   m_Father: {fileID: 7573983174246167798}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &7589896752268477954
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3854289020474478076}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 2b5c6dffa7e130b43b07345dc50ac619, type: 2}
 --- !u!1 &3878302088262656542
 GameObject:
   m_ObjectHideFlags: 0
@@ -3263,7 +3729,7 @@ GameObject:
   - component: {fileID: 548683910622295748}
   - component: {fileID: 8257018916424276032}
   - component: {fileID: 4555911358369043193}
-  - component: {fileID: 5987271269471859311}
+  - component: {fileID: 216410058593547503}
   m_Layer: 0
   m_Name: Bone.Hand.R
   m_TagString: Untagged
@@ -3321,7 +3787,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: 0, z: 0}
+  m_ConnectedAnchor: {x: -0.00000005983748, y: 0.26303345, z: 0.00000027567148}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -3355,8 +3821,8 @@ CharacterJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!136 &5987271269471859311
-CapsuleCollider:
+--- !u!64 &216410058593547503
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -3365,10 +3831,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.05
-  m_Height: 0.2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.1, z: 0}
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 75b59f0355af30c40a5a2d8cd4b10595, type: 2}
 --- !u!1 &3934701652920098601
 GameObject:
   m_ObjectHideFlags: 0
@@ -3378,6 +3844,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3916870877782394378}
+  - component: {fileID: 1174113665283053174}
   m_Layer: 0
   m_Name: Bone.Eyelid.Upper.L
   m_TagString: Untagged
@@ -3400,6 +3867,20 @@ Transform:
   m_Father: {fileID: 7573983174246167798}
   m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &1174113665283053174
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3934701652920098601}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 9f5684b97c96ed349845c122f4ad8f4d, type: 2}
 --- !u!1 &4058222210101413493
 GameObject:
   m_ObjectHideFlags: 0
@@ -3409,6 +3890,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1473026339398306991}
+  - component: {fileID: 7075290437604006974}
   m_Layer: 0
   m_Name: Bone.UpperLip.003.R
   m_TagString: Untagged
@@ -3431,6 +3913,20 @@ Transform:
   m_Father: {fileID: 7573983174246167798}
   m_RootOrder: 23
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &7075290437604006974
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4058222210101413493}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 5a0851373050f654fbb8151493858ff9, type: 2}
 --- !u!1 &4235951239292758465
 GameObject:
   m_ObjectHideFlags: 0
@@ -3442,7 +3938,7 @@ GameObject:
   - component: {fileID: 6670010590037460446}
   - component: {fileID: 3316991944883998879}
   - component: {fileID: 1821919964266629601}
-  - component: {fileID: 8016480289104913918}
+  - component: {fileID: 6409905040482467999}
   - component: {fileID: 1646717365358391683}
   m_Layer: 0
   m_Name: Bone.Foot.L
@@ -3529,8 +4025,8 @@ CharacterJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!136 &8016480289104913918
-CapsuleCollider:
+--- !u!64 &6409905040482467999
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -3539,10 +4035,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.06
-  m_Height: 0.01
-  m_Direction: 1
-  m_Center: {x: 0.06, y: 0.06, z: 0}
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 959945ffcbcb9384289289f13cbe8673, type: 2}
 --- !u!82 &1646717365358391683
 AudioSource:
   m_ObjectHideFlags: 0
@@ -3648,6 +4144,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5751484348240883879}
+  - component: {fileID: 8777720550343413923}
   m_Layer: 0
   m_Name: Bone.Thumb.002.L
   m_TagString: Untagged
@@ -3671,6 +4168,20 @@ Transform:
   m_Father: {fileID: 150345554854360320}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &8777720550343413923
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4418455656166343122}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 52b0f7139bdb895498beeee4a867f8d3, type: 2}
 --- !u!1 &4423819254781320574
 GameObject:
   m_ObjectHideFlags: 0
@@ -3711,6 +4222,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8332683834062004106}
+  - component: {fileID: 7526794515813129594}
   m_Layer: 0
   m_Name: Bone.PinkyF.001.R
   m_TagString: Untagged
@@ -3734,6 +4246,20 @@ Transform:
   m_Father: {fileID: 548683910622295748}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &7526794515813129594
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4440586318249606795}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 3e3762a7c247e4d4c827590de23f3103, type: 2}
 --- !u!1 &4516208577590326751
 GameObject:
   m_ObjectHideFlags: 0
@@ -3745,7 +4271,7 @@ GameObject:
   - component: {fileID: 1701656094409413816}
   - component: {fileID: 1092258533096818002}
   - component: {fileID: 4971754664462338911}
-  - component: {fileID: 756082969}
+  - component: {fileID: 3014415251680366498}
   m_Layer: 0
   m_Name: Bone.Shoulder.R
   m_TagString: Untagged
@@ -3797,7 +4323,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: 0, z: 0}
+  m_ConnectedAnchor: {x: 0.045182854, y: 0.12981361, z: 0.074213006}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -3831,8 +4357,8 @@ CharacterJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!136 &756082969
-CapsuleCollider:
+--- !u!64 &3014415251680366498
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -3841,10 +4367,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.075
-  m_Height: 0
-  m_Direction: 1
-  m_Center: {x: -0.01, y: 0.12, z: -0.03}
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 1efcf27e3d1d6c34eb69591016948b7c, type: 2}
 --- !u!1 &4542321653760186817
 GameObject:
   m_ObjectHideFlags: 0
@@ -3856,7 +4382,7 @@ GameObject:
   - component: {fileID: 7849553172509030415}
   - component: {fileID: 2520450039696662876}
   - component: {fileID: 7697713906026127030}
-  - component: {fileID: 8609145575984599772}
+  - component: {fileID: 3170392249719753678}
   m_Layer: 0
   m_Name: Bone.Ponytail.002
   m_TagString: Untagged
@@ -3908,7 +4434,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: 0, z: 0}
+  m_ConnectedAnchor: {x: 1.164921e-10, y: 0.04646173, z: -0.000000003725289}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 0, z: 1}
   m_TwistLimitSpring:
@@ -3942,8 +4468,8 @@ CharacterJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!136 &8609145575984599772
-CapsuleCollider:
+--- !u!64 &3170392249719753678
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -3952,10 +4478,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.022
-  m_Height: 0
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 80bd990499e9ad941b8a15e37942cf7a, type: 2}
 --- !u!1 &4588546457955903322
 GameObject:
   m_ObjectHideFlags: 0
@@ -3965,6 +4491,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4829189372689648340}
+  - component: {fileID: 6935373612077935292}
   m_Layer: 0
   m_Name: Bone.IndexF.002.L
   m_TagString: Untagged
@@ -3988,6 +4515,20 @@ Transform:
   m_Father: {fileID: 763643504258187980}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &6935373612077935292
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4588546457955903322}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 6c35ab33fa14f5d42894da6797248d59, type: 2}
 --- !u!1 &4602785150869845866
 GameObject:
   m_ObjectHideFlags: 0
@@ -3997,6 +4538,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6564624056169800556}
+  - component: {fileID: 7941412020984684662}
   m_Layer: 0
   m_Name: Bone.HairFrill.004.R
   m_TagString: Untagged
@@ -4020,6 +4562,20 @@ Transform:
   m_Father: {fileID: 6763202879130219683}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &7941412020984684662
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4602785150869845866}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 135c0a40de887444294b978d0240b4e3, type: 2}
 --- !u!1 &4675081676004168888
 GameObject:
   m_ObjectHideFlags: 0
@@ -4029,6 +4585,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2939651043105780950}
+  - component: {fileID: 2032547031979674599}
   m_Layer: 0
   m_Name: Bone.HairFrill.002.L
   m_TagString: Untagged
@@ -4052,6 +4609,20 @@ Transform:
   m_Father: {fileID: 3053351503158509709}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &2032547031979674599
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4675081676004168888}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: e61a51710b9dc3741aef0cd4906e3cfa, type: 2}
 --- !u!1 &4733421767846252089
 GameObject:
   m_ObjectHideFlags: 0
@@ -4061,6 +4632,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2504073264597736321}
+  - component: {fileID: 5036128970451645568}
   m_Layer: 0
   m_Name: Bone.MiddleF.001.R
   m_TagString: Untagged
@@ -4084,6 +4656,20 @@ Transform:
   m_Father: {fileID: 548683910622295748}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &5036128970451645568
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4733421767846252089}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 526992110b73d3544b12be2340ae09da, type: 2}
 --- !u!1 &4832595867138716061
 GameObject:
   m_ObjectHideFlags: 0
@@ -4093,6 +4679,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3538373180682216831}
+  - component: {fileID: 3116639357019750936}
   m_Layer: 0
   m_Name: Bone.LowerLip.001.R
   m_TagString: Untagged
@@ -4115,6 +4702,20 @@ Transform:
   m_Father: {fileID: 480935865105371949}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &3116639357019750936
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4832595867138716061}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 267b60df116dc584597c03a38aad94c2, type: 2}
 --- !u!1 &4945073472674869888
 GameObject:
   m_ObjectHideFlags: 0
@@ -4186,6 +4787,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 55842431229030684}
+  - component: {fileID: 4327387710903569}
   m_Layer: 0
   m_Name: Bone.RingF.003.L
   m_TagString: Untagged
@@ -4208,6 +4810,20 @@ Transform:
   m_Father: {fileID: 8799976810178824182}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &4327387710903569
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5103974516106797494}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 4bd8d2bafe56cbf4e98f76de798f0c03, type: 2}
 --- !u!1 &5187107694924753191
 GameObject:
   m_ObjectHideFlags: 0
@@ -4217,6 +4833,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8201740159289249567}
+  - component: {fileID: 5534011641328544779}
   m_Layer: 0
   m_Name: Bone.Eyebrow.003.R
   m_TagString: Untagged
@@ -4239,6 +4856,20 @@ Transform:
   m_Father: {fileID: 7573983174246167798}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &5534011641328544779
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5187107694924753191}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 4e4aae65c6c8cf147a49db8f4c450b0a, type: 2}
 --- !u!1 &5235067773465332780
 GameObject:
   m_ObjectHideFlags: 0
@@ -4281,7 +4912,7 @@ GameObject:
   - component: {fileID: 3501023352839832169}
   - component: {fileID: 5637867586287902820}
   - component: {fileID: 6468218431923808321}
-  - component: {fileID: 533532141207776490}
+  - component: {fileID: 5376415472542529594}
   m_Layer: 0
   m_Name: Bone.Ponytail.001
   m_TagString: Untagged
@@ -4333,7 +4964,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: 0, z: 0}
+  m_ConnectedAnchor: {x: 0.0017283324, y: 0.11720292, z: -0.06713522}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 0, z: 1}
   m_TwistLimitSpring:
@@ -4367,8 +4998,8 @@ CharacterJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!136 &533532141207776490
-CapsuleCollider:
+--- !u!64 &5376415472542529594
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -4377,10 +5008,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.025
-  m_Height: 0
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: e59f1f56be2a63647a6ab05f39d2f5ab, type: 2}
 --- !u!1 &5326896422822478278
 GameObject:
   m_ObjectHideFlags: 0
@@ -4390,6 +5021,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2764046774411529126}
+  - component: {fileID: 3440215435725984968}
   m_Layer: 0
   m_Name: Bone.LowerLip.002.L
   m_TagString: Untagged
@@ -4412,6 +5044,20 @@ Transform:
   m_Father: {fileID: 480935865105371949}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &3440215435725984968
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5326896422822478278}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 12c371d07a73eff4990bb2319553a624, type: 2}
 --- !u!1 &5333503036553554231
 GameObject:
   m_ObjectHideFlags: 0
@@ -4454,6 +5100,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3714261288991173551}
+  - component: {fileID: 7603453273201736196}
   m_Layer: 0
   m_Name: Bone.HairFrill.005.L
   m_TagString: Untagged
@@ -4476,6 +5123,20 @@ Transform:
   m_Father: {fileID: 5030656970570029095}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &7603453273201736196
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5476268753107789946}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 000629034dd72e643a20c3a33d2cdbd5, type: 2}
 --- !u!1 &5551105567516685778
 GameObject:
   m_ObjectHideFlags: 0
@@ -4485,6 +5146,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 480935865105371949}
+  - component: {fileID: 6747261961828515923}
   m_Layer: 0
   m_Name: Bone.Jaw
   m_TagString: Untagged
@@ -4514,6 +5176,20 @@ Transform:
   m_Father: {fileID: 7573983174246167798}
   m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &6747261961828515923
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5551105567516685778}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 72fc229cd12d1e14898a484b66062d8a, type: 2}
 --- !u!1 &5554866888290929805
 GameObject:
   m_ObjectHideFlags: 0
@@ -4523,6 +5199,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6537918180163578315}
+  - component: {fileID: 1747355023739941234}
   m_Layer: 0
   m_Name: Bone.IndexF.003.R
   m_TagString: Untagged
@@ -4545,6 +5222,20 @@ Transform:
   m_Father: {fileID: 5190945723698536935}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &1747355023739941234
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5554866888290929805}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 32a3919a65bf356459ec3809700e1f3e, type: 2}
 --- !u!1 &5576032246463579009
 GameObject:
   m_ObjectHideFlags: 0
@@ -4554,6 +5245,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8223312434164710001}
+  - component: {fileID: 3128291836211978837}
   m_Layer: 0
   m_Name: Bone.Thumb.002.R
   m_TagString: Untagged
@@ -4577,6 +5269,20 @@ Transform:
   m_Father: {fileID: 1406303033366101104}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &3128291836211978837
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5576032246463579009}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 3f4f028a1dda90b4ead7527cc0116d1a, type: 2}
 --- !u!1 &5631696615163442138
 GameObject:
   m_ObjectHideFlags: 0
@@ -4650,7 +5356,7 @@ GameObject:
   - component: {fileID: 171812537365800619}
   - component: {fileID: 1423147799430893089}
   - component: {fileID: 3421019085596307353}
-  - component: {fileID: 2643911371256236089}
+  - component: {fileID: 8328221775066849574}
   m_Layer: 0
   m_Name: Bone.Spine003
   m_TagString: Untagged
@@ -4704,7 +5410,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: 0, z: 0}
+  m_ConnectedAnchor: {x: -1.0835777e-13, y: 0.163783, z: -0.00000046193588}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -4738,8 +5444,8 @@ CharacterJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!136 &2643911371256236089
-CapsuleCollider:
+--- !u!64 &8328221775066849574
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -4748,10 +5454,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.14
-  m_Height: 0.2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.01, z: 0}
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: c25b04b6ea08e9048aacf69002d9b199, type: 2}
 --- !u!1 &5913740165192804951
 GameObject:
   m_ObjectHideFlags: 0
@@ -4761,6 +5467,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 378854454815548381}
+  - component: {fileID: 1291276774161423700}
   m_Layer: 0
   m_Name: Bone.PinkyF.002.L
   m_TagString: Untagged
@@ -4784,6 +5491,20 @@ Transform:
   m_Father: {fileID: 38770002208440172}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &1291276774161423700
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5913740165192804951}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 113370613a731ef4195e27353aa785a0, type: 2}
 --- !u!1 &5930398171924478149
 GameObject:
   m_ObjectHideFlags: 0
@@ -4795,7 +5516,7 @@ GameObject:
   - component: {fileID: 4479632259110242571}
   - component: {fileID: 7047799042861535261}
   - component: {fileID: 8824123918705544058}
-  - component: {fileID: 1615321022648909868}
+  - component: {fileID: 3481004890182305791}
   m_Layer: 0
   m_Name: Bone.Spine001
   m_TagString: Untagged
@@ -4847,7 +5568,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: 0, z: 0}
+  m_ConnectedAnchor: {x: 3.3228e-41, y: 0.099999964, z: -0.0000003218865}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -4881,8 +5602,8 @@ CharacterJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!136 &1615321022648909868
-CapsuleCollider:
+--- !u!64 &3481004890182305791
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -4891,10 +5612,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.078
-  m_Height: 0.4
-  m_Direction: 0
-  m_Center: {x: 0, y: -0.02, z: 0}
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 0e2c44492d0202e40a3f28091521cfe6, type: 2}
 --- !u!1 &6020369704785401922
 GameObject:
   m_ObjectHideFlags: 0
@@ -4906,7 +5627,7 @@ GameObject:
   - component: {fileID: 3100715966187013233}
   - component: {fileID: 5635805572617707945}
   - component: {fileID: 6684472236805996575}
-  - component: {fileID: 2119205931265491024}
+  - component: {fileID: 4450939169273093552}
   m_Layer: 0
   m_Name: Bone.UpperLeg.L
   m_TagString: Untagged
@@ -4992,8 +5713,8 @@ CharacterJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!136 &2119205931265491024
-CapsuleCollider:
+--- !u!64 &4450939169273093552
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -5002,10 +5723,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.09
-  m_Height: 0.3
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.15, z: 0}
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 0ac1e5ce559e2564c93b549eeffd760f, type: 2}
 --- !u!1 &6064077347229086840
 GameObject:
   m_ObjectHideFlags: 0
@@ -5015,6 +5736,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4719121109331124890}
+  - component: {fileID: 3692520685234542927}
   m_Layer: 0
   m_Name: Bone.Thumb.003.R
   m_TagString: Untagged
@@ -5037,6 +5759,20 @@ Transform:
   m_Father: {fileID: 8223312434164710001}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &3692520685234542927
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6064077347229086840}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 8f7fbb1a75932e14e90d110a02fc6aab, type: 2}
 --- !u!1 &6098752400840065240
 GameObject:
   m_ObjectHideFlags: 0
@@ -5046,6 +5782,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8799976810178824182}
+  - component: {fileID: 8589935756030855310}
   m_Layer: 0
   m_Name: Bone.RingF.002.L
   m_TagString: Untagged
@@ -5069,6 +5806,20 @@ Transform:
   m_Father: {fileID: 6128604140499757122}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &8589935756030855310
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6098752400840065240}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: c04683e6ab9ef2f4a84cb648402ece99, type: 2}
 --- !u!1 &6156056754620882037
 GameObject:
   m_ObjectHideFlags: 0
@@ -5111,7 +5862,7 @@ GameObject:
   - component: {fileID: 2488666990375149073}
   - component: {fileID: 1064886317858871907}
   - component: {fileID: 2128865628511675785}
-  - component: {fileID: 212524333675480384}
+  - component: {fileID: 2069935283038944604}
   m_Layer: 0
   m_Name: Bone.UpperLeg.R
   m_TagString: Untagged
@@ -5197,8 +5948,8 @@ CharacterJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!136 &212524333675480384
-CapsuleCollider:
+--- !u!64 &2069935283038944604
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -5207,10 +5958,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.09
-  m_Height: 0.3
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.15, z: 0}
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 8a325b382eef9b94fb888a84a850c439, type: 2}
 --- !u!1 &6363689691826721403
 GameObject:
   m_ObjectHideFlags: 0
@@ -5220,6 +5971,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 281236143623539066}
+  - component: {fileID: 1601490386984182370}
   m_Layer: 0
   m_Name: Bone.UpperLip.001.R
   m_TagString: Untagged
@@ -5242,6 +5994,20 @@ Transform:
   m_Father: {fileID: 7573983174246167798}
   m_RootOrder: 19
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &1601490386984182370
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6363689691826721403}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 3ff696d392ea2a44a83e8a2628eb5f34, type: 2}
 --- !u!1 &6430871469038284377
 GameObject:
   m_ObjectHideFlags: 0
@@ -5251,6 +6017,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8267972280636141332}
+  - component: {fileID: 2527598846521771698}
   m_Layer: 0
   m_Name: Bone.Mask
   m_TagString: Untagged
@@ -5273,6 +6040,20 @@ Transform:
   m_Father: {fileID: 6211419823786417833}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &2527598846521771698
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6430871469038284377}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 4436719c9f435844083116aed6d5eefc, type: 2}
 --- !u!1 &6504536286081033887
 GameObject:
   m_ObjectHideFlags: 0
@@ -5282,6 +6063,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1015647334815188092}
+  - component: {fileID: 7452752443772703940}
   m_Layer: 0
   m_Name: Bone.HairFrill.001.R
   m_TagString: Untagged
@@ -5305,6 +6087,20 @@ Transform:
   m_Father: {fileID: 7573983174246167798}
   m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &7452752443772703940
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6504536286081033887}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: abab0a9252603a747906bf0a702a04c0, type: 2}
 --- !u!1 &6679711194546512635
 GameObject:
   m_ObjectHideFlags: 0
@@ -5358,6 +6154,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8644858500505721001}
+  - component: {fileID: 6815656300424214234}
   m_Layer: 0
   m_Name: Bone.PinkyF.002.R
   m_TagString: Untagged
@@ -5381,6 +6178,20 @@ Transform:
   m_Father: {fileID: 8332683834062004106}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &6815656300424214234
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6924589884452204568}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: c830c9babe9624f478bf9c4369c5caac, type: 2}
 --- !u!1 &6952440934820983229
 GameObject:
   m_ObjectHideFlags: 0
@@ -5390,6 +6201,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6572503240513267369}
+  - component: {fileID: 9185780762873447499}
   m_Layer: 0
   m_Name: Bone.Eyelid.Lower.L
   m_TagString: Untagged
@@ -5412,6 +6224,20 @@ Transform:
   m_Father: {fileID: 7573983174246167798}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &9185780762873447499
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6952440934820983229}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 9d442680a8f119a4a8daa7e8a1eda30a, type: 2}
 --- !u!1 &7058782005886451003
 GameObject:
   m_ObjectHideFlags: 0
@@ -5421,6 +6247,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6147905353144413372}
+  - component: {fileID: 976188429346975673}
   m_Layer: 0
   m_Name: Bone.PinkyF.004.R
   m_TagString: Untagged
@@ -5443,6 +6270,20 @@ Transform:
   m_Father: {fileID: 8888374171735333004}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &976188429346975673
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7058782005886451003}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: b9f38c88fdf8182498c59b12a603a054, type: 2}
 --- !u!1 &7102878421041462247
 GameObject:
   m_ObjectHideFlags: 0
@@ -5452,6 +6293,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1571333973224055849}
+  - component: {fileID: 8294399814317028720}
   m_Layer: 0
   m_Name: Bone.LowerLip.003.R
   m_TagString: Untagged
@@ -5474,6 +6316,20 @@ Transform:
   m_Father: {fileID: 480935865105371949}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &8294399814317028720
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7102878421041462247}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: cc44ba909d2a67248984925a305af9f0, type: 2}
 --- !u!1 &7104640285164550055
 GameObject:
   m_ObjectHideFlags: 0
@@ -5483,6 +6339,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6981152777341188777}
+  - component: {fileID: 1993419419205442837}
   m_Layer: 0
   m_Name: Bone.Eyelid.Upper.R
   m_TagString: Untagged
@@ -5505,6 +6362,20 @@ Transform:
   m_Father: {fileID: 7573983174246167798}
   m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &1993419419205442837
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7104640285164550055}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: b2141b033f69d7542b1e23dff6846232, type: 2}
 --- !u!1 &7128644826550261578
 GameObject:
   m_ObjectHideFlags: 0
@@ -5514,6 +6385,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6912176608728772043}
+  - component: {fileID: 6907627528019090218}
   m_Layer: 0
   m_Name: Bone.SideLip.L
   m_TagString: Untagged
@@ -5536,6 +6408,20 @@ Transform:
   m_Father: {fileID: 7573983174246167798}
   m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &6907627528019090218
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7128644826550261578}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 61dd0f25e19250a4cb7f46cb95783512, type: 2}
 --- !u!1 &7133694800779732428
 GameObject:
   m_ObjectHideFlags: 0
@@ -5545,6 +6431,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2834833910822976532}
+  - component: {fileID: 6548015163282649107}
   m_Layer: 0
   m_Name: Bone.HairFrill.005.R
   m_TagString: Untagged
@@ -5567,6 +6454,20 @@ Transform:
   m_Father: {fileID: 6564624056169800556}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &6548015163282649107
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7133694800779732428}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 219934b434ab250408020c346d4be920, type: 2}
 --- !u!1 &7169075419966859301
 GameObject:
   m_ObjectHideFlags: 0
@@ -5578,7 +6479,7 @@ GameObject:
   - component: {fileID: 4488868224633692870}
   - component: {fileID: 1683434947786722129}
   - component: {fileID: 5243141454256111775}
-  - component: {fileID: 6524546363828241724}
+  - component: {fileID: 4330832360298116461}
   m_Layer: 0
   m_Name: Bone.Ponytail.007
   m_TagString: Untagged
@@ -5629,7 +6530,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: 0, z: 0}
+  m_ConnectedAnchor: {x: 1.3674951e-10, y: 0.046461724, z: 0.00000004373091}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 0, z: 1}
   m_TwistLimitSpring:
@@ -5663,8 +6564,8 @@ CharacterJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!136 &6524546363828241724
-CapsuleCollider:
+--- !u!64 &4330832360298116461
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -5673,10 +6574,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.02
-  m_Height: 0
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: c5e74d526d8ff7b42acc5985dd363d1d, type: 2}
 --- !u!1 &7293790047674770301
 GameObject:
   m_ObjectHideFlags: 0
@@ -5686,6 +6587,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2812787688022614865}
+  - component: {fileID: 4005636106365830268}
   m_Layer: 0
   m_Name: Bone.HairFrill.002.R
   m_TagString: Untagged
@@ -5709,6 +6611,20 @@ Transform:
   m_Father: {fileID: 1015647334815188092}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &4005636106365830268
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7293790047674770301}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 2d371a06b8a0f984fbbd3a320f007422, type: 2}
 --- !u!1 &7422881237117580228
 GameObject:
   m_ObjectHideFlags: 0
@@ -5780,6 +6696,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6574454391961717202}
+  - component: {fileID: 1640779024368807378}
   m_Layer: 0
   m_Name: Bone.RingF.002.R
   m_TagString: Untagged
@@ -5803,6 +6720,20 @@ Transform:
   m_Father: {fileID: 2067090267421708491}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &1640779024368807378
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7531314287342687352}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: eb28853d42459614bac5cff82525ab64, type: 2}
 --- !u!1 &7580485318334519729
 GameObject:
   m_ObjectHideFlags: 0
@@ -5814,7 +6745,7 @@ GameObject:
   - component: {fileID: 1607255839130260424}
   - component: {fileID: 8088341929341870726}
   - component: {fileID: 749271240589145416}
-  - component: {fileID: 4363643221248655068}
+  - component: {fileID: 9081253732291297392}
   m_Layer: 0
   m_Name: Bone.Toes.R
   m_TagString: Untagged
@@ -5899,8 +6830,8 @@ CharacterJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!65 &4363643221248655068
-BoxCollider:
+--- !u!64 &9081253732291297392
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -5909,9 +6840,10 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.07, y: 0.15, z: 0.1}
-  m_Center: {x: 0.03, y: 0, z: 0}
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: c2c14d7084beb844ebb69e7098e4827a, type: 2}
 --- !u!1 &7595620093640093286
 GameObject:
   m_ObjectHideFlags: 0
@@ -5921,6 +6853,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8888374171735333004}
+  - component: {fileID: 1555227367015597385}
   m_Layer: 0
   m_Name: Bone.PinkyF.003.R
   m_TagString: Untagged
@@ -5944,6 +6877,20 @@ Transform:
   m_Father: {fileID: 8644858500505721001}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &1555227367015597385
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7595620093640093286}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: eaf2d8a34649b9340a6c87e27832e012, type: 2}
 --- !u!1 &7917257581512694999
 GameObject:
   m_ObjectHideFlags: 0
@@ -5953,6 +6900,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5152367565502331507}
+  - component: {fileID: 1272099941378263137}
   m_Layer: 0
   m_Name: Bone.Eye.R
   m_TagString: Untagged
@@ -5975,6 +6923,20 @@ Transform:
   m_Father: {fileID: 7573983174246167798}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &1272099941378263137
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7917257581512694999}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: b333dc648d25bdc4c8f6e54a9bc0a938, type: 2}
 --- !u!1 &8154744505576810201
 GameObject:
   m_ObjectHideFlags: 0
@@ -5986,7 +6948,7 @@ GameObject:
   - component: {fileID: 6191680968620107132}
   - component: {fileID: 2199396773768592257}
   - component: {fileID: 9009010615043995432}
-  - component: {fileID: 1889795373598616759}
+  - component: {fileID: 3018909702437418708}
   m_Layer: 0
   m_Name: Bone.UpperArm.R
   m_TagString: Untagged
@@ -6038,7 +7000,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: 0, z: 0}
+  m_ConnectedAnchor: {x: -0.000000047031797, y: 0.140192, z: -0.00000022724271}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -6072,8 +7034,8 @@ CharacterJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!136 &1889795373598616759
-CapsuleCollider:
+--- !u!64 &3018909702437418708
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -6082,10 +7044,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.05
-  m_Height: 0.3
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.1, z: 0}
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: dee7ffe6399064c4ca961987c34509a5, type: 2}
 --- !u!1 &8261264808334494853
 GameObject:
   m_ObjectHideFlags: 0
@@ -6097,7 +7059,7 @@ GameObject:
   - component: {fileID: 6391644251304176645}
   - component: {fileID: 8566326602081948540}
   - component: {fileID: 1787707334016846829}
-  - component: {fileID: 4171685536650144137}
+  - component: {fileID: 5272853962454834664}
   m_Layer: 0
   m_Name: Bone.Hand.L
   m_TagString: Untagged
@@ -6154,7 +7116,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: 0, z: 0}
+  m_ConnectedAnchor: {x: 0.00000015131081, y: 0.26303357, z: 0.00000023841864}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -6188,8 +7150,8 @@ CharacterJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!136 &4171685536650144137
-CapsuleCollider:
+--- !u!64 &5272853962454834664
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -6198,10 +7160,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.05
-  m_Height: 0.2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.1, z: 0}
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: abb3732388a0185468608e34ad4f31d7, type: 2}
 --- !u!1 &8277803194025056080
 GameObject:
   m_ObjectHideFlags: 0
@@ -6242,6 +7204,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6763202879130219683}
+  - component: {fileID: 8033609556622146892}
   m_Layer: 0
   m_Name: Bone.HairFrill.003.R
   m_TagString: Untagged
@@ -6265,6 +7228,20 @@ Transform:
   m_Father: {fileID: 2812787688022614865}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &8033609556622146892
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8443410381203540699}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: b77e8cc7181830e41b87cd58ecaefdc5, type: 2}
 --- !u!1 &8493902378966505304
 GameObject:
   m_ObjectHideFlags: 0
@@ -6274,6 +7251,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8336662605198156124}
+  - component: {fileID: 8629162345129038994}
   m_Layer: 0
   m_Name: Bone.Eyebrow.002.R
   m_TagString: Untagged
@@ -6296,6 +7274,20 @@ Transform:
   m_Father: {fileID: 7573983174246167798}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &8629162345129038994
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8493902378966505304}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: db85089d463297f46bb0b92a3cc56090, type: 2}
 --- !u!1 &8570466730871573951
 GameObject:
   m_ObjectHideFlags: 0
@@ -6307,7 +7299,7 @@ GameObject:
   - component: {fileID: 9126001059601865401}
   - component: {fileID: 7156445945952116159}
   - component: {fileID: 1935823210094723672}
-  - component: {fileID: 6275334088851608020}
+  - component: {fileID: 783887360975932412}
   m_Layer: 0
   m_Name: Bone.LowerLeg.R
   m_TagString: Untagged
@@ -6393,8 +7385,8 @@ CharacterJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!136 &6275334088851608020
-CapsuleCollider:
+--- !u!64 &783887360975932412
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -6403,10 +7395,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.1
-  m_Height: 0.54
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.215, z: 0}
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: be261a9008331124fb658814de47eb9e, type: 2}
 --- !u!1 &8605941928299232076
 GameObject:
   m_ObjectHideFlags: 0
@@ -6448,6 +7440,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4659971792089541821}
+  - component: {fileID: 195439169849400660}
   m_Layer: 0
   m_Name: Bone.UpperLip.001.L
   m_TagString: Untagged
@@ -6470,6 +7463,20 @@ Transform:
   m_Father: {fileID: 7573983174246167798}
   m_RootOrder: 18
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &195439169849400660
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8698362082427266406}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 502105d66ab3c1349b9a7f2bfbf94253, type: 2}
 --- !u!1 &8706810011206575283
 GameObject:
   m_ObjectHideFlags: 0
@@ -6479,6 +7486,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5190945723698536935}
+  - component: {fileID: 3753167285613058787}
   m_Layer: 0
   m_Name: Bone.IndexF.002.R
   m_TagString: Untagged
@@ -6502,6 +7510,20 @@ Transform:
   m_Father: {fileID: 3642721262150654176}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &3753167285613058787
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8706810011206575283}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: e56262e5f443faa468490a6c8fa08e74, type: 2}
 --- !u!1 &8741965431235217592
 GameObject:
   m_ObjectHideFlags: 0
@@ -6512,6 +7534,7 @@ GameObject:
   m_Component:
   - component: {fileID: 280702626771958836}
   - component: {fileID: 4241873712598886792}
+  - component: {fileID: 4593663896226494598}
   m_Layer: 0
   m_Name: Bone.Hips
   m_TagString: Untagged
@@ -6553,6 +7576,20 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!64 &4593663896226494598
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8741965431235217592}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 68a52ba241ee50a44aebea95b81d0c05, type: 2}
 --- !u!1 &8889588051661840726
 GameObject:
   m_ObjectHideFlags: 0
@@ -6562,6 +7599,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6447045701160248804}
+  - component: {fileID: 1044851251997473180}
   m_Layer: 0
   m_Name: Bone.Eyebrow.001.R
   m_TagString: Untagged
@@ -6584,6 +7622,20 @@ Transform:
   m_Father: {fileID: 7573983174246167798}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &1044851251997473180
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8889588051661840726}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 9ea4e84bbe3b90f4e8817a38d7fd8a70, type: 2}
 --- !u!1 &8903020152188215745
 GameObject:
   m_ObjectHideFlags: 0
@@ -6593,6 +7645,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3460469594403207328}
+  - component: {fileID: 4465584564368060752}
   m_Layer: 0
   m_Name: Bone.RingF.003.R
   m_TagString: Untagged
@@ -6615,6 +7668,20 @@ Transform:
   m_Father: {fileID: 6574454391961717202}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &4465584564368060752
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8903020152188215745}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 477a86a49cd3b3a4a95181fe025cd1fc, type: 2}
 --- !u!1 &8976100930570326159
 GameObject:
   m_ObjectHideFlags: 0
@@ -6624,6 +7691,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1073031592870443496}
+  - component: {fileID: 4257277830443527571}
   m_Layer: 0
   m_Name: Bone.Eyebrow.002.L
   m_TagString: Untagged
@@ -6646,6 +7714,20 @@ Transform:
   m_Father: {fileID: 7573983174246167798}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &4257277830443527571
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8976100930570326159}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: d8643cd5898d14b44841280b6bf7019a, type: 2}
 --- !u!1 &9077653211147926343
 GameObject:
   m_ObjectHideFlags: 0
@@ -6657,7 +7739,7 @@ GameObject:
   - component: {fileID: 8664711494726202981}
   - component: {fileID: 8673167726857887841}
   - component: {fileID: 3091368256996014136}
-  - component: {fileID: 8174030166596653089}
+  - component: {fileID: 7287958260691652390}
   m_Layer: 0
   m_Name: Bone.LowerLeg.L
   m_TagString: Untagged
@@ -6743,8 +7825,8 @@ CharacterJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
---- !u!136 &8174030166596653089
-CapsuleCollider:
+--- !u!64 &7287958260691652390
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -6753,10 +7835,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.1
-  m_Height: 0.54
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.215, z: 0}
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 1fb5ed1e987d87b4c8f166602a5bde11, type: 2}
 --- !u!1001 &4353615767181293323
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7594,7 +8676,7 @@ MonoBehaviour:
   objectTiles: []
   isTraversable: 0
   impactType: 0
-  Tile: {fileID: 0}
+  objectTile: {fileID: 0}
   _unitActions: []
   Stats:
     HealthCurrent: 10
@@ -7615,6 +8697,8 @@ MonoBehaviour:
     UnitPortrait: {fileID: 5109197237807887600, guid: 89be96d83ec682a4d8707a0c8ef0938d, type: 3}
     UnitVoice: 0
     UnitVoicePitch: 1
+    UnitDeathType: 0
+    UnitIdleType: 0
     UseTorsoTwist: 1
 --- !u!4 &6475551837164368749 stripped
 Transform:
