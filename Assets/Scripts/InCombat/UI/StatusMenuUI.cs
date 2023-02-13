@@ -49,7 +49,7 @@ public class StatusMenuUI : MonoBehaviour
         if (playerInput.Controls.InputCancel.triggered || playerInput.Controls.InputMenu.triggered)
         {
             ISSTATUS = true;
-            statusMenuState.ChangeState(StateHandler.State.CombatState);
+            statusMenuState.ChangeState(StateHandler.State.TurnState);
             ISSTATUS = false;
             keyPressed = true;
         }
@@ -77,7 +77,7 @@ public class StatusMenuUI : MonoBehaviour
                 Application.Quit();
                 return true;
             }
-            else statusMenuState.ChangeState(StateHandler.State.CombatState);
+            else statusMenuState.ChangeState(StateHandler.State.TurnState);
         }
         return keyPressed;
     }
