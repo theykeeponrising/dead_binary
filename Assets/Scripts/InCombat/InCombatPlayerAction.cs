@@ -299,6 +299,10 @@ public class InCombatPlayerAction
     {
         // Start player's next turn
 
+        // If no player units, game over
+        CombatState combatState = (CombatState) StateHandler.Instance.GetStateObject(StateHandler.State.CombatState);
+        combatState.CheckGameConditions();
+
         foreach (Unit unit in playerUnits)
             unit.OnTurnStart();
 

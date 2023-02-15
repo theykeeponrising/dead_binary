@@ -12,7 +12,6 @@ public class GameRunningState : GameState
         this.stateEnum = StateHandler.State.GameRunningState;
         this.substates = new List<GameState> {
             new CombatState(),
-            new StatusMenuState(),
         };
 
         foreach (GameState gameState in substates) {
