@@ -23,14 +23,6 @@ public class EnemyTurnProcess
 
     public IEnumerator ProcessEnemyUnits()
     {
-        foreach (EnemyPod enemyPod in _enemyPods)
-        {
-            Camera.main.GetComponent<CameraHandler>().SetCameraSnap(enemyPod.Leader);
-            enemyPod.ProcessTurn();
-            //Ensure one pod acts at a time
-            while (enemyPod.IsProcessingTurn) yield return new WaitForSeconds(0.1f);
-        }
-
         foreach (EnemyUnit enemyUnit in _enemyUnits)
         {
             if (enemyUnit.IsFollowingPod())
@@ -40,6 +32,14 @@ public class EnemyTurnProcess
             enemyUnit.ProcessTurn();
             //Ensure units act one at a time
             while (enemyUnit.IsProcessingTurn) yield return new WaitForSeconds(0.1f);
+        }
+
+        foreach (EnemyPod enemyPod in _enemyPods)
+        {
+            Camera.main.GetComponent<CameraHandler>().SetCameraSnap(enemyPod.Leader);
+            enemyPod.ProcessTurn();
+            //Ensure one pod acts at a time
+            while (enemyPod.IsProcessingTurn) yield return new WaitForSeconds(0.1f);
         }
 
         //End turn when we're done processing the units
