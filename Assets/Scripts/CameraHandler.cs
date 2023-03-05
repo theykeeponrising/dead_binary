@@ -23,6 +23,7 @@ public class CameraHandler : MonoBehaviour
     private Vector3 _panLastPosition;
     private Vector3 _panSnapPosition;
     private Vector3 _panVelocity;
+    private Unit _panFollowTarget;
 
     // Vertical Motion
     [SerializeField] [Range(0.5f, 3f)] private float _zoomStepSize = 2f;
@@ -82,6 +83,7 @@ public class CameraHandler : MonoBehaviour
         UpdateCameraPosition();
         UpdateBasePosition();
         UpdateCameraRotation();
+        UpdateCameraFollow();
         UpdateCameraSnap();
         CheckActiveCamera();
     }
@@ -226,6 +228,11 @@ public class CameraHandler : MonoBehaviour
         _panSnapPosition = unit.transform.position;
     }
 
+    public void SetCameraFollow(Unit unit)
+    {
+        _panFollowTarget = unit;
+    }
+
     public void SetCameraSnap(Vector3 position)
     {
         if (position == Vector3.zero)
@@ -250,6 +257,25 @@ public class CameraHandler : MonoBehaviour
         // Once position is reached, clear snap target
         if (Vector3.Distance(PlayerPosition, newPosition) <= 0.25f) 
             _panSnapPosition = Vector3.zero;
+    }
+
+    private void UpdateCameraFollow()
+    {
+        if (!_panFollowTarget)
+            return;
+
+        Vector3 targetPosition = _panFollowTarget.transform.position;
+
+        // If distance to target is small enough, no need to update
+        if (Vector3.Distance(PlayerPosition, targetPosition) <= 0.25f)
+            return;
+
+        // Set new target position and pan speed
+        Vector3 newPosition = new(targetPosition.x, PlayerPosition.y, targetPosition.z);
+        _panSpeed = Mathf.Lerp(_panSpeed, _panSpeedMax, Time.deltaTime * _panAcceleration);
+
+        // Move the camera focus target
+        PlayerPosition = Vector3.Lerp(PlayerPosition, newPosition, 0.01f * _panSpeed);
     }
 
     private bool IsPositionInViewFrustum(Vector3 originalPosition, Vector3 delta)

@@ -28,7 +28,7 @@ public class EnemyTurnProcess
             if (enemyUnit.IsFollowingPod())
                 continue;
 
-            Camera.main.GetComponent<CameraHandler>().SetCameraSnap(enemyUnit);
+            Camera.main.GetComponent<CameraHandler>().SetCameraFollow(enemyUnit);
             enemyUnit.ProcessTurn();
             //Ensure units act one at a time
             while (enemyUnit.IsProcessingTurn) yield return new WaitForSeconds(0.1f);
@@ -36,7 +36,7 @@ public class EnemyTurnProcess
 
         foreach (EnemyPod enemyPod in _enemyPods)
         {
-            Camera.main.GetComponent<CameraHandler>().SetCameraSnap(enemyPod.Leader);
+            Camera.main.GetComponent<CameraHandler>().SetCameraFollow(enemyPod.Leader);
             enemyPod.ProcessTurn();
             //Ensure one pod acts at a time
             while (enemyPod.IsProcessingTurn) yield return new WaitForSeconds(0.1f);
@@ -48,6 +48,7 @@ public class EnemyTurnProcess
 
     public void EnemyUnitsProcessedCallback()
     {
+        Camera.main.GetComponent<CameraHandler>().SetCameraFollow(null);
         _enemyTurnState.EndTurn();
     }
 }
