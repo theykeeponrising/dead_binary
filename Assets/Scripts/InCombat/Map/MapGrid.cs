@@ -185,6 +185,30 @@ public class MapGrid : MonoBehaviour
         return true;
     }
 
+    public bool IsPathLOSObstructed(Tile tileStart, Tile tileDest)
+    {
+        // Returns True/False if any obstructions are blocking the LOS
+        // Trivial check
+        if (tileStart == tileDest) return false;
+
+        bool startHasCover = (tileStart.Cover != null) && !tileStart.Cover.IsDestroyed;
+        bool endHasCover = (tileDest.Cover != null) && !tileDest.Cover.IsDestroyed;
+
+        // If neither tile have cover objects, LOS is not obstructed
+        if (!startHasCover || !endHasCover)
+            return false;
+
+        // Then, check if the cover object is not full sized
+        if (endHasCover && tileDest.Cover.CoverSize != CoverSizes.full)
+            return false;
+
+        // Check if both tiles share the same cover object
+        if (tileStart.Cover != tileDest.Cover)
+            return false;
+        
+        return true;
+    }
+
     
 
     //Path distance between two tiles (Note: Not straight-line distance!)
@@ -281,7 +305,7 @@ public class MapGrid : MonoBehaviour
             Tile lastTile = startTile;
             foreach (Tile tile in path)
             {
-                if (IsTilePathObstructed(lastTile, tile)) return new List<Tile>();
+                if (IsPathLOSObstructed(lastTile, tile)) return new List<Tile>();
                 lastTile = tile;
             }
             return path;
