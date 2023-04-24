@@ -39,16 +39,16 @@ public sealed class CoverObject : MonoBehaviour
         InitCollider();
     }
 
-    private void Update()
-    {
-        // Temp timer to test destruction physics
-        // Destruction will normally be called externally and not performed via Update
+    //private void Update()
+    //{
+    //    // Temp timer to test destruction physics
+    //    // Destruction will normally be called externally and not performed via Update
 
-        if (_debugTimer.CheckTimer() && !IsDestroyed && IsDestructible)
-        {
-            DestroyObject();
-        }
-    }
+    //    if (_debugTimer.CheckTimer() && !IsDestroyed && IsDestructible)
+    //    {
+    //        DestroyObject();
+    //    }
+    //}
 
     private void InitCollider()
     {
