@@ -11,6 +11,7 @@ public class StateHandler: MonoBehaviour
     public enum State { 
         GameRunningState,
         StatusMenuState,
+        StartMenuState,
         CombatState,
         TurnState,
         PlayerTurnState,
