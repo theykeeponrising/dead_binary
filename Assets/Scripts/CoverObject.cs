@@ -70,14 +70,31 @@ public sealed class CoverObject : MonoBehaviour
     {
         // Calculates a stand position based on the cover object's collider size
 
-        Vector3 tilePosition = tile.transform.position;
+        Vector3 tilePosition = tile.transform.position + new Vector3(0, 0.5f, 0);
         Vector3 coverPosition = transform.position;
 
-        float offset = _mainCollider.bounds.size.z / 2;
-        Vector3 direction = tilePosition - coverPosition;
-        Vector3 standPoint = (tilePosition + coverPosition) / 2;
+        Vector3 direction = coverPosition - tilePosition;
+        //Vector3 standPoint = (tilePosition + coverPosition) / 2;
 
-        return new Vector3(standPoint.x, 0, standPoint.z) + direction * offset;
+        int layerMask = (1 << LayerMask.NameToLayer("CoverObject"));
+        if (Physics.Raycast(tilePosition, direction, out RaycastHit hit, 2f, layerMask))
+        {
+            Debug.DrawRay(tilePosition, direction * 2, Color.red, 30f);
+            Debug.Log(hit.point);
+            Vector3 hitPoint = hit.point;
+            Vector3 standPoint = (tilePosition + hitPoint) / 2;
+
+            direction = new Vector3(direction.x, 0f, direction.z);
+            return new Vector3(standPoint.x, 0, standPoint.z) - direction / 2;
+        }
+        else
+        {
+            Debug.DrawRay(tilePosition, direction, Color.red, 30f);
+            Debug.Log(hit.point);
+            Vector3 standPoint = (tilePosition + coverPosition) / 2;
+
+            return new Vector3(standPoint.x, 0, standPoint.z);
+        }
     }
 
     public void PlayImpactSFX()
