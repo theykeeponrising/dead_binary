@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 //Class that manages all the (highest-level) states. Handles transitioning between states, passes inputs to the states, etc. 
 public class StateHandler: MonoBehaviour
@@ -20,7 +21,7 @@ public class StateHandler: MonoBehaviour
         GameOverState
     };
 
-    public State activeState;
+    public State initialState = State.StartMenuState;
     public List<GameState> gameStates;
     public bool keypressPaused = false;
 
@@ -29,6 +30,7 @@ public class StateHandler: MonoBehaviour
         Instance = this;
         gameRunningState = new GameRunningState();
         gameRunningState.Init(null, this);
+        gameRunningState.SetInitialState(initialState);
         gameRunningState.Start();
         gameRunningState.SetStateActive();
     }
@@ -43,20 +45,6 @@ public class StateHandler: MonoBehaviour
         gameRunningState.FixedUpdate();
     }
 
-    public State SetStateActive(State state) {
-        State old_state = activeState;
-        GetStateObject(old_state).SetStateInactive();
-        GetStateObject(state).SetStateActive();
-        StartCoroutine(GetStateObject(state).WaitKeyPress());
-        activeState = state;
-        return old_state;
-    }
-
-    //Obtain the currently active menu
-    public State GetActiveState() {
-        return activeState;
-    }
-
     public GameState GetStateObject(State state) {
         if (state == State.GameRunningState) return gameRunningState;
 
@@ -67,7 +55,7 @@ public class StateHandler: MonoBehaviour
     public IEnumerator WaitKeyPress()
     {
         keypressPaused = true;
-        yield return new WaitForSeconds(0.01f);
+        yield return new WaitForSeconds(0.15f);
         keypressPaused = false;
     }
 
@@ -78,6 +66,11 @@ public class StateHandler: MonoBehaviour
 
     public void PauseKeypress(bool paused) {
         keypressPaused = paused;
+    }
+
+    public void LoadScene(int sceneIndex)
+    {
+        SceneManager.LoadScene(sceneIndex);
     }
 
 }

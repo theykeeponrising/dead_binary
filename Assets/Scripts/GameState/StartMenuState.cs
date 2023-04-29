@@ -1,8 +1,5 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 using System.Collections;
-using UnityEngine.UI;
-using TMPro;
 
 //Start Menu
 public class StartMenuState : GameState
@@ -12,35 +9,27 @@ public class StartMenuState : GameState
     public override void Init(GameState parentState, StateHandler stateHandler)
     {
         base.Init(parentState, stateHandler);
-        this.stateEnum = StateHandler.State.StartMenuState;
-        startMenuUI = UIManager.GetStartMenu();
-        startMenuUI.SetStartMenuState(this);
-    }
-
-    public override void Update()
-    {
-        base.Update();
-        HandleKeyPress();
-    }
-
-    // Update is called once per frame
-    public override bool HandleKeyPress()
-    {
-        // True/False if any key is pressed while in state
-        return startMenuUI.HandleKeyPress();
+        this.stateEnum = StateHandler.State.StartMenuState;        
     }
 
     public override void SetStateActive()
     {
-        startMenuUI.EnablePlayerInput();
-        startMenuUI.DisplayMenu(true);
-        //statusMenuUI.playerInput.Controls.InputMenu.performed += _ => this.ChangeState(StateHandler.State.CombatState);
+        if (startMenuUI == null)
+        {
+            startMenuUI = UIManager.GetStartMenu();
+            startMenuUI.SetStartMenuState(this);
+        }
+        base.SetStateActive();
     }
 
     public override void SetStateInactive()
     {
-        startMenuUI.DisablePlayerInput();
-        startMenuUI.DisplayMenu(false);
-        //statusMenuUI.playerInput.Controls.InputMenu.performed += _ => this.ChangeState(StateHandler.State.CombatState);
+        base.SetStateActive();
+    }
+
+    public void StartGame()
+    {
+        StateHandler.Instance.LoadScene(1);
+        //ChangeState(StateHandler.State.CombatState);
     }
 }

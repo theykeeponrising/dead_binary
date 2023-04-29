@@ -29,6 +29,7 @@ public class GameRunningState : GameState
 
     public override void SetStateActive()
     {
+        base.SetStateActive();
         CombatState combatState = (CombatState) this.GetSubStateObject(StateHandler.State.CombatState);
         StartMenuState startMenuState = (StartMenuState) this.GetSubStateObject(StateHandler.State.StartMenuState);
 

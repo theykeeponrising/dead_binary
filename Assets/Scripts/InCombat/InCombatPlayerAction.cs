@@ -36,9 +36,10 @@ public class InCombatPlayerAction
     {
         playerInput = new PlayerInput();
         this.playerTurnState = playerTurnState;
+        CombatState.OnMapLoaded += OnMapLoaded;
     }
 
-    public void Start()
+    public void OnMapLoaded()
     {
         actionPanelScript = UIManager.GetActionPanel();
         actionPanelScript.gameObject.SetActive(false);

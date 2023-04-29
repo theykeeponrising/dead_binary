@@ -32,12 +32,6 @@ public class PlayerTurnState : GameState
         playerAction.SetStateMachine(playerActionStateMachine);
     }
 
-    public override void Start()
-    {
-        playerAction.Start();
-        base.Start();
-    }
-
     public override void Update() {
         base.Update();
         UpdatePlayerTurnState();
