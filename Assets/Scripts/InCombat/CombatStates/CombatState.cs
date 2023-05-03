@@ -10,6 +10,11 @@ public class CombatState : GameState
     // Used to manage user inputs
     public InCombatPlayerAction inCombatPlayerAction;
 
+    // Creates an event for when the scene/map is loaded
+    public delegate void MapLoaded();
+    public static event MapLoaded OnMapLoaded;
+    private bool _mapLoaded = false;
+
     public override void Init(GameState parentState, StateHandler stateHandler) 
     {
         base.Init(parentState, stateHandler);
@@ -31,6 +36,17 @@ public class CombatState : GameState
     public override void Update() 
     {
         base.Update();
+    }
+
+    public override void SetStateActive()
+    {
+        if (!_mapLoaded)
+        {
+            OnMapLoaded();
+            _mapLoaded = true;
+        }
+        
+        base.SetStateActive();
     }
 
     public void CheckGameConditions()

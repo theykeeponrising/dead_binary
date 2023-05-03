@@ -7,6 +7,7 @@ public class UIManager : MonoBehaviour
     public static AudioSource AudioSource;
     public static GameObject IndicatorAOE;
 
+    static StartMenuUI _startMenuUI;
     static StatusMenuUI _statusMenuUI;
     static ActionPanelScript _actionPanel;
     static InCombatPlayerActionUI _inCombatPlayerActionUI;
@@ -23,6 +24,12 @@ public class UIManager : MonoBehaviour
         Instance = this;
         AudioSource = GetComponent<AudioSource>();
         IndicatorAOE = _indicatorAOE;
+    }
+
+    public static StartMenuUI GetStartMenu()
+    {
+        if (!_startMenuUI) _startMenuUI = Instance.GetComponentInChildren<StartMenuUI>();
+        return _startMenuUI;
     }
 
     public static InfoPanelScript GetInfoPanel()

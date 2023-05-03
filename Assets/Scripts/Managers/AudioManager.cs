@@ -75,6 +75,7 @@ public class AudioManager : MonoBehaviour
 
     private void CombatMusicTransition()
     {
+        if (_player == null) return;
         // Gradually transitions volume between combat and non-combat audio sources
 
         if (_player.InCombat())

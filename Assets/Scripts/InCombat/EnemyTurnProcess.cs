@@ -5,13 +5,20 @@ using UnityEngine;
 //Process for handling enemy turns. Will basically iterate through each unit one at a time and have them act.
 public class EnemyTurnProcess
 {
-    private readonly List<EnemyUnit> _enemyUnits;
-    private readonly List<EnemyPod> _enemyPods;
+    private List<EnemyUnit> _enemyUnits;
+    private List<EnemyPod> _enemyPods;
     private readonly EnemyTurnState _enemyTurnState;
+
+    
 
     public EnemyTurnProcess(EnemyTurnState enemyTurnState)
     {
         _enemyTurnState = enemyTurnState;
+        CombatState.OnMapLoaded += OnMapLoaded;
+    }
+
+    public void OnMapLoaded()
+    {
         _enemyUnits = Map.FindEnemyUnits();
         _enemyPods = Map.FindPods();
     }

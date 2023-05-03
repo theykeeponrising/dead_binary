@@ -79,8 +79,6 @@ public sealed class CoverObject : MonoBehaviour
         int layerMask = (1 << LayerMask.NameToLayer("CoverObject"));
         if (Physics.Raycast(tilePosition, direction, out RaycastHit hit, 2f, layerMask))
         {
-            Debug.DrawRay(tilePosition, direction * 2, Color.red, 30f);
-            Debug.Log(hit.point);
             Vector3 hitPoint = hit.point;
             Vector3 standPoint = (tilePosition + hitPoint) / 2;
 
@@ -89,8 +87,6 @@ public sealed class CoverObject : MonoBehaviour
         }
         else
         {
-            Debug.DrawRay(tilePosition, direction, Color.red, 30f);
-            Debug.Log(hit.point);
             Vector3 standPoint = (tilePosition + coverPosition) / 2;
 
             return new Vector3(standPoint.x, 0, standPoint.z);

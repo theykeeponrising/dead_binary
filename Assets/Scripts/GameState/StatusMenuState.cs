@@ -14,6 +14,11 @@ public class StatusMenuState : GameState
     {
         base.Init(parentState, stateHandler);
         this.stateEnum = StateHandler.State.StatusMenuState;
+        CombatState.OnMapLoaded += OnMapLoaded;
+    }
+
+    public void OnMapLoaded()
+    {
         statusMenuUI = UIManager.GetStatusMenu();
         statusMenuUI.SetStatusMenuState(this);
     }
@@ -21,7 +26,7 @@ public class StatusMenuState : GameState
     public override void Update()
     {
         base.Update();
-        HandleKeyPress();
+        HandleInput();
     }
 
     // Update is called once per frame
@@ -33,6 +38,7 @@ public class StatusMenuState : GameState
 
     public override void SetStateActive()
     {
+        base.SetStateActive();
         statusMenuUI.EnablePlayerInput();
         statusMenuUI.DisplayMenu(true);
         //statusMenuUI.playerInput.Controls.InputMenu.performed += _ => this.ChangeState(StateHandler.State.CombatState);
@@ -40,6 +46,7 @@ public class StatusMenuState : GameState
 
     public override void SetStateInactive()
     {
+        base.SetStateActive();
         statusMenuUI.DisablePlayerInput();
         statusMenuUI.DisplayMenu(false);
         //statusMenuUI.playerInput.Controls.InputMenu.performed += _ => this.ChangeState(StateHandler.State.CombatState);
