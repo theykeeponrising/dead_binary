@@ -53,6 +53,10 @@ public class InCombatPlayerAction
         playerUnits = Map.FindUnits(FactionManager.PV);
     }
 
+    public void Destroy() {
+        CombatState.OnMapLoaded -= OnMapLoaded;
+    }
+
     public void EnablePlayerInput()
     {
         playerInput.Enable();
