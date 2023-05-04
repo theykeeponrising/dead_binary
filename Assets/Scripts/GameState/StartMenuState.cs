@@ -22,14 +22,32 @@ public class StartMenuState : GameState
         base.SetStateActive();
     }
 
+    public override void Update()
+    {
+        base.Update();
+        HandleInput();
+    }
+
+    public override bool HandleKeyPress()
+    {
+        return startMenuUI.HandleKeyPress();
+    }
+
     public override void SetStateInactive()
     {
-        base.SetStateActive();
+        base.SetStateInactive();
+        startMenuUI.DisablePlayerInput();
     }
 
     public void StartGame()
     {
+        SetStateInactive();
         StateHandler.Instance.LoadScene(1);
         //ChangeState(StateHandler.State.CombatState);
+    }
+
+    public void ShowCredits()
+    {
+
     }
 }
