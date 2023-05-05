@@ -38,6 +38,10 @@ public abstract class GameState
         }
     }
 
+    public virtual void OnDestroy() {
+        return;
+    }
+
     public virtual void ChangeState(StateHandler.State newStateEnum) {
         this.parentState.ChangeSubState(newStateEnum);
     }

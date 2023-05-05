@@ -45,6 +45,10 @@ public class StateHandler: MonoBehaviour
         gameRunningState.FixedUpdate();
     }
 
+    private void OnDestroy() {
+        gameRunningState.OnDestroy();
+    }
+
     public GameState GetStateObject(State state) {
         if (state == State.GameRunningState) return gameRunningState;
 
@@ -71,6 +75,11 @@ public class StateHandler: MonoBehaviour
     public void LoadScene(int sceneIndex)
     {
         SceneManager.LoadScene(sceneIndex);
+    }
+
+    public void ReloadScene()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
 }

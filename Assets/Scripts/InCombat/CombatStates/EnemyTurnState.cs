@@ -13,6 +13,11 @@ public class EnemyTurnState : GameState
         base.Init(parentState, stateHandler);
         this.stateEnum = StateHandler.State.EnemyTurnState;
         this.enemyTurnProcess = new EnemyTurnProcess(this);
+        CombatState.OnMapLoaded += enemyTurnProcess.OnMapLoaded;
+    }
+
+    public override void OnDestroy() {
+        CombatState.OnMapLoaded -= enemyTurnProcess.OnMapLoaded;
     }
 
     public override void SetStateActive()

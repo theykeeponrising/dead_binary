@@ -23,6 +23,10 @@ public class EnemyTurnProcess
         _enemyPods = Map.FindPods();
     }
 
+    private void OnDestroy() {
+        CombatState.OnMapLoaded -= OnMapLoaded;
+    }
+
     public void ProcessTurn()
     {
         GlobalManager.Instance.StartCoroutine(ProcessEnemyUnits());

@@ -38,6 +38,12 @@ public class CombatState : GameState
         base.Update();
     }
 
+    public override void OnDestroy()
+    {
+        base.OnDestroy();
+        inCombatPlayerAction.Destroy();
+    }
+
     public override void SetStateActive()
     {
         if (!_mapLoaded)
@@ -45,14 +51,14 @@ public class CombatState : GameState
             OnMapLoaded();
             _mapLoaded = true;
         }
-        
         base.SetStateActive();
     }
 
-    public void CheckGameConditions()
+    public bool CheckGameConditions()
     {
         bool gameEnded = CheckGameWin();
-        if (!gameEnded) CheckGameOver();
+        if (!gameEnded) gameEnded = CheckGameOver();
+        return gameEnded;
     }
 
     public bool CheckGameOver()

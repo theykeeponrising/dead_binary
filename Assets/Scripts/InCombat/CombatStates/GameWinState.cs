@@ -8,6 +8,7 @@ using UnityEditor;
 //Combat State is the basic gameplay, i.e. player vs robot battles. This class will handle inputs at a high level
 public class GameWinState : GameState
 {
+    GameWinUI gameWinUI;
     public override void Init(GameState parentState, StateHandler stateHandler) 
     {
         base.Init(parentState, stateHandler);
@@ -21,11 +22,13 @@ public class GameWinState : GameState
 
     public override void SetStateActive()
     {
+        if (gameWinUI == null)
+        {
+            gameWinUI = UIManager.GetGameWinMenu();
+            gameWinUI.SetGameWinState(this);
+            gameWinUI.SetActive(true);
+        }
         base.SetStateActive();
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#endif
-        Application.Quit();
     }
 
     public bool CheckGameWin()
@@ -33,5 +36,10 @@ public class GameWinState : GameState
         List<EnemyUnit> units = Map.FindEnemyUnits();
         if (units.Count == 0) return true;
         return false;
+    }
+
+    public void RestartGame()
+    {
+        StateHandler.Instance.ReloadScene();
     }
 }

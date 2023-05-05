@@ -13,8 +13,8 @@ public class Map : MonoBehaviour
     public static Tilemap CoverMap;
     public static Tilemap UnitMap;
 
-    private static List<Tile> _tileMapResults = new();
-    private static List<CoverObject> _coverMapResults = new();
+    private static List<Tile> _tileMapResults;
+    private static List<CoverObject> _coverMapResults;
 
     private void Awake()
     {
@@ -27,8 +27,14 @@ public class Map : MonoBehaviour
         CoverMap = tilemaps[2];
         UnitMap = tilemaps[3];
 
-        //_tileMapResults = TileMap.GetComponentsInChildren<Tile>().ToList();
-        //_coverMapResults = CoverMap.GetComponentsInChildren<CoverObject>().ToList();
+        _tileMapResults = new();
+        _coverMapResults = new();
+    }
+
+    private void OnDestroy()
+    {
+        _tileMapResults = null;
+        _coverMapResults = null;
     }
 
     public static List<Unit> FindUnits(Faction faction=null, bool excludeDeadUnits=true)
@@ -105,7 +111,6 @@ public class Map : MonoBehaviour
     public static List<Tile> FindTiles()
     {
         // Returns all tiles on the active map
-
         if (_tileMapResults.Count == 0)
             _tileMapResults = TileMap.GetComponentsInChildren<Tile>().ToList();
 

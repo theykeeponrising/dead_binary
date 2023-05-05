@@ -9,6 +9,8 @@ public class UIManager : MonoBehaviour
 
     static StartMenuUI _startMenuUI;
     static StatusMenuUI _statusMenuUI;
+    static GameOverUI _gameOverUI;
+    static GameWinUI _gameWinUI;
     static ActionPanelScript _actionPanel;
     static InCombatPlayerActionUI _inCombatPlayerActionUI;
     static InventoryPanelScript _inventoryPanel;
@@ -42,6 +44,18 @@ public class UIManager : MonoBehaviour
     {
         if (!_statusMenuUI) _statusMenuUI = Instance.GetComponentInChildren<StatusMenuUI>();
         return _statusMenuUI;
+    }
+
+    public static GameOverUI GetGameOverMenu()
+    {
+        if (!_gameOverUI) _gameOverUI = Instance.GetComponentInChildren<GameOverUI>();
+        return _gameOverUI;
+    }
+
+    public static GameWinUI GetGameWinMenu()
+    {
+        if (!_gameWinUI) _gameWinUI = Instance.GetComponentInChildren<GameWinUI>();
+        return _gameWinUI;
     }
 
     public static ActionPanelScript GetActionPanel()

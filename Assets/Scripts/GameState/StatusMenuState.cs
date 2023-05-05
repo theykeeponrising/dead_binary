@@ -23,6 +23,12 @@ public class StatusMenuState : GameState
         statusMenuUI.SetStatusMenuState(this);
     }
 
+    public override void OnDestroy()
+    {
+        base.OnDestroy();
+        CombatState.OnMapLoaded -= OnMapLoaded;
+    }
+
     public override void Update()
     {
         base.Update();
