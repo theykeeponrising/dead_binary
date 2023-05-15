@@ -10,6 +10,7 @@ public class StateTarget : StateCancel
     List<Unit> targets;
     TargetType targetType = TargetType.CHARACTER;
     Faction targetFaction;
+    bool targetSelf = false;
 
     protected Unit targetedUnit;
     protected Tile targetedTile;
@@ -37,6 +38,7 @@ public class StateTarget : StateCancel
             targetRange = storedAction.Item.range;
             areaOfEffect = storedAction.Item.areaOfEffect;
             targetType = storedAction.Item.targetType;
+            targetSelf = storedAction.Item.targetSelf;
 
             if (storedAction.Item.GetType().BaseType == typeof(DamageItem))
             {
@@ -60,7 +62,7 @@ public class StateTarget : StateCancel
         switch (targetType)
         {
             case TargetType.CHARACTER:
-                FindTargets<Unit>(t);
+                FindTargets<Unit>(t, targetSelf);
                 break;
             default:
                 Debug.Log("Types other than Character are not yet implemented");
@@ -106,7 +108,7 @@ public class StateTarget : StateCancel
         }
     }
 
-    public virtual void FindTargets<TargetType>(InCombatPlayerAction t)
+    public virtual void FindTargets<TargetType>(InCombatPlayerAction t, bool canTargetSelf = false)
     {
         if (typeof(TargetType) == typeof(Unit))
         {
@@ -121,6 +123,7 @@ public class StateTarget : StateCancel
                 {
                     targets.Add(unit);
                 }
+            if (canTargetSelf) targets.Add(t.selectedCharacter);
         }
 
         //Find closest Target

@@ -4,9 +4,9 @@ public class StateChoosingTarget : StateTarget
 {
     public StateChoosingTarget(StateMachine<InCombatPlayerAction> machine, UnitTargetAction storedAction) : base(machine, storedAction) { Machine = machine; this.storedAction = storedAction; }
 
-    public override void FindTargets<TargetType>(InCombatPlayerAction t)
+    public override void FindTargets<TargetType>(InCombatPlayerAction t, bool targetSelf = false)
     {
-        base.FindTargets<TargetType>(t);
+        base.FindTargets<TargetType>(t, targetSelf);
         t.selectedCharacter.GetTarget(storedAction.UseCharacterCamera);
     }
 
