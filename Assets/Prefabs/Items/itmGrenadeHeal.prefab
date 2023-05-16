@@ -47,6 +47,7 @@ MonoBehaviour:
   itemType: 2
   targetType: 0
   targetFaction: 0
+  targetSelf: 1
   immuneUnitTypes: 01000000
   itemAction: {fileID: 3652251968811846348, guid: 377566d31a1fa644d9c71d42d954a6df, type: 3}
   itemUsesCurrent: 1

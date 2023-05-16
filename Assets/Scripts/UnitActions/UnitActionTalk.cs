@@ -16,7 +16,6 @@ public class UnitActionTalk : UnitAction
         string[] randomDialog = new string[]{
             "Well, things can't get much worse, right?",
             "Patrolling the Mojave almost makes you wish for a nuclear winter.",
-            "So many roads, but no cars... what's that about?",
             "Damn.",
             "It's my turn to use the rocket launcher.",
             "I'm not really sure how these \"Healnades\" work. The future is great!"

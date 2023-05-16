@@ -7,6 +7,7 @@ public abstract class Item : MonoBehaviour
     public ItemType itemType;
     public TargetType targetType;
     public FactionAffinity targetFaction;
+    public bool targetSelf;
     public List<UnitType> immuneUnitTypes;
 
     public UnitAction itemAction;

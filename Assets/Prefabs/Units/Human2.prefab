@@ -14511,7 +14511,7 @@ MonoBehaviour:
   Stats:
     HealthCurrent: 10
     HealthMax: 10
-    Movement: 5
+    Movement: 7
     Aim: 6
     Armor: 4
     Dodge: 3

@@ -9,7 +9,7 @@ public abstract class UnitTargetAction : UnitAction
     protected Vector3 TargetPosition;
     public FactionAffinity TargetFaction;
     public List<TargetType> TargetTypes;
-
+    public bool TargetSelf;
     public bool UseCharacterCamera { get { return _useCharacterCamera; } }
 
     public override void UseAction(Unit unit)
