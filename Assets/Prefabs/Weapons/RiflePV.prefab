@@ -190,7 +190,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: _reloadSound.Array.size
-      value: 1
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: attributes.weaponFamily
@@ -267,19 +267,19 @@ PrefabInstance:
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: _reloadSound.Array.data[0]
       value: 
-      objectReference: {fileID: 8300000, guid: 4aedde272f9886f40983f5b3d607cedd, type: 3}
+      objectReference: {fileID: 8300000, guid: 7bf31e96ac8cc9d458783d96fe87a316, type: 3}
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: _reloadSound.Array.data[1]
       value: 
-      objectReference: {fileID: 8300000, guid: 4aedde272f9886f40983f5b3d607cedd, type: 3}
+      objectReference: {fileID: 8300000, guid: c793f0e85d974a047a16b8821e93c726, type: 3}
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: _reloadSound.Array.data[2]
       value: 
-      objectReference: {fileID: 8300000, guid: 4aedde272f9886f40983f5b3d607cedd, type: 3}
+      objectReference: {fileID: 8300000, guid: ec428712732a67740b5e53fcc17e1308, type: 3}
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: _reloadSound.Array.data[3]
       value: 
-      objectReference: {fileID: 8300000, guid: 4aedde272f9886f40983f5b3d607cedd, type: 3}
+      objectReference: {fileID: 8300000, guid: 31ebccfd94a2e3f48b3c588c1f77dacc, type: 3}
     - target: {fileID: -4286811643612619385, guid: 9d4c3f1f0fb300347a99bd8aae7083e9, type: 3}
       propertyPath: stats.baseAccuracyModifier
       value: 0.8
