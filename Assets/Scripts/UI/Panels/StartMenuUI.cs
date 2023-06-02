@@ -50,7 +50,13 @@ public class StartMenuUI : MonoBehaviour
 
     public void OnStartClick()
     {
+        StartCoroutine(StartGame());
+    }
+
+    public IEnumerator StartGame()
+    {
         SetLoadingPanelActive(true);
+        yield return new WaitForSeconds(0.1f);
         startMenuState.StartGame();
     }
 
