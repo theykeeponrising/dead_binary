@@ -11,9 +11,11 @@ public class StartMenuUI : MonoBehaviour
     public GameObject quitButton;
     public GameObject creditsButton;
     public GameObject creditsPanel;
+    public GameObject loadingPanel;
     public StartMenuState startMenuState;
     public int currentPanelSelection;
     public bool bCreditsActive = false;
+    public bool bLoadingPanelActive = false;
     private PlayerInput playerInput;
 
     void Awake()
@@ -27,6 +29,7 @@ public class StartMenuUI : MonoBehaviour
         quitButton.GetComponent<Button>().onClick.AddListener(OnQuitClick);
         creditsButton.GetComponent<Button>().onClick.AddListener(OnCreditsClick);
         SetCreditsActive(false);
+        SetLoadingPanelActive(false);
         EnablePlayerInput();
     }
 
@@ -47,6 +50,13 @@ public class StartMenuUI : MonoBehaviour
 
     public void OnStartClick()
     {
+        StartCoroutine(StartGame());
+    }
+
+    public IEnumerator StartGame()
+    {
+        SetLoadingPanelActive(true);
+        yield return new WaitForSeconds(0.1f);
         startMenuState.StartGame();
     }
 
@@ -85,5 +95,12 @@ public class StartMenuUI : MonoBehaviour
         creditsPanel.GetComponent<CanvasGroup>().alpha = active ? 1 : 0;
         creditsPanel.GetComponent<CanvasGroup>().blocksRaycasts = active;
         bCreditsActive = active;
+    }
+
+    public void SetLoadingPanelActive(bool active)
+    {
+        loadingPanel.GetComponent<CanvasGroup>().alpha = active ? 1 : 0;
+        loadingPanel.GetComponent<CanvasGroup>().blocksRaycasts = active;
+        bLoadingPanelActive = active;
     }
 }
