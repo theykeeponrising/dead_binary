@@ -1,8 +1,10 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.UI;
 using TMPro;
+using System;
 
 //Menu for exiting the game, may obtain additional functionality later
 public class StartMenuUI : MonoBehaviour
@@ -11,19 +13,22 @@ public class StartMenuUI : MonoBehaviour
     public GameObject quitButton;
     public GameObject creditsButton;
     public GameObject creditsPanel;
+    public List<GameObject> creditsPages;
     public GameObject loadingPanel;
     public StartMenuState startMenuState;
     public int currentPanelSelection;
     public bool bCreditsActive = false;
     public bool bLoadingPanelActive = false;
     private PlayerInput playerInput;
+    private int _creditsIndex = 0;
+    private bool _waitBuffer = false;
 
     void Awake()
     {
         playerInput = new PlayerInput();
     }
 
-    public void Start() 
+    public void Start()
     {
         startButton.GetComponent<Button>().onClick.AddListener(OnStartClick);
         quitButton.GetComponent<Button>().onClick.AddListener(OnQuitClick);
@@ -37,9 +42,24 @@ public class StartMenuUI : MonoBehaviour
     {
         if (IsCreditsActive() && playerInput.Controls.AnyKey.IsPressed())
         {
-            OnCloseCreditsPanel();
-            return true;
+            if (_waitBuffer)
+                return false;
+
+            if (_creditsIndex < creditsPages.Count)
+            {
+                NextCreditsPage();
+                _creditsIndex++;
+                _waitBuffer = true;
+                return true;
+            }
+            else
+            {
+                OnCloseCreditsPanel();
+                _waitBuffer = true;
+                return true;
+            }
         }
+        _waitBuffer = false;
         return false;
     }
 
@@ -68,6 +88,8 @@ public class StartMenuUI : MonoBehaviour
     public void OnCreditsClick()
     {
         SetCreditsActive(true);
+        NextCreditsPage();
+        _creditsIndex++;
     }
 
     public bool IsCreditsActive()
@@ -78,6 +100,9 @@ public class StartMenuUI : MonoBehaviour
     public void OnCloseCreditsPanel()
     {
         SetCreditsActive(false);
+        foreach (GameObject creditPage in creditsPages)
+            creditPage.SetActive(false);
+        _creditsIndex = 0;
     }
 
     public void EnablePlayerInput()
@@ -94,7 +119,16 @@ public class StartMenuUI : MonoBehaviour
     {
         creditsPanel.GetComponent<CanvasGroup>().alpha = active ? 1 : 0;
         creditsPanel.GetComponent<CanvasGroup>().blocksRaycasts = active;
+
         bCreditsActive = active;
+    }
+
+    public void NextCreditsPage()
+    {
+        if (_creditsIndex > 0)
+            creditsPages[_creditsIndex - 1].SetActive(false);
+
+        creditsPages[_creditsIndex].SetActive(true);
     }
 
     public void SetLoadingPanelActive(bool active)
